@@ -6,12 +6,12 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class ItemSmeltingEvent extends PlayerEvent {
+public class RetrieveSmeltedItemEvent extends PlayerEvent {
 	@NotNull
 	private final ItemStack outputStack;
 	private final Container outputSlotInventory;
 
-	public ItemSmeltingEvent(Player player, @NotNull ItemStack smelting, Container outputSlotInventory) {
+	public RetrieveSmeltedItemEvent(Player player, @NotNull ItemStack smelting, Container outputSlotInventory) {
 		super(player);
 
 		this.outputStack = smelting;

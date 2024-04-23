@@ -31,7 +31,7 @@ public class SpacekingArmour extends AdventArmour {
 
 	@Override
 	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots == null && !DamageUtil.isEnvironmentalDamage(event.getSource()) && !DamageUtil.isPoisonDamage(event.getSource(), plData.player(), event.getAmount())) {
+		if (slots == null && !DamageUtil.isEnvironmentalDamage(event.getSource()) && !DamageUtil.isPoisonDamage(event.getSource())) {
 			Player pl = plData.player();
 
 			if (!pl.level().isClientSide && pl.getHealth() > 0 && RandomUtil.oneInNChance(3)) {

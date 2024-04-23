@@ -18,11 +18,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.content.entity.base.AoARangedMob;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
@@ -137,7 +137,7 @@ public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (source.is(AoATags.DamageTypes.IS_TECHNICAL))
+		if (source.is(Tags.DamageTypes.IS_TECHNICAL))
 			return super.hurt(source, amount);
 
 		if (source.is(DamageTypeTags.IS_FIRE))

@@ -4,9 +4,9 @@
     "chance_per_player": 1.0,
     "dimensions": [
       "aoa3:runandor",
-      "aoa3:greckon",
+      "aoa3:dustopia",
       "aoa3:lborean",
-      "aoa3:dustopia"
+      "aoa3:greckon"
     ],
     "extra_delay_per_spawn": {
       "type": "minecraft:uniform",

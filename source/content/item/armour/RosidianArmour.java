@@ -29,7 +29,7 @@ public class RosidianArmour extends AdventArmour {
 
 	@Override
 	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (!DamageUtil.isEnvironmentalDamage(event.getSource()) && !DamageUtil.isPoisonDamage(event.getSource(), plData.player(), event.getAmount())) {
+		if (!DamageUtil.isEnvironmentalDamage(event.getSource()) && !DamageUtil.isPoisonDamage(event.getSource())) {
 			if (slots == null) {
 				//if (event.getAmount() >= 4)
 				//	spawnRosid(plData.player());

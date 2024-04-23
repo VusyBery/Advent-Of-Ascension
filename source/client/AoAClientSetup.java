@@ -16,8 +16,9 @@ import net.tslat.aoa3.client.gui.overlay.ScreenEffectRenderer;
 import net.tslat.aoa3.client.model.ModelProperties;
 import net.tslat.aoa3.client.particle.*;
 import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
-import net.tslat.aoa3.client.render.dimension.CustomDimensionRenders;
+import net.tslat.aoa3.client.render.dimension.AoADimensionRenderEffects;
 import net.tslat.aoa3.client.render.entity.misc.OccultBlockRenderer;
+import net.tslat.aoa3.client.render.shader.AoAPostProcessing;
 import net.tslat.aoa3.common.menu.MendingTableMenu;
 import net.tslat.aoa3.common.menu.WhitewashingTableMenu;
 import net.tslat.aoa3.common.registration.AoAMenus;
@@ -32,6 +33,7 @@ public final class AoAClientSetup {
     public static void init() {
         AoAEntityRendering.init();
         ClientEventHandler.init();
+        AoAPostProcessing.init();
         AoAGuiElementRenderers.init();
         AoAKeybinds.init();
         AoAResourceReloadListeners.init();
@@ -39,7 +41,7 @@ public final class AoAClientSetup {
         ScopeOverlayRenderer.init();
         XpParticlesRenderer.init();
         ScreenEffectRenderer.init();
-        CustomDimensionRenders.init();
+        AoADimensionRenderEffects.init();
         AoATintHandling.init();
         BossBarRenderer.init();
         RecoilRenderer.init();

@@ -8,6 +8,7 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.AoATags;
@@ -48,7 +49,7 @@ public class TESIntegration {
 			else if (damageSource.is(AoATags.DamageTypes.ENERGY)) {
 				icon = ENERGY_ICON;
 			}
-			else if (damageSource.is(AoATags.DamageTypes.MAGIC)) {
+			else if (damageSource.is(Tags.DamageTypes.IS_MAGIC)) {
 				icon = MAGIC_ICON;
 			}
 			else if (damageSource.is(DamageTypeTags.IS_FIRE)) {

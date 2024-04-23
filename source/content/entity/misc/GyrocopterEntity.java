@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.registration.AoATags;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 
 public class GyrocopterEntity extends Entity {
@@ -80,7 +80,7 @@ public class GyrocopterEntity extends Entity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource source) {
-        return !source.is(AoATags.DamageTypes.IS_TECHNICAL);
+        return !source.is(Tags.DamageTypes.IS_TECHNICAL);
     }
 
     @Override

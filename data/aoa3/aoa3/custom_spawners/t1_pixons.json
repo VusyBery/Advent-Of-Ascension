@@ -3,10 +3,10 @@
     "biomes": [],
     "chance_per_player": 1.0,
     "dimensions": [
-      "minecraft:the_nether",
       "aoa3:precasia",
-      "aoa3:creeponia",
+      "minecraft:the_nether",
       "aoa3:barathos",
+      "aoa3:creeponia",
       "aoa3:lelyetia"
     ],
     "extra_delay_per_spawn": {

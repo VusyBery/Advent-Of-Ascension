@@ -27,8 +27,8 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.event.AoAPlayerEvents;
@@ -194,7 +194,7 @@ public class FishingCageEntity extends Entity {
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource source) {
-		return !source.is(AoATags.DamageTypes.IS_TECHNICAL);
+		return !source.is(Tags.DamageTypes.IS_TECHNICAL);
 	}
 
 	protected void doFishingCheckTick() {

@@ -31,7 +31,7 @@ public class CrystallisArmour extends AdventArmour {
 	@Override
 	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
 		if (event.getSource().getEntity() instanceof LivingEntity attacker) {
-			if (slots == null && (DamageUtil.isMeleeDamage(event.getSource()) || DamageUtil.isRangedDamage(event.getSource(), plData.player(), event.getAmount()))) {
+			if (slots == null && (DamageUtil.isMeleeDamage(event.getSource()) || DamageUtil.isRangedDamage(event.getSource()))) {
 				attacker.hurt(attacker.level().damageSources().thorns(plData.player()), event.getAmount());
 				plData.player().hurtArmor(attacker.level().damageSources().generic(), event.getAmount() * 2);
 			}

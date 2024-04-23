@@ -33,4 +33,10 @@ public final class AoABiomes {
 	public static final ResourceKey<Biome> THE_DEPTHS = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("the_depths"));
 
 	public static final ResourceKey<Biome> THE_SILENT_FOREST = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("the_silent_forest"));
+
+	public static final ResourceKey<Biome> CRYSTAL_CAVERNS = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("crystal_caverns"));
+
+	public static final ResourceKey<Biome> FLOATING_BIG_TOP = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("floating_big_top"));
+
+	public static final ResourceKey<Biome> ABYSSAL_VALLEY = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("abyssal_valley"));
 }

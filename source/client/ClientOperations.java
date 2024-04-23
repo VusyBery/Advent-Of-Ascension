@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.OptionalDouble;
 
 public final class ClientOperations {
-	public static Level getWorld() {
+	public static Level getLevel() {
 		return Minecraft.getInstance().level;
 	}
 

@@ -32,12 +32,12 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAExplosions;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoAMobs;
 import net.tslat.aoa3.content.entity.base.AoARangedAttacker;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
@@ -295,7 +295,7 @@ public class EliteKingBamBamBamEntity extends AoABoss implements AoARangedAttack
 		float prevHealth = getHealth() / getMaxHealth();
 		boolean success = super.hurt(source, amount);
 
-		if (!source.is(AoATags.DamageTypes.IS_TECHNICAL) && prevHealth > 0.25f && getHealth() / getMaxHealth() <= 0.25f)
+		if (!source.is(Tags.DamageTypes.IS_TECHNICAL) && prevHealth > 0.25f && getHealth() / getMaxHealth() <= 0.25f)
 			collapse();
 
 		return success;

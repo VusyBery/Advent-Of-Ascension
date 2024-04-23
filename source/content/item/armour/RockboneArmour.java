@@ -34,7 +34,7 @@ public class RockboneArmour extends AdventArmour {
 
 	@Override
 	public void onPreAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingAttackEvent event) {
-		if (slots == null && RandomUtil.oneInNChance(10) && DamageUtil.isRangedDamage(event.getSource(), plData.player(), event.getAmount())) {
+		if (slots == null && RandomUtil.oneInNChance(10) && DamageUtil.isRangedDamage(event.getSource())) {
 			event.setCanceled(true);
 
 			for (ItemStack armour : plData.player().getArmorSlots()) {
@@ -48,7 +48,7 @@ public class RockboneArmour extends AdventArmour {
 
 	@Override
 	public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots != null && DamageUtil.isRangedDamage(event.getSource(), plData.player(), event.getAmount()))
+		if (slots != null && DamageUtil.isRangedDamage(event.getSource()))
 			event.setAmount(event.getAmount() * (1 - (0.1f * slots.size())));
 	}
 

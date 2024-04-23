@@ -21,6 +21,7 @@ import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +35,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.tslat.aoa3.common.registration.AoAAttributes;
+import net.tslat.aoa3.content.entity.ai.movehelper.MultiFluidSmoothGroundNavigation;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.library.object.EntityDataHolder;
@@ -76,6 +78,11 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 		super(entityType, level);
 
 		getNavigation().setCanFloat(true);
+	}
+
+	@Override
+	protected PathNavigation createNavigation(Level level) {
+		return new MultiFluidSmoothGroundNavigation(this, level);
 	}
 
 	@Override

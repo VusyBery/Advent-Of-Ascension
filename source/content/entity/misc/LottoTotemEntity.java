@@ -19,9 +19,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -149,7 +149,7 @@ public class LottoTotemEntity extends Entity {
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource source) {
-		return !source.is(AoATags.DamageTypes.IS_TECHNICAL);
+		return !source.is(Tags.DamageTypes.IS_TECHNICAL);
 	}
 
 	@Override

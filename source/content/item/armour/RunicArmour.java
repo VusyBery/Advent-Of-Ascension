@@ -32,13 +32,13 @@ public class RunicArmour extends AdventArmour {
 
 	@Override
 	public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots != null && DamageUtil.isMagicDamage(event.getSource(), plData.player(), event.getAmount()))
+		if (slots != null && DamageUtil.isMagicDamage(event.getSource()))
 			event.setAmount(event.getAmount() * (1 - (slots.size() * 0.1f)));
 	}
 
 	@Override
 	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots == null && plData.equipment().isCooledDown("runic_armour") && DamageUtil.isMagicDamage(event.getSource(), plData.player(), event.getAmount())) {
+		if (slots == null && plData.equipment().isCooledDown("runic_armour") && DamageUtil.isMagicDamage(event.getSource())) {
 			plData.player().addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 200, 0, false, false));
 			plData.equipment().setCooldown("runic_armour", 6000);
 		}

@@ -1,4 +1,4 @@
-package net.tslat.aoa3.mixin.common.patch;
+package net.tslat.aoa3.mixin.common.accessor;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;

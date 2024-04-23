@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
-import net.tslat.aoa3.event.custom.events.ItemSmeltingEvent;
+import net.tslat.aoa3.event.custom.events.RetrieveSmeltedItemEvent;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
@@ -34,7 +34,7 @@ public class BonusSmeltResult extends ScalableModAbility {
 	}
 
 	@Override
-	public void handleItemSmelting(ItemSmeltingEvent ev) {
+	public void handleItemSmelting(RetrieveSmeltedItemEvent ev) {
 		ItemStack smeltedStack = ev.getOutputStack();
 
 		if (smeltedStack.getItem().getFoodProperties() == null) {

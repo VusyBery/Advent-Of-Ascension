@@ -21,7 +21,7 @@ public class GrindstoneMenuMixin {
     Container repairSlots;
 
     @WrapOperation(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/GrindstoneMenu;removeNonCurses(Lnet/minecraft/world/item/ItemStack;II)Lnet/minecraft/world/item/ItemStack;"))
-    private ItemStack aoa3$ModifyResult(GrindstoneMenu instance, ItemStack stack, int count, int damage, Operation<ItemStack> original) {
+    private ItemStack aoa3$modifyResult(GrindstoneMenu instance, ItemStack stack, int count, int damage, Operation<ItemStack> original) {
         Player player = null;
 
         for (Slot slot : instance.slots) {

@@ -5,9 +5,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -15,13 +12,11 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.RenderUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -35,19 +30,6 @@ public class NightVisionGoggles extends AdventArmour {
 	@Override
 	public Type getSetType() {
 		return Type.ALL;
-	}
-
-	@Override
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		plData.player().addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false));
-	}
-
-	@Override
-	public void onUnequip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
-		MobEffectInstance nightVision = plData.player().getEffect(MobEffects.NIGHT_VISION);
-
-		if (nightVision != null && nightVision.getDuration() < 300)
-			plData.player().removeEffect(MobEffects.NIGHT_VISION);
 	}
 
 	@Override

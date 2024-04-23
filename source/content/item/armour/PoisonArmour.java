@@ -32,7 +32,7 @@ public class PoisonArmour extends AdventArmour {
 
 	@Override
 	public void onPreAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingAttackEvent event) {
-		if (slots == null && DamageUtil.isPoisonDamage(event.getSource(), plData.player(), event.getAmount())) {
+		if (slots == null && DamageUtil.isPoisonDamage(event.getSource())) {
 			event.setCanceled(true);
 			plData.player().addEffect(new EffectBuilder(MobEffects.DAMAGE_RESISTANCE, 60).isAmbient().hideEffectIcon().build());
 		}
@@ -40,7 +40,7 @@ public class PoisonArmour extends AdventArmour {
 
 	@Override
 	public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots != null && DamageUtil.isPoisonDamage(event.getSource(), plData.player(), event.getAmount()))
+		if (slots != null && DamageUtil.isPoisonDamage(event.getSource()))
 			event.setAmount(event.getAmount() * (1 - (slots.size() * 0.25f)));
 	}
 

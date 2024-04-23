@@ -31,7 +31,7 @@ public class PredatiousArmour extends AdventArmour {
 
 	@Override
 	public void onDamageDealt(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots != null && DamageUtil.isRangedDamage(event.getSource(), event.getEntity(), event.getAmount()))
+		if (slots != null && DamageUtil.isRangedDamage(event.getSource()))
 			event.setAmount(event.getAmount() * (1f + (0.1f * (float)slots.size())));
 	}
 

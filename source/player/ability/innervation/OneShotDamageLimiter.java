@@ -8,8 +8,8 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.player.ability.AoAAbility;
@@ -54,7 +54,7 @@ public class OneShotDamageLimiter extends AoAAbility.Instance {
 
 	@Override
 	public void handlePostIncomingAttack(LivingDamageEvent ev) {
-		if (ev.getSource().is(AoATags.DamageTypes.IS_TECHNICAL))
+		if (ev.getSource().is(Tags.DamageTypes.IS_TECHNICAL))
 			return;
 
 		LivingEntity player = ev.getEntity();

@@ -373,12 +373,12 @@ public final class SoundBuilder {
 			buffer.writeDouble(builder.location.y());
 			buffer.writeDouble(builder.location.z());
 		}, (builder, buffer) -> {
-			builder.atPos(ClientOperations.getWorld(), buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
+			builder.atPos(ClientOperations.getLevel(), buffer.readDouble(), buffer.readDouble(), buffer.readDouble());
 		}),
 		FOLLOWING_ENTITY(builder -> builder.followingEntity != null, (builder, buffer) -> {
 			buffer.writeVarInt(builder.followingEntity.getId());
 		}, (builder, buffer) -> {
-			builder.followEntity(ClientOperations.getWorld().getEntity(buffer.readVarInt()));
+			builder.followEntity(ClientOperations.getLevel().getEntity(buffer.readVarInt()));
 		}),
 		PITCH(builder -> builder.pitch != 1f, (builder, buffer) -> {
 			buffer.writeFloat(builder.pitch);

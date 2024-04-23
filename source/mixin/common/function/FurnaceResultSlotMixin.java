@@ -12,9 +12,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FurnaceResultSlot.class)
 public class FurnaceResultSlotMixin {
-	@Inject(method = "onTake",
-	at = @At(value = "HEAD"))
-	public void onTake(Player player, ItemStack stack, CallbackInfo ci) {
-		AoAEvents.firePlayerSmeltingEvent(player, stack, ((Slot)(Object)this).container);
+	@Inject(method = "onTake", at = @At(value = "HEAD"))
+	public void aoa3$fireSmeltingEvent(Player player, ItemStack stack, CallbackInfo ci) {
+		AoAEvents.firePlayerRetrieveSmeltedEvent(player, stack, ((Slot)(Object)this).container);
 	}
 }

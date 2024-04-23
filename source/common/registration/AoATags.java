@@ -216,6 +216,21 @@ public final class AoATags {
 		public static final TagKey<Item> COOKEDPORK = tag("cookedpork");
 		public static final TagKey<Item> COOKEDBEEF = tag("cookedbeef");
 
+		public static final TagKey<Item> COMPASS_RUNE_CATALYST = aoaTag("compass_rune_catalyst");
+		public static final TagKey<Item> DISTORTION_RUNE_CATALYST = aoaTag("distortion_rune_catalyst");
+		public static final TagKey<Item> ENERGY_RUNE_CATALYST = aoaTag("energy_rune_catalyst");
+		public static final TagKey<Item> FIRE_RUNE_CATALYST = aoaTag("fire_rune_catalyst");
+		public static final TagKey<Item> KINETIC_RUNE_CATALYST = aoaTag("kinetic_rune_catalyst");
+		public static final TagKey<Item> LIFE_RUNE_CATALYST = aoaTag("life_rune_catalyst");
+		public static final TagKey<Item> LUNAR_RUNE_CATALYST = aoaTag("lunar_rune_catalyst");
+		public static final TagKey<Item> POISON_RUNE_CATALYST = aoaTag("poison_rune_catalyst");
+		public static final TagKey<Item> POWER_RUNE_CATALYST = aoaTag("power_rune_catalyst");
+		public static final TagKey<Item> STORM_RUNE_CATALYST = aoaTag("storm_rune_catalyst");
+		public static final TagKey<Item> STRIKE_RUNE_CATALYST = aoaTag("strike_rune_catalyst");
+		public static final TagKey<Item> WATER_RUNE_CATALYST = aoaTag("water_rune_catalyst");
+		public static final TagKey<Item> WITHER_RUNE_CATALYST = aoaTag("wither_rune_catalyst");
+		public static final TagKey<Item> WIND_RUNE_CATALYST = aoaTag("wind_rune_catalyst");
+
 		private static TagKey<Item> aoaTag(String id) {
 			return ItemTags.create(new ResourceLocation(AdventOfAscension.MOD_ID, id));
 		}
@@ -255,12 +270,16 @@ public final class AoATags {
 
 	public static class Biomes {
 		public static final TagKey<Biome> NO_MOB_SPAWNS = tag("no_mob_spawns");
-		public static final TagKey<Biome> IS_PRECASIA = aoaTag("is_precasia");
+		public static final TagKey<Biome> IS_ABYSS = aoaTag("is_abyss");
+		public static final TagKey<Biome> IS_BARATHOS = aoaTag("is_barathos");
+		public static final TagKey<Biome> IS_CELEVE = aoaTag("is_celeve");
+		public static final TagKey<Biome> IS_CRYSTEVIA = aoaTag("is_crystevia");
+		public static final TagKey<Biome> IS_DEEPLANDS = aoaTag("is_deeplands");
 		public static final TagKey<Biome> IS_DUSTOPIA = aoaTag("is_dustopia");
 		public static final TagKey<Biome> IS_LBOREAN = aoaTag("is_lborean");
-		public static final TagKey<Biome> IS_BARATHOS = aoaTag("is_barathos");
 		public static final TagKey<Biome> IS_LELYETIA = aoaTag("is_lelyetia");
-		public static final TagKey<Biome> IS_DEEPLANDS = aoaTag("is_deeplands");
+		public static final TagKey<Biome> IS_NOWHERE = aoaTag("is_nowhere");
+		public static final TagKey<Biome> IS_PRECASIA = aoaTag("is_precasia");
 		public static final TagKey<Biome> HAS_RUINED_TELEPORTER = aoaTag("has_structure/ruined_teleporter");
 		public static final TagKey<Biome> HAS_PRECASIAN_LOTTO_HOVEL = aoaTag("has_structure/precasian_lotto_hovel");
 		public static final TagKey<Biome> HAS_ATTERCOPUS_NEST = aoaTag("has_structure/attercopus_nest");
@@ -297,11 +316,8 @@ public final class AoATags {
 	public static class DamageTypes {
 		public static final TagKey<DamageType> GUN = aoaTag("gun");
 		public static final TagKey<DamageType> ENERGY = aoaTag("energy");
-		public static final TagKey<DamageType> MAGIC = tag("magic");
-		public static final TagKey<DamageType> ENVIRONMENTAL = tag("environmental");
 		public static final TagKey<DamageType> NO_SPIRIT_REGEN = aoaTag("no_spirit_regen");
 		public static final TagKey<DamageType> REDUCED_FLINCH = tag("reduced_flinch");
-		public static final TagKey<DamageType> IS_TECHNICAL = tag("is_technical");
 
 		private static TagKey<DamageType> aoaTag(String id) {
 			return create(AdventOfAscension.id(id));

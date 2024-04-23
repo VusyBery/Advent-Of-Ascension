@@ -14,21 +14,15 @@ import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.util.RenderUtil;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-class LBoreanRenderingEffects extends DimensionSpecialEffects {
-    static final ResourceLocation ID = new ResourceLocation(AdventOfAscension.MOD_ID, "lborean");
-    private static final ResourceLocation MOON_TEXTURE = new ResourceLocation("textures/environment/moon_phases.png");
-    private static final ResourceLocation SUN_TEXTURE = new ResourceLocation("textures/environment/sun.png");
+public class LBoreanRenderingEffects extends AoADimensionEffectsRenderer {
+    public static final ResourceLocation ID = AdventOfAscension.id("lborean");
 
-    public LBoreanRenderingEffects() {
-        super(400, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
-    }
+    LBoreanRenderingEffects() {
+        super(400, true, SkyType.NORMAL, false, false);
 
-    @Override
-    public boolean renderSnowAndRain(ClientLevel level, int ticks, float partialTick, LightTexture lightTexture, double camX, double camY, double camZ) {
-        return true;
+        noWeather();
     }
 
     @Override
@@ -162,26 +156,5 @@ class LBoreanRenderingEffects extends DimensionSpecialEffects {
         }
         
         return true;
-    }
-
-    @Nullable
-    @Override
-    public float[] getSunriseColor(float pTimeOfDay, float pPartialTicks) {
-        return super.getSunriseColor(pTimeOfDay, pPartialTicks);
-    }
-
-    @Override
-    public boolean tickRain(ClientLevel level, int ticks, Camera camera) {
-        return true;
-    }
-
-    @Override
-    public Vec3 getBrightnessDependentFogColor(Vec3 fogColour, float brightness) {
-        return fogColour.multiply(brightness * 0.94F + 0.06F, brightness * 0.94F + 0.06F, brightness * 0.91F + 0.09F);
-    }
-
-    @Override
-    public boolean isFoggyAt(int pX, int pY) {
-        return false;
     }
 }

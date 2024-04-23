@@ -53,7 +53,7 @@ public final class AoAPlayerEvents {
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerXpEvent.XpChange.class, AoAPlayerEvents::onVanillaXpGain);
 		forgeBus.addListener(EventPriority.NORMAL, false, ItemCraftingEvent.class, AoAPlayerEvents::onItemCrafting);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerEvent.ItemCraftedEvent.class, AoAPlayerEvents::onItemCrafted);
-		forgeBus.addListener(EventPriority.NORMAL, false, ItemSmeltingEvent.class, AoAPlayerEvents::onItemSmelting);
+		forgeBus.addListener(EventPriority.NORMAL, false, RetrieveSmeltedItemEvent.class, AoAPlayerEvents::onItemSmelting);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerEvent.ItemSmeltedEvent.class, AoAPlayerEvents::onItemSmelted);
 		forgeBus.addListener(EventPriority.NORMAL, false, GrindstoneResultEvent.class, AoAPlayerEvents::onGrindstoneModifying);
 		forgeBus.addListener(EventPriority.NORMAL, false, ItemFishedEvent.class, AoAPlayerEvents::onItemFished);
@@ -228,7 +228,7 @@ public final class AoAPlayerEvents {
 		}
 	}
 
-	private static void onItemSmelting(final ItemSmeltingEvent ev) {
+	private static void onItemSmelting(final RetrieveSmeltedItemEvent ev) {
 		if (ev.getEntity() instanceof ServerPlayer pl) {
 			issueEvent(pl, ITEM_SMELTING, listener -> listener.handleItemSmelting(ev));
 		}

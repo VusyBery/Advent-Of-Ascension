@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.advent.AdventOfAscension;
@@ -13,11 +12,11 @@ import net.tslat.aoa3.util.RenderUtil;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
-public class LunalusRenderingEffects extends DimensionSpecialEffects {
-    public static final ResourceLocation ID = new ResourceLocation(AdventOfAscension.MOD_ID, "lunalus");
-    private static final ResourceLocation TEXTURE = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/realmstonegui/background.png");
+public class LunalusRenderingEffects extends AoADimensionEffectsRenderer {
+    public static final ResourceLocation ID = AdventOfAscension.id("lunalus");
+    private static final ResourceLocation TEXTURE = AdventOfAscension.id("textures/gui/realmstonegui/background.png");
 
-    public LunalusRenderingEffects() {
+    LunalusRenderingEffects() {
         super(Float.NaN, true, SkyType.NONE, false, true);
     }
 
@@ -59,18 +58,13 @@ public class LunalusRenderingEffects extends DimensionSpecialEffects {
         return true;
     }
 
-    @Override // Sky & distant fog colour - Biome fog & celestial angle
+    @Override
     public Vec3 getBrightnessDependentFogColor(Vec3 biomeFogColour, float celestialAngle) {
         return biomeFogColour;
     }
 
-    @Override // Show fog at X/Z
-    public boolean isFoggyAt(int posX, int posZ) {
-        return false;
-    }
-
     @Nullable
-    @Override // Adjust fog/sky colour for sunset/sunrise
+    @Override
     public float[] getSunriseColor(float celestialAngle, float partialTicks) {
         return null;
     }

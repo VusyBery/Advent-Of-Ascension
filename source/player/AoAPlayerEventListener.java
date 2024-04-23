@@ -307,9 +307,9 @@ public interface AoAPlayerEventListener {
 	 *
 	 * This handler is called on both the client and the server indiscriminately.
 	 *
-	 * @param ev {@link ItemSmeltingEvent} event
+	 * @param ev {@link RetrieveSmeltedItemEvent} event
 	 */
-	default void handleItemSmelting(final ItemSmeltingEvent ev) {}
+	default void handleItemSmelting(final RetrieveSmeltedItemEvent ev) {}
 
 	/**
 	 * This method gets triggered when the player takes an item out of a smelting device or furnace.
@@ -331,7 +331,7 @@ public interface AoAPlayerEventListener {
 	 *
 	 * This handler is called on both the client and the server indiscriminately.
 	 *
-	 * @param ev {@link ItemSmeltingEvent} event
+	 * @param ev {@link RetrieveSmeltedItemEvent} event
 	 */
 	default void handleGrindstoneModifying(final GrindstoneResultEvent ev) {}
 

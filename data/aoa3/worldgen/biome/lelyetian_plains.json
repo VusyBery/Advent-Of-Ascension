@@ -4,6 +4,12 @@
   "effects": {
     "fog_color": 13755135,
     "foliage_color": 2196498,
+    "music": {
+      "max_delay": 24000,
+      "min_delay": 12000,
+      "replace_current_music": false,
+      "sound": "aoa3:biome.lelyetian_plains.music"
+    },
     "sky_color": 9666625,
     "water_color": 5210338,
     "water_fog_color": 329011

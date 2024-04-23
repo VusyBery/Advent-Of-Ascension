@@ -29,7 +29,7 @@ public record MultipartTogglePacket(int entityId, boolean active) implements AoA
 	@Override
 	public void receiveMessage(PlayPayloadContext context) {
 		context.workHandler().execute(() -> {
-			if (ClientOperations.getWorld().getEntity(this.entityId) instanceof AoAMultipartEntity multipart) {
+			if (ClientOperations.getLevel().getEntity(this.entityId) instanceof AoAMultipartEntity multipart) {
 				multipart.toggleMultipart(this.active);
 				((Entity)multipart).refreshDimensions();
 			}

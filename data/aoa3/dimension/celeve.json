@@ -1,0 +1,10 @@
+{
+  "type": "aoa3:celeve",
+  "generator": {
+    "type": "aoa3:empty",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "aoa3:floating_big_top"
+    }
+  }
+}

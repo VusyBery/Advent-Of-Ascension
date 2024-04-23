@@ -56,8 +56,8 @@ public final class AoAEvents {
 		return NeoForge.EVENT_BUS.post(new GrindstoneResultEvent(player, result, inputSlots)).isCanceled();
 	}
 
-	public static void firePlayerSmeltingEvent(Player player, ItemStack smelting, Container outputInventory) {
-		NeoForge.EVENT_BUS.post(new ItemSmeltingEvent(player, smelting, outputInventory));
+	public static void firePlayerRetrieveSmeltedEvent(Player player, ItemStack smelting, Container outputInventory) {
+		NeoForge.EVENT_BUS.post(new RetrieveSmeltedItemEvent(player, smelting, outputInventory));
 	}
 
 	public static MagicTeleportEvent magicalTeleport(Entity entity, @Nullable Entity teleportSource, @Nullable Entity indirectTeleportSource, Vec3 teleportPosition) {

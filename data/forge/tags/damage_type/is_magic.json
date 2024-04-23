@@ -7,8 +7,6 @@
     {
       "id": "aoa3:magic_effect",
       "required": false
-    },
-    "minecraft:magic",
-    "minecraft:indirect_magic"
+    }
   ]
 }

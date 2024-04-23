@@ -10,8 +10,10 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.library.object.EntityDataHolder;
@@ -44,11 +46,6 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
                 new AoAEntityPart<>(this, getBbWidth() * 0.75f, getBbHeight() * 0.5f, 0, getBbHeight(), getBbWidth() * 1.625f).setDamageMultiplier(1.25f),
                 new AoAEntityPart<>(this, getBbWidth(), getBbHeight() * 0.9f, 0, 0, -getBbWidth()).setDamageMultiplier(0.75f)
         );
-    }
-
-    @Override
-    public boolean isInFluidType(FluidType type) {
-        return super.isInFluidType(type);
     }
 
     @Override
@@ -99,8 +96,18 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
     }
 
     @Override
+    public void jumpInFluid(FluidType type) {
+        if (getNavigation().canFloat() && type == AoAFluidTypes.TAR.get()) {
+            self().setDeltaMovement(self().getDeltaMovement().add(0.0D, (double)0.4F * self().getAttributeValue(NeoForgeMod.SWIM_SPEED.value()), 0.0D));
+        }
+        else {
+            super.jumpInFluid(type);
+        }
+    }
+
+    @Override
     public boolean hurt(DamageSource source, float amount) {
-        if (DamageUtil.isRangedDamage(source, this, amount) || DamageUtil.isGunDamage(source))
+        if (DamageUtil.isRangedDamage(source) || DamageUtil.isGunDamage(source))
             amount *= 0.5f;
 
         return super.hurt(source, amount);
@@ -131,9 +138,8 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
     protected void customServerAiStep() {
         super.customServerAiStep();
 
-        if (tickCount % 100 == 0) {
-            setStanding((tickCount / 100) % 2 == 0);
-        }
+        if (isInFluidType(AoAFluidTypes.TAR.get()) && getHealth() < getMaxHealth())
+            heal(2);
     }
 
     @Override

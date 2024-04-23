@@ -3,6 +3,12 @@
   "downfall": 0.0,
   "effects": {
     "fog_color": 0,
+    "music": {
+      "max_delay": 24000,
+      "min_delay": 12000,
+      "replace_current_music": false,
+      "sound": "aoa3:biome.cavern_depths.music"
+    },
     "sky_color": 0,
     "water_color": 4159204,
     "water_fog_color": 329011

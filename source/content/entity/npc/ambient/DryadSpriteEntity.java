@@ -17,10 +17,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.ToolActions;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoAEntityDataSerializers;
 import net.tslat.aoa3.common.registration.entity.variant.DryadSpriteVariant;
 import net.tslat.aoa3.content.entity.base.AoAAmbientNPC;
@@ -80,7 +80,7 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (!source.is(AoATags.DamageTypes.IS_TECHNICAL))
+		if (!source.is(Tags.DamageTypes.IS_TECHNICAL))
 			return false;
 
 		return super.hurt(source, amount);

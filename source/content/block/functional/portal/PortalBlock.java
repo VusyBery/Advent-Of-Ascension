@@ -44,7 +44,18 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class PortalBlock extends Block {
-	private static final Supplier<Set<Block>> USEABLE_PORTALS = Suppliers.memoize(() -> Set.of(AoABlocks.NETHER_PORTAL.get(), AoABlocks.NOWHERE_PORTAL.get(), AoABlocks.PRECASIA_PORTAL.get(), AoABlocks.BARATHOS_PORTAL.get(), AoABlocks.LELYETIA_PORTAL.get(), AoABlocks.DEEPLANDS_PORTAL.get(), AoABlocks.LBOREAN_PORTAL.get(), AoABlocks.DUSTOPIA_PORTAL.get()));
+	private static final Supplier<Set<Block>> USEABLE_PORTALS = Suppliers.memoize(() -> Set.of(
+			AoABlocks.NETHER_PORTAL.get(),
+			AoABlocks.NOWHERE_PORTAL.get(),
+			AoABlocks.PRECASIA_PORTAL.get(),
+			AoABlocks.BARATHOS_PORTAL.get(),
+			AoABlocks.LELYETIA_PORTAL.get(),
+			AoABlocks.DEEPLANDS_PORTAL.get(),
+			AoABlocks.LBOREAN_PORTAL.get(),
+			AoABlocks.CELEVE_PORTAL.get(),
+			AoABlocks.ABYSS_PORTAL.get(),
+			AoABlocks.DUSTOPIA_PORTAL.get(),
+			AoABlocks.CRYSTEVIA_PORTAL.get()));
 	private static final IdentityHashMap<ResourceKey<Level>, ITeleporter> TELEPORTERS = Util.make(new IdentityHashMap<>(21), map -> {
 		map.put(AoADimensions.ABYSS, new AbyssTeleporter());
 		map.put(AoADimensions.BARATHOS, new BarathosTeleporter());

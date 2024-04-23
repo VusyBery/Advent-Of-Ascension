@@ -3,13 +3,13 @@
     "biomes": [],
     "chance_per_player": 1.0,
     "dimensions": [
-      "aoa3:iromine",
-      "aoa3:gardencia",
-      "aoa3:candyland",
       "aoa3:celeve",
-      "aoa3:abyss",
-      "aoa3:crystevia",
       "aoa3:haven",
+      "aoa3:crystevia",
+      "aoa3:abyss",
+      "aoa3:candyland",
+      "aoa3:gardencia",
+      "aoa3:iromine",
       "aoa3:mysterium"
     ],
     "extra_delay_per_spawn": {

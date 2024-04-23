@@ -11,11 +11,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Biome.class)
 public abstract class BiomeMixin {
-	@Shadow public abstract Biome.Precipitation getPrecipitationAt(BlockPos pos);
+	@Shadow
+	public abstract Biome.Precipitation getPrecipitationAt(BlockPos pos);
 
 	// Disables snowing for biomes where precipitation is set to none. This prevents dry/alien biomes from gathering snow layers when they shouldn't
 	@Inject(method = "shouldSnow", at = @At("HEAD"), cancellable = true)
-	private void shouldSnow(LevelReader world, BlockPos pos, CallbackInfoReturnable<Boolean> callback) {
+	private void shouldSnow(LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> callback) {
 		if (getPrecipitationAt(pos) == Biome.Precipitation.NONE)
 			callback.setReturnValue(false);
 	}

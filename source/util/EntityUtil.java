@@ -275,15 +275,6 @@ public final class EntityUtil {
 		};
 	}
 
-	public static double getEntityJumpVelocity(LivingEntity entity) {
-		float jumpVelocity = entity.getJumpPower();
-
-		if (entity.hasEffect(MobEffects.JUMP))
-			jumpVelocity += 0.1f * entity.getEffect(MobEffects.JUMP).getAmplifier() + 1;
-
-		return jumpVelocity;
-	}
-
 	@NotNull
 	public static Set<Entity> getAttackersForMob(LivingEntity entity, @Nullable Predicate<Entity> filter) {
 		CombatTracker tracker = entity.getCombatTracker();

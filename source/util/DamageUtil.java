@@ -7,7 +7,6 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,6 +18,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.tslat.aoa3.common.registration.AoATags;
@@ -188,20 +188,20 @@ public final class DamageUtil {
 		return source.is(AoATags.DamageTypes.ENERGY);
 	}
 
-	public static boolean isMagicDamage(DamageSource source, Entity target, float dmg) {
-		return source.is(AoATags.DamageTypes.MAGIC) && !isPoisonDamage(source, target, dmg);
+	public static boolean isMagicDamage(DamageSource source) {
+		return source.is(Tags.DamageTypes.IS_MAGIC) && !isPoisonDamage(source);
 	}
 
-	public static boolean isRangedDamage(DamageSource source, Entity target, float dmg) {
-		return source.is(DamageTypeTags.IS_PROJECTILE) && !isMagicDamage(source, target, dmg) && !isEnergyDamage(source) && !source.is(AoATags.DamageTypes.GUN);
+	public static boolean isRangedDamage(DamageSource source) {
+		return source.is(DamageTypeTags.IS_PROJECTILE) && !isMagicDamage(source) && !isEnergyDamage(source) && !source.is(AoATags.DamageTypes.GUN);
 	}
 
 	public static boolean isGunDamage(DamageSource source) {
 		return source.is(AoATags.DamageTypes.GUN);
 	}
 
-	public static boolean isPoisonDamage(DamageSource source, Entity target, float dmg) {
-		return source.is(DamageTypes.MAGIC) && source.getEntity() == null && target instanceof LivingEntity livingEntity && livingEntity.hasEffect(MobEffects.POISON) && dmg == 1;
+	public static boolean isPoisonDamage(DamageSource source) {
+		return !source.is(Tags.DamageTypes.IS_POISON);
 	}
 
 	public static boolean isPhysicalDamage(DamageSource source) {
@@ -213,10 +213,7 @@ public final class DamageUtil {
 	}
 
 	public static boolean isEnvironmentalDamage(DamageSource source) {
-		if (source.getEntity() != null || source.is(DamageTypeTags.IS_EXPLOSION))
-			return false;
-
-		return source.is(AoATags.DamageTypes.ENVIRONMENTAL);
+		return source.getEntity() == null && source.is(Tags.DamageTypes.IS_ENVIRONMENT);
 	}
 
 	public static boolean isPlayerEnvironmentallyProtected(ServerPlayer player) {
