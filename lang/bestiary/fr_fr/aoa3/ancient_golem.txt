@@ -1,4 +1,7 @@
-Fabriqués par des créateurs inconnus, les golems antiques peuvent parfois être aperçus en train d'errer dans l'Overworld.
-Dû à leur âge, on ne sait toujours pas comment leurs opérateurs logiques fonctionnent, mais que ce soit à cause d'un bug ou par mauvaises intentions, ils sont agressifs envers les humains et indifférents envers tout le reste.
+Supposément créés par une civilisation disparue, ces golems semblent être une version primitive des golems de fer modernes.
 
-Ils ne possèdent aucune arme, et pour attaquer ils frappent leurs cibles de leurs corps de fer rouillé.
+Malgré le fait qu'il s'agit d'une version antiquée d'une technologie plus moderne, ils sont tout aussi compétents que leurs alter egos modernes, et même plus efficaces dans certaines situations.
+L'alliage dont ils sont composés est bien plus résistant que celui des golems de fer, et leurs appendices motorisés augmente leur puissance d'attaque déjà remarquable.
+Cependant, ils sont extrêmement lents, et ils ne représentent donc pas une véritable menace à ceux qui ne s'approchent pas de trop près.
+
+Une théorie stipule qu'ils étaient à l'origine conçus pour servir d'esclaves plutôt que de combattants, ce qui explique leur force et leur durabilité impressionnantes.
