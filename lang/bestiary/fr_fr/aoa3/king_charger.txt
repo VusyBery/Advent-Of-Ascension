@@ -1,4 +1,5 @@
-Résultat d'une expérience désastreuse de Pluton, en essayant de se créer un chargeur à lui tout seul. Les rois des chargeurs sont similaires aux chargeurs normaux, mis à part qu'ils sont plus grands, portent une couronne, et ont été bénis par Pluton.
-Évitez-les à tout prix, car leur endurance, force et vitesse augmentée est suffisante pour poser probleme aux aventuriers sans préparation.
+Les rois chargeurs sont similaires aux chargeurs ordinaires, à l'exception près qu'ils sont bien plus grands, portent une couronne, et règnent sur le poulailler.
+Évite-les à tout prix, car leur endurance, leur force et leur vitesse augmentées sont suffisantes pour poser problème aux aventuriers sans préparation.
 
-Leurs instincts de chargeur naturels sont présents, et ils essaieront d'attaquer de la même manière que les chargeurs habituels, mais leur force ajoutée est suffisante pour temporairement affaiblir tout ce qu'ils sont capables de frapper.
+Leurs instincts naturels de chargeur sont présents, et ils essaieront d'attaquer de la même manière que les chargeurs habituels.
+De plus, s'en prendre à eux est comme s'en prendre au nid, et les chargeurs à proximité accouront aussitôt pour défendre leur roi.
