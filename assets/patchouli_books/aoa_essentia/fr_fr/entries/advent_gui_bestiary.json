@@ -1,0 +1,22 @@
+{
+  "category": "aoa3:advent_gui",
+  "icon": "minecraft:zombie_head",
+  "name": "Onglet Bestiaire",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "bestiary_tab",
+      "text": "L'$(thing)onglet Bestiaire$() est le lieu favori des chasseurs de monstres! À chaque fois que tu tues une créature, elle sera ajoutée au bestiaire, avec en prime ses statistiques et d'autres informations la concernant. Recense-les toutes!",
+      "title": "Onglet Bestiaire"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "L'onglet montre une liste de toutes les créatures que tu as déjà tuées au moins une fois, ainsi qu'un compteur du nombre de spécimens vaincus, et un compteur du nombre de fois qu'ils t'ont tués.$(br2)Cliquer sur un monstre permet d'afficher des détails supplémentaires, comme ses attributs, ses statistiques, et d'autres infos importantes. Certaines créatures ont même du lore en bas de leur page!"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Si tu as beaucoup de monstres dans ton $(thing)bestiaire$() et que tu veux en chercher un en particulier, tu peux utiliser la barre de recherche en haut de la liste pour t'y retrouver."
+    }
+  ],
+  "sortnum": 2
+}
