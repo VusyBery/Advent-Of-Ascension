@@ -1,0 +1,31 @@
+{
+  "category": "aoa3:weapons",
+  "icon": "minecraft:bow",
+  "name": "Arcs",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "bows",
+      "text": "Dans $(thing)Minecraft$(), les $(thing)arcs$() représentent le moyen le plus simple d'augmenter sa flexibilité en combat.$(br)Avec un temps de chargement court à moyen, ils tirent des $(thing)flèches$() qui fendent les cieux à haute vitesse pour atteindre les ennemis à distance.$(br2)Attention aux temps de chargement différents de certains arcs.",
+      "title": "Arcs"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Bien que tous les $(thing)arcs$() fonctionnent à peu près pareil, il est important de savoir que chacun d'entre eux a ses caractéristiques uniques.$(br2)Certains $(thing)arcs$() tirent des $(thing)flèches$() plus ou moins vite, et d'autres envoient les $(thing)flèches$() plus ou moins loin."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:alacrity_bow",
+      "text": "Les $(thing)arcs$() offrent la flexibilité du combat à distance, avec des munitions économes.",
+      "title": "Un arc"
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Trouve des infos sur tous les $(thing)arcs$() d'$(aoa) sur le $(thing)wiki officiel$(). (EN ANGLAIS SEULEMENT)",
+      "title": "En savoir plus",
+      "url": "https://adventofascension.fandom.com/wiki/Bows"
+    }
+  ],
+  "sortnum": 3
+}
