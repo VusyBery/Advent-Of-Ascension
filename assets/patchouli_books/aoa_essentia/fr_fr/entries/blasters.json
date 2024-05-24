@@ -22,7 +22,7 @@
     {
       "type": "patchouli:link",
       "link_text": "AoA Wiki",
-      "text": "Trouve des infos sur tous les $(thing)blasters$() d'$(aoa) sur le $(thing)wiki officiel$(). (EN ANGLAIS SEULEMENT)",
+      "text": "Trouve des infos sur tous les $(thing)blasters$() d'$(aoa) sur le $(thing)wiki officiel$().",
       "title": "En savoir plus",
       "url": "https://adventofascension.fandom.com/wiki/Blasters"
     }
