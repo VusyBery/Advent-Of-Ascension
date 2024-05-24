@@ -1,0 +1,52 @@
+{
+  "category": "aoa3:hauling",
+  "icon": "aoa3:small_skill_crystal",
+  "name": "Méthodes d'entraînement",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Il existe 3 grandes méthodes pour entraîner la $(thing)Pêche$() :$(br)1. Pêcher avec une canne à pêche standard$(br)2. Pêcher avec une canne à pêche avancée$(br)3. Pêcher avec une cage de pêcheur$(br2)Chaque méthode a ses avantages et ses inconvénients.",
+      "title": "Méthodes d'entraînement"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Il existe quelques méthodes supplémentaires pour entraîner la $(thing)Pêche$(), telle que chasser le poulpe scintillant, et il existe des capacités et l'équipement permettant d'augmenter le gain en expérience des actions liées à la $(thing)Pêche$()."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "minecraft:fishing_rod",
+      "text": "La canne à pêche standard est le premier pas vers la maîtrise de la $(thing)Pêche$()."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "La canne à pêche standard est la première étape de tout pratiquant de la $(thing)Pêche$(). Elle fonctionne comme d'habitude; clic droit pour lancer la ligne à l'eau, attends qu'une traînée de bulles morde à l'hameçon, puis clique droit pour attraper une prise."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:hauling_rod",
+      "text": "Les cannes à pêche avancées : la nouvelle ère des technologies de la pêche!"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Après avoir suffisamment entraîné la $(thing)Pêche$(), tu pourras utiliser les cannes à pêche avancées.$(br)Ces cannes sont un peu différentes des cannes à pêche standard, nécessitant de faire un peu plus attention pour attraper une prise.$(br2)D'autres variables pourraient affecter l'efficacité de ces cannes, telles que l'environnement local, la température, et les autres joueurs à proximité, entre autres."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Pour utiliser une canne à pêche avancée, lance la ligne dans l'eau, et attends qu'un poisson vienne mordre à l'hameçon. Une fois qu'un poisson s'approche, il s'emparera du leurre avec la ferme intention de repartir avec.$(br)Clique droit de manière répétée aussi vite que possible pour remonter ta prise!$(br)Le poisson risque de s'échapper si tu prends trop longtemps, et tu devras alors recommencer."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Certains poissons risquent d'être plus difficiles à remonter, et il te faudra peut-être une canne plus puissante pour les poissons particulièrement gros.$(br)Une fois qu'un poisson mord à l'hameçon, il est recommandé de le remonter en restant immobile. S'en approcher risque de le faire paniquer et d'augmenter ses chances de fuite."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:fishing_cage",
+      "text": "Les cages de pêcheur sont pour les pêcheurs flemmards que nous sommes tous un peu."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Les cages de pêcheur sont une manière alternative d'attraper des poissons, et peuvent être utilisées en parallèle de la pêche à la canne.$(br)Pour utiliser une cage de pêcheur, il suffit de la jeter dans l'eau et d'attendre qu'elle atteigne le fond. Une fois positionnée, elle attrapera toute seule des poissons et d'autres objets.$(br)Les cages de pêcheur sont typiquement une méthode plus lente, et ont tendance à récupérer du butin moins rare."
+    }
+  ],
+  "sortnum": 0
+}
