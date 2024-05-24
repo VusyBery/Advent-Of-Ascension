@@ -1,0 +1,31 @@
+{
+  "category": "aoa3:weapons",
+  "icon": "aoa3:squad_gun",
+  "name": "Fusils",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "guns",
+      "text": "Les $(thing)fusils$() sont la version moderne des $(l:aoa3:bows#bows)arcs$(/l) de $(thing)Minecraft$().$(br)Avec des dégâts moyens et une cadence de tir élevée, mais des munitions un peu plus difficiles à se procurer.$(br2)Chaque $(thing)fusil$() a ses propres demandes en munitions, alors vérifie bien avant de t'en servir.",
+      "title": "Fusils"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Pour tirer avec un $(thing)fusil$(), assure-toi que tu as les munitions nécessaires (indiquées dans l'info-bulle de l'arme), puis clic droit en tenant le fusil dans ta main.$(br2)Chaque $(thing)fusil$() a une cadence, un recul et d'autres caractéristiques différentes, alors ça vaut peut-être le coup de faire un ou deux tests avant de s'en servir en situation réelle."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:squad_gun",
+      "text": "Les $(thing)fusils$() tirent des balles rapides et précises, mais un peu difficiles à se procurer.",
+      "title": "Un fusil"
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Trouve des infos sur tous les $(thing)fusils$() d'$(aoa) sur le $(thing)wiki officiel$().(EN ANGLAIS SEULEMENT)",
+      "title": "En savoir plus",
+      "url": "https://adventofascension.fandom.com/wiki/Guns"
+    }
+  ],
+  "sortnum": 5
+}
