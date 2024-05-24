@@ -1,0 +1,31 @@
+{
+  "category": "aoa3:weapons",
+  "icon": "aoa3:bloodlurker",
+  "name": "Espadons",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "greatblades",
+      "text": "Le grand frère des $(l:aoa3:swords#swords)épées$(/l), l'$(thing)espadon$() est une classe d'arme similaire mais légèrement différente.$(br)Les espadons attaquent de la même manière que les épées, mais les $(thing)espadons$() sont plus lents, plus puissants, et disposent d'une meilleure portée.",
+      "title": "Espadon"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Le meilleur moyen de se servir d'un espadon, c'est de prendre avantage de sa portée supérieure, en attaquant les ennemis d'aussi loin que possible pour les empêcher de s'approcher.$(br)Bien qu'ils soient tout de même loin d'égaler les armes à longue distance, cette portée supplémentaire est bien plus pratique que l'on pourrait le croire au premier abord.$(br2)Ces armes sont surtout pratiques pour combattre les ennemis puissants dont tu ne veux pas t'approcher en combat individuel."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:bloodlurker",
+      "text": "Les $(thing)espadons$() sont les grands frères des $(l:aoa3:swords#swords)épées$(/l), et sont tout aussi tranchants!",
+      "title": "Un espadon"
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Trouve des infos sur tous les $(thing)espadons$() d'$(aoa) sur le $(thing)wiki officiel$(). (EN ANGLAIS SEULEMENT)",
+      "title": "En savoir plus",
+      "url": "https://adventofascension.fandom.com/wiki/Greatblades"
+    }
+  ],
+  "sortnum": 1
+}
