@@ -1,0 +1,31 @@
+{
+  "category": "aoa3:weapons",
+  "icon": "aoa3:horizon_maul",
+  "name": "Marteaux",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "mauls",
+      "text": "As-tu déjà eu l'envie de frapper quelque chose avec une $(l:aoa3:swords#swords)épée$(/l), mais également de l'envoyer valser à dix mètres?$(br)Alors voilà ce qu'il te faut! Les $(thing)marteaux$() offrent la portée augmentée des $(l:aoa3:greatblades#greatblades)espadons$(/l) en plus d'un énorme recul à l'impact, au prix de dégâts un peu faibles.",
+      "title": "Marteaux"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "En géneral, on peut se servir des $(thing)marteaux$() pour tenir à distance les ennemis dangereux, ou pour dégager un ennemi qui s'est un peu trop approché.$(br2)Bien que leurs $(t:Damage Per Second)DPS$(/t) n'égalent pas ceux des épées, les marteaux offrent un recul important, surtout utile contre des monstres individuels assez puissants."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:electron_maul",
+      "text": "Les $(thing)marteaux$() offrent la portée des $(l:aoa3:greatblades#greatblades)espadons$(/l) et la puissance nécessaire pour de superbes parties de golf.",
+      "title": "Un marteau"
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Trouve des infos sur tous les $(thing)marteaux$() d'$(aoa) sur le $(thing)wiki officiel$().",
+      "title": "En savoir plus",
+      "url": "https://adventofascension.fandom.com/wiki/Mauls"
+    }
+  ],
+  "sortnum": 2
+}
