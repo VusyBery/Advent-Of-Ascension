@@ -16,7 +16,7 @@
     {
       "type": "patchouli:link",
       "link_text": "Wiki officiel",
-      "text": "Visite le wiki officiel d'$(aoa) pour plus d'informations.",
+      "text": "Visite la page du wiki officiel d'$(aoa) pour plus d'informations.",
       "title": "AoA Wiki",
       "url": "https://adventofascension.fandom.com/wiki/Energy"
     }
