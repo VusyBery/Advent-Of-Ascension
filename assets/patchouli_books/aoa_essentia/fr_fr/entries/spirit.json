@@ -1,0 +1,24 @@
+{
+  "category": "aoa3:resources",
+  "icon": "aoa3:patchouli/images/icons/spirit_icon.png",
+  "name": "Spirit",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "spirit",
+      "text": "L'$(thing)esprit$() est une ressource naturelle qui représente l'$(o)énergie spirituelle$() du corps.$(br)Ton $(thing)esprit$() se régénère naturellement au fil du temps, ou quand tu attaques des monstres.$(br)Plus ta vie est basse, plus ton esprit se régénère vite, y compris en attaquant.",
+      "title": "Esprit"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "L'$(thing)esprit$() est utilisé par les $(l:aoa3:blasters#blasters)blasters$(/l) pour tirer, et pour quelques autres armes.$(br)Certaines créatures volent ton $(thing)esprit$() si elles te touchent, alors garde un œil sur ta jauge d'$(thing)esprit$() si tu comptes t'en servir."
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "Wiki officiel",
+      "text": "Visite la page du wiki officiel d'$(aoa) pour plus d'informations.",
+      "title": "AoA Wiki",
+      "url": "https://adventofascension.fandom.com/wiki/Spirit"
+    }
+  ]
+}
