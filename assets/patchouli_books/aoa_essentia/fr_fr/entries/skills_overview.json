@@ -1,0 +1,28 @@
+{
+  "category": "aoa3:skills",
+  "icon": "aoa3:large_skill_crystal",
+  "name": "Généralités",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Les $(thing)compétences$() sont une fonctionnalité d'$(aoa) qui tourne autour de l'entraînement de capacités en gagant de l'$(thing)exp$() et des $(thing)niveaux$() pour débloquer de nouvelles aptitudes et des nouvelles fonctionnalités.$(br)$(aoa) inclut 10 compétences par défaut.",
+      "title": "Les bases de compétences"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Tous les joueurs ont accès aux mêmes $(thing)skills$() pour un monde donné, et chaque joueur commence au niveau 1.$(br)Chaque $(thing)compétence$() est liée à des $(l:aoa3:abilities)capacités$(/l), des bénéfices, et des méthodes d'entraînement différentes - alors pour plus d'informations, consulte les sections portant sur chaque $(thing)compétences$() individuellement."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Chaque $(thing)compétence$() débloque ses derniers atouts au niveau 100, mais tu peux continuer à augmenter ton niveau jusqu'à 1000, pour prouver à tes amis que tu es le meilleur.$(br2)Attention, car atteindre le niveau maximum risque de prendre du temps, et il sera certainement judicieux de $(l:aoa3:cycles)réinitialiser$(/l) tes $(thing)compétences$() plusieurs fois avant de devenir le maître."
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Trouve plus d'infos sur toutes les $(thing)compétences$() d'$(aoa) sur le $(thing)wiki officiel$().",
+      "title": "En savoir plus",
+      "url": "https://adventofascension.fandom.com/wiki/Skills"
+    }
+  ],
+  "sortnum": 0
+}

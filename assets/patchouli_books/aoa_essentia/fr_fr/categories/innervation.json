@@ -1,0 +1,6 @@
+{
+  "parent": "aoa3:skills",
+  "description": "La $(thing)Létalité$() est une compétence axée sur la résistance physique.$(br2)Entraîner cette compétence permet d'améliorer sa force, sa résistance, et ses aptitudes au combat.",
+  "icon": "aoa3:textures/gui/aoaskill/innervation.png",
+  "name": "Létalité"
+}

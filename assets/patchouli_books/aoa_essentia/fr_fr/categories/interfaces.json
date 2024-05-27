@@ -1,0 +1,5 @@
+{
+  "description": "$(aoa) ajoute quelques $(thing)interfaces$() avec lesquelles se familiariser. Ces $(thing)interfaces$() permet d'accéder à des informations importantes ou à des fonctionnalités uniques.",
+  "icon": "minecraft:map",
+  "name": "Interfaces"
+}

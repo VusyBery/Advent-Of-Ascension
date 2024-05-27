@@ -1,0 +1,5 @@
+{
+  "description": "$(aoa) ajoute 10 compétences uniques qui peuvent être entraînées.",
+  "icon": "aoa3:giant_skill_crystal",
+  "name": "Compétences"
+}

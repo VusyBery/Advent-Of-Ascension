@@ -1,0 +1,5 @@
+{
+  "description": "$(aoa) contient des centaines d'armes venant de plein de classes différentes, chacune ayant des effets et des capacités uniques.$(br2)Chaque groupe d'arme a ses forces et ses faiblesses, et aucune arme ne marche dans toutes les situations.",
+  "icon": "minecraft:diamond_sword",
+  "name": "Armes"
+}

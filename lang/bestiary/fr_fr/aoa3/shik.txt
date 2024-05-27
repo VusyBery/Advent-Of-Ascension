@@ -1,5 +1,5 @@
-Les shik sont des petites créatures ressemblantes à des crabes qui vivent dans les Profondeurs, utilisant à leur avantage le paysage rocheux pour se cacher.
-Ils se cachent presque toujours dans des pointes de pierre et s'enfuient lorsqu'on s'approche.
+Les shik sont des petites créatures ressemblantes à des crabes qui vivent dans les terres profondes, utilisant à leur avantage le paysage rocheux pour se cacher.
+Ils se cachent presque toujours dans des pointes de pierre et s'enfuient lorsqu'on s'en approche.
 
 Ce sont des créatures très timides qui s'enfuient rapidement à la vue de tout ce qui bouge.
-Cependant, ils montrent un comportement pour le moins inhabituel si ils rencontrent un autre shik, effectuant une sorte de bienvenue ou de danse primitive.
+Cependant, ils montrent un comportement pour le moins inhabituel si ils rencontrent un autre shik, effectuant une sorte de salutation ou de danse primitive.

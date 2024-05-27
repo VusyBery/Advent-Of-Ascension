@@ -1,0 +1,6 @@
+{
+  "parent": "aoa3:interfaces",
+  "description": "Le $(thing)menu d'Advent$() est le menu principal utilisé par $(aoa), qui sert de point central du mod en lui-même.",
+  "icon": "minecraft:filled_map",
+  "name": "Menu d'Advent"
+}
