@@ -3,21 +3,21 @@ package net.tslat.aoa3.client.gui.hud;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
-import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
 import net.tslat.aoa3.client.render.custom.AoASkillRenderer;
 import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.library.object.RenderContext;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.HolidayUtil;
@@ -38,7 +38,7 @@ public final class XpParticlesRenderer {
 	private static AoASkill lastParticleSkill = null;
 
 	public static void init() {
-		AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterGuiOverlaysEvent.class, ev -> ev.registerAbove(VanillaGuiOverlay.POTION_ICONS.id(), AdventOfAscension.id("aoa_xp_particles"), XpParticlesRenderer::renderParticles));
+		AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterGuiLayersEvent.class, ev -> ev.registerAbove(VanillaGuiLayers.EFFECTS, AdventOfAscension.id("aoa_xp_particles"), XpParticlesRenderer::renderParticles));
 	}
 
 	public static void addXpParticle(AoASkill skill, float xp, boolean isLevelUp) {
@@ -95,10 +95,11 @@ public final class XpParticlesRenderer {
 		}
 	}
 
-	private static void renderParticles(ExtendedGui gui, GuiGraphics guiGraphics, float partialTick, int width, int height) {
+	private static void renderParticles(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (particlesMap.isEmpty())
 			return;
 
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		long currentTime = System.currentTimeMillis();
 		Minecraft mc = Minecraft.getInstance();
 		Window window = mc.getWindow();
@@ -145,7 +146,7 @@ public final class XpParticlesRenderer {
 				float lifespan = 1 - (currentTime - particle.creationTime) / 1500f;
 
 				if (lifespan >= 0.1f) {
-					RenderUtil.renderCenteredScaledText(poseStack, Component.literal(particle.xpString), 0, scrollHeight * lifespan, 0.5f, ColourUtil.RGBA(255, 255, 255, (int)Mth.clamp(255 * lifespan, 1, 255)), RenderUtil.TextRenderType.NORMAL);
+					RenderUtil.renderCenteredScaledText(poseStack, Component.literal(particle.xpString), 0, scrollHeight * lifespan, 0.5f, ColourUtil.ARGB(255, 255, 255, (int)Mth.clamp(255 * lifespan, 1, 255)), RenderUtil.TextRenderType.NORMAL);
 				}
 			}
 

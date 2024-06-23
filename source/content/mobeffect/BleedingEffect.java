@@ -1,11 +1,11 @@
 package net.tslat.aoa3.content.mobeffect;
 
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -26,20 +26,22 @@ public class BleedingEffect extends ExtendedMobEffect {
 	}
 
 	@Override
-	public boolean shouldTickEffect(@org.jetbrains.annotations.Nullable MobEffectInstance effectInstance, @org.jetbrains.annotations.Nullable LivingEntity entity, int ticksRemaining, int amplifier) {
+	public boolean shouldTickEffect(@Nullable MobEffectInstance effectInstance, @Nullable LivingEntity entity, int ticksRemaining, int amplifier) {
 		int interval = 100 >> amplifier;
 
 		return interval == 0 || ticksRemaining % interval == 0;
 	}
 
 	@Override
-	public void tick(LivingEntity entity, @org.jetbrains.annotations.Nullable MobEffectInstance effectInstance, int amplifier) {
-		if (!entity.level().isClientSide && entity.getMobType() != MobType.UNDEAD) {
+	public boolean tick(LivingEntity entity, @Nullable MobEffectInstance effectInstance, int amplifier) {
+		if (!entity.level().isClientSide && !entity.getType().is(EntityTypeTags.UNDEAD)) {
 			entity.hurt(DamageUtil.miscDamage(AoADamageTypes.BLEED, entity.level()), 0.75f);
 
 			if (entity instanceof Player player)
 				player.causeFoodExhaustion(5);
 		}
+
+		return true;
 	}
 
 	@Override
@@ -51,7 +53,7 @@ public class BleedingEffect extends ExtendedMobEffect {
 	@Override
 	public MobEffectInstance onReapplication(MobEffectInstance existingEffectInstance, MobEffectInstance newEffectInstance, LivingEntity entity) {
 		if (existingEffectInstance.getAmplifier() >= newEffectInstance.getAmplifier())
-			return new MobEffectInstance(newEffectInstance.getEffect(), Math.max(newEffectInstance.getDuration(), existingEffectInstance.getDuration()), Mth.clamp(existingEffectInstance.getAmplifier() + 1, 0, 127), newEffectInstance.isAmbient(), newEffectInstance.isVisible(), newEffectInstance.showIcon(), newEffectInstance.hiddenEffect, newEffectInstance.getFactorData());
+			return new MobEffectInstance(newEffectInstance.getEffect(), Math.max(newEffectInstance.getDuration(), existingEffectInstance.getDuration()), Mth.clamp(existingEffectInstance.getAmplifier() + 1, 0, 127), newEffectInstance.isAmbient(), newEffectInstance.isVisible(), newEffectInstance.showIcon(), newEffectInstance.hiddenEffect);
 
 		return newEffectInstance;
 	}

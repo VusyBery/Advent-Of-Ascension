@@ -1,0 +1,27 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:helmet_frame"
+  },
+  "ingredients": [
+    {
+      "tag": "c:gems/emerald"
+    },
+    {
+      "tag": "c:gems/emerald"
+    },
+    {
+      "tag": "neoforge:gems/jade"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:night_vision_goggles"
+  }
+}

@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.projectile.misc;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -40,8 +41,8 @@ public class ErebonSticklerStuckEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
-		return 0.0f;
+	public double getDefaultGravity() {
+		return 0;
 	}
 
 	@Override
@@ -93,5 +94,5 @@ public class ErebonSticklerStuckEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 }

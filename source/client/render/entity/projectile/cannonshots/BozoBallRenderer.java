@@ -5,10 +5,9 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.aoa3.client.render.entity.projectile.TexturedProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.cannon.BozoBallEntity;
-import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
 public class BozoBallRenderer extends TexturedProjectileRenderer<BozoBallEntity> {
 	private int counter = 12;
@@ -30,11 +29,17 @@ public class BozoBallRenderer extends TexturedProjectileRenderer<BozoBallEntity>
 				counter = 12;
 			}
 
+			float colourMod = entity.level().random.nextFloat() * 0.7f + 0.3f;
+
 			if (toggle) {
-				entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 3, ColourUtil.YELLOW), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
+				ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+						.colourOverride(colourMod, colourMod, 0, 1f)
+						.spawnParticles(entity.level());
 			}
 			else {
-				entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 3, ColourUtil.BLUE), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
+				ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+						.colourOverride(0, 0, colourMod, 1f)
+						.spawnParticles(entity.level());
 			}
 		}
 	}

@@ -5,8 +5,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
@@ -73,7 +73,7 @@ public class SpiritResource extends AoAResource.Instance {
 	}
 
 	@Override
-	public void handlePlayerTick(TickEvent.PlayerTickEvent ev) {
+	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (this.value < getMaxValue())
 			addValue(getHealthScaledRegen(getPerTickRegen()));
 	}

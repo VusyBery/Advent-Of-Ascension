@@ -6,10 +6,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.enchantment.ProtectionEnchantment;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.library.object.AllDirections;
+import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -142,10 +144,10 @@ public class StandardExplosion extends ExtendedExplosion {
 					knockback *= this.info.calculateKnockbackModifier(this, entity);
 
 					if (entity instanceof LivingEntity livingEntity)
-						knockback = ProtectionEnchantment.getExplosionKnockbackAfterDampener(livingEntity, knockback);
+						knockback = knockback * (1 - AttributeUtil.getAttributeValue(livingEntity, Attributes.EXPLOSION_KNOCKBACK_RESISTANCE));
 
 					dist.multiply(knockback, knockback, knockback);
-					entity.setDeltaMovement(entity.getDeltaMovement().add(dist));
+					entity.setDeltaMovement(entity.getDeltaMovement().add(EventHooks.getExplosionKnockback(this.level, this, entity, dist)));
 				}
 			}
 

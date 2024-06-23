@@ -8,13 +8,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.menu.BankerMenu;
 import net.tslat.aoa3.library.object.RenderContext;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.RenderUtil;
 
 public class BankerScreen extends AbstractContainerScreen<BankerMenu> {
-	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("aoa3", "textures/gui/containers/banker.png");
+	private static final ResourceLocation GUI_TEXTURE = AdventOfAscension.id("textures/gui/containers/banker.png");
 	private final Minecraft mc;
 	public BankerScreen(BankerMenu container, Inventory inv, Component guiTitle) {
 		super(container, inv, guiTitle);

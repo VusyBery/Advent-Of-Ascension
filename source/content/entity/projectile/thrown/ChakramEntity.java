@@ -43,13 +43,13 @@ public class ChakramEntity extends BaseBullet implements HardProjectile, ItemSup
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.05f;
 	}
 
 	@Override
 	public void doEntityImpact(Entity target, Vec3 impactLocation) {
-		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.CHAKRAM.get().getDamage()) && target instanceof LivingEntity)
+		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.CHAKRAM.get().getGunDamage(getWeaponStack(AoAWeapons.CHAKRAM.asItem()))) && target instanceof LivingEntity)
 			EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.POISON, 60).level(2));
 	}
 

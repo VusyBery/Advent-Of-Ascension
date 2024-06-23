@@ -91,10 +91,6 @@ public final class RegistryUtil {
 		return BuiltInRegistries.ATTRIBUTE.getKey(attribute);
 	}
 
-	public static ResourceLocation getId(Enchantment enchantment) {
-		return BuiltInRegistries.ENCHANTMENT.getKey(enchantment);
-	}
-
 	public static ResourceLocation getId(MobEffect effect) {
 		return BuiltInRegistries.MOB_EFFECT.getKey(effect);
 	}

@@ -59,10 +59,10 @@ public class HiveKingEntity extends AoAMeleeMob<HiveKingEntity> {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		entityData.define(GROWTH_PERCENT, growthPercent);
+		builder.define(GROWTH_PERCENT, growthPercent);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class HiveKingEntity extends AoAMeleeMob<HiveKingEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return size.height * 0.85f;
 	}
 
@@ -103,7 +103,7 @@ public class HiveKingEntity extends AoAMeleeMob<HiveKingEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return growthPercent >= 100;
 	}
 
@@ -187,7 +187,7 @@ public class HiveKingEntity extends AoAMeleeMob<HiveKingEntity> {
 				PlayerUtil.messageAllPlayersInRange(LocaleUtil.getLocaleMessage(AoAMobs.HIVE_KING.get().getDescriptionId() + ".kill", killer.getDisplayName()), level, blockPosition(), 50);
 
 				if (killer instanceof ServerPlayer) // TODO
-					AdvancementUtil.completeAdvancement((ServerPlayer)killer, new ResourceLocation(AdventOfAscension.MOD_ID, "barathos/daddy_issues"), "hive_king_hive_staff_kill");
+					AdvancementUtil.completeAdvancement((ServerPlayer)killer, AdventOfAscension.id("barathos/daddy_issues"), "hive_king_hive_staff_kill");
 			}
 		}
 	}

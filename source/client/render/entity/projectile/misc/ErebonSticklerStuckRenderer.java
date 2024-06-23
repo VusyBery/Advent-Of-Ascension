@@ -2,10 +2,10 @@ package net.tslat.aoa3.client.render.entity.projectile.misc;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.tslat.aoa3.client.render.entity.projectile.ParticleProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.misc.ErebonSticklerStuckEntity;
 import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
 public class ErebonSticklerStuckRenderer extends ParticleProjectileRenderer<ErebonSticklerStuckEntity> {
 	public ErebonSticklerStuckRenderer(final EntityRendererProvider.Context manager) {
@@ -14,8 +14,9 @@ public class ErebonSticklerStuckRenderer extends ParticleProjectileRenderer<Ereb
 
 	@Override
 	protected void addParticles(ErebonSticklerStuckEntity entity, float partialTicks) {
-		for (int i = 0; i < 7; i++) {
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SWIRLY.get(), 1, 3, ColourUtil.RED), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-		}
+		ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_SWIRL.get(), entity.position())
+				.spawnNTimes(7)
+				.colourOverride(ColourUtil.RED)
+				.spawnParticles(entity.level());
 	}
 }

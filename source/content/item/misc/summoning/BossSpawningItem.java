@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.item.misc.summoning;
 
+import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -11,10 +12,10 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
+import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
-import net.tslat.aoa3.content.block.functional.portal.PortalBlock;
+import net.tslat.aoa3.content.world.teleporter.AoAPortal;
 import net.tslat.aoa3.content.item.misc.TooltipItem;
 import net.tslat.aoa3.content.world.teleporter.PortalCoordinatesContainer;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
@@ -23,6 +24,7 @@ import net.tslat.aoa3.util.AdvancementUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
+import net.tslat.effectslib.networking.packet.TELParticlePacket;
 
 public abstract class BossSpawningItem<T extends Entity> extends TooltipItem implements BossTokenItem {
 	public BossSpawningItem() {
@@ -39,7 +41,7 @@ public abstract class BossSpawningItem<T extends Entity> extends TooltipItem imp
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 60;
 	}
 
@@ -59,7 +61,7 @@ public abstract class BossSpawningItem<T extends Entity> extends TooltipItem imp
 	}
 
 	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+	public boolean isPrimaryItemFor(ItemStack stack, Holder<Enchantment> enchantment) {
 		return false;
 	}
 
@@ -74,9 +76,16 @@ public abstract class BossSpawningItem<T extends Entity> extends TooltipItem imp
 	@Override
 	public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
 		if (level instanceof ServerLevel serverLevel) {
-			ParticleBuilder.forRandomPosInEntity(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 0.5f, 1, 0xD1B100), livingEntity)
-					.spawnNTimes(3)
-					.sendToAllNearbyPlayers(serverLevel, livingEntity.position(), 20);
+			TELParticlePacket packet = new TELParticlePacket();
+
+			for (int i = 0; i < 3; i++) {
+				float colorMod = level.random.nextFloat() * 0.7f + 0.3f;
+
+				packet.particle(ParticleBuilder.forRandomPosInEntity(AoAParticleTypes.GENERIC_DUST.get(), livingEntity)
+						.colourOverride(colorMod * 209 / 255f, colorMod * 177 / 255f, 0, 1f));
+			}
+
+			packet.sendToAllNearbyPlayers(serverLevel, livingEntity.position(), 20);
 		}
 	}
 
@@ -95,15 +104,14 @@ public abstract class BossSpawningItem<T extends Entity> extends TooltipItem imp
 				ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
 				PortalCoordinatesContainer returnLoc = plData.getPortalReturnLocation(nowhere.dimension());
 
-				pl.changeDimension(nowhere, PortalBlock.getTeleporterForLevel(nowhere));
+				pl.changeDimension(AoAPortal.getTransitionForLevel(nowhere, pl, AoABlocks.NOWHERE_PORTAL.get()));
 				pl.connection.teleport(17.5d, 502.5d, 3.5d, 0, pl.getXRot());
 
 				if (returnLoc != null)
 					plData.setPortalReturnLocation(nowhere.dimension(), returnLoc);
 			}
 			else {
-				PlayerUtil.getAdventPlayer(pl).setPortalReturnLocation(nowhere.dimension(), new PortalCoordinatesContainer(level.dimension(), pl.getX(), pl.getY(), pl.getZ()));
-				pl.changeDimension(nowhere, PortalBlock.getTeleporterForLevel(nowhere));
+				pl.changeDimension(AoAPortal.getTransitionForLevel(nowhere, pl, AoABlocks.NOWHERE_PORTAL.get()));
 				pl.connection.teleport(17.5d, 452.5d, 3.5d, 0, pl.getXRot());
 			}
 		}, 1);

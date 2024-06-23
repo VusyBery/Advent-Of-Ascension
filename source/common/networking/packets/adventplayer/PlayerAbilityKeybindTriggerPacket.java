@@ -1,34 +1,29 @@
 package net.tslat.aoa3.common.networking.packets.adventplayer;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.packets.AoAPacket;
 import net.tslat.aoa3.event.AoAPlayerEvents;
 
 import java.util.List;
 
-public record PlayerAbilityKeybindTriggerPacket(List<String> abilities) implements AoAPacket<PlayPayloadContext> {
-	public static final ResourceLocation ID = AdventOfAscension.id("player_ability_keybind_trigger");
+public record PlayerAbilityKeybindTriggerPacket(List<String> abilities) implements AoAPacket {
+	public static final Type<PlayerAbilityKeybindTriggerPacket> TYPE = new Type<>(AdventOfAscension.id("player_ability_keybind_trigger"));
+	public static final StreamCodec<FriendlyByteBuf, PlayerAbilityKeybindTriggerPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs.list()), PlayerAbilityKeybindTriggerPacket::abilities,
+			PlayerAbilityKeybindTriggerPacket::new);
 
 	@Override
-	public ResourceLocation id() {
-		return ID;
+	public Type<? extends PlayerAbilityKeybindTriggerPacket> type() {
+		return TYPE;
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeCollection(this.abilities, FriendlyByteBuf::writeUtf);
-	}
-
-	public static PlayerAbilityKeybindTriggerPacket decode(FriendlyByteBuf buffer) {
-		return new PlayerAbilityKeybindTriggerPacket(buffer.readList(FriendlyByteBuf::readUtf));
-	}
-
-	@Override
-	public void receiveMessage(PlayPayloadContext context) {
-		context.workHandler().execute(() -> AoAPlayerEvents.onKeyPress((ServerPlayer)context.player().get(), this.abilities));
+	public void receiveMessage(IPayloadContext context) {
+		context.enqueueWork(() -> AoAPlayerEvents.onKeyPress((ServerPlayer)context.player(), this.abilities));
 	}
 }

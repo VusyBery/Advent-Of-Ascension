@@ -17,7 +17,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-
 public class Iropole extends RotatedPillarBlock {
 	private static final VoxelShape Y_SHAPE = box(3, 0, 3, 13, 16, 13);
 	private static final VoxelShape X_SHAPE = box(0, 3, 3, 16, 13, 13);

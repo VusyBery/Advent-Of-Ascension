@@ -4,10 +4,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.packets.*;
 import net.tslat.aoa3.common.networking.packets.adventplayer.*;
@@ -22,60 +23,61 @@ public class AoANetworking {
 		AdventOfAscension.getModEventBus().addListener(AoANetworking::registerPackets);
 	}
 
-	private static void registerPackets(final RegisterPayloadHandlerEvent ev) {
-		final IPayloadRegistrar registrar = ev.registrar(AdventOfAscension.MOD_ID);
+	private static void registerPackets(final RegisterPayloadHandlersEvent ev) {
+		final PayloadRegistrar registrar = ev.registrar(AdventOfAscension.MOD_ID);
 
-		registrar.configuration(PlayerHalosLoginSyncPacket.ID, PlayerHalosLoginSyncPacket::decode, PlayerHalosLoginSyncPacket::receiveMessage);
-		registrar.configuration(SkillReqLoginSyncPacket.ID, SkillReqLoginSyncPacket::decode, SkillReqLoginSyncPacket::receiveMessage);
+		registrar.configurationBidirectional(PlayerHalosLoginSyncPacket.TYPE, PlayerHalosLoginSyncPacket.CODEC, PlayerHalosLoginSyncPacket::receiveMessage);
+		registrar.configurationBidirectional(SkillReqLoginSyncPacket.TYPE, SkillReqLoginSyncPacket.CODEC, SkillReqLoginSyncPacket::receiveMessage);
 
-		registrar.play(PlayerDataSyncPacket.ID, PlayerDataSyncPacket::decode, PlayerDataSyncPacket::receiveMessage);
-		registrar.play(PlayerDataUpdatePacket.ID, PlayerDataUpdatePacket::decode, PlayerDataUpdatePacket::receiveMessage);
-		registrar.play(ToastPopupPacket.ID, ToastPopupPacket::decode, ToastPopupPacket::receiveMessage);
-		registrar.play(ScreenEffectPacket.ID, ScreenEffectPacket::decode, ScreenEffectPacket::receiveMessage);
-		registrar.play(GunRecoilPacket.ID, GunRecoilPacket::decode, GunRecoilPacket::receiveMessage);
-		registrar.play(XpGainPacket.ID, XpGainPacket::decode, XpGainPacket::receiveMessage);
-		registrar.play(HaloSelectPacket.ID, HaloSelectPacket::decode, HaloSelectPacket::receiveMessage);
-		registrar.play(SyncHaloDataPacket.ID, SyncHaloDataPacket::decode, SyncHaloDataPacket::receiveMessage);
-		registrar.play(WikiSearchPacket.ID, WikiSearchPacket::decode, WikiSearchPacket::receiveMessage);
-		registrar.play(ChangeMusicPacket.ID, ChangeMusicPacket::decode, ChangeMusicPacket::receiveMessage);
-		registrar.play(PatchouliBookSyncPacket.ID, PatchouliBookSyncPacket::decode, PatchouliBookSyncPacket::receiveMessage);
-		registrar.play(AccountPatchouliBookPacket.ID, AccountPatchouliBookPacket::decode, AccountPatchouliBookPacket::receiveMessage);
-		registrar.play(GivePatchouliBookPacket.ID, GivePatchouliBookPacket::decode, GivePatchouliBookPacket::receiveMessage);
-		registrar.play(UpdateClientMovementPacket.ID, UpdateClientMovementPacket::decode, UpdateClientMovementPacket::receiveMessage);
-		registrar.play(PlayerAbilityKeybindTriggerPacket.ID, PlayerAbilityKeybindTriggerPacket::decode, PlayerAbilityKeybindTriggerPacket::receiveMessage);
-		registrar.play(AddSkillCyclePacket.ID, AddSkillCyclePacket::decode, AddSkillCyclePacket::receiveMessage);
-		registrar.play(ToggleAoAAbilityPacket.ID, ToggleAoAAbilityPacket::decode, ToggleAoAAbilityPacket::receiveMessage);
-		registrar.play(SyncAoAAbilityDataPacket.ID, SyncAoAAbilityDataPacket::decode, SyncAoAAbilityDataPacket::receiveMessage);
-		registrar.play(AoASoundBuilderPacket.ID, AoASoundBuilderPacket::decode, AoASoundBuilderPacket::receiveMessage);
-		registrar.play(ParticleEffectPacket.ID, ParticleEffectPacket::decode, ParticleEffectPacket::receiveMessage);
-		registrar.play(MultipartTogglePacket.ID, MultipartTogglePacket::decode, MultipartTogglePacket::receiveMessage);
+		registrar.playToServer(PlayerAbilityKeybindTriggerPacket.TYPE, PlayerAbilityKeybindTriggerPacket.CODEC, PlayerAbilityKeybindTriggerPacket::receiveMessage);
+		registrar.playToServer(ToggleAoAAbilityPacket.TYPE, ToggleAoAAbilityPacket.CODEC, ToggleAoAAbilityPacket::receiveMessage);
+		registrar.playToServer(HaloSelectPacket.TYPE, HaloSelectPacket.CODEC, HaloSelectPacket::receiveMessage);
+		registrar.playToServer(AccountPatchouliBookPacket.TYPE, AccountPatchouliBookPacket.CODEC, AccountPatchouliBookPacket::receiveMessage);
+		registrar.playToServer(GivePatchouliBookPacket.TYPE, GivePatchouliBookPacket.CODEC, GivePatchouliBookPacket::receiveMessage);
+		registrar.playToServer(AddSkillCyclePacket.TYPE, AddSkillCyclePacket.CODEC, AddSkillCyclePacket::receiveMessage);
+		registrar.playToServer(ParticleEffectPacket.TYPE, ParticleEffectPacket.CODEC, ParticleEffectPacket::receiveMessage);
+		registrar.playToServer(SyncAoAAbilityDataPacket.TYPE, SyncAoAAbilityDataPacket.CODEC, SyncAoAAbilityDataPacket::receiveMessage);
+
+		registrar.playToClient(PlayerDataSyncPacket.TYPE, PlayerDataSyncPacket.CODEC, PlayerDataSyncPacket::receiveMessage);
+		registrar.playToClient(PlayerDataUpdatePacket.TYPE, PlayerDataUpdatePacket.CODEC, PlayerDataUpdatePacket::receiveMessage);
+		registrar.playToClient(ToastPopupPacket.TYPE, ToastPopupPacket.CODEC, ToastPopupPacket::receiveMessage);
+		registrar.playToClient(ScreenEffectPacket.TYPE, ScreenEffectPacket.CODEC, ScreenEffectPacket::receiveMessage);
+		registrar.playToClient(GunRecoilPacket.TYPE, GunRecoilPacket.CODEC, GunRecoilPacket::receiveMessage);
+		registrar.playToClient(XpGainPacket.TYPE, XpGainPacket.CODEC, XpGainPacket::receiveMessage);
+		registrar.playToClient(SyncHaloDataPacket.TYPE, SyncHaloDataPacket.CODEC, SyncHaloDataPacket::receiveMessage);
+		registrar.playToClient(WikiSearchPacket.TYPE, WikiSearchPacket.CODEC, WikiSearchPacket::receiveMessage);
+		registrar.playToClient(PatchouliBookSyncPacket.TYPE, PatchouliBookSyncPacket.CODEC, PatchouliBookSyncPacket::receiveMessage);
+		registrar.playToClient(UpdateClientMovementPacket.TYPE, UpdateClientMovementPacket.CODEC, UpdateClientMovementPacket::receiveMessage);
+		registrar.playToClient(AoASoundBuilderPacket.TYPE, AoASoundBuilderPacket.CODEC, AoASoundBuilderPacket::receiveMessage);
+		registrar.playToClient(MultipartTogglePacket.TYPE, MultipartTogglePacket.CODEC, MultipartTogglePacket::receiveMessage);
+		registrar.playToClient(HaloChangePacket.TYPE, HaloChangePacket.CODEC, HaloChangePacket::receiveMessage);
 	}
 
 	public static void sendToAllNearbyPlayers(AoAPacket packet, ServerLevel level, Vec3 origin, double radius) {
-		PacketDistributor.NEAR.with(new PacketDistributor.TargetPoint(origin.x, origin.y, origin.z, radius, level.dimension())).send(packet);
+		PacketDistributor.sendToPlayersNear(level, null, origin.x, origin.y, origin.z, radius, packet);
 	}
 
 	public static void sendToPlayer(ServerPlayer player, AoAPacket packet) {
 		if (player.connection != null)
-			PacketDistributor.PLAYER.with(player).send(packet);
+			PacketDistributor.sendToPlayer(player, packet);
 	}
 
 	public static void sendToAllPlayers(AoAPacket packet) {
-		PacketDistributor.ALL.noArg().send(packet);
+		PacketDistributor.sendToAllPlayers(packet);
 	}
 
 	public static void sendToServer(AoAPacket packet) {
-		PacketDistributor.SERVER.noArg().send(packet);
+		PacketDistributor.sendToServer(packet);
 	}
 
 	public static void sendToAllPlayersTrackingBlock(ServerLevel level, BlockPos pos, AoAPacket packet) {
-		PacketDistributor.TRACKING_CHUNK.with(level.getChunkAt(pos)).send(packet);
+		PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(pos), packet);
 	}
 
 	public static void sendToAllPlayersTrackingEntity(AoAPacket packet, Entity entity) {
 		if (entity instanceof ServerPlayer pl)
 			sendToPlayer(pl, packet);
 
-		PacketDistributor.TRACKING_ENTITY.with(entity).send(packet);
+		PacketDistributor.sendToPlayersTrackingEntity(entity, packet);
 	}
 }

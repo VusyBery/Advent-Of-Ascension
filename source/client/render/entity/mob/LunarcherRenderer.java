@@ -7,7 +7,7 @@ import net.minecraft.world.entity.FlyingMob;
 
 
 public class LunarcherRenderer extends HumanoidMobRenderer<FlyingMob, LunarcherModel<FlyingMob>> {
-	private final ResourceLocation texture = new ResourceLocation("aoa3", "textures/entity/mob/lunalus/lunarcher.png");
+	private final ResourceLocation texture = AdventOfAscension.id("textures/entity/mob/lunalus/lunarcher.png");
 
 	public LunarcherRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new LunarcherModel(), AoAMobs.LUNARCHER.get().getWidth() / 3f);

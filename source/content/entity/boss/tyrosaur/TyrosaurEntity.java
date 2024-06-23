@@ -4,19 +4,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
@@ -26,10 +25,10 @@ import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
 
 public class TyrosaurEntity extends AoABoss {
     public static final EntityDataHolder<Boolean> WOUNDED = EntityDataHolder.register(TyrosaurEntity.class, EntityDataSerializers.BOOLEAN, false, entity -> entity.wounded, (entity, value) -> entity.wounded = value);
@@ -47,15 +46,10 @@ public class TyrosaurEntity extends AoABoss {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
 
-        registerDataParams(WOUNDED);
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
-        return 1;
+        registerDataParams(builder, WOUNDED);
     }
 
     @Override
@@ -100,7 +94,7 @@ public class TyrosaurEntity extends AoABoss {
 
             if (isDeadOrDying()) {
                 AoAScheduler.scheduleSyncronisedTask(() -> {
-                    EntitySpawningUtil.spawnEntity(level, AoAMobs.SKELETRON.get(), position(), MobSpawnType.CONVERSION, abomination -> {
+                    EntitySpawningUtil.spawnEntity(level, AoAMonsters.SKELETRON.get(), position(), MobSpawnType.CONVERSION, abomination -> {
                         abomination.setXRot(getXRot());
                         abomination.setYRot(getYRot());
                         abomination.setYHeadRot(getYHeadRot());

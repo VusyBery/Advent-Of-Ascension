@@ -1,7 +1,10 @@
 package net.tslat.aoa3.content.block.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -17,6 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -69,33 +73,32 @@ public class ImbuingChamberBlockEntity extends BlockEntity implements Nameable, 
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
+		CompoundTag tag = super.getUpdateTag(registryLookup);
 
-		ContainerHelper.saveAllItems(tag, this.items, true);
+		ContainerHelper.saveAllItems(tag, this.items, registryLookup);
 
 		return tag;
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
+	public void saveAdditional(CompoundTag tag, HolderLookup.Provider registryLookup) {
+		super.saveAdditional(tag, registryLookup);
 
-		ContainerHelper.saveAllItems(compound, this.items, true);
+		ContainerHelper.saveAllItems(tag, this.items, registryLookup);
 
 		if (this.customName != null)
-			compound.putString("CustomName", Component.Serializer.toJson(this.customName));
+			tag.putString("CustomName", Component.Serializer.toJson(this.customName, registryLookup));
 	}
 
 	@Override
-	public void load(CompoundTag compound) {
-		super.load(compound);
+	protected void loadAdditional(CompoundTag compound, HolderLookup.Provider registryLookup) {
+		super.loadAdditional(compound, registryLookup);
 
 		this.items.clear();
-		ContainerHelper.loadAllItems(compound, this.items);
+		ContainerHelper.loadAllItems(compound, this.items, registryLookup);
 
-		if (compound.contains("CustomName", Tag.TAG_STRING))
-			this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
+		this.customName = compound.contains("CustomName", Tag.TAG_STRING) ? parseCustomNameSafe(compound.getString("CustomName"), registryLookup) : null;
 	}
 
 	@Override
@@ -153,5 +156,27 @@ public class ImbuingChamberBlockEntity extends BlockEntity implements Nameable, 
 		container.getOutputSlot().set(contents.get(6));
 
 		return container;
+	}
+
+	@Override
+	protected void applyImplicitComponents(DataComponentInput components) {
+		super.applyImplicitComponents(components);
+
+		setCustomName(components.get(DataComponents.CUSTOM_NAME));
+		components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(getContents());
+	}
+
+	@Override
+	protected void collectImplicitComponents(DataComponentMap.Builder builder) {
+		super.collectImplicitComponents(builder);
+
+		builder.set(DataComponents.CUSTOM_NAME, this.customName);
+		builder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(getContents()));
+	}
+
+	@Override
+	public void removeComponentsFromTag(CompoundTag tag) {
+		tag.remove("CustomName");
+		tag.remove("Items");
 	}
 }

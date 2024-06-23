@@ -7,7 +7,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.item.weapon.bow.BaseBow;
 
 public class PopShotEntity extends CustomArrowEntity {
 	public final boolean isExplosive;
@@ -32,29 +31,15 @@ public class PopShotEntity extends CustomArrowEntity {
 		setPos(x, y, z);
 	}
 
-	public PopShotEntity(Level world, BaseBow bow, LivingEntity shooter, double damageBase) {
+	public PopShotEntity(Level world, ItemStack weaponStack, LivingEntity shooter, double baseDamage, boolean isExplosive) {
 		super(AoAProjectiles.POP_SHOT.get(), world);
 
-		this.isExplosive = true;
-
 		setOwner(shooter);
-		setBaseDamage(damageBase);
-
-		this.bow = bow;
-
+		setBaseDamage(baseDamage);
 		setPos(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
-	}
 
-	public PopShotEntity(Level world, BaseBow bow, LivingEntity shooter, double damageBase, boolean isExplosive) {
-		super(AoAProjectiles.POP_SHOT.get(), world);
-
-		setOwner(shooter);
-		setBaseDamage(damageBase);
-
-		this.bow = bow;
+		this.firedFromWeapon = weaponStack;
 		this.isExplosive = isExplosive;
-
-		setPos(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
 	}
 
 	protected void doPostHurtEffects(LivingEntity target) {}

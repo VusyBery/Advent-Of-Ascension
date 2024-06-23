@@ -2,10 +2,9 @@ package net.tslat.aoa3.client.render.entity.projectile.blasters;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.tslat.aoa3.client.render.entity.projectile.ParticleProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.blaster.MindBlasterShotEntity;
-import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
 public class MindBlasterShotRenderer extends ParticleProjectileRenderer<MindBlasterShotEntity> {
 	public MindBlasterShotRenderer(final EntityRendererProvider.Context manager) {
@@ -42,8 +41,14 @@ public class MindBlasterShotRenderer extends ParticleProjectileRenderer<MindBlas
 			}
 
 			for (int j = 0; j < 3; j++) {
-				entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 3, ColourUtil.BLUE), entity.getX(), entity.getY() + entity.yOffset1, entity.getZ(), 0, 0, 0);
-				entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 3, ColourUtil.WHITE), entity.getX(), entity.getY() + entity.yOffset2, entity.getZ(), 0, 0, 0);
+				float colourMod = entity.level().random.nextFloat() * 0.7f + 0.3f;
+
+				ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().add(0, entity.yOffset1, 0))
+					.colourOverride(0, 0, entity.level().random.nextFloat() * 0.7f + 0.3f, 1f)
+					.spawnParticles(entity.level());
+				ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().add(0, entity.yOffset2, 0))
+					.colourOverride(colourMod, colourMod, colourMod, 1f)
+					.spawnParticles(entity.level());
 			}
 		}
 	}

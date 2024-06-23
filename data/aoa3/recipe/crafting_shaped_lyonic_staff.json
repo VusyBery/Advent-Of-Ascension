@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aoa3:energy_rune"
+    },
+    "B": {
+      "item": "aoa3:magnet_shard"
+    },
+    "C": {
+      "item": "aoa3:wither_rune"
+    },
+    "D": {
+      "tag": "neoforge:ingots/lyon"
+    },
+    "E": {
+      "tag": "neoforge:rods/metal"
+    }
+  },
+  "pattern": [
+    "ABC",
+    " D ",
+    " E "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:lyonic_staff"
+  }
+}

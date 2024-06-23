@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:crystallite"
+    }
+  ],
+  "result": {
+    "count": 8,
+    "id": "aoa3:crystallite_bricks"
+  }
+}

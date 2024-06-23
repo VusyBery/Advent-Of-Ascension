@@ -28,7 +28,7 @@ public class ClownBallEntity extends BaseBullet implements HardProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
+	public double getDefaultGravity() {
 		return 0.1f;
 	}
 }

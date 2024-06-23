@@ -1,7 +1,10 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffects;
@@ -11,6 +14,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.FireworkExplosion;
+import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -25,8 +30,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class ShowStaff extends BaseStaff<List<LivingEntity>> {
-	public ShowStaff(int durability) {
-		super(durability);
+	public ShowStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -35,15 +40,16 @@ public class ShowStaff extends BaseStaff<List<LivingEntity>> {
 		return AoASounds.ITEM_SHOW_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.COMPASS_RUNE.get(), 3);
-		runes.put(AoAItems.POWER_RUNE.get(), 3);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.COMPASS_RUNE.get(), 3);
+			runes.put(AoAItems.POWER_RUNE.get(), 3);
+		});
 	}
 
 	@Override
 	public Optional<List<LivingEntity>> checkPreconditions(LivingEntity caster, ItemStack staff) {
-		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 30, entity -> entity instanceof LivingEntity livingEntity && EntityUtil.Predicates.HOSTILE_MOB.test(livingEntity));
+		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 30, entity -> entity instanceof LivingEntity livingEntity && EntityUtil.isHostileMob(livingEntity));
 
 		return Optional.ofNullable(targets.isEmpty() ? null : targets);
 	}
@@ -51,7 +57,7 @@ public class ShowStaff extends BaseStaff<List<LivingEntity>> {
 	@Override
 	public void cast(Level world, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
 		for (LivingEntity entity : args) {
-			entity.setSecondsOnFire(5);
+			entity.igniteForSeconds(5);
 			EntityUtil.applyPotions(entity, new EffectBuilder(MobEffects.GLOWING, 100));
 			world.addFreshEntity(new FireworkRocketEntity(world, entity.getX(), entity.getBoundingBox().maxY, entity.getZ(), makeFireworksStack()));
 		}
@@ -59,28 +65,15 @@ public class ShowStaff extends BaseStaff<List<LivingEntity>> {
 
 	private ItemStack makeFireworksStack() {
 		ItemStack fireworks = new ItemStack(Items.FIREWORK_ROCKET, 1);
-		CompoundTag explosionTag = new CompoundTag();
-		CompoundTag fireworksTag = new CompoundTag();
-		CompoundTag finalTag = new CompoundTag();
-		CompoundTag wrapperTag = new CompoundTag();
-		ListTag finalTagList = new ListTag();
 
-		explosionTag.putBoolean("Trail", true);
-		explosionTag.putIntArray("Colors", new int[] {0});
-		explosionTag.putByte("Type", (byte)4);
-		fireworksTag.put("Explosion", explosionTag);
-		finalTagList.add(fireworksTag);
-		finalTag.put("Explosions", finalTagList);
-		finalTag.putByte("Flight", (byte)3);
-		wrapperTag.put("Fireworks", finalTag);
-		fireworks.setTag(wrapperTag);
+		fireworks.set(DataComponents.FIREWORKS, new Fireworks(3, List.of(new FireworkExplosion(FireworkExplosion.Shape.BURST, IntList.of(0), IntList.of(), true, false))));
 
 		return fireworks;
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

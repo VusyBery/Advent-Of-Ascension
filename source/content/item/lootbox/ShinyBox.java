@@ -28,7 +28,7 @@ public class ShinyBox extends Item {
 		ItemStack heldStack = player.getItemInHand(hand);
 
 		if (player instanceof ServerPlayer pl) {
-			ItemUtil.givePlayerMultipleItems(pl, LootUtil.generateLoot(new ResourceLocation(AdventOfAscension.MOD_ID, "items/shiny_box"), LootUtil.getGiftParameters(pl.serverLevel(), pl.position(), pl)));
+			ItemUtil.givePlayerMultipleItems(pl, LootUtil.generateLoot(AdventOfAscension.id("items/shiny_box"), LootUtil.getGiftParameters(pl.serverLevel(), pl.position(), pl)));
 
 			if (!pl.isCreative())
 				heldStack.shrink(1);
@@ -42,7 +42,7 @@ public class ShinyBox extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.NEUTRAL, 1));
 	}
 }

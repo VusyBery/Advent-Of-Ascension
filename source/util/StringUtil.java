@@ -9,24 +9,20 @@ public final class StringUtil {
 	private static final Pattern FORMATTING_CODE_PATTERN = Pattern.compile("(?i)\\u00A7[0-9A-FK-OR]");
 
 	public static String toTitleCase(@NotNull String str) {
-		str = str.toLowerCase();
-		int size = str.length();
-		StringBuilder buffer = new StringBuilder(size);
-		boolean space = true;
+		final StringBuilder buffer = new StringBuilder(str.length());
+		boolean capitaliseNext = true;
 
-		for (int i = 0; i < size; i++) {
-			char ch = str.charAt(i);
-
+		for (char ch : str.toCharArray()) {
 			if (Character.isWhitespace(ch) || ch == '_') {
 				buffer.append(' ');
-				space = true;
+				capitaliseNext = true;
 			}
-			else if (space) {
-				buffer.append(Character.toTitleCase(ch));
-				space = false;
+			else if (capitaliseNext) {
+				buffer.append(Character.toUpperCase(ch));
+				capitaliseNext = false;
 			}
 			else {
-				buffer.append(ch);
+				buffer.append(Character.toLowerCase(ch));
 			}
 		}
 

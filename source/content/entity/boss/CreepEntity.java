@@ -32,7 +32,7 @@ public class CreepEntity extends AoARangedMob<CreepEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.53125f;
 	}
 
@@ -61,7 +61,7 @@ public class CreepEntity extends AoARangedMob<CreepEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
@@ -99,7 +99,7 @@ public class CreepEntity extends AoARangedMob<CreepEntity> {
 	@Override
 	public void doProjectileEntityImpact(BaseMobProjectile projectile, Entity target) {
 		if (projectile instanceof CreepBombEntity) {
-			if (target.hurt(DamageSource.indirectMobAttack(projectile, this), (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()) * 2.5f))
+			if (target.hurt(DamageSource.indirectMobAttack(projectile, this), (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE) * 2.5f))
 				doProjectileImpactEffect(projectile, target);
 		}
 		else {

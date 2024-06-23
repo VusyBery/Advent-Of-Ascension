@@ -1,0 +1,13 @@
+{
+  "type": "aoa3:upgrade_kit",
+  "input": {
+    "item": "aoa3:hot_shot"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:heat_wave"
+  },
+  "upgrade_kit": {
+    "item": "aoa3:nether_upgrade_kit"
+  }
+}

@@ -3,11 +3,12 @@ package net.tslat.aoa3.client.gui.adventgui;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.tslat.aoa3.client.gui.lib.ScrollablePane;
 import net.tslat.aoa3.library.object.RenderContext;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -31,12 +32,15 @@ public class AdventGuiTabLeaderboard extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		this.adjustedMouseX = (int)(mouseX * (1 / AdventMainGui.SCALE));
 		this.adjustedMouseY = (int)(mouseY * (1 / AdventMainGui.SCALE));
-		this.categoryMenu.render(guiGraphics, this.adjustedMouseX, this.adjustedMouseY, partialTicks);
+
+		for (Renderable renderable : this.renderables) {
+			renderable.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTick);
+		}
+
+		this.categoryMenu.render(guiGraphics, this.adjustedMouseX, this.adjustedMouseY, partialTick);
 
 		RenderContext renderContext = RenderContext.of(guiGraphics);
 		final int boardPaneLeft = AdventMainGui.scaledTabRootX + 136;

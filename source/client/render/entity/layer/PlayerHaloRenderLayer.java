@@ -15,13 +15,15 @@ import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.model.misc.PlayerHaloModel;
 import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.player.halo.HaloTypes;
 import net.tslat.aoa3.player.halo.PlayerHaloManager;
+import net.tslat.aoa3.util.ColourUtil;
 
 public class PlayerHaloRenderLayer extends RenderLayer<AbstractClientPlayer, PlayerModel<AbstractClientPlayer>> {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("aoa3", "textures/entity/player/halo_texture.png");
+	private static final ResourceLocation TEXTURE = AdventOfAscension.id("textures/entity/player/halo_texture.png");
 	private static final RenderType TSLAT_HALO_RENDER_TYPE = getTslatHaloRenderType();
 
 	private final PlayerHaloModel model;
@@ -40,7 +42,7 @@ public class PlayerHaloRenderLayer extends RenderLayer<AbstractClientPlayer, Pla
 					VertexConsumer vertexConsumer = bufferSource.getBuffer(TSLAT_HALO_RENDER_TYPE);
 
 					this.model.root.copyFrom(getParentModel().getHead());
-					this.model.renderToBuffer(poseStack, vertexConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, 0, 0, 0, 0.1f);
+					this.model.renderToBuffer(poseStack, vertexConsumer, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ColourUtil.ARGB(0, 0, 0, 0.1f));
 
 					return;
 				}
@@ -66,7 +68,7 @@ public class PlayerHaloRenderLayer extends RenderLayer<AbstractClientPlayer, Pla
 				RenderSystem.enableBlend();
 				RenderSystem.disableDepthTest();
 				this.model.root.copyFrom(getParentModel().getHead());
-				this.model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(player))), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, red, green, blue, 0.1f);
+				this.model.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.entityTranslucent(getTextureLocation(player))), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ColourUtil.ARGB(red, green, blue, 0.1f));
 				RenderSystem.enableDepthTest();
 				RenderSystem.disableBlend();
 			});

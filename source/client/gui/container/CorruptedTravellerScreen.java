@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.menu.CorruptedTravellerMenu;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.library.object.RenderContext;
@@ -27,11 +29,12 @@ import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.RenderUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4fStack;
 
 import java.util.ArrayList;
 
 public class CorruptedTravellerScreen extends AbstractContainerScreen<CorruptedTravellerMenu> {
-	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("aoa3", "textures/gui/containers/corrupted_traveller.png");
+	private static final ResourceLocation GUI_TEXTURE = AdventOfAscension.id("textures/gui/containers/corrupted_traveller.png");
 	private static final ArrayList<Item> APPLICABLE_FOOD = new ArrayList<>();
 
 	private long nextFoodTick = 0;
@@ -93,9 +96,9 @@ public class CorruptedTravellerScreen extends AbstractContainerScreen<CorruptedT
 			RenderSystem.enableBlend();
 			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			RenderUtil.resetShaderColour();
-			PoseStack modelViewPose = RenderSystem.getModelViewStack();
+			Matrix4fStack modelViewPose = RenderSystem.getModelViewStack();
 
-			modelViewPose.pushPose();
+			modelViewPose.pushMatrix();
 			modelViewPose.translate(slot.x + centerX, slot.y + centerY, 100f);
 			modelViewPose.translate(8, 8, 0);
 			modelViewPose.scale(1, -1, 1);
@@ -116,13 +119,13 @@ public class CorruptedTravellerScreen extends AbstractContainerScreen<CorruptedT
 			if (changeLighting)
 				Lighting.setupFor3DItems();
 
-			modelViewPose.popPose();
+			modelViewPose.popMatrix();
 			RenderSystem.applyModelViewMatrix();
 		}
 	}
 
 	private void compileFoodList() {
-		AoARegistries.ITEMS.getAllRegisteredObjects().filter(Item::isEdible).forEach(APPLICABLE_FOOD::add);
+		AoARegistries.ITEMS.getAllRegisteredObjects().filter(item -> item.components().has(DataComponents.FOOD)).forEach(APPLICABLE_FOOD::add);
 	}
 
 	@NotNull

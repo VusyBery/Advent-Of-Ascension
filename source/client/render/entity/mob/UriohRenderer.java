@@ -12,7 +12,7 @@ import net.tslat.aoa3.client.render.entity.AoAMobRenderer;
 public class UriohRenderer extends AoAMobRenderer {
 	private static final float shadowScale = AoAMobs.URIOH.get().getWidth() / 3f;
 	public UriohRenderer(EntityRendererProvider.Context renderManager) {
-		super(renderManager, new UriohModel(), shadowScale, 1.0f, new ResourceLocation("aoa3", "textures/entity/mob/nowhere/urioh.png"));
+		super(renderManager, new UriohModel(), shadowScale, 1.0f, AdventOfAscension.id("textures/entity/mob/nowhere/urioh.png"));
 	}
 
 	@Override

@@ -2,7 +2,6 @@ package net.tslat.aoa3.content.entity.npc.trader;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -13,13 +12,14 @@ import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.entity.base.AoATrader;
+import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
 import net.tslat.effectslib.api.util.PotionBuilder;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
 
 
 public class StoreKeeperEntity extends AoATrader {
@@ -36,7 +36,7 @@ public class StoreKeeperEntity extends AoATrader {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1 + 12.5f / 16f;
 	}
 
@@ -52,7 +52,7 @@ public class StoreKeeperEntity extends AoATrader {
 	}
 
 	public static ItemStack poisonPotionStack() {
-		return new PotionBuilder(Items.LINGERING_POTION).addEffect(new EffectBuilder(MobEffects.POISON, 600).build()).withTranslationKey("item.minecraft.lingering_potion.effect.poison").build();
+		return new PotionBuilder(Items.LINGERING_POTION).addEffects(new EffectBuilder(MobEffects.POISON, 600).build()).withName(LocaleUtil.getLocaleMessage("item.minecraft.lingering_potion.effect.poison")).build();
 	}
 
 	@Override

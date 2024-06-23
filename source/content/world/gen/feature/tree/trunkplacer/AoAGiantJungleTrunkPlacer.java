@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.world.gen.feature.tree.trunkplacer;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 
 public class AoAGiantJungleTrunkPlacer extends AoAGiantTrunkPlacer {
-	public static final Codec<AoAGiantJungleTrunkPlacer> CODEC = RecordCodecBuilder.create(builder ->
+	public static final MapCodec<AoAGiantJungleTrunkPlacer> CODEC = RecordCodecBuilder.mapCodec(builder ->
 			heightValues(builder).apply(builder, AoAGiantJungleTrunkPlacer::new));
 
 	public AoAGiantJungleTrunkPlacer(final IntProvider baseHeight, final IntProvider additionalHeight) {

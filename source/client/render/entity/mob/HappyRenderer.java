@@ -10,7 +10,7 @@ import net.minecraft.world.entity.monster.Monster;
 
 
 public class HappyRenderer extends HumanoidMobRenderer<Monster, HumanoidModel<Monster>> {
-	private final ResourceLocation texture = new ResourceLocation("aoa3", "textures/entity/mob/celeve/happy.png");
+	private final ResourceLocation texture = AdventOfAscension.id("textures/entity/mob/celeve/happy.png");
 
 	public HappyRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new AbstractZombieModel<Monster>(0, 0, 64, 64) {

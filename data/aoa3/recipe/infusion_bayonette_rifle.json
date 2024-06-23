@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:gun_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:sharp_claw"
+    },
+    {
+      "tag": "neoforge:ingots/skeletal"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:gunpowders"
+    },
+    {
+      "tag": "minecraft:planks"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:bayonette_rifle"
+  }
+}

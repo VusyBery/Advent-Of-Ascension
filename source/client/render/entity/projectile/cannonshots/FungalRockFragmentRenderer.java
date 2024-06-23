@@ -8,9 +8,9 @@ import net.minecraft.world.entity.Entity;
 import net.tslat.aoa3.client.AoAEntityRendering;
 import net.tslat.aoa3.client.model.entity.projectile.CobblestoneProjectileModel;
 import net.tslat.aoa3.client.render.entity.projectile.ModelledProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class FungalRockFragmentRenderer extends ModelledProjectileRenderer<Entity> {
@@ -30,12 +30,9 @@ public class FungalRockFragmentRenderer extends ModelledProjectileRenderer<Entit
 		super.render(entity, entityYaw, partialTicks, matrix, buffer, packedLight);
 
 		for (int i = 0; i < 8; i++) {
-			switch (RandomUtil.randomNumberUpTo(4)) {
-				case 0 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.GREEN), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-				case 1 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.YELLOW), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-				case 2 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.BLUE), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-				case 3 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.RGB(193, 64, 215)), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-			}
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+					.colourOverride(RandomUtil.getRandomSelection(ColourUtil.GREEN, ColourUtil.YELLOW, ColourUtil.BLUE, 0xC140D7))
+					.spawnParticles(entity.level());
 		}
 	}
 }

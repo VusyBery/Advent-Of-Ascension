@@ -27,7 +27,7 @@ public class UpsideDownGrassBlock extends AoAGrassBlock {
 	public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {}
 
 	public boolean hasSufficientLight(BlockState grassState, Level world, BlockPos grassPos) {
-		if (world.dimension() == ResourceKey.create(Registries.DIMENSION, new ResourceLocation(AdventOfAscension.MOD_ID, "lelyetia")))
+		if (world.dimension() == ResourceKey.create(Registries.DIMENSION, AdventOfAscension.id("lelyetia")))
 			return true;
 
 		BlockPos bottomPos = grassPos.below();

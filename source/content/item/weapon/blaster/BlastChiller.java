@@ -7,17 +7,16 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
+import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.item.EnergyProjectileWeapon;
-import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
@@ -29,8 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class BlastChiller extends BaseBlaster {
-	public BlastChiller(double dmg, int durability, int fireDelayTicks, float energyCost) {
-		super(dmg, durability, fireDelayTicks, 20, energyCost);
+	public BlastChiller(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -75,7 +74,7 @@ public class BlastChiller extends BaseBlaster {
 				.ignoreDistanceAndLimits()
 				.scaleMod(0.25f)
 				.colourOverride(0, 168, 162, 120));
-		packet.particle(ParticleBuilder.forPositionsInLine(new CustomisableParticleType.Data(AoAParticleTypes.FREEZING_SNOWFLAKE.get(), ColourUtil.WHITE), originPos, hitPos, 6)
+		packet.particle(ParticleBuilder.forPositionsInLine(EntityTrackingParticleOptions.ambient(AoAParticleTypes.FREEZING_SNOWFLAKE), originPos, hitPos, 6)
 				.lifespan(rand.nextInt(20, 50))
 				.ignoreDistanceAndLimits()
 				.velocity(rand.nextGaussian() * 0.05f, rand.nextGaussian() * 0.05f, rand.nextGaussian() * 0.05f)
@@ -91,9 +90,9 @@ public class BlastChiller extends BaseBlaster {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SLOWS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.FREEZES_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

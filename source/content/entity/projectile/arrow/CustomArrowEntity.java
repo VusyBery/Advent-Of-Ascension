@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -13,27 +14,23 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.entity.projectile.ProjectileDeflection;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
-import net.tslat.aoa3.content.item.weapon.bow.BaseBow;
-import net.tslat.aoa3.content.item.weapon.crossbow.BaseCrossbow;
+import net.tslat.aoa3.content.item.ArrowFiringWeapon;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CustomArrowEntity extends Arrow {
-	protected BaseBow bow;
-	protected BaseCrossbow crossbow;
-
 	private boolean ignoreExplosions = false;
-	private Entity cachedOwner = null;
 
 	public CustomArrowEntity(EntityType<? extends Arrow> type, Level world) {
 		super(type, world);
@@ -45,108 +42,67 @@ public class CustomArrowEntity extends Arrow {
 		setPos(x, y, z);
 	}
 
-	public CustomArrowEntity(Level world, BaseBow bow, LivingEntity shooter, double baseDamage) {
-		super(AoAProjectiles.ARROW.get(), world);
+	public CustomArrowEntity(Level world, ItemStack weaponStack, LivingEntity shooter, double baseDamage) {
+		this(world, shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
 
 		setOwner(shooter);
 		setBaseDamage(baseDamage);
 
-		this.bow = bow;
-
-		setPos(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+		this.firedFromWeapon = weaponStack;
 	}
 
-	public CustomArrowEntity(Level world, BaseCrossbow crossbow, LivingEntity shooter, double baseDamage) {
-		super(AoAProjectiles.ARROW.get(), world);
-
-		setOwner(shooter);
-		setBaseDamage(baseDamage);
-
-		this.crossbow = crossbow;
-
-		setPos(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
-	}
-
-	public static CustomArrowEntity fromArrow(AbstractArrow baseArrow, BaseBow bow, LivingEntity shooter, double baseDamage) {
+	public static CustomArrowEntity fromArrow(AbstractArrow baseArrow, @Nullable ItemStack weaponStack, LivingEntity shooter, double baseDamage) {
 		CustomArrowEntity arrow = new CustomArrowEntity(AoAProjectiles.ARROW.get(), baseArrow.level());
 
 		arrow.setOwner(shooter);
+		arrow.setCustomName(baseArrow.getCustomName());
+		arrow.setCustomNameVisible(baseArrow.isCustomNameVisible());
 		arrow.setBaseDamage(baseDamage);
-		arrow.setKnockback(baseArrow.getKnockback());
 		arrow.setCritArrow(baseArrow.isCritArrow());
-		arrow.setSecondsOnFire(baseArrow.getRemainingFireTicks());
-		duplicateArrowVelocity(baseArrow, arrow);
-		arrow.setPos(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
+		arrow.setPierceLevel(baseArrow.getPierceLevel());
+		arrow.igniteForTicks(baseArrow.getRemainingFireTicks());
+		arrow.setSoundEvent(arrow.getHitGroundSoundEvent());
+		arrow.setPos(baseArrow.position().equals(Vec3.ZERO) ? shooter.getEyePosition().subtract(0, 0.1f, 0) : baseArrow.position());
+		arrow.setDeltaMovement(baseArrow.getDeltaMovement());
+		arrow.setXRot(baseArrow.getXRot());
+		arrow.setYRot(baseArrow.getYRot());
+		arrow.setPickupItemStack(baseArrow.getPickupItemStackOrigin());
 
-		if (baseArrow instanceof Arrow baseArrowEntity) {
-			arrow.potion = baseArrowEntity.potion;
-			arrow.effects = baseArrowEntity.effects;
-			arrow.setFixedColor(baseArrowEntity.getColor());
+		arrow.xRotO = baseArrow.xRotO;
+		arrow.yRotO = baseArrow.yRotO;
+		arrow.lastState = baseArrow.lastState;
+		arrow.inGround = baseArrow.inGround;
+		arrow.pickup = baseArrow.pickup;
+		arrow.shakeTime = baseArrow.shakeTime;
+		arrow.piercedAndKilledEntities = baseArrow.piercedAndKilledEntities;
+		arrow.piercingIgnoreEntityIds = baseArrow.piercingIgnoreEntityIds;
+
+		if (weaponStack != null) {
+			arrow.firedFromWeapon = weaponStack.copy();
+
+			if (arrow.level() instanceof ServerLevel serverlevel)
+				EnchantmentHelper.onProjectileSpawned(serverlevel, weaponStack, arrow, p_348347_ -> arrow.firedFromWeapon = null);
 		}
-
-		arrow.bow = bow;
-
-		return arrow;
-	}
-
-	public static CustomArrowEntity fromArrow(AbstractArrow baseArrow, BaseCrossbow crossbow, LivingEntity shooter, double baseDamage) {
-		CustomArrowEntity arrow = new CustomArrowEntity(AoAProjectiles.ARROW.get(), baseArrow.level());
-
-		arrow.setOwner(shooter);
-		arrow.setBaseDamage(baseDamage);
-		arrow.setKnockback(baseArrow.getKnockback());
-		arrow.setCritArrow(baseArrow.isCritArrow());
-		arrow.setSecondsOnFire(baseArrow.getRemainingFireTicks());
-		duplicateArrowVelocity(baseArrow, arrow);
-		arrow.setPos(shooter.getX(), shooter.getEyeY() - 0.1f, shooter.getZ());
-
-		if (baseArrow instanceof Arrow baseArrowEntity) {
-			arrow.potion = baseArrowEntity.potion;
-			arrow.effects = baseArrowEntity.effects;
-			arrow.setFixedColor(baseArrowEntity.getColor());
-		}
-
-		arrow.crossbow = crossbow;
 
 		return arrow;
 	}
 
 	protected static void duplicateArrowVelocity(AbstractArrow source, AbstractArrow target) {
-		target.setDeltaMovement(source.getDeltaMovement());
-
-		target.setXRot(source.getXRot());
-		target.setYRot(source.getYRot());
-
-		target.xRotO = source.xRotO;
-		target.yRotO = source.yRotO;
-	}
-
-	@Nullable
-	@Override
-	public Entity getOwner() {
-		if (this.cachedOwner != null && this.cachedOwner.isAlive())
-			return this.cachedOwner;
-
-		this.cachedOwner = super.getOwner();
-
-		return this.cachedOwner;
 	}
 
 	@Override
 	public void tick() {
-		if (bow != null) {
-			bow.onArrowTick(this, getOwner());
-		}
-		else if (crossbow != null) {
-			crossbow.onArrowTick(this, getOwner());
-		}
+		ItemStack weaponStack = getWeaponItem();
+
+		if (weaponStack != null && weaponStack.getItem() instanceof ArrowFiringWeapon arrowFiringWeapon)
+			arrowFiringWeapon.tickArrow(this, getOwner(), weaponStack);
 
 		super.tick();
 	}
 
 	@Override
 	public boolean ignoreExplosion(Explosion explosion) {
-		return ignoreExplosions;
+		return this.ignoreExplosions;
 	}
 
 	public void setIgnoreExplosions() {
@@ -154,139 +110,108 @@ public class CustomArrowEntity extends Arrow {
 	}
 
 	@Override
-	protected void onHit(HitResult rayTrace) {
-		if (rayTrace.getType() == HitResult.Type.ENTITY) {
-			onHitEntity((EntityHitResult)rayTrace);
-		}
-		else if (rayTrace.getType() == HitResult.Type.BLOCK) {
-			BlockHitResult blockTrace = (BlockHitResult)rayTrace;
-			BlockState blockstate = level().getBlockState(blockTrace.getBlockPos());
-			lastState = blockstate;
-			Vec3 Vec3 = blockTrace.getLocation().subtract(getX(), getY(), getZ());
+	protected void onHitBlock(BlockHitResult hitResult) {
+		this.lastState = level().getBlockState(hitResult.getBlockPos());
+		ItemStack weaponStack = getWeaponItem();
 
-			if (bow != null) {
-				bow.onBlockHit(this, blockTrace, getOwner());
-			}
-			else if (crossbow != null) {
-				crossbow.onBlockHit(this, blockTrace, getOwner());
-			}
+		if (weaponStack != null && weaponStack.getItem() instanceof ArrowFiringWeapon arrowFiringWeapon)
+			arrowFiringWeapon.onBlockImpact(this, getOwner(), hitResult, weaponStack);
 
-			setDeltaMovement(Vec3);
+		this.lastState.onProjectileHit(level(), this.lastState, hitResult, this);
 
-			Vec3 Vector3d1 = Vec3.normalize().scale((double)0.05F);
+		Vec3 impactVelocity = hitResult.getLocation().subtract(getX(), getY(), getZ());
 
-			setPosRaw(getX() - Vector3d1.x, getY() - Vector3d1.y, getZ() - Vector3d1.z);
-			playSound(getHitGroundSoundEvent(), 1.0F, 1.2F / (random.nextFloat() * 0.2F + 0.9F));
+		setDeltaMovement(impactVelocity);
 
-			inGround = true;
-			shakeTime = 7;
+		if (level() instanceof ServerLevel serverlevel && weaponStack != null)
+			hitBlockEnchantmentEffects(serverlevel, hitResult, weaponStack);
 
-			setCritArrow(false);
-			setPierceLevel((byte)0);
-			setSoundEvent(SoundEvents.ARROW_HIT);
-			setShotFromCrossbow(false);
+		Vec3 embedPos = position().subtract(impactVelocity.normalize().scale(0.05F));
 
-			if (piercedAndKilledEntities != null)
-				piercedAndKilledEntities.clear();
+		setPosRaw(embedPos.x, embedPos.y, embedPos.z);
+		playSound(getHitGroundSoundEvent(), 1, 1.2f / (this.random.nextFloat() * 0.2f + 0.9f));
 
-			if (piercingIgnoreEntityIds != null)
-				piercingIgnoreEntityIds.clear();
+		this.inGround = true;
+		this.shakeTime = 7;
 
-			blockstate.onProjectileHit(level(), blockstate, blockTrace, this);
-		}
+		setCritArrow(false);
+		setPierceLevel((byte)0);
+		setSoundEvent(SoundEvents.ARROW_HIT);
+		resetPiercedEntities();
 	}
 
 	@Override
-	protected void onHitEntity(EntityHitResult rayTrace) {
-		Entity target = rayTrace.getEntity();
-		float drawPower = (float)this.getDeltaMovement().length();
-		double damage = getBaseDamage();
-		boolean critical = isCritArrow();
+	protected void onHitEntity(EntityHitResult hitResult) {
+		Entity target = hitResult.getEntity();
+		Entity owner = getOwner();
+		float velocity = (float)this.getDeltaMovement().length();
+		float damage = (float)getBaseDamage();
+		ItemStack weaponStack = getWeaponItem();
+		DamageSource damageSource = damageSources().arrow(this, owner != null ? owner : this);
+		ArrowFiringWeapon arrowFiringWeapon = weaponStack != null && weaponStack.getItem() instanceof ArrowFiringWeapon weapon ? weapon : null;
 
-		if (bow != null) {
-			damage = bow.getArrowDamage(this, target, damage, drawPower, critical);
-		}
-		else if (crossbow != null) {
-			damage = crossbow.getArrowDamage(this, target, damage, drawPower, critical);
-		}
+		if (weaponStack != null && level() instanceof ServerLevel level)
+			damage = EnchantmentHelper.modifyDamage(level, weaponStack, target, damageSource, damage);
 
-		damage = Math.max(damage, 0.0D);
+		if (arrowFiringWeapon != null)
+			damage = arrowFiringWeapon.getArrowDamage(this, owner, hitResult, weaponStack, damage, velocity, isCritArrow());
+
+		damage = Math.max(damage, 0);
 
 		if (getPierceLevel() > 0) {
-			if (piercingIgnoreEntityIds == null)
-				piercingIgnoreEntityIds = new IntOpenHashSet(5);
+			if (this.piercingIgnoreEntityIds == null)
+				this.piercingIgnoreEntityIds = new IntOpenHashSet(5);
 
-			if (piercedAndKilledEntities == null)
-				piercedAndKilledEntities = Lists.newArrayListWithCapacity(5);
+			if (this.piercedAndKilledEntities == null)
+				this.piercedAndKilledEntities = Lists.newArrayListWithCapacity(5);
 
-			if (piercingIgnoreEntityIds.size() >= getPierceLevel() + 1) {
+			if (this.piercingIgnoreEntityIds.size() >= getPierceLevel() + 1) {
 				discard();
 
 				return;
 			}
 
-			piercingIgnoreEntityIds.add(target.getId());
-		}
-
-		Entity shooter = this.getOwner();
-		DamageSource source;
-
-		if (shooter == null) {
-			source = damageSources().arrow(this, this);
-		}
-		else {
-			source = damageSources().arrow(this, shooter);
-
-			if (shooter instanceof LivingEntity)
-				((LivingEntity)shooter).setLastHurtMob(target);
+			this.piercingIgnoreEntityIds.add(target.getId());
 		}
 
 		boolean isEnderman = target.getType() == EntityType.ENDERMAN;
-		int fireTimer = target.getRemainingFireTicks();
+		int fireTicks = target.getRemainingFireTicks();
 
 		if (isOnFire() && !isEnderman)
-			target.setSecondsOnFire(5);
+			target.igniteForSeconds(5);
 
-		if (target.hurt(source, (float)damage)) {
+		if (target.hurt(damageSource, damage)) {
 			if (isEnderman)
 				return;
 
-			if (bow != null) {
-				bow.onEntityHit(this, target, shooter, damage, drawPower);
-			}
-			else if (crossbow != null) {
-				crossbow.onEntityHit(this, target, shooter, damage, drawPower);
-			}
+			if (owner instanceof LivingEntity shooter)
+				shooter.setLastHurtMob(target);
+
+			if (arrowFiringWeapon != null)
+				arrowFiringWeapon.onEntityImpact(this, owner, hitResult, weaponStack, velocity);
 
 			if (target instanceof LivingEntity livingTarget) {
 				if (!level().isClientSide && getPierceLevel() <= 0)
 					livingTarget.setArrowCount(livingTarget.getArrowCount() + 1);
 
-				if (getKnockback() > 0) {
-					Vec3 Vec3 = getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize().scale(getKnockback() * 0.6D);
+				doKnockback(livingTarget, damageSource);
 
-					if (Vec3.lengthSqr() > 0.0D)
-						livingTarget.push(Vec3.x, 0.1D, Vec3.z);
-				}
-
-				if (!level().isClientSide && shooter instanceof LivingEntity) {
-					EnchantmentHelper.doPostHurtEffects(livingTarget, shooter);
-					EnchantmentHelper.doPostDamageEffects((LivingEntity)shooter, livingTarget);
-				}
+				if (level() instanceof ServerLevel serverLevel)
+					EnchantmentHelper.doPostAttackEffectsWithItemSource(serverLevel, livingTarget, damageSource, weaponStack);
 
 				doPostHurtEffects(livingTarget);
 
-				if (livingTarget != shooter && livingTarget instanceof Player && shooter instanceof ServerPlayer)
-					((ServerPlayer)shooter).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+				if (livingTarget != owner && livingTarget instanceof Player && owner instanceof ServerPlayer serverPlayer)
+					serverPlayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0));
 
-				if (!target.isAlive() && piercedAndKilledEntities != null)
-					piercedAndKilledEntities.add(livingTarget);
+				if (!target.isAlive() && this.piercedAndKilledEntities != null)
+					this.piercedAndKilledEntities.add(livingTarget);
 
-				if (!level().isClientSide && shooter instanceof ServerPlayer serverPlayer) {
-					if (piercedAndKilledEntities != null && shotFromCrossbow()) {
+				if (owner instanceof ServerPlayer serverPlayer && shotFromCrossbow()) {
+					if (this.piercedAndKilledEntities != null) {
 						CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverPlayer, this.piercedAndKilledEntities);
 					}
-					else if (!target.isAlive() && shotFromCrossbow()) {
+					else if (!target.isAlive()) {
 						CriteriaTriggers.KILLED_BY_CROSSBOW.trigger(serverPlayer, List.of(target));
 					}
 				}
@@ -298,12 +223,9 @@ public class CustomArrowEntity extends Arrow {
 				discard();
 		}
 		else {
-			target.setRemainingFireTicks(fireTimer);
-			setDeltaMovement(getDeltaMovement().scale(-0.1D));
-
-			setYRot(getYRot() + 180f);
-
-			yRotO += 180.0F;
+			target.setRemainingFireTicks(fireTicks);
+			deflect(ProjectileDeflection.REVERSE, target, owner, false);
+			setDeltaMovement(getDeltaMovement().scale(0.2));
 
 			if (!level().isClientSide && getDeltaMovement().lengthSqr() < 0.0000001) {
 				if (pickup == Pickup.ALLOWED)
@@ -312,5 +234,12 @@ public class CustomArrowEntity extends Arrow {
 				discard();
 			}
 		}
+	}
+
+	@Override
+	public boolean shotFromCrossbow() {
+		ItemStack weapon = getWeaponItem();
+
+		return weapon != null && weapon.getItem() instanceof CrossbowItem;
 	}
 }

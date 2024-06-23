@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 2.0,
+  "ingredient": {
+    "item": "aoa3:runium_ore"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:runium_chunk"
+  }
+}

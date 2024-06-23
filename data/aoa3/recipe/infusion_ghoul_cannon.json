@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:cannon_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:ghoulasm"
+    },
+    {
+      "item": "aoa3:ghoulasm"
+    },
+    {
+      "tag": "neoforge:ingots/ghoulish"
+    },
+    {
+      "tag": "neoforge:ingots/ghoulish"
+    },
+    {
+      "tag": "c:gunpowders"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:ghoul_cannon"
+  }
+}

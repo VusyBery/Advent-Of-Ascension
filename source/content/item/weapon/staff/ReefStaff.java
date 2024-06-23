@@ -1,6 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
 import com.google.common.base.Suppliers;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -61,8 +63,8 @@ public class ReefStaff extends BaseStaff<Boolean> {
 		map.put(Blocks.DEAD_HORN_CORAL_WALL_FAN, Blocks.HORN_CORAL_WALL_FAN);
 	}));
 
-	public ReefStaff(int durability) {
-		super(durability);
+	public ReefStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -71,10 +73,11 @@ public class ReefStaff extends BaseStaff<Boolean> {
 		return AoASounds.ITEM_REEF_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.ENERGY_RUNE.get(), 2);
-		runes.put(AoAItems.WATER_RUNE.get(), 1);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.ENERGY_RUNE.get(), 2);
+			runes.put(AoAItems.WATER_RUNE.get(), 1);
+		});
 	}
 
 	@Override
@@ -181,9 +184,9 @@ public class ReefStaff extends BaseStaff<Boolean> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 2));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

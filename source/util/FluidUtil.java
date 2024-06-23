@@ -16,14 +16,11 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.advent.AoAStartupCache;
-import net.tslat.aoa3.common.registration.item.AoACreativeModeTabs;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.library.object.MutableSupplier;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -37,8 +34,8 @@ public final class FluidUtil {
 		private final MutableSupplier<BaseFlowingFluid.Source> sourceFluid = new MutableSupplier<BaseFlowingFluid.Source>(null);
 		private final MutableSupplier<BaseFlowingFluid.Flowing> flowingFluid = new MutableSupplier<BaseFlowingFluid.Flowing>(null);
 
-		private BiFunction<MutableSupplier<BaseFlowingFluid.Flowing>, Block.Properties, Supplier<LiquidBlock>> blockCreationFunction = (flowingFluid, blockProperties) -> () -> new LiquidBlock(flowingFluid, blockProperties);
-		private BiFunction<MutableSupplier<BaseFlowingFluid.Source>, Item.Properties, Supplier<BucketItem>> bucketCreationFunction = (sourceFluid, itemProperties) -> () -> new BucketItem(sourceFluid, itemProperties);
+		private BiFunction<MutableSupplier<BaseFlowingFluid.Flowing>, Block.Properties, Supplier<LiquidBlock>> blockCreationFunction = (flowingFluid, blockProperties) -> () -> new LiquidBlock(flowingFluid.get(), blockProperties);
+		private BiFunction<MutableSupplier<BaseFlowingFluid.Source>, Item.Properties, Supplier<BucketItem>> bucketCreationFunction = (sourceFluid, itemProperties) -> () -> new BucketItem(sourceFluid.get(), itemProperties);
 		private Function<BaseFlowingFluid.Properties, Supplier<BaseFlowingFluid.Source>> sourceFluidFunction = properties -> () ->  new BaseFlowingFluid.Source(properties);
 		private Function<BaseFlowingFluid.Properties, Supplier<BaseFlowingFluid.Flowing>> flowingFluidFunction = properties -> () ->  new BaseFlowingFluid.Flowing(properties);
 
@@ -147,9 +144,8 @@ public final class FluidUtil {
 
 			makeFluidProperties();
 
-			DeferredHolder<Item, BucketItem> bucket = itemRegistry.register(id + "_bucket", this.bucketCreationFunction.apply(sourceFluid, new Item.Properties().craftRemainder(Items.BUCKET)));
+			DeferredHolder<Item, BucketItem> bucket = itemRegistry.register(id + "_bucket", this.bucketCreationFunction.apply(sourceFluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
-			AoAStartupCache.setItemCreativeTabs(bucket, List.of(AoACreativeModeTabs.MISC_ITEMS.getKey()));
 			this.fluidProperties.bucket(bucket);
 
 			return bucket;

@@ -1,15 +1,27 @@
 package net.tslat.aoa3.common.networking.packets;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.ClientOperations;
+import net.tslat.aoa3.util.StreamCodecUtil;
 
 import java.util.OptionalDouble;
 
-public record UpdateClientMovementPacket(Operation operation, OptionalDouble x, OptionalDouble y, OptionalDouble z) implements AoAPacket<PlayPayloadContext> {
-	public static final ResourceLocation ID = AdventOfAscension.id("update_client_movement");
+public record UpdateClientMovementPacket(Operation operation, OptionalDouble x, OptionalDouble y, OptionalDouble z) implements AoAPacket {
+	public static final Type<UpdateClientMovementPacket> TYPE = new Type<>(AdventOfAscension.id("update_client_movement"));
+	public static final StreamCodec<FriendlyByteBuf, UpdateClientMovementPacket> CODEC = StreamCodec.composite(
+			NeoForgeStreamCodecs.enumCodec(Operation.class),
+			UpdateClientMovementPacket::operation,
+			StreamCodecUtil.OPTIONAL_DOUBLE,
+			UpdateClientMovementPacket::x,
+			StreamCodecUtil.OPTIONAL_DOUBLE,
+			UpdateClientMovementPacket::y,
+			StreamCodecUtil.OPTIONAL_DOUBLE,
+			UpdateClientMovementPacket::z,
+			UpdateClientMovementPacket::new);
 
 	public UpdateClientMovementPacket(Operation operation, double x, double y, double z) {
 		this(operation, OptionalDouble.of(x), OptionalDouble.of(y), OptionalDouble.of(z));
@@ -24,34 +36,13 @@ public record UpdateClientMovementPacket(Operation operation, OptionalDouble x, 
 	}
 
 	@Override
-	public ResourceLocation id() {
-		return ID;
+	public Type<? extends UpdateClientMovementPacket> type() {
+		return TYPE;
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeEnum(this.operation);
-		this.x.ifPresentOrElse(x -> {
-			buffer.writeBoolean(true);
-			buffer.writeDouble(x);
-		}, () -> buffer.writeBoolean(false));
-		this.y.ifPresentOrElse(y -> {
-			buffer.writeBoolean(true);
-			buffer.writeDouble(y);
-		}, () -> buffer.writeBoolean(false));
-		this.z.ifPresentOrElse(z -> {
-			buffer.writeBoolean(true);
-			buffer.writeDouble(z);
-		}, () -> buffer.writeBoolean(false));
-	}
-
-	public static UpdateClientMovementPacket decode(FriendlyByteBuf buffer) {
-		return new UpdateClientMovementPacket(buffer.readEnum(Operation.class), buffer.readBoolean() ? OptionalDouble.of(buffer.readDouble()) : OptionalDouble.empty(), buffer.readBoolean() ? OptionalDouble.of(buffer.readDouble()) : OptionalDouble.empty(), buffer.readBoolean() ? OptionalDouble.of(buffer.readDouble()) : OptionalDouble.empty());
-	}
-
-	@Override
-	public void receiveMessage(PlayPayloadContext context) {
-		context.workHandler().execute(() -> ClientOperations.adjustPlayerMovement(this.x, this.y, this.z, this.operation));
+	public void receiveMessage(IPayloadContext context) {
+		context.enqueueWork(() -> ClientOperations.adjustPlayerMovement(this.x, this.y, this.z, this.operation));
 	}
 
 	public enum Operation {

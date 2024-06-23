@@ -7,14 +7,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.event.custom.events.*;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.util.EntityUtil;
@@ -30,7 +30,7 @@ public final class AoAPlayerEvents {
 	public static void preInit() {
 		final IEventBus forgeBus = NeoForge.EVENT_BUS;
 
-		forgeBus.addListener(EventPriority.NORMAL, false, TickEvent.PlayerTickEvent.class, AoAPlayerEvents::onPlayerTick);
+		forgeBus.addListener(EventPriority.NORMAL, false, PlayerTickEvent.Pre.class, AoAPlayerEvents::onPlayerTick);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingEvent.LivingJumpEvent.class, AoAPlayerEvents::onPlayerJump);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingFallEvent.class, AoAPlayerEvents::onPlayerFall);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingDeathEvent.class, AoAPlayerEvents::onEntityDeath);
@@ -92,8 +92,8 @@ public final class AoAPlayerEvents {
 		}
 	}
 
-	private static void onPlayerTick(final TickEvent.PlayerTickEvent ev) {
-		if (ev.phase == TickEvent.Phase.END && ev.player instanceof ServerPlayer pl) {
+	private static void onPlayerTick(final PlayerTickEvent.Pre ev) {
+		if (ev.getEntity() instanceof ServerPlayer pl) {
 			PlayerUtil.getAdventPlayer(pl).doPlayerTick();
 
 			issueEvent(pl, PLAYER_TICK, listener -> listener.handlePlayerTick(ev));

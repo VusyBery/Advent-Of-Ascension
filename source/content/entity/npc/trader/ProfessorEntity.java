@@ -33,7 +33,7 @@ public class ProfessorEntity extends AoATrader {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.7625f;
 	}
 

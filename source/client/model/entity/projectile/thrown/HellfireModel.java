@@ -44,7 +44,7 @@ public class HellfireModel extends EntityModel<HellfireEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
+	public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
 		root.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 }

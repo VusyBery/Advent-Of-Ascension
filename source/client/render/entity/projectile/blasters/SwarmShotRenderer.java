@@ -2,10 +2,10 @@ package net.tslat.aoa3.client.render.entity.projectile.blasters;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.tslat.aoa3.client.render.entity.projectile.ParticleProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.blaster.SwarmShotEntity;
 import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
 public class SwarmShotRenderer extends ParticleProjectileRenderer<SwarmShotEntity> {
 	public SwarmShotRenderer(final EntityRendererProvider.Context manager) {
@@ -14,8 +14,9 @@ public class SwarmShotRenderer extends ParticleProjectileRenderer<SwarmShotEntit
 
 	@Override
 	protected void addParticles(SwarmShotEntity entity, float partialTicks) {
-		for (int i = 0; i < 3; i++) {
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SWIRLY.get(), 1, 3, ColourUtil.RGB(146, 98, 57)), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-		}
+		ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_SWIRL.get(), entity.position())
+				.spawnNTimes(3)
+				.colourOverride(0x926239)
+				.spawnParticles(entity.level());
 	}
 }

@@ -12,6 +12,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.util.Color;
 
 public class AnimatedMobRenderer<T extends LivingEntity & GeoEntity> extends GeoEntityRenderer<T> {
 	public AnimatedMobRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model, float shadowSize) {
@@ -28,12 +29,12 @@ public class AnimatedMobRenderer<T extends LivingEntity & GeoEntity> extends Geo
 	}
 
 	@Override
-	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
 		if (animatable.getStringUUID().startsWith("00000")) { // Shiny :)
-			super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, LightTexture.FULL_BRIGHT, packedOverlay, 0, 0, 0, 0.5f);
+			super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, LightTexture.FULL_BRIGHT, packedOverlay, Color.ofARGB(0.5f, 0, 0, 0).argbInt());
 		}
 		else {
-			super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 		}
 	}
 }

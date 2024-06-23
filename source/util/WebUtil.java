@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Level;
 
 public final class WebUtil {
 	private static boolean isUpdateAvailable = false;
-	private static String latestVersion = AdventOfAscension.VERSION;
+	private static String latestVersion = AdventOfAscension.getVersion();
 
 	public static void doHTTPTasks() {
 		Logging.logMessage(Level.DEBUG, "Starting web tasks");

@@ -1,9 +1,9 @@
 package net.tslat.aoa3.content.block.generation.plants;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -18,10 +18,8 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.neoforged.neoforge.common.IPlantable;
 import net.neoforged.neoforge.common.IShearable;
 import net.neoforged.neoforge.common.PlantType;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -81,13 +79,13 @@ public class StackablePlant extends Block implements IShearable, IPlantable {
 	}
 
 	@Override
-	public boolean isShearable(@NotNull ItemStack item, Level world, BlockPos pos) {
+	public boolean isShearable(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
 		return true;
 	}
 
 	@Override
-	public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type) {
-		return type == PathComputationType.AIR && !this.hasCollision || super.isPathfindable(state, worldIn, pos, type);
+	public boolean isPathfindable(BlockState state, PathComputationType type) {
+		return type == PathComputationType.AIR && !this.hasCollision || super.isPathfindable(state, type);
 	}
 
 	@Override
@@ -105,14 +103,9 @@ public class StackablePlant extends Block implements IShearable, IPlantable {
 		return state;
 	}
 
-	@NotNull
 	@Override
-	public List<ItemStack> onSheared(@Nullable Player player, @NotNull ItemStack item, Level world, BlockPos pos, int fortune) {
-		ArrayList<ItemStack> drops = new ArrayList<ItemStack>();
-
-		drops.add(new ItemStack(Item.byBlock(this)));
-
-		return drops;
+	public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
+		return ObjectArrayList.of(asItem().getDefaultInstance());
 	}
 
 	// TODO Look at random offset? RE: DoublePlantBlock

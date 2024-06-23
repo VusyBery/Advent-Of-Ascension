@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "aoa3:darkwash_bricks"
-  },
-  "result": "aoa3:darkwash_brick_slab"
-}

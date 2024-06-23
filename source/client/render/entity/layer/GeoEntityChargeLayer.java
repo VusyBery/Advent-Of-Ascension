@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.util.ColourUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -32,7 +33,7 @@ public class GeoEntityChargeLayer<T extends Entity & GeoEntity> extends GeoRende
 		renderType = RenderType.energySwirl(texture, adjustU(lerpedTicks) % 1, lerpedTicks * 0.005F % 1);
 		buffer = bufferSource.getBuffer(renderType);
 
-		this.renderer.reRender(bakedModel, poseStack, bufferSource, animatable, renderType, buffer, partialTick, packedLight, packedOverlay, 0.5f, 0.5f, 0.5f, 0.5f);
+		this.renderer.reRender(bakedModel, poseStack, bufferSource, animatable, renderType, buffer, partialTick, packedLight, packedOverlay, ColourUtil.ARGB(0.5f, 0.5f, 0.5f, 0.5f));
 	}
 
 	@Nullable

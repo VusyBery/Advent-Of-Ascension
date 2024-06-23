@@ -3,10 +3,10 @@ package net.tslat.aoa3.common.registration;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.library.object.AllDirections;
 import net.tslat.aoa3.library.object.explosion.ExplosionInfo;
 import net.tslat.aoa3.util.PlayerUtil;
@@ -23,13 +23,13 @@ public final class AoAExplosions {
 			.radius(5)
 			.baseDamage(40)
 			.damageMod((explosion, target) -> PlayerUtil.getPlayerOrOwnerIfApplicable(target) != null ? 1 : 0f)
-			.onHit((explosion, target) -> target.setSecondsOnFire(target.getRemainingFireTicks() / 20 + 10));
+			.onHit((explosion, target) -> target.igniteForSeconds(target.getRemainingFireTicks() / 20 + 10));
 	public static final ExplosionInfo LITTLE_BAM_OVERLOAD = new ExplosionInfo()
 			.radius(6)
 			.baseDamage(20)
 			.penetration(30)
 			.baseKnockbackStrength(1.25f)
-			.onHit((explosion, entity) -> entity.setSecondsOnFire(3))
+			.onHit((explosion, entity) -> entity.igniteForSeconds(3))
 			.onBlockHit((explosion, state, pos) -> {
 				if (explosion.level.random.nextInt(3) == 0 && explosion.level.getBlockState(pos.below()).isSolidRender(explosion.level, pos.below()))
 					explosion.level.setBlock(pos, Blocks.FIRE.defaultBlockState(), Block.UPDATE_ALL);
@@ -40,7 +40,11 @@ public final class AoAExplosions {
 
 				for (AllDirections direction : AllDirections.values()) {
 					Vec3i angle = direction.angle();
-					packet.particle(ParticleBuilder.forPosition(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 5, 0x7C0000), pos.x, pos.y, pos.z).velocity(angle.getX() * 10, angle.getY() * 10, angle.getZ() * 10));
+
+					packet.particle(ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), pos)
+							.lifespan(Mth.ceil(5 * (explosion.rand().nextFloat() * 0.8f + 0.2f)))
+							.colourOverride((explosion.rand().nextFloat() * 0.7f + 0.3f) * 124 / 255f, 0, 0, 1f)
+							.velocity(angle.getX() * 10, angle.getY() * 10, angle.getZ() * 10));
 				}
 
 				packet.sendToAllNearbyPlayers((ServerLevel)explosion.level, pos, 64);

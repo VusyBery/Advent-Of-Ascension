@@ -20,8 +20,8 @@ public class GrindstoneMenuMixin {
     @Final
     Container repairSlots;
 
-    @WrapOperation(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/GrindstoneMenu;removeNonCurses(Lnet/minecraft/world/item/ItemStack;II)Lnet/minecraft/world/item/ItemStack;"))
-    private ItemStack aoa3$modifyResult(GrindstoneMenu instance, ItemStack stack, int count, int damage, Operation<ItemStack> original) {
+    @WrapOperation(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/GrindstoneMenu;computeResult(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;"))
+    private ItemStack aoa3$modifyResult(GrindstoneMenu instance, ItemStack inputItem, ItemStack additionalItem, Operation<ItemStack> original) {
         Player player = null;
 
         for (Slot slot : instance.slots) {
@@ -32,7 +32,7 @@ public class GrindstoneMenuMixin {
             }
         }
 
-        ItemStack output = original.call(instance, stack, count, damage);
+        ItemStack output = original.call(instance, inputItem, additionalItem);
 
         if (player == null || !AoAEvents.firePlayerGrindstoneEvent(player, output, this.repairSlots))
             return output;

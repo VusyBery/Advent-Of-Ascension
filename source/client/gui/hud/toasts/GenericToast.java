@@ -11,7 +11,7 @@ import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.RenderUtil;
 
 public class GenericToast implements Toast {
-    protected static final ResourceLocation ADVANCEMENT_TOAST_TEXTURE = new ResourceLocation("toast/advancement");
+    protected static final ResourceLocation ADVANCEMENT_TOAST_TEXTURE = ResourceLocation.withDefaultNamespace("toast/advancement");
     protected final Component title;
     protected final Component message;
 

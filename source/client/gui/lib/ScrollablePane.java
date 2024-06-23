@@ -2,10 +2,7 @@ package net.tslat.aoa3.client.gui.lib;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -97,28 +94,27 @@ public abstract class ScrollablePane {
 			int barTop = Math.max((int)distanceScrolled * (viewHeight - scrollBarHeight) / paneViewDiff + top, top);
 			int barLeft = right - 6;
 			Tesselator tess = Tesselator.getInstance();
-			BufferBuilder buff = tess.getBuilder();
+			BufferBuilder buff = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			Matrix4f matrix4f = guiGraphics.pose().last().pose();
 
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			buff.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			buff.vertex(matrix4f, barLeft, bottom, 0).uv(0, 1).color(0, 0, 0, 255).endVertex();
-			buff.vertex(matrix4f, right + 1, bottom, 0).uv(1, 1).color(0, 0, 0, 255).endVertex();
-			buff.vertex(matrix4f, right + 1, top, 0).uv(1, 0).color(0, 0, 0, 255).endVertex();
-			buff.vertex(matrix4f, barLeft, top, 0).uv(0, 0).color(0, 0, 0, 255).endVertex();
-			tess.end();
-			buff.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			buff.vertex(matrix4f, barLeft, barTop + scrollBarHeight, 0).uv(0, 1).color(128, 128, 128, 255).endVertex();
-			buff.vertex(matrix4f, right + 1, barTop + scrollBarHeight, 0).uv(1, 1).color(128, 128, 128, 255).endVertex();
-			buff.vertex(matrix4f, right + 1, barTop, 0).uv(1, 0).color(128, 128, 128, 255).endVertex();
-			buff.vertex(matrix4f, barLeft, barTop, 0).uv(0, 0).color(128, 128, 128, 255).endVertex();
-			tess.end();
-			buff.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			buff.vertex(matrix4f, barLeft, barTop + scrollBarHeight - 1, 0).uv(0, 1).color(192, 192, 192, 255).endVertex();
-			buff.vertex(matrix4f, right, barTop + scrollBarHeight - 1, 0).uv(1, 1).color(192, 192, 192, 255).endVertex();
-			buff.vertex(matrix4f, right, barTop, 0).uv(1, 0).color(192, 192, 192, 255).endVertex();
-			buff.vertex(matrix4f, barLeft, barTop, 0).uv(0, 0).color(192, 192, 192, 255).endVertex();
-			tess.end();
+			buff.addVertex(matrix4f, barLeft, bottom, 0).setUv(0, 1).setColor(0, 0, 0, 255);
+			buff.addVertex(matrix4f, right + 1, bottom, 0).setUv(1, 1).setColor(0, 0, 0, 255);
+			buff.addVertex(matrix4f, right + 1, top, 0).setUv(1, 0).setColor(0, 0, 0, 255);
+			buff.addVertex(matrix4f, barLeft, top, 0).setUv(0, 0).setColor(0, 0, 0, 255);
+			BufferUploader.drawWithShader(buff.buildOrThrow());
+			buff = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			buff.addVertex(matrix4f, barLeft, barTop + scrollBarHeight, 0).setUv(0, 1).setColor(128, 128, 128, 255);
+			buff.addVertex(matrix4f, right + 1, barTop + scrollBarHeight, 0).setUv(1, 1).setColor(128, 128, 128, 255);
+			buff.addVertex(matrix4f, right + 1, barTop, 0).setUv(1, 0).setColor(128, 128, 128, 255);
+			buff.addVertex(matrix4f, barLeft, barTop, 0).setUv(0, 0).setColor(128, 128, 128, 255);
+			BufferUploader.drawWithShader(buff.buildOrThrow());
+			buff = tess.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			buff.addVertex(matrix4f, barLeft, barTop + scrollBarHeight - 1, 0).setUv(0, 1).setColor(192, 192, 192, 255);
+			buff.addVertex(matrix4f, right, barTop + scrollBarHeight - 1, 0).setUv(1, 1).setColor(192, 192, 192, 255);
+			buff.addVertex(matrix4f, right, barTop, 0).setUv(1, 0).setColor(192, 192, 192, 255);
+			buff.addVertex(matrix4f, barLeft, barTop, 0).setUv(0, 0).setColor(192, 192, 192, 255);
+			BufferUploader.drawWithShader(buff.buildOrThrow());
 		}
 
 		//RenderSystem.shadeModel(GL11.GL_FLAT);

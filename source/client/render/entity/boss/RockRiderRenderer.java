@@ -11,8 +11,8 @@ import net.tslat.aoa3.content.entity.boss.RockRiderEntity;
 
 
 public class RockRiderRenderer extends MobRenderer<RockRiderEntity, EntityModel<RockRiderEntity>> {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/rockrider/rock_rider.png");
-	private static final ResourceLocation ALTERNATE_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/rockrider/rock_rider_alternate.png");
+	private static final ResourceLocation TEXTURE = AdventOfAscension.id("textures/entity/boss/rockrider/rock_rider.png");
+	private static final ResourceLocation ALTERNATE_TEXTURE = AdventOfAscension.id("textures/entity/boss/rockrider/rock_rider_alternate.png");
 
 	public RockRiderRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new RockRiderModel(), AoAMobs.ROCK_RIDER.get().getWidth() / 3);

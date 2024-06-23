@@ -1,0 +1,42 @@
+{
+  "parent": "minecraft:story/mine_stone",
+  "criteria": {
+    "enter_structure_ruined_teleporter_frame": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "location": {
+                "structures": "aoa3:ruined_teleporter_frame"
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.overworld.nostalgia_trip.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "aoa3:ancient_rock"
+    },
+    "title": {
+      "color": "dark_green",
+      "translate": "advancements.aoa3.overworld.nostalgia_trip.title"
+    }
+  },
+  "requirements": [
+    [
+      "enter_structure_ruined_teleporter_frame"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -41,15 +41,15 @@ public class CottonCandorEntity extends AoAFlyingRangedMob {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.71875f;
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		entityData.define(STAGE, (byte)0);
+		builder.define(STAGE, (byte)0);
 	}
 
 	private void changeStage(int stage) {
@@ -79,7 +79,7 @@ public class CottonCandorEntity extends AoAFlyingRangedMob {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
@@ -171,7 +171,7 @@ public class CottonCandorEntity extends AoAFlyingRangedMob {
 				PlayerUtil.messageAllPlayersInRange(LocaleUtil.getLocaleMessage(AoAMobs.COTTON_CANDOR.get().getDescriptionId() + ".kill", killer.getDisplayName()), level, blockPosition(), 50);
 
 				if (cause.getDirectEntity() instanceof PrimordialShotEntity && (killer.getMainHandItem().getItem() == AoAWeapons.WIND_STAFF.get() || killer.getOffhandItem().getItem() == AoAWeapons.WIND_STAFF.get()))
-					AdvancementUtil.completeAdvancement((ServerPlayer)killer, new ResourceLocation(AdventOfAscension.MOD_ID, "candyland/when_push_comes_to_shove"), "wind_staff_cotton_candor_kill");
+					AdvancementUtil.completeAdvancement((ServerPlayer)killer, AdventOfAscension.id("candyland/when_push_comes_to_shove"), "wind_staff_cotton_candor_kill");
 			}
 		}
 	}

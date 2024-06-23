@@ -1,7 +1,8 @@
 package net.tslat.aoa3.content.block.functional.misc;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.MobSpawnType;
@@ -18,13 +19,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.common.registration.worldgen.AoAWorldgenKeys;
-import net.tslat.aoa3.content.entity.mob.precasia.AttercopusEntity;
+import net.tslat.aoa3.content.entity.monster.precasia.AttercopusEntity;
 import net.tslat.aoa3.library.object.AllDirections;
 import net.tslat.aoa3.util.BlockUtil;
 import net.tslat.aoa3.util.EntitySpawningUtil;
-import net.tslat.aoa3.util.ObjectUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,15 +65,13 @@ public class CocoonBlock extends Block {
     }
 
     private static boolean trySpawn(ServerLevel level, BlockPos pos, RandomSource random) {
-        final List<AllDirections> directions = new ObjectArrayList<>(AllDirections.values());
-
-        ObjectUtil.fastShuffleList(directions);
+        List<AllDirections> directions = Util.shuffledCopy(AllDirections.values(), random);
 
         for (AllDirections direction : directions) {
             BlockPos spawnPos = pos.offset(direction.angle());
 
             if (!level.getBlockState(spawnPos).isSuffocating(level, spawnPos) && Monster.isDarkEnoughToSpawn(level, pos, random)) {
-                EntitySpawningUtil.spawnEntity(level, AoAMobs.ATTERCOPUS.get(), Vec3.atCenterOf(spawnPos), MobSpawnType.SPAWNER);
+                EntitySpawningUtil.spawnEntity(level, AoAMonsters.ATTERCOPUS.get(), Vec3.atCenterOf(spawnPos), MobSpawnType.SPAWNER);
 
                 return true;
             }
@@ -91,7 +89,7 @@ public class CocoonBlock extends Block {
         if (EntityRetrievalUtil.getPlayers(level, bounds.inflate(30)).isEmpty())
             return false;
 
-        if (level.structureManager().getStructureWithPieceAt(pos, AoAWorldgenKeys.Structures.ATTERCOPUS_NEST) == StructureStart.INVALID_START)
+        if (level.registryAccess().registry(Registries.STRUCTURE).get().getOptional(AoAWorldgenKeys.Structures.ATTERCOPUS_NEST).map(nest -> level.structureManager().getStructureWithPieceAt(pos, nest) == StructureStart.INVALID_START).orElse(true))
             return false;
 
         if (EntityRetrievalUtil.getEntities(level, bounds.inflate(10), entity -> entity instanceof AttercopusEntity).size() > 20)

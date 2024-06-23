@@ -2,11 +2,14 @@ package net.tslat.aoa3.content.entity.misc;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
@@ -46,6 +49,8 @@ public class FishingCageEntity extends Entity {
 	public static final EntityDataHolder<ItemStack> CAUGHT_STACK_1 = EntityDataHolder.register(FishingCageEntity.class, EntityDataSerializers.ITEM_STACK, ItemStack.EMPTY, cage -> cage.loot[0], (cage, stack) -> cage.loot[0] = stack);
 	public static final EntityDataHolder<ItemStack> CAUGHT_STACK_2 = EntityDataHolder.register(FishingCageEntity.class, EntityDataSerializers.ITEM_STACK, ItemStack.EMPTY, cage -> cage.loot[1], (cage, stack) -> cage.loot[1] = stack);
 	public static final EntityDataHolder<ItemStack> CAUGHT_STACK_3 = EntityDataHolder.register(FishingCageEntity.class, EntityDataSerializers.ITEM_STACK, ItemStack.EMPTY, cage -> cage.loot[2], (cage, stack) -> cage.loot[2] = stack);
+
+	public static final ResourceKey<LootTable> FISHING_CAGE_LOOT_TABLE = ResourceKey.create(Registries.LOOT_TABLE, AdventOfAscension.id("misc/fishing_cage_catches"));
 
 	private UUID ownerUUID = null;
 	private int damage;
@@ -103,15 +108,15 @@ public class FishingCageEntity extends Entity {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		CAUGHT_STACK_1.defineDefault(this);
-		CAUGHT_STACK_2.defineDefault(this);
-		CAUGHT_STACK_3.defineDefault(this);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		CAUGHT_STACK_1.defineDefault(builder);
+		CAUGHT_STACK_2.defineDefault(builder);
+		CAUGHT_STACK_3.defineDefault(builder);
 	}
 
 	@Override
@@ -133,7 +138,7 @@ public class FishingCageEntity extends Entity {
 
 		for (int i = 0; i < 3; i++) {
 			if (!this.loot[i].isEmpty())
-				lootList.add(this.loot[i].save(new CompoundTag()));
+				lootList.add(this.loot[i].save(registryAccess()));
 		}
 
 		if (!lootList.isEmpty())
@@ -152,12 +157,12 @@ public class FishingCageEntity extends Entity {
 			ListTag lootList = compound.getList("loot", Tag.TAG_COMPOUND);
 
 			if (lootList.size() > 2)
-				CAUGHT_STACK_3.set(this, ItemStack.of(lootList.getCompound(2)));
+				CAUGHT_STACK_3.set(this, ItemUtil.loadStackFromNbt(level(), lootList.getCompound(2)));
 
 			if (lootList.size() > 1)
-				CAUGHT_STACK_2.set(this, ItemStack.of(lootList.getCompound(1)));
+				CAUGHT_STACK_2.set(this, ItemUtil.loadStackFromNbt(level(), lootList.getCompound(1)));
 
-			CAUGHT_STACK_1.set(this, ItemStack.of(lootList.getCompound(0)));
+			CAUGHT_STACK_1.set(this, ItemUtil.loadStackFromNbt(level(), lootList.getCompound(0)));
 		}
 	}
 
@@ -225,9 +230,9 @@ public class FishingCageEntity extends Entity {
 						.withParameter(LootContextParams.ORIGIN, this.position())
 						.withParameter(LootContextParams.TOOL, new ItemStack(AoATools.FISHING_CAGE.get()))
 						.withParameter(LootContextParams.THIS_ENTITY, this)
-						.withParameter(LootContextParams.KILLER_ENTITY, owner)
+						.withParameter(LootContextParams.ATTACKING_ENTITY, owner)
 						.withLuck(2 + owner.getLuck());
-				LootTable lootTable = level().getServer().getLootData().getLootTable(AdventOfAscension.id("misc/fishing_cage_catches"));
+				LootTable lootTable = level().getServer().reloadableRegistries().getLootTable(FISHING_CAGE_LOOT_TABLE);
 				List<ItemStack> loot = lootTable.getRandomItems(lootContext.create(LootContextParamSets.FISHING));
 
 				for (int i = 0; i < 3 && i < loot.size(); i++) {

@@ -11,15 +11,9 @@ import net.tslat.aoa3.content.entity.projectile.cannon.RockFragmentEntity;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import org.jetbrains.annotations.Nullable;
 
-
 public class JackRocker extends BaseCannon {
-	double dmg;
-	int firingDelay;
-
-	public JackRocker(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
-		this.dmg = dmg;
-		this.firingDelay = firingDelayTicks;
+	public JackRocker(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

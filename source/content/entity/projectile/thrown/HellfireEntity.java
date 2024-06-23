@@ -2,7 +2,6 @@ package net.tslat.aoa3.content.entity.projectile.thrown;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -54,7 +53,7 @@ public class HellfireEntity extends BaseBullet implements HardProjectile, ItemSu
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.075f;
 	}
 
@@ -80,14 +79,14 @@ public class HellfireEntity extends BaseBullet implements HardProjectile, ItemSu
 		int count = 0;
 		Player attacker = getOwner() instanceof Player pl ? pl : null;
 
-		for (LivingEntity target : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(7.0D), EntityUtil.Predicates.HOSTILE_MOB)) {
+		for (LivingEntity target : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(7.0D), EntityUtil::isHostileMob)) {
 			if (DamageUtil.doMiscMagicAttack(getOwner(), target, 3.5f, position())) {
 				HellfireProjectileEntity tail = new HellfireProjectileEntity(this, target.getX(), target.getY(), target.getZ());
 
 				tail.setOwner(getOwner());
 
 				level().addFreshEntity(tail);
-				target.setSecondsOnFire(10);
+				target.igniteForSeconds(10);
 				target.hurt(level().damageSources().indirectMagic(attacker, this), 0.1f);
 
 				if (attacker != null) {
@@ -103,7 +102,7 @@ public class HellfireEntity extends BaseBullet implements HardProjectile, ItemSu
 			level().playSound(null, getX(), getY(), getZ(), AoASounds.HELLFIRE_IMPACT.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
 
 			if (count >= 20 && shooter instanceof ServerPlayer)
-				AdvancementUtil.completeAdvancement((ServerPlayer)shooter, new ResourceLocation(AdventOfAscension.MOD_ID, "overworld/heckfire"), "20_target_hellfire");
+				AdvancementUtil.grantCriterion((ServerPlayer)shooter, AdventOfAscension.id("overworld/heckfire"), "20_target_hellfire");
 		}
 	}
 

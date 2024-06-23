@@ -1,0 +1,33 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:blaster_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:power_core"
+    },
+    {
+      "item": "aoa3:unstable_gunpowder"
+    },
+    {
+      "tag": "neoforge:ingots/lyon"
+    },
+    {
+      "tag": "neoforge:ingots/lyon"
+    },
+    {
+      "tag": "neoforge:ingots/blazium"
+    },
+    {
+      "tag": "neoforge:ingots/blazium"
+    },
+    {
+      "tag": "neoforge:ingots/blazium"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:revolution"
+  }
+}

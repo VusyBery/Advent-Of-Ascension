@@ -1,0 +1,37 @@
+{
+  "parent": "aoa3:completionist/root",
+  "criteria": {
+    "obtain_holy_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:holy_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.completionist.sponsored_by_god.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "aoa3:holy_sword"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.completionist.sponsored_by_god.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_holy_sword"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -2,10 +2,10 @@ package net.tslat.aoa3.client.render.entity.projectile.staff;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.tslat.aoa3.client.render.entity.projectile.ParticleProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.staff.MeteorFallEntity;
 import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
 public class MeteorFallRenderer extends ParticleProjectileRenderer<MeteorFallEntity> {
 	public MeteorFallRenderer(final EntityRendererProvider.Context manager) {
@@ -14,10 +14,20 @@ public class MeteorFallRenderer extends ParticleProjectileRenderer<MeteorFallEnt
 
 	@Override
 	protected void addParticles(MeteorFallEntity entity, float partialTicks) {
-		for (int i = 0; i < 3; i++) {
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.RED), entity.getX(), entity.getY() , entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.RGB(223, 153, 0)), entity.getX(), entity.getY() - 0.3D , entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.YELLOW), entity.getX(), entity.getY() - 0.6D , entity.getZ(), 0, 0, 0);
-		}
+		ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+				.ignoreDistanceAndLimits()
+				.spawnNTimes(3)
+				.colourOverride(ColourUtil.RED)
+				.spawnParticles(entity.level());
+		ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().subtract(0, 0.3d, 0))
+				.ignoreDistanceAndLimits()
+				.spawnNTimes(3)
+				.colourOverride(0xDF9900)
+				.spawnParticles(entity.level());
+		ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().subtract(0, 0.6d, 0))
+				.ignoreDistanceAndLimits()
+				.spawnNTimes(3)
+				.colourOverride(ColourUtil.YELLOW)
+				.spawnParticles(entity.level());
 	}
 }

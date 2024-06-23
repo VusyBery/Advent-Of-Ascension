@@ -28,7 +28,6 @@ import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import net.tslat.smartbrainlib.util.RandomUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -46,13 +45,13 @@ public class ChumItem extends Item {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
-		return super.getUseDuration(stack) + 3;
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
+		return super.getUseDuration(stack, user) + 3;
 	}
 
 	@Override
 	public void releaseUsing(ItemStack stack, Level level, LivingEntity user, int timeLeft) {
-		if (level instanceof ServerLevel serverLevel && getUseDuration(stack) - timeLeft < 5) {
+		if (level instanceof ServerLevel serverLevel && getUseDuration(stack, user) - timeLeft < 5) {
 			Vec3 velocityVector = EntityUtil.getVelocityVectorForFacing(user).multiply(1, 1.5, 1);
 			List<BlockPos> positions = WorldUtil.getBlocksWithinAABB(serverLevel, user.getBoundingBox().move(velocityVector.x() * 3, velocityVector.y() * 3, velocityVector.z() * 3), (blockState, mutable) -> blockState.getFluidState().is(FluidTags.WATER) && blockState.getFluidState().getHeight(level, mutable) > 0.85f);
 
@@ -107,7 +106,7 @@ public class ChumItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level pLevel, List<Component> tooltip, TooltipFlag flags) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flags) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.NEUTRAL, 1));
 	}
 }

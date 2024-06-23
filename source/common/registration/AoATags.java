@@ -11,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.internal.versions.neoforge.NeoForgeVersion;
@@ -21,6 +22,22 @@ public final class AoATags {
 		public static final TagKey<Block> GRASS = tag("grass");
 		public static final TagKey<Block> MUSHROOMS = tag("mushrooms");
 		public static final TagKey<Block> FARMLAND = tag("farmland");
+
+		public static final TagKey<Block> INCORRECT_FOR_EMBERSTONE_TOOL = aoaTag("incorrect_for_emberstone_tool");
+		public static final TagKey<Block> INCORRECT_FOR_JADE_TOOL = aoaTag("incorrect_for_jade_tool");
+		public static final TagKey<Block> INCORRECT_FOR_LIMONITE_TOOL = aoaTag("incorrect_for_limonite_tool");
+		public static final TagKey<Block> INCORRECT_FOR_ORNAMYTE_TOOL = aoaTag("incorrect_for_ornamyte_tool");
+		public static final TagKey<Block> INCORRECT_FOR_SKELETAL_TOOL = aoaTag("incorrect_for_skeletal_tool");
+		public static final TagKey<Block> INCORRECT_FOR_ENERGISTIC_TOOL = aoaTag("incorrect_for_energistic_tool");
+		public static final TagKey<Block> INCORRECT_FOR_GEMCRACKER_TOOL = aoaTag("incorrect_for_gemcracker_tool");
+		public static final TagKey<Block> INCORRECT_FOR_GOOFY_TOOL = aoaTag("incorrect_for_goofy_tool");
+		public static final TagKey<Block> INCORRECT_FOR_OCCULT_TOOL = aoaTag("incorrect_for_occult_tool");
+		public static final TagKey<Block> INCORRECT_FOR_PICKMAX_TOOL = aoaTag("incorrect_for_pickmax_tool");
+		public static final TagKey<Block> INCORRECT_FOR_SOULSTONE_TOOL = aoaTag("incorrect_for_soulstone_tool");
+		public static final TagKey<Block> INCORRECT_FOR_CHAINSAW_TOOL = aoaTag("incorrect_for_chainsaw_tool");
+		public static final TagKey<Block> INCORRECT_FOR_DRYADS_BLESSING_TOOL = aoaTag("incorrect_for_dryads_blessing_tool");
+		public static final TagKey<Block> INCORRECT_FOR_ROCK_PICK_TOOL = aoaTag("incorrect_for_rock_pick_tool");
+		public static final TagKey<Block> INCORRECT_FOR_TROLL_BASHER_TOOL = aoaTag("incorrect_for_troll_basher_tool");
 
 		public static final TagKey<Block> BARONYTE_ORE = tag("ores/baronyte");
 		public static final TagKey<Block> BLAZIUM_ORE = tag("ores/blazium");
@@ -81,12 +98,16 @@ public final class AoATags {
 
 		public static final TagKey<Block> BASE_STONE_PRECASIA = tag("base_stone_precasia");
 
+		public static final TagKey<Block> EXTRACTION_TRAINABLE = tag("extraction_trainable");
+
+		public static final TagKey<Block> INFINIBURN_BARATHOS = aoaTag("infiniburn_barathos");
+
 		private static TagKey<Block> aoaTag(String id) {
-			return BlockTags.create(new ResourceLocation(AdventOfAscension.MOD_ID, id));
+			return BlockTags.create(AdventOfAscension.id(id));
 		}
 
 		private static TagKey<Block> tag(String id) {
-			return BlockTags.create(new ResourceLocation(NeoForgeVersion.MOD_ID, id));
+			return BlockTags.create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
 		}
 	}
 
@@ -192,9 +213,7 @@ public final class AoATags {
 		public static final TagKey<Item> FAUNAMANCER_TOOL = aoaTag("faunamancer_tool");
 		public static final TagKey<Item> POWER_STONE = aoaTag("power_stones");
 
-		public static final TagKey<Item> SWORDS = tag("swords");
 		public static final TagKey<Item> CURRENCY = tag("currency");
-		public static final TagKey<Item> CANDY = tag("candy");
 		public static final TagKey<Item> FRUIT = tag("fruit");
 		public static final TagKey<Item> MILK = tag("milk");
 		public static final TagKey<Item> GINGERBREAD = tag("gingerbread");
@@ -205,15 +224,11 @@ public final class AoATags {
 		public static final TagKey<Item> RODS_METAL = tag("rods/metal");
 		public static final TagKey<Item> AIRTIGHT = tag("armor/airtight");
 
-		public static final TagKey<Item> COOKIES = tag("cookies");
-		public static final TagKey<Item> RAWMEATS = tag("rawmeats");
 		public static final TagKey<Item> RAWBEEF = tag("rawbeef");
-		public static final TagKey<Item> RAWPORK = tag("rawpork");
 		public static final TagKey<Item> RAWCHICKEN = tag("rawchicken");
 		public static final TagKey<Item> RAWFISH = tag("rawfish");
 		public static final TagKey<Item> COOKEDFISH = tag("cookedfish");
 		public static final TagKey<Item> COOKEDCHICKEN = tag("cookedchicken");
-		public static final TagKey<Item> COOKEDPORK = tag("cookedpork");
 		public static final TagKey<Item> COOKEDBEEF = tag("cookedbeef");
 
 		public static final TagKey<Item> COMPASS_RUNE_CATALYST = aoaTag("compass_rune_catalyst");
@@ -231,12 +246,36 @@ public final class AoATags {
 		public static final TagKey<Item> WITHER_RUNE_CATALYST = aoaTag("wither_rune_catalyst");
 		public static final TagKey<Item> WIND_RUNE_CATALYST = aoaTag("wind_rune_catalyst");
 
+		public static final TagKey<Item> STAVES = aoaTag("staves");
+		public static final TagKey<Item> GUNS = aoaTag("guns");
+		public static final TagKey<Item> MAULS = aoaTag("mauls");
+		public static final TagKey<Item> ONE_HANDED_GUNS = aoaTag("one_handed_guns");
+		public static final TagKey<Item> SHOTGUNS = aoaTag("shotguns");
+		public static final TagKey<Item> BLASTERS = aoaTag("blasters");
+		public static final TagKey<Item> GREATBLADES = aoaTag("greatblades");
+		public static final TagKey<Item> BULLET_FIRING_GUNS = aoaTag("bullet_firing_guns");
+
+		public static final TagKey<Item> STAVES_ENCHANTABLE = aoaTag("staves_enchantable");
+		public static final TagKey<Item> GUNS_ENCHANTABLE = aoaTag("guns_enchantable");
+		public static final TagKey<Item> SMALL_GUNS_ENCHANTABLE = aoaTag("small_guns_enchantable");
+		public static final TagKey<Item> SHOTGUNS_ENCHANTABLE = aoaTag("shotguns_enchantable");
+		public static final TagKey<Item> BLASTERS_ENCHANTABLE = aoaTag("blasters_enchantable");
+		public static final TagKey<Item> GREATBLADES_ENCHANTABLE = aoaTag("greatblades_enchantable");
+		public static final TagKey<Item> BULLET_FIRING_ENCHANTABLE = aoaTag("bullet_firing_enchantable");
+		public static final TagKey<Item> GREED_ENCHANTABLE = aoaTag("greed_enchantable");
+
+		public static final TagKey<Item> DEINOTHERIUM_FOOD = aoaTag("deinotherium_food");
+		public static final TagKey<Item> HORNDRON_FOOD = aoaTag("horndron_food");
+		public static final TagKey<Item> OPTERYX_FOOD = aoaTag("opteryx_food");
+
+		public static final TagKey<Item> INTERVENTION_ENCHANTMENT_COMPATIBLE = aoaTag("intervention_enchantment_compatible");
+
 		private static TagKey<Item> aoaTag(String id) {
-			return ItemTags.create(new ResourceLocation(AdventOfAscension.MOD_ID, id));
+			return ItemTags.create(AdventOfAscension.id(id));
 		}
 
 		private static TagKey<Item> tag(String id) {
-			return ItemTags.create(new ResourceLocation(NeoForgeVersion.MOD_ID, id));
+			return ItemTags.create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
 		}
 	}
 
@@ -246,21 +285,23 @@ public final class AoATags {
 		public static final TagKey<Fluid> TAR = tag("tar");
 
 		private static TagKey<Fluid> aoaTag(String id) {
-			return FluidTags.create(new ResourceLocation(AdventOfAscension.MOD_ID, id));
+			return FluidTags.create(AdventOfAscension.id(id));
 		}
 
 		private static TagKey<Fluid> tag(String id) {
-			return FluidTags.create(new ResourceLocation(NeoForgeVersion.MOD_ID, id));
+			return FluidTags.create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
 		}
 	}
 
 	public static class Entities {
+		public static final TagKey<EntityType<?>> FLYING = tag("flying");
+
 		private static TagKey<EntityType<?>> aoaTag(String id) {
 			return create(AdventOfAscension.id(id));
 		}
 
 		private static TagKey<EntityType<?>> tag(String id) {
-			return create(new ResourceLocation(NeoForgeVersion.MOD_ID, id));
+			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
 		}
 
 		public static TagKey<EntityType<?>> create(ResourceLocation id) {
@@ -289,7 +330,7 @@ public final class AoATags {
 		}
 
 		private static TagKey<Biome> tag(String id) {
-			return create(new ResourceLocation(NeoForgeVersion.MOD_ID, id));
+			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
 		}
 
 		public static TagKey<Biome> create(ResourceLocation id) {
@@ -305,7 +346,7 @@ public final class AoATags {
 		}
 
 		private static TagKey<Structure> tag(String id) {
-			return create(new ResourceLocation(NeoForgeVersion.MOD_ID, id));
+			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
 		}
 
 		public static TagKey<Structure> create(ResourceLocation id) {
@@ -324,11 +365,40 @@ public final class AoATags {
 		}
 
 		private static TagKey<DamageType> tag(String id) {
-			return create(new ResourceLocation(NeoForgeVersion.MOD_ID, id));
+			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
 		}
 
 		public static TagKey<DamageType> create(ResourceLocation id) {
 			return TagKey.create(Registries.DAMAGE_TYPE, id);
+		}
+	}
+
+	public static class BannerPatterns {
+		public static final TagKey<BannerPattern> COMPASS_RUNE = aoaTag("pattern_item/compass_rune");
+		public static final TagKey<BannerPattern> DISTORTION_RUNE = aoaTag("pattern_item/distortion_rune");
+		public static final TagKey<BannerPattern> ENERGY_RUNE = aoaTag("pattern_item/energy_rune");
+		public static final TagKey<BannerPattern> FIRE_RUNE = aoaTag("pattern_item/fire_rune");
+		public static final TagKey<BannerPattern> KINETIC_RUNE = aoaTag("pattern_item/kinetic_rune");
+		public static final TagKey<BannerPattern> LIFE_RUNE = aoaTag("pattern_item/life_rune");
+		public static final TagKey<BannerPattern> LUNAR_RUNE = aoaTag("pattern_item/lunar_rune");
+		public static final TagKey<BannerPattern> POISON_RUNE = aoaTag("pattern_item/poison_rune");
+		public static final TagKey<BannerPattern> POWER_RUNE = aoaTag("pattern_item/power_rune");
+		public static final TagKey<BannerPattern> STORM_RUNE = aoaTag("pattern_item/storm_rune");
+		public static final TagKey<BannerPattern> STRIKE_RUNE = aoaTag("pattern_item/strike_rune");
+		public static final TagKey<BannerPattern> WATER_RUNE = aoaTag("pattern_item/water_rune");
+		public static final TagKey<BannerPattern> WIND_RUNE = aoaTag("pattern_item/wind_rune");
+		public static final TagKey<BannerPattern> WITHER_RUNE = aoaTag("pattern_item/wither_rune");
+
+		private static TagKey<BannerPattern> aoaTag(String id) {
+			return create(AdventOfAscension.id(id));
+		}
+
+		private static TagKey<BannerPattern> tag(String id) {
+			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		}
+
+		public static TagKey<BannerPattern> create(ResourceLocation id) {
+			return TagKey.create(Registries.BANNER_PATTERN, id);
 		}
 	}
 }

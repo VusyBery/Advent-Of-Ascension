@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:strings"
+    },
+    {
+      "tag": "c:strings"
+    },
+    {
+      "item": "aoa3:torn_cloth"
+    },
+    {
+      "item": "aoa3:torn_cloth"
+    }
+  ],
+  "result": {
+    "count": 3,
+    "id": "aoa3:reinforced_cloth"
+  }
+}

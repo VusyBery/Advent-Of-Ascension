@@ -7,9 +7,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.tslat.aoa3.common.registration.entity.AoAAnimals;
-import net.tslat.aoa3.content.entity.animal.ShikEntity;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.EnchantmentUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class DenseStone extends Block {
@@ -18,14 +16,14 @@ public class DenseStone extends Block {
 	}
 
 	@Override
-	public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-		super.playerWillDestroy(world, pos, state, player);
+	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+		super.playerWillDestroy(level, pos, state, player);
 
-		if (!world.isClientSide && RandomUtil.oneInNChance(50) && !ItemUtil.hasEnchantment(player.getMainHandItem(), Enchantments.SILK_TOUCH)) {
-			ShikEntity shik = new ShikEntity(AoAAnimals.SHIK.get(), world);
+		if (!level.isClientSide && RandomUtil.oneInNChance(50) && !EnchantmentUtil.hasEnchantment(level, player.getMainHandItem(), Enchantments.SILK_TOUCH)) {
+			/*ShikEntity shik = new ShikEntity(AoAAnimals.SHIK.get(), world);
 
 			shik.teleportTo(pos.getX() + 0.5f, pos.getY() + 0.1f, pos.getZ() + 0.5f);
-			world.addFreshEntity(shik);
+			world.addFreshEntity(shik);*/
 		}
 
 		return state;

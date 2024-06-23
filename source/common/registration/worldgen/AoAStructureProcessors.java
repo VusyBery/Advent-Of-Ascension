@@ -1,6 +1,6 @@
 package net.tslat.aoa3.common.registration.worldgen;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -12,7 +12,7 @@ public final class AoAStructureProcessors {
 
 	public static void init() {}
 
-	private static <T extends StructureProcessor> DeferredHolder<StructureProcessorType<?>, StructureProcessorType<T>> register(String id, Codec<T> codec) {
+	private static <T extends StructureProcessor> DeferredHolder<StructureProcessorType<?>, StructureProcessorType<T>> register(String id, MapCodec<T> codec) {
 		return AoARegistries.STRUCTURE_PROCESSORS.register(id, () -> () -> codec);
 	}
 }

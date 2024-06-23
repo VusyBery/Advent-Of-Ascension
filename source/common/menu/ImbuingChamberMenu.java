@@ -19,7 +19,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.menu.container.ListenableResultContainer;
-import net.tslat.aoa3.common.menu.generic.ExtensibleContainerMenu;
+import net.tslat.aoa3.common.menu.generic.ExtensibleRecipeMenu;
+import net.tslat.aoa3.common.menu.generic.GenericRecipeInput;
 import net.tslat.aoa3.common.menu.slot.CraftableResultSlot;
 import net.tslat.aoa3.common.menu.slot.PredicatedSlot;
 import net.tslat.aoa3.common.registration.AoAMenus;
@@ -34,12 +35,18 @@ import net.tslat.aoa3.util.PlayerUtil;
 
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
-public class ImbuingChamberMenu extends ExtensibleContainerMenu<ImbuingChamberMenu.ImbuingInventory> {
+public class ImbuingChamberMenu extends ExtensibleRecipeMenu<ImbuingChamberMenu.ImbuingInventory, ImbuingRecipe.ImbuingRecipeInput> {
 	public ImbuingChamberMenu(int screenId, Inventory playerInventory, ContainerLevelAccess accessValidator) {
 		super(AoAMenus.IMBUING_CHAMBER.get(), screenId, playerInventory, accessValidator);
 
 		createPlayerInventory(playerInventory, 8, 84);
+	}
+
+	@Override
+	protected ImbuingRecipe.ImbuingRecipeInput createRecipeInput() {
+		return new ImbuingRecipe.ImbuingRecipeInput(getInventory());
 	}
 
 	@Override
@@ -67,7 +74,7 @@ public class ImbuingChamberMenu extends ExtensibleContainerMenu<ImbuingChamberMe
 
 	@Override
 	protected Slot createOutputSlot(int slotIndex, Player player) {
-		return new ImbuingResultSlot(player, getInventory(), new ListenableResultContainer(stack -> getInventory().setItem(getOutputSlotIndex(), stack)), slotIndex, 139, 35);
+		return new ImbuingResultSlot(player, getInventory(), new ListenableResultContainer(stack -> getInventory().setItem(getOutputSlotIndex(), stack)), this::createRecipeInput, slotIndex, 139, 35);
 	}
 
 	@Override
@@ -84,21 +91,21 @@ public class ImbuingChamberMenu extends ExtensibleContainerMenu<ImbuingChamberMe
 	}
 
 	@Override
-	protected <R extends Recipe<ImbuingInventory>> void updateRecipeOutput(RecipeType<R> recipeType, Player player, ResultContainer resultContainer, Predicate<RecipeHolder<R>> recipePredicate) {
-		final ImbuingInventory container = getInventory();
-		final Optional<RecipeHolder<R>> recipeHolder = getOrFindRecipe(recipeType, container, resultContainer, player.level());
+	protected <R extends Recipe<ImbuingRecipe.ImbuingRecipeInput>> void updateRecipeOutput(RecipeType<R> recipeType, Player player, ResultContainer resultContainer, Predicate<RecipeHolder<R>> recipePredicate) {
+		final ImbuingRecipe.ImbuingRecipeInput recipeInput = createRecipeInput();
+		final Optional<RecipeHolder<R>> recipeHolder = getOrFindRecipe(recipeType, recipeInput, resultContainer, player.level());
 
 		if (player instanceof ServerPlayer serverPlayer) {
 			final ServerLevel level = serverPlayer.serverLevel();
 			final ItemStack outputStack = recipeHolder
 					.filter(holder -> recipePredicate.test(holder) && resultContainer.setRecipeUsed(level, serverPlayer, holder))
 					.map(RecipeHolder::value)
-					.map(recipe -> recipe.assemble(container, level.registryAccess()))
+					.map(recipe -> recipe.assemble(recipeInput, level.registryAccess()))
 					.filter(recipeResult -> recipeResult.isItemEnabled(level.enabledFeatures()))
 					.filter(stack -> !AoAEvents.firePlayerCraftingEvent(player, stack, getInventory(), resultContainer))
 					.orElse(getOutputItem());
 
-			if (!ItemStack.isSameItemSameTags(getOutputItem(), outputStack)) {
+			if (!ItemStack.isSameItemSameComponents(getOutputItem(), outputStack)) {
 				inventory.imbuing = true;
 
 				setOutputItem(outputStack);
@@ -133,9 +140,9 @@ public class ImbuingChamberMenu extends ExtensibleContainerMenu<ImbuingChamberMe
 		}
 	}
 
-	public static class ImbuingResultSlot extends CraftableResultSlot<ImbuingInventory, ImbuingRecipe> {
-		public ImbuingResultSlot(Player pl, ImbuingInventory craftInv, ResultContainer inv, int slotIndex, int xPos, int yPos) {
-			super(pl, craftInv, inv, AoARecipes.IMBUING.type().get(), slotIndex, xPos, yPos);
+	public static class ImbuingResultSlot extends CraftableResultSlot<ImbuingInventory, ImbuingRecipe.ImbuingRecipeInput, ImbuingRecipe> {
+		public ImbuingResultSlot(Player pl, ImbuingInventory craftInv, ResultContainer inv, Supplier<ImbuingRecipe.ImbuingRecipeInput> recipeInput, int slotIndex, int xPos, int yPos) {
+			super(pl, craftInv, inv, AoARecipes.IMBUING.type().get(), recipeInput, slotIndex, xPos, yPos);
 		}
 
 		@Override
@@ -166,9 +173,9 @@ public class ImbuingChamberMenu extends ExtensibleContainerMenu<ImbuingChamberMe
 		}
 
 		@Override
-		protected NonNullList<ItemStack> getRemainingItems(RecipeType<ImbuingRecipe> recipeType, ImbuingInventory craftingContainer, Player player) {
-			final NonNullList<ItemStack> remainingStacks = super.getRemainingItems(recipeType, craftingContainer, player);
-			craftingContainer.imbuing = false;
+		protected NonNullList<ItemStack> getRemainingItems(RecipeType<ImbuingRecipe> recipeType, ImbuingRecipe.ImbuingRecipeInput recipeInput, Player player) {
+			final NonNullList<ItemStack> remainingStacks = super.getRemainingItems(recipeType, recipeInput, player);
+			getInventoryContainer().imbuing = false;
 
 			return remainingStacks;
 		}

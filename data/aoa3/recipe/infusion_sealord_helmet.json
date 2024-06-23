@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:helmet_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:coral_stone"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "item": "aoa3:reinforced_cloth"
+    },
+    {
+      "tag": "c:glass_panes/colorless"
+    },
+    {
+      "tag": "c:gems/diamond"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:sealord_helmet"
+  }
+}

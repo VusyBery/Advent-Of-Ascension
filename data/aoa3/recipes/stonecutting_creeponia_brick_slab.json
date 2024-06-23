@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "aoa3:creeponia_bricks"
-  },
-  "result": "aoa3:creeponia_brick_slab"
-}

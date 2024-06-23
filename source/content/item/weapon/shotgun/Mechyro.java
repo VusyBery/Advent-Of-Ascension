@@ -1,7 +1,9 @@
 package net.tslat.aoa3.content.item.weapon.shotgun;
 
+import net.minecraft.world.item.Item;
+
 public class Mechyro extends BaseShotgun {
-	public Mechyro(final float dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
-		super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
+	public Mechyro(Item.Properties properties) {
+		super(properties);
 	}
 }

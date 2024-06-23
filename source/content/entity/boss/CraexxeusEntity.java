@@ -32,7 +32,7 @@ public class CraexxeusEntity extends AoAFlyingRangedMob {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 3.9f;
 	}
 
@@ -61,7 +61,7 @@ public class CraexxeusEntity extends AoAFlyingRangedMob {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
@@ -116,7 +116,7 @@ public class CraexxeusEntity extends AoAFlyingRangedMob {
 	@Override
 	public void doProjectileEntityImpact(BaseMobProjectile projectile, Entity target) {
 		if (projectile instanceof CraexxeusNukeEntity) {
-			DamageUtil.dealBlasterDamage(this, target, projectile, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()) * 3, false);
+			DamageUtil.dealBlasterDamage(this, target, projectile, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE) * 3, false);
 		}
 		else {
 			super.doProjectileEntityImpact(projectile, target);

@@ -4,8 +4,4 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 
-public record PortalCoordinatesContainer(ResourceKey<Level> fromDim, double x, double y, double z) {
-	public BlockPos asBlockPos() {
-		return BlockPos.containing(x, y, z);
-	}
-}
+public record PortalCoordinatesContainer(ResourceKey<Level> fromDim, BlockPos portalPos) {}

@@ -1,0 +1,27 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:sniper_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:jungle_thorns"
+    },
+    {
+      "item": "aoa3:jungle_thorns"
+    },
+    {
+      "item": "minecraft:short_grass"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "minecraft:leaves"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:camo_rifle"
+  }
+}

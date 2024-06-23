@@ -10,12 +10,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
+import java.util.function.Function;
+
 public class TexturedProjectileRenderer<T extends Entity> extends EntityRenderer<T> {
-	private final ResourceLocation texture;
-	private final RenderType renderType;
+	protected final ResourceLocation texture;
+	protected RenderType renderType;
+	protected float scale = 0.5f;
 
 	public TexturedProjectileRenderer(final EntityRendererProvider.Context renderManager, final ResourceLocation texture) {
 		super(renderManager);
@@ -24,33 +26,44 @@ public class TexturedProjectileRenderer<T extends Entity> extends EntityRenderer
 		this.renderType = RenderType.entityCutoutNoCull(texture);
 	}
 
+	public TexturedProjectileRenderer<T> withScale(float scale) {
+		this.scale = scale;
+
+		return this;
+	}
+
+	public TexturedProjectileRenderer<T> withRenderType(Function<ResourceLocation, RenderType> renderTypeFunction) {
+		this.renderType = renderTypeFunction.apply(this.texture);
+
+		return this;
+	}
+
 	@Override
-	public void render(T entity, float yaw, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int packedLight) {
-		matrix.pushPose();
-		matrix.scale(0.5f, 0.5f, 0.5f);
-		matrix.mulPose(this.entityRenderDispatcher.cameraOrientation());
-		matrix.mulPose(Axis.YP.rotationDegrees(180.0F));
+	public void render(T entity, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+		poseStack.pushPose();
+		poseStack.scale(this.scale, this.scale, this.scale);
+		poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+		poseStack.mulPose(Axis.YP.rotationDegrees(180));
 
-		PoseStack.Pose pose = matrix.last();
-		Matrix4f matrix4f = pose.pose();
-		Matrix3f normal = pose.normal();
-		VertexConsumer vertexBuilder = buffer.getBuffer(renderType);
+		PoseStack.Pose poseState = poseStack.last();
+		Matrix4f pose = poseState.pose();
+		VertexConsumer vertexConsumer = buffer.getBuffer(this.renderType);
 
-		pos(vertexBuilder, matrix4f, normal, packedLight, 0, 0, 0, 1);
-		pos(vertexBuilder, matrix4f, normal, packedLight, 1, 0, 1, 1);
-		pos(vertexBuilder, matrix4f, normal, packedLight, 1, 1, 1, 0);
-		pos(vertexBuilder, matrix4f, normal, packedLight, 0, 1, 0, 0);
-		matrix.popPose();
+		vertex(vertexConsumer, pose, poseState, packedLight, 0, 0, 0, 1);
+		vertex(vertexConsumer, pose, poseState, packedLight, 1, 0, 1, 1);
+		vertex(vertexConsumer, pose, poseState, packedLight, 1, 1, 1, 0);
+		vertex(vertexConsumer, pose, poseState, packedLight, 0, 1, 0, 0);
+		poseStack.popPose();
 		
-		super.render(entity, yaw, partialTicks, matrix, buffer, packedLight);
+		super.render(entity, yaw, partialTick, poseStack, buffer, packedLight);
 	}
 
-	private static void pos(VertexConsumer vertexBuilder, Matrix4f matrix4f, Matrix3f normal, int lightmapUV, float x, float y, float u, float v) {
-		vertexBuilder.vertex(matrix4f, x - 0.5F, y - 0.25f, 0).color(255, 255, 255, 255).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(lightmapUV).normal(normal, 0, 1, 0).endVertex();
+	protected static void vertex(VertexConsumer vertexConsumer, Matrix4f pose, PoseStack.Pose poseState, int packedLight, float x, float y, float u, float v) {
+		vertexConsumer.addVertex(pose, x - 0.5F, y - 0.25f, 0).setColor(0xFFFFFFFF).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(poseState, 0, 1, 0);
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(T entity) {
-		return texture;
+	public ResourceLocation getTextureLocation(T projectile) {
+		return this.texture;
 	}
 }

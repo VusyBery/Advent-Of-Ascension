@@ -43,7 +43,7 @@ public final class BossBarRenderer {
 			return;
 
 		RenderUtil.resetShaderColour();
-		RenderUtil.prepRenderTexture(BAR_ID_CACHE.computeIfAbsent(RegistryUtil.getId(entity.getType()), key -> new ResourceLocation(key.getNamespace(), "textures/gui/bossbars/" + key.getPath() + ".png")));
+		RenderUtil.prepRenderTexture(BAR_ID_CACHE.computeIfAbsent(RegistryUtil.getId(entity.getType()), key -> ResourceLocation.fromNamespaceAndPath(key.getNamespace(), "textures/gui/bossbars/" + key.getPath() + ".png")));
 
 		Window window = mc.getWindow();
 		PoseStack poseStack = ev.getGuiGraphics().pose();

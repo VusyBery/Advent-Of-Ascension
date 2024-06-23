@@ -46,7 +46,7 @@ public class ElusiveEntity extends AoAMeleeMob<ElusiveEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.5f;
 	}
 
@@ -69,7 +69,7 @@ public class ElusiveEntity extends AoAMeleeMob<ElusiveEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
@@ -145,7 +145,7 @@ public class ElusiveEntity extends AoAMeleeMob<ElusiveEntity> {
 					}
 
 					if (armourless)
-						AdvancementUtil.completeAdvancement((ServerPlayer)killer, new ResourceLocation(AdventOfAscension.MOD_ID, "abyss/activated_my_trap_card"), "invisible_armourless_elusive_kill");
+						AdvancementUtil.completeAdvancement((ServerPlayer)killer, AdventOfAscension.id("abyss/activated_my_trap_card"), "invisible_armourless_elusive_kill");
 				}
 			}
 

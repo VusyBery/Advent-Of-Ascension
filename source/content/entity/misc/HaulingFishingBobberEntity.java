@@ -49,7 +49,7 @@ public class HaulingFishingBobberEntity extends FishingHook {
 
 	protected final ItemStack rod;
 	protected float luck;
-	protected float lure;
+	protected float lureReduction;
 
 	protected float fishingBonusMod = 1;
 	protected int timeUntilFishSpawn = -1;
@@ -60,8 +60,6 @@ public class HaulingFishingBobberEntity extends FishingHook {
 
 	protected State state = State.MIDAIR;
 
-	public int ownerId;
-
 	public HaulingFishingBobberEntity(EntityType<? extends HaulingFishingBobberEntity> entityType, Level level) {
 		super(entityType, level);
 
@@ -70,22 +68,22 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		this.yo = getY();
 		this.zo = getZ();
 		this.luck = 0;
-		this.lure = 0;
+		this.lureReduction = 0;
 	}
 
-	public HaulingFishingBobberEntity(Player player, Level world, ItemStack rod) {
+	public HaulingFishingBobberEntity(ServerPlayer player, Level world, ItemStack rod) {
 		this(player, world, rod, 0, 0);
 
 		this.luck = calculateLuck(player, rod);
-		this.lure = calculateLure(player, rod);
+		this.lureReduction = calculateLureTimeReduction(player, rod);
 	}
 
-	public HaulingFishingBobberEntity(Player player, Level world, ItemStack rod, float luck, float lure) {
+	public HaulingFishingBobberEntity(Player player, Level world, ItemStack rod, float luck, float lureReduction) {
 		super(player, world, 0, 0);
 
 		this.rod = rod;
 		this.luck = luck;
-		this.lure = lure;
+		this.lureReduction = lureReduction;
 		setOwner(player);
 		float castStrength = getCastStrength();
 
@@ -93,30 +91,30 @@ public class HaulingFishingBobberEntity extends FishingHook {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		getEntityData().define(HOOKED_ENTITY, -1);
-		getEntityData().define(STATE, 0);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		builder.define(HOOKED_ENTITY, -1);
+		builder.define(STATE, 0);
 	}
 
-	protected float calculateLuck(Player player, ItemStack rod) {
+	protected float calculateLuck(ServerPlayer player, ItemStack rod) {
 		float luck = player.getLuck();
 
 		if (rod.getItem() instanceof HaulingRod) {
 			luck += ((HaulingRod)rod.getItem()).getLuckMod(player, rod);
 		}
 		else {
-			luck += EnchantmentHelper.getFishingLuckBonus(rod);
+			luck += EnchantmentHelper.getFishingLuckBonus(player.serverLevel(), rod, player);
 		}
 
 		return luck;
 	}
 
-	protected float calculateLure(Player player, ItemStack rod) {
+	protected float calculateLureTimeReduction(ServerPlayer player, ItemStack rod) {
 		if (rod.getItem() instanceof HaulingRod) {
 			return ((HaulingRod)rod.getItem()).getLureMod(player, rod);
 		}
 		else {
-			return EnchantmentHelper.getFishingLuckBonus(rod);
+			return EnchantmentHelper.getFishingTimeReduction(player.serverLevel(), rod, player);
 		}
 	}
 
@@ -167,7 +165,7 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		}
 
 		this.fishingBonusMod *= 1 + (nearbyFluidBlocks * 0.0025f);
-		this.fishingBonusMod += 0.25f * lure;
+		this.fishingBonusMod += 0.25f * lureReduction / 5f;
 		this.fishingBonusMod *= (1 - Math.min(5, EntityRetrievalUtil.getPlayers(level(), getBoundingBox().inflate(5)).size()) * 0.1f);
 	}
 

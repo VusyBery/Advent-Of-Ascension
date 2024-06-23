@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 
 
 public class CorallusRenderer extends MobRenderer<CorallusEntity, EntityModel<CorallusEntity>> {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/corallus/corallus.png");
-	private static final ResourceLocation ENRAGED_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/corallus/corallus_enraged.png");
+	private static final ResourceLocation TEXTURE = AdventOfAscension.id("textures/entity/boss/corallus/corallus.png");
+	private static final ResourceLocation ENRAGED_TEXTURE = AdventOfAscension.id("textures/entity/boss/corallus/corallus_enraged.png");
 
 	public CorallusRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new CorallusModel(), AoAMobs.CORALLUS.get().getWidth() / 3);

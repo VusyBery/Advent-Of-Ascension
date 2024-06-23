@@ -4,8 +4,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
-import net.tslat.aoa3.content.entity.mob.creeponia.CreeperlockEntity;
-import net.tslat.aoa3.content.entity.mob.creeponia.MagicalCreeperEntity;
+import net.tslat.aoa3.content.entity.monster.creeponia.CreeperlockEntity;
+import net.tslat.aoa3.content.entity.monster.creeponia.MagicalCreeperEntity;
 
 public class CreeperShotEntity extends BaseMobProjectile {
 	public CreeperShotEntity(EntityType<? extends ThrowableProjectile> entityType, Level world) {
@@ -25,7 +25,7 @@ public class CreeperShotEntity extends BaseMobProjectile {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.075f;
 	}
 }

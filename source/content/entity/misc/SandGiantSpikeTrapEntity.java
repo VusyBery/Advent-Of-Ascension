@@ -8,13 +8,13 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.library.builder.EntityPredicate;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimatableManager;
 
 public class SandGiantSpikeTrapEntity extends BasicMiscEntity {
-	private static final EntityPredicate<Entity> damagePredicate = new EntityPredicate<>().isAlive().isNot(AoAMobs.SAND_GIANT.get()).isDamageable();
+	private static final EntityPredicate<Entity> damagePredicate = new EntityPredicate<>().isAlive().isNot(AoAMonsters.SAND_GIANT.get()).isDamageable();
 
 	public SandGiantSpikeTrapEntity(EntityType<?> entityType, Level level) {
 		super(entityType, level);

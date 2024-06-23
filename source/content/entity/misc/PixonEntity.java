@@ -23,7 +23,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -79,9 +78,9 @@ public class PixonEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        getEntityData().define(MAGNITUDE, 1f);
-        getEntityData().define(VARIANT, PixonVariant.AMBIENT.get());
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(MAGNITUDE, 1f);
+        builder.define(VARIANT, PixonVariant.AMBIENT.get());
     }
 
     @Override
@@ -152,12 +151,12 @@ public class PixonEntity extends Entity {
                 float scaling = Math.min(25, this.magnitude);
 
                 if (this.random.nextFloat() < scaling / 250f) {
-                    ItemUtil.givePlayerMultipleItems(pl, LootUtil.generateLoot(this.variant.lootTable(), new LootParams.Builder(level)
+                    ItemUtil.givePlayerMultipleItems(pl, LootUtil.generateLoot(this.variant.lootTable().location(), new LootParams.Builder(level)
                             .withParameter(LootContextParams.THIS_ENTITY, this)
                             .withParameter(LootContextParams.ORIGIN, position())
                             .withParameter(LootContextParams.DAMAGE_SOURCE, level.damageSources().playerAttack(pl))
-                            .withParameter(LootContextParams.KILLER_ENTITY, pl)
-                            .withParameter(LootContextParams.DIRECT_KILLER_ENTITY, pl)
+                            .withParameter(LootContextParams.ATTACKING_ENTITY, pl)
+                            .withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, pl)
                             .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, pl)
                             .create(LootContextParamSets.ENTITY)));
 
@@ -181,9 +180,11 @@ public class PixonEntity extends Entity {
         else if (this.variant != null) {
             float size = Math.min(Math.min(2, this.magnitude), (random.nextFloat() * random.nextFloat()) * this.magnitude / 2f);
 
-            ParticleBuilder.forRandomPosInEntity(new CustomisableParticleType.Data(AoAParticleTypes.ORB.get(), size, 1, this.random.nextFloat() < 0.25f ? this.variant.secondaryColour() : this.variant.primaryColour()), this)
+            ParticleBuilder.forRandomPosInEntity(AoAParticleTypes.ORB.get(), this)
                     .velocity(random.nextGaussian() * 0.05f * (1 / size), Math.min(1.5f, this.magnitude * 0.1f), random.nextGaussian() * 0.05f * (1 / size))
+                    .colourOverride(this.random.nextFloat() < 0.25f ? this.variant.secondaryColour() : this.variant.primaryColour())
                     .cutoffDistance(256)
+                    .scaleMod(size)
                     .lifespan(100)
                     .spawnParticles(level());
             ParticleBuilder.forRandomPosInSphere(ParticleTypes.ASH, position(), Math.min(20, this.magnitude))
@@ -192,8 +193,10 @@ public class PixonEntity extends Entity {
                     .spawnParticles(level());
 
             for (Vec3 ringPos : MathUtil.inLateralCircle(position(), 0.5f, random.nextIntBetweenInclusive(1, 12))) {
-                ParticleBuilder.forPositions(new CustomisableParticleType.Data(AoAParticleTypes.ORB.get(), size, 1, this.random.nextFloat() < 0.25f ? this.variant.secondaryColour() : this.variant.primaryColour()), ringPos)
+                ParticleBuilder.forPositions(AoAParticleTypes.ORB.get(), ringPos)
                         .velocity(position().vectorTo(ringPos).normalize().scale(0.1f).add(random.nextGaussian() * 0.05f * (1 / size), Math.min(1.5f, this.magnitude * 0.05f), random.nextGaussian() * 0.05f * (1 / size)))
+                        .colourOverride(this.random.nextFloat() < 0.25f ? this.variant.secondaryColour() : this.variant.primaryColour())
+                        .scaleMod(size)
                         .lifespan(100)
                         .spawnParticles(level());
             }
@@ -234,7 +237,7 @@ public class PixonEntity extends Entity {
     }
 
     @Override
-    public boolean canChangeDimensions() {
+    public boolean canChangeDimensions(Level from, Level to) {
         return false;
     }
 

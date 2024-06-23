@@ -2,33 +2,34 @@ package net.tslat.aoa3.player.ability.generic;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentInstance;
-import net.tslat.aoa3.common.registration.AoARegistries;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.ItemCraftingEvent;
 import net.tslat.aoa3.player.skill.AoASkill;
-import net.tslat.aoa3.util.RegistryUtil;
+import net.tslat.aoa3.util.EnchantmentUtil;
 
 import java.util.Map;
 
 public class AutoEnchantCrafting extends ScalableModAbility {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.ITEM_CRAFTING};
 
-	private final EnchantmentInstance[] enchantments;
+	private final ObjectIntPair<Holder<Enchantment>>[] enchantments;
 
 	public AutoEnchantCrafting(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.AUTO_ENCHANT_CRAFTING.get(), skill, data);
 
 		JsonObject enchantMap = data.getAsJsonObject("enchantments");
-		enchantments = new EnchantmentInstance[enchantMap.size()];
+		this.enchantments = new ObjectIntPair[enchantMap.size()];
 		int i = 0;
 
 		for (Map.Entry<String, JsonElement> entry : enchantMap.entrySet()) {
-			enchantments[i] = new EnchantmentInstance(AoARegistries.ENCHANTMENTS.getEntry(new ResourceLocation(entry.getKey())), entry.getValue().getAsInt());
+			enchantments[i] = ObjectIntPair.of(EnchantmentUtil.toHolder(getPlayer().level(), ResourceLocation.read(entry.getKey()).getOrThrow()), entry.getValue().getAsInt());
 			i++;
 		}
 
@@ -40,11 +41,11 @@ public class AutoEnchantCrafting extends ScalableModAbility {
 		super(AoAAbilities.AUTO_ENCHANT_CRAFTING.get(), skill, data);
 
 		CompoundTag enchantMap = data.getCompound("enchantments");
-		enchantments = new EnchantmentInstance[enchantMap.size()];
+		enchantments = new ObjectIntPair[enchantMap.size()];
 		int i = 0;
 
 		for (String enchantId : enchantMap.getAllKeys()) {
-			enchantments[i] = new EnchantmentInstance(AoARegistries.ENCHANTMENTS.getEntry(new ResourceLocation(enchantId)), enchantMap.getInt(enchantId));
+			enchantments[i] = ObjectIntPair.of(EnchantmentUtil.toHolder(getPlayer().level(), ResourceLocation.read(enchantId).getOrThrow()), enchantMap.getInt(enchantId));
 			i++;
 		}
 	}
@@ -58,11 +59,11 @@ public class AutoEnchantCrafting extends ScalableModAbility {
 	protected void updateDescription(MutableComponent defaultDescription) {
 		boolean comma = false;
 
-		for (EnchantmentInstance enchants : enchantments) {
+		for (ObjectIntPair<Holder<Enchantment>> enchant : enchantments) {
 			if (comma)
 				defaultDescription.append(", ");
 
-			defaultDescription.append(enchants.enchantment.getFullname(enchants.level));
+			defaultDescription.append(EnchantmentUtil.getFormattedName(enchant.left(), enchant.rightInt()));
 
 			comma = true;
 		}
@@ -74,13 +75,13 @@ public class AutoEnchantCrafting extends ScalableModAbility {
 	public void handleItemCrafting(ItemCraftingEvent ev) {
 		ItemStack output = ev.getOutputStack();
 
-		for (EnchantmentInstance data : enchantments) {
-			if (!data.enchantment.canApplyAtEnchantingTable(output))
+		for (ObjectIntPair<Holder<Enchantment>> data : enchantments) {
+			if (!output.isPrimaryItemFor(data.left()))
 				return;
 		}
 
-		for (EnchantmentInstance data : enchantments) {
-			output.enchant(data.enchantment, data.level);
+		for (ObjectIntPair<Holder<Enchantment>> data : enchantments) {
+			output.enchant(data.left(), data.rightInt());
 		}
 	}
 
@@ -91,8 +92,8 @@ public class AutoEnchantCrafting extends ScalableModAbility {
 		if (forClientSetup) {
 			CompoundTag enchantMap = new CompoundTag();
 
-			for (EnchantmentInstance enchantData : enchantments) {
-				enchantMap.putInt(RegistryUtil.getId(enchantData.enchantment).toString(), enchantData.level);
+			for (ObjectIntPair<Holder<Enchantment>> enchant : enchantments) {
+				enchantMap.putInt(enchant.left().getRegisteredName(), enchant.rightInt());
 			}
 
 			data.put("enchantments", enchantMap);

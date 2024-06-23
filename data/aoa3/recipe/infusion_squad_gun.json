@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:gun_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:darkly_powder"
+    },
+    {
+      "item": "aoa3:darkly_powder"
+    },
+    {
+      "tag": "c:gunpowders"
+    },
+    {
+      "tag": "neoforge:ingots/varsium"
+    },
+    {
+      "tag": "neoforge:ingots/varsium"
+    },
+    {
+      "tag": "minecraft:planks"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:squad_gun"
+  }
+}

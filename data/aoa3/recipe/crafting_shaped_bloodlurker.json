@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:gems/bloodstone"
+    },
+    "B": {
+      "tag": "c:ingots/iron"
+    },
+    "C": {
+      "tag": "neoforge:rods/metal"
+    },
+    "D": {
+      "item": "minecraft:spider_eye"
+    }
+  },
+  "pattern": [
+    " A ",
+    " A ",
+    "BCD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:bloodlurker"
+  }
+}

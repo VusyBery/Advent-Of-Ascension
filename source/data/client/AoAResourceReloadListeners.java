@@ -18,7 +18,7 @@ public final class AoAResourceReloadListeners {
 		ev.registerReloadListener(new RealmstoneInsertsReloadListener());
 		ev.registerReloadListener(new AdventGuiThemeReloadListener());
 		ev.registerReloadListener((ResourceManagerReloadListener)resourceManager -> {
-			if (ModLoader.isLoadingStateValid())
+			if (!ModLoader.hasErrors())
 				AoAMiscModels.generateFactories();
 		});
 	}

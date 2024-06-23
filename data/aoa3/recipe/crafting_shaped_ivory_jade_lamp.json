@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "I": {
+      "tag": "neoforge:ivory"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "X": {
+      "tag": "neoforge:gems/jade"
+    }
+  },
+  "pattern": [
+    " I ",
+    "RXR",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:ivory_jade_lamp"
+  }
+}

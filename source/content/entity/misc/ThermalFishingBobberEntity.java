@@ -28,7 +28,7 @@ import net.tslat.smartbrainlib.util.RandomUtil;
 import java.util.function.Function;
 
 public class ThermalFishingBobberEntity extends HaulingFishingBobberEntity {
-	public ThermalFishingBobberEntity(Player player, Level world, ItemStack rod) {
+	public ThermalFishingBobberEntity(ServerPlayer player, Level world, ItemStack rod) {
 		super(player, world, rod);
 	}
 
@@ -114,7 +114,7 @@ public class ThermalFishingBobberEntity extends HaulingFishingBobberEntity {
 		}
 
 		this.fishingBonusMod *= 1 + (nearbyFluidBlocks * 0.0035f);
-		this.fishingBonusMod += 0.25f * lure;
+		this.fishingBonusMod += 0.25f * lureReduction;
 
 		if (!EntityRetrievalUtil.getPlayers(level(), getBoundingBox().inflate(5)).isEmpty())
 			this.fishingBonusMod *= 0.2f;

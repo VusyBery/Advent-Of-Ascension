@@ -37,7 +37,7 @@ public class AggroBasedNearbyPlayersSensor<E extends LivingEntity> extends Nearb
 		SquareRadius radius = this.radius;
 
 		if (radius == null) {
-			double dist = entity.getAttributeValue(AoAAttributes.AGGRO_RANGE.get());
+			double dist = entity.getAttributeValue(AoAAttributes.AGGRO_RANGE);
 
 			radius = new SquareRadius(dist, dist);
 		}

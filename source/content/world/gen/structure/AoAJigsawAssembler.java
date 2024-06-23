@@ -29,6 +29,7 @@ import net.minecraft.world.level.levelgen.structure.pools.EmptyPoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.JigsawJunction;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.minecraft.world.phys.AABB;
@@ -52,7 +53,7 @@ public class AoAJigsawAssembler {
 		return new BlockPos(x, y, z);
 	}
 
-	public Optional<Structure.GenerationStub> addPieces(Structure.GenerationContext genContext, Holder<StructureTemplatePool> templatePoolHolder, Optional<ResourceLocation> startJigsawName, int maxPieces, BlockPos startPos, Optional<Heightmap.Types> heightmap, int maxRadius) {
+	public Optional<Structure.GenerationStub> addPieces(Structure.GenerationContext genContext, Holder<StructureTemplatePool> templatePoolHolder, Optional<ResourceLocation> startJigsawName, int maxPieces, BlockPos startPos, Optional<Heightmap.Types> heightmap, int maxRadius, LiquidSettings liquidSettings) {
 		StructureTemplateManager templateManager = genContext.structureTemplateManager();
 		WorldgenRandom rand = genContext.random();
 		Rotation rotation = ignoreRotations() ? Rotation.NONE : Rotation.getRandom(rand);
@@ -76,7 +77,7 @@ public class AoAJigsawAssembler {
 		}
 
 		BlockPos finalStartPos = startPos.subtract(startOffset);
-		PoolElementStructurePiece startPiece = new PoolElementStructurePiece(templateManager, poolElement, finalStartPos, poolElement.getGroundLevelDelta(), rotation, poolElement.getBoundingBox(templateManager, finalStartPos, rotation));
+		PoolElementStructurePiece startPiece = new PoolElementStructurePiece(templateManager, poolElement, finalStartPos, poolElement.getGroundLevelDelta(), rotation, poolElement.getBoundingBox(templateManager, finalStartPos, rotation), liquidSettings);
 		BoundingBox startPieceBounds = startPiece.getBoundingBox();
 		int structurePosX = (startPieceBounds.minX() + startPieceBounds.maxX()) / 2;
 		int structurePosZ = (startPieceBounds.minZ() + startPieceBounds.maxZ()) / 2;
@@ -87,10 +88,10 @@ public class AoAJigsawAssembler {
 
 		startPiece.move(0, startY - (startPieceBounds.minY() + startPiece.getGroundLevelDelta()), 0);
 
-		return buildGenerationStub(startPiece, startPieceBounds, genContext, structurePosX, startY + startOffset.getY(), structurePosZ, maxPieces, maxRadius);
+		return buildGenerationStub(startPiece, startPieceBounds, genContext, structurePosX, startY + startOffset.getY(), structurePosZ, maxPieces, maxRadius, liquidSettings);
 	}
 
-	protected Optional<Structure.GenerationStub> buildGenerationStub(PoolElementStructurePiece startPiece, BoundingBox startPieceBounds, Structure.GenerationContext genContext, int startX, int startY, int startZ, int maxPieces, int maxRadius) {
+	protected Optional<Structure.GenerationStub> buildGenerationStub(PoolElementStructurePiece startPiece, BoundingBox startPieceBounds, Structure.GenerationContext genContext, int startX, int startY, int startZ, int maxPieces, int maxRadius, LiquidSettings liquidSettings) {
 		return Optional.of(new Structure.GenerationStub(getStartPos(startPiece, startX, startY, startZ), pieceBuilder -> {
 			List<PoolElementStructurePiece> pieces = new ObjectArrayList<>();
 
@@ -109,7 +110,8 @@ public class AoAJigsawAssembler {
 						pieces,
 						Shapes.join(
 								Shapes.create(new AABB(startX - maxRadius, -4000, startZ - maxRadius, startX + maxRadius + 1, 4000, startZ + maxRadius + 1)),
-								Shapes.create(AABB.of(startPieceBounds)), BooleanOp.ONLY_FIRST));
+								Shapes.create(AABB.of(startPieceBounds)), BooleanOp.ONLY_FIRST),
+						liquidSettings);
 				pieces.forEach(pieceBuilder::addPiece);
 			}
 		}));
@@ -124,7 +126,7 @@ public class AoAJigsawAssembler {
 		return Optional.empty();
 	}
 
-	protected void addPieces(RandomState genState, int maxPieces, ChunkGenerator chunkGen, StructureTemplateManager templateManager, LevelHeightAccessor heightAccessor, RandomSource rand, Registry<StructureTemplatePool> templatePool, PoolElementStructurePiece parentPiece, List<PoolElementStructurePiece> childPieces, VoxelShape bounds) {
+	protected void addPieces(RandomState genState, int maxPieces, ChunkGenerator chunkGen, StructureTemplateManager templateManager, LevelHeightAccessor heightAccessor, RandomSource rand, Registry<StructureTemplatePool> templatePool, PoolElementStructurePiece parentPiece, List<PoolElementStructurePiece> childPieces, VoxelShape bounds, LiquidSettings liquidSettings) {
 		PiecePlacer piecePlacer = new PiecePlacer(templatePool, maxPieces, chunkGen, templateManager, childPieces, rand);
 
 		piecePlacer.placing.addLast(new PieceState(parentPiece, new MutableObject<>(bounds), 0));
@@ -132,18 +134,18 @@ public class AoAJigsawAssembler {
 		while (!piecePlacer.placing.isEmpty()) {
 			PieceState pieceState = piecePlacer.placing.removeFirst();
 
-			piecePlacer.tryPlacingChildren(pieceState.piece, pieceState.bounds, pieceState.depth, heightAccessor, genState);
+			piecePlacer.tryPlacingChildren(pieceState.piece, pieceState.bounds, pieceState.depth, heightAccessor, genState, liquidSettings);
 		}
 
 	}
 
-	public boolean generateJigsaw(ServerLevel level, Holder<StructureTemplatePool> templatePool, ResourceLocation startJigsawName, int maxPieces, BlockPos startPos, boolean keepJigsaws) {
+	public boolean generateJigsaw(ServerLevel level, Holder<StructureTemplatePool> templatePool, ResourceLocation startJigsawName, int maxPieces, BlockPos startPos, boolean keepJigsaws, LiquidSettings liquidSettings) {
 		ChunkGenerator chunkGen = level.getChunkSource().getGenerator();
 		StructureTemplateManager templateManager = level.getStructureManager();
 		StructureManager structureManager = level.structureManager();
 		RandomSource rand = level.getRandom();
 		Structure.GenerationContext genContext = new Structure.GenerationContext(level.registryAccess(), chunkGen, chunkGen.getBiomeSource(), level.getChunkSource().randomState(), templateManager, level.getSeed(), new ChunkPos(startPos), level, (p_227255_) -> true);
-		Optional<Structure.GenerationStub> pieceGen = addPieces(genContext, templatePool, Optional.of(startJigsawName), maxPieces, startPos, Optional.empty(), 128);
+		Optional<Structure.GenerationStub> pieceGen = addPieces(genContext, templatePool, Optional.of(startJigsawName), maxPieces, startPos, Optional.empty(), 128, liquidSettings);
 
 		if (pieceGen.isEmpty())
 			return false;
@@ -188,17 +190,17 @@ public class AoAJigsawAssembler {
 			this.random = rand;
 		}
 
-		void tryPlacingChildren(PoolElementStructurePiece parentPiece, MutableObject<VoxelShape> bounds, int pieceDepth, LevelHeightAccessor heightAccessor, RandomState genState) {
+		void tryPlacingChildren(PoolElementStructurePiece parentPiece, MutableObject<VoxelShape> bounds, int pieceDepth, LevelHeightAccessor heightAccessor, RandomState genState, LiquidSettings liquidSettings) {
 			StructurePoolElement poolElement = parentPiece.getElement();
 			StructureTemplatePool.Projection projection = poolElement.getProjection();
 			MutableObject<VoxelShape> shape = new MutableObject<>();
 			BoundingBox parentBounds = parentPiece.getBoundingBox();
 			int minY = parentBounds.minY();
 
-			for(StructureTemplate.StructureBlockInfo jigsawBlockInfo : poolElement.getShuffledJigsawBlocks(this.structureTemplateManager, parentPiece.getPosition(), parentPiece.getRotation(), this.random)) {
+			for (StructureTemplate.StructureBlockInfo jigsawBlockInfo : poolElement.getShuffledJigsawBlocks(this.structureTemplateManager, parentPiece.getPosition(), parentPiece.getRotation(), this.random)) {
 				BlockPos jigsawPos = jigsawBlockInfo.pos();
 				BlockPos jigsawFacingPos = jigsawPos.relative(JigsawBlock.getFrontFacing(jigsawBlockInfo.state()));
-				ResourceLocation poolPath = new ResourceLocation(jigsawBlockInfo.nbt().getString("pool"));
+				ResourceLocation poolPath = ResourceLocation.read(jigsawBlockInfo.nbt().getString("pool")).getOrThrow();
 				Optional<StructureTemplatePool> pool = this.pools.getOptional(poolPath);
 
 				if (pool.isEmpty() || (pool.get().size() == 0 && !poolPath.equals(Pools.EMPTY.location()))) {
@@ -235,13 +237,13 @@ public class AoAJigsawAssembler {
 
 				piecesToGen.addAll(fallbackPool.getShuffledTemplates(this.random));
 
-				placeChildren(jigsawBlockInfo, heightAccessor, genState, parentPiece, jigsawFacingPos, placementBounds, jigsawPos.getY() - minY, projection == StructureTemplatePool.Projection.RIGID, minY, pieceDepth, projection, jigsawPos, piecesToGen);
+				placeChildren(jigsawBlockInfo, heightAccessor, genState, parentPiece, jigsawFacingPos, placementBounds, jigsawPos.getY() - minY, projection == StructureTemplatePool.Projection.RIGID, minY, pieceDepth, projection, jigsawPos, piecesToGen, liquidSettings);
 			}
 		}
 
 		private void placeChildren(final StructureTemplate.StructureBlockInfo jigsawBlockInfo, final LevelHeightAccessor heightAccessor, final RandomState genState, final PoolElementStructurePiece parentPiece,
 								   final BlockPos jigsawFacingPos, final MutableObject<VoxelShape> placementBounds, final int jigsawPosDelta, final boolean isRigid, final int minY, final int pieceDepth,
-								   final StructureTemplatePool.Projection projection, final BlockPos jigsawPos, final List<StructurePoolElement> piecesToGen) {
+								   final StructureTemplatePool.Projection projection, final BlockPos jigsawPos, final List<StructurePoolElement> piecesToGen, final LiquidSettings liquidSettings) {
 			int terrainMatchDelta = -1;
 
 			for(StructurePoolElement childPoolElement : piecesToGen) {
@@ -281,7 +283,7 @@ public class AoAJigsawAssembler {
 								if (childIsRigid)
 									groundLevelDelta = parentGroundDelta - deltaY;
 
-								PoolElementStructurePiece childPiece = new PoolElementStructurePiece(this.structureTemplateManager, childPoolElement, childPos, groundLevelDelta, pieceRotation, childBounds);
+								PoolElementStructurePiece childPiece = new PoolElementStructurePiece(this.structureTemplateManager, childPoolElement, childPos, groundLevelDelta, pieceRotation, childBounds, liquidSettings);
 								int childBaseY;
 
 								if (isRigid) {

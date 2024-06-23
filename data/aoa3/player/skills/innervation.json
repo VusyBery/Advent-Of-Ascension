@@ -5,7 +5,7 @@
       "base_value": 0.0,
       "id": "aoa3:attribute_modification",
       "level_req": 1,
-      "operation": 0.0,
+      "operation": 0,
       "per_level_mod": 0.3,
       "unique_id": "1970224826"
     },
@@ -34,7 +34,7 @@
       "base_value": 10.0,
       "id": "aoa3:attribute_modification",
       "level_req": 25,
-      "operation": 0.0,
+      "operation": 0,
       "per_level_mod": 0.0,
       "unique_id": "-2042597261"
     },
@@ -58,7 +58,7 @@
       "base_value": 10.0,
       "id": "aoa3:attribute_modification",
       "level_req": 50,
-      "operation": 0.0,
+      "operation": 0,
       "per_level_mod": 0.0,
       "unique_id": "-2042598532"
     },
@@ -87,7 +87,7 @@
       "base_value": 10.0,
       "id": "aoa3:attribute_modification",
       "level_req": 85,
-      "operation": 0.0,
+      "operation": 0,
       "per_level_mod": 0.0,
       "unique_id": "-2042599369"
     },

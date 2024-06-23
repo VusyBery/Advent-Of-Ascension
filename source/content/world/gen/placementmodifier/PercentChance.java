@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.world.gen.placementmodifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
@@ -10,7 +10,7 @@ import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.tslat.aoa3.common.registration.worldgen.AoAPlacementModifiers;
 
 public class PercentChance extends PlacementFilter {
-	public static final Codec<PercentChance> CODEC = ExtraCodecs.POSITIVE_FLOAT.fieldOf("chance").xmap(PercentChance::new, instance -> instance.chance).codec();
+	public static final MapCodec<PercentChance> CODEC = ExtraCodecs.POSITIVE_FLOAT.fieldOf("chance").xmap(PercentChance::new, instance -> instance.chance);
 
 	private final float chance;
 

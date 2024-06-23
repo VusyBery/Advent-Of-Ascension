@@ -21,8 +21,8 @@ public class UrkaEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
-		return sizeIn.height * 0.85f;
+	public float getEyeHeightAccess(Pose pose) {
+		return getDimensions(pose).height() * 0.85f;
 	}
 
 	@Nullable

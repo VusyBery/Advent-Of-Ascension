@@ -5,11 +5,15 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.level.block.Block;
-import net.tslat.aoa3.common.menu.generic.ExtensibleContainerMenu;
+import net.tslat.aoa3.common.menu.generic.ExtensibleRecipeMenu;
 import net.tslat.aoa3.common.menu.provider.GenericMenuProvider;
 import net.tslat.aoa3.common.menu.slot.OutputSlot;
 import net.tslat.aoa3.common.menu.slot.PredicatedSlot;
@@ -20,7 +24,7 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 import java.util.function.Supplier;
 
 
-public class FrameBenchMenu extends ExtensibleContainerMenu<TransientCraftingContainer> {
+public class FrameBenchMenu extends ExtensibleRecipeMenu<TransientCraftingContainer, SingleRecipeInput> {
 	private static final Supplier<Item>[] SELECTIONS = new Supplier[] {AoAItems.CROSSBOW_FRAME, AoAItems.BLASTER_FRAME, AoAItems.CANNON_FRAME, AoAItems.HELMET_FRAME, AoAItems.CHESTPLATE_FRAME, AoAItems.LEGGINGS_FRAME, AoAItems.BOOTS_FRAME, AoAItems.GUN_FRAME, AoAItems.SHOTGUN_FRAME, AoAItems.SNIPER_FRAME};
 
 	private int currentSelection = 0;
@@ -29,6 +33,11 @@ public class FrameBenchMenu extends ExtensibleContainerMenu<TransientCraftingCon
 		super(AoAMenus.FRAME_BENCH.get(), screenId, playerInventory, accessValidator);
 
 		createPlayerInventory(playerInventory, 8, 84);
+	}
+
+	@Override
+	protected SingleRecipeInput createRecipeInput() {
+		return new SingleRecipeInput(getInventory().getItems().get(0));
 	}
 
 	public int getCurrentSelection() {

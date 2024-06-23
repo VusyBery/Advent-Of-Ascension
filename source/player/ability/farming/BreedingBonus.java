@@ -44,7 +44,7 @@ public class BreedingBonus extends ScalableModAbility {
 				newChild = ageableParentA.getBreedOffspring(level, ageableParentB);
 			}
 			else {
-				newChild = ((EntityType<AgeableMob>)ev.getChild().getType()).create(level, null, null, parentA.blockPosition(), MobSpawnType.BREEDING, false, false);
+				newChild = ((EntityType<AgeableMob>)ev.getChild().getType()).create(level, null, parentA.blockPosition(), MobSpawnType.BREEDING, false, false);
 			}
 
 			if (newChild != null) {

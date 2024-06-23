@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.world.gen.feature.tree.decorator;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 public class OpteryxNestTreeDecorator extends TreeDecorator {
-    public static final Codec<OpteryxNestTreeDecorator> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+    public static final MapCodec<OpteryxNestTreeDecorator> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
             Codec.floatRange(0, 1).fieldOf("probability").forGetter(instance -> instance.probability),
             ConfiguredFeature.CODEC.fieldOf("nest_feature").forGetter(instance -> instance.nestFeature)
     ).apply(builder, OpteryxNestTreeDecorator::new));
@@ -52,13 +53,16 @@ public class OpteryxNestTreeDecorator extends TreeDecorator {
         ServerChunkCache chunkSource = null;
         WorldGenLevel genLevel = null;
 
-        if (context.level() instanceof WorldGenRegion worldGenRegion) {
-            chunkSource = worldGenRegion.getLevel().getChunkSource();
-            genLevel = worldGenRegion;
-        }
-        else if (context.level() instanceof ServerLevel serverLevel) {
-            chunkSource = serverLevel.getChunkSource();
-            genLevel = serverLevel;
+        switch (context.level()) {
+            case WorldGenRegion region -> {
+                chunkSource = region.getLevel().getChunkSource();
+                genLevel = region;
+            }
+            case ServerLevel level -> {
+                chunkSource = level.getChunkSource();
+                genLevel = level;
+            }
+            default -> {}
         }
 
         if (chunkSource == null)

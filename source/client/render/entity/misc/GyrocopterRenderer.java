@@ -20,7 +20,7 @@ import net.tslat.aoa3.util.ColourUtil;
 
 
 public class GyrocopterRenderer extends EntityRenderer<GyrocopterEntity> {
-	private final ResourceLocation texture = new ResourceLocation("aoa3", "textures/entity/boss/gyro/gyro.png");
+	private final ResourceLocation texture = AdventOfAscension.id("textures/entity/boss/gyro/gyro.png");
 	private final EntityModel<Entity> model = new GyrocopterModel();
 
 	public GyrocopterRenderer(EntityRendererProvider.Context renderManager) {
@@ -46,7 +46,7 @@ public class GyrocopterRenderer extends EntityRenderer<GyrocopterEntity> {
 			IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
 
 			this.model.renderToBuffer(matrix, ivertexbuilder, packedLight, ColourUtil.WHITE, 1f, 1f, 1f, shade ? 0.15f : 1f);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 0.5f, 3, ColourUtil.CYAN), entity.getX(), entity.getY() + 0.3f, entity.getZ(), 0, 0, 0);
+			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER..get(), 0.5f, 3, ColourUtil.CYAN), entity.getX(), entity.getY() + 0.3f, entity.getZ(), 0, 0, 0);
 		}
 
 		matrix.popPose();

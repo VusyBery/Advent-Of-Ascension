@@ -3,15 +3,15 @@ package net.tslat.aoa3.content.item.weapon.blaster;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.FragmentShotEntity;
 import org.jetbrains.annotations.Nullable;
 
-
 public class Fragment extends BaseBlaster {
-	public Fragment(double dmg, int durability, int fireDelayTicks, float energyCost) {
-		super(dmg, durability, fireDelayTicks, energyCost);
+	public Fragment(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

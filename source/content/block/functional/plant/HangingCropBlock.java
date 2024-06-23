@@ -42,9 +42,9 @@ public abstract class HangingCropBlock extends AoACropBlock {
 			if (age < this.getMaxAge()) {
 				float growthMod = getGrowthMod(this, world, pos);
 
-				if (CommonHooks.onCropsGrowPre(world, pos, state, random.nextInt((int)(25.0F / growthMod) + 1) == 0)) {
+				if (CommonHooks.canCropGrow(world, pos, state, random.nextInt((int)(25.0F / growthMod) + 1) == 0)) {
 					world.setBlock(pos, this.getStateForAge(age + 1), 2);
-					CommonHooks.onCropsGrowPost(world, pos, state);
+					CommonHooks.fireCropGrowPost(world, pos, state);
 				}
 			}
 		}

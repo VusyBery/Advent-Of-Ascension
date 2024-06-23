@@ -35,9 +35,9 @@ public class SunShotEntity extends BaseEnergyShot {
 
 		setDeltaMovement(getDeltaMovement().multiply(0.3d, 0.3d, 0.3d));
 
-		for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10), EntityUtil.Predicates.HOSTILE_MOB)) {
+		for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(10), EntityUtil::isHostileMob)) {
 			if (!e.isOnFire() && !e.fireImmune())
-				e.setSecondsOnFire(2);
+				e.igniteForSeconds(2);
 		}
 
 		if (getAge() >= 260) {

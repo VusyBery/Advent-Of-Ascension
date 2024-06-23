@@ -5,10 +5,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.aoa3.client.render.entity.projectile.TexturedProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.cannon.FungalBallEntity;
 import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class FungalBallRenderer extends TexturedProjectileRenderer<FungalBallEntity> {
@@ -22,10 +22,27 @@ public class FungalBallRenderer extends TexturedProjectileRenderer<FungalBallEnt
 
 		for (int i = 0; i < 8; i++) {
 			switch (RandomUtil.randomNumberUpTo(4)) {
-				case 0 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 3, ColourUtil.GREEN), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-				case 1 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.YELLOW), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-				case 2 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.BLUE), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-				case 3 -> entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 1, 3, ColourUtil.RGB(193, 64, 215)), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
+				case 0 -> {
+					
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+					.colourOverride(0, entity.level().random.nextFloat() * 0.7f + 0.3f, 0, 1f)
+					.spawnParticles(entity.level());
+				}
+				case 1 -> {
+					ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+							.colourOverride(ColourUtil.YELLOW)
+							.spawnParticles(entity.level());
+				}
+				case 2 -> {
+					ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+							.colourOverride(ColourUtil.BLUE)
+							.spawnParticles(entity.level());
+				}
+				case 3 -> {
+					ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+							.colourOverride(ColourUtil.RGB(193, 64, 215))
+							.spawnParticles(entity.level());
+				}
 			}
 		}
 	}

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "aoa3:natural_redstone_ivory"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:natural_redstone_ivory_stairs"
+  }
+}

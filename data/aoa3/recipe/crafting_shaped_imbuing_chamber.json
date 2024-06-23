@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "tag": "c:ingots/copper"
+    },
+    "I": {
+      "item": "aoa3:infusion_table"
+    },
+    "S": {
+      "tag": "aoa3:energy_stone"
+    }
+  },
+  "pattern": [
+    "CCC",
+    "CIC",
+    "CSC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:imbuing_chamber"
+  }
+}

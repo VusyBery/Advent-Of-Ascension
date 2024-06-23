@@ -1,9 +1,9 @@
 package net.tslat.aoa3.content.loottable.function;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,8 +20,8 @@ import net.tslat.aoa3.util.PlayerUtil;
 import java.util.List;
 
 public class GrantSkillXp extends LootItemConditionalFunction {
-	public static final Codec<GrantSkillXp> CODEC = RecordCodecBuilder.create(builder -> commonFields(builder).and(builder.group(
-					ExtraCodecs.lazyInitializedCodec(AoARegistries.AOA_SKILLS::lookupCodec).fieldOf("skill").forGetter(GrantSkillXp::getSkill),
+	public static final MapCodec<GrantSkillXp> CODEC = RecordCodecBuilder.mapCodec(builder -> commonFields(builder).and(builder.group(
+					Codec.lazyInitialized(AoARegistries.AOA_SKILLS::lookupCodec).fieldOf("skill").forGetter(GrantSkillXp::getSkill),
 					Codec.FLOAT.fieldOf("xp").forGetter(GrantSkillXp::getXp)))
 			.apply(builder, GrantSkillXp::new));
 
@@ -36,13 +36,16 @@ public class GrantSkillXp extends LootItemConditionalFunction {
 	}
 
 	@Override
-	public LootItemFunctionType getType() {
+	public LootItemFunctionType<GrantSkillXp> getType() {
 		return AoALootFunctions.GRANT_SKILL_XP.get();
 	}
 
 	@Override
 	protected ItemStack run(ItemStack stack, LootContext context) {
-		Entity entity = context.getParamOrNull(LootContextParams.KILLER_ENTITY);
+		Entity entity = context.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY);
+
+		if (entity == null)
+			entity = context.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
 
 		if (!(entity instanceof Player))
 			entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);

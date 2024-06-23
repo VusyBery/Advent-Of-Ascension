@@ -11,7 +11,7 @@ import net.tslat.aoa3.client.model.entity.boss.HiveKingModel;
 import net.tslat.aoa3.content.entity.boss.HiveKingEntity;
 
 public class HiveKingRenderer extends MobRenderer<HiveKingEntity, EntityModel<HiveKingEntity>> {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/hiveking/hive_king.png");
+	private static final ResourceLocation TEXTURE = AdventOfAscension.id("textures/entity/boss/hiveking/hive_king.png");
 
 	public HiveKingRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new HiveKingModel(), AoAMobs.HIVE_KING.get().getWidth() / 3f);

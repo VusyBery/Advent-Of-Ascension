@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "aoa3:pressed_creep_stone"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:pressed_creep_stone_wall"
+  }
+}

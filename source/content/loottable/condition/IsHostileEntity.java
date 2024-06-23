@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.loottable.condition;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.monster.Enemy;
@@ -11,7 +12,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.tslat.aoa3.common.registration.loot.AoALootConditions;
 
 public record IsHostileEntity() implements LootItemCondition {
-	public static final Codec<IsHostileEntity> CODEC = Codec.unit(IsHostileEntity::new);
+	public static final MapCodec<IsHostileEntity> CODEC = MapCodec.unit(IsHostileEntity::new);
 
 	@Override
 	public LootItemConditionType getType() {

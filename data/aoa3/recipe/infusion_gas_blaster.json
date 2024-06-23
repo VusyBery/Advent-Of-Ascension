@@ -1,0 +1,27 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:blaster_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:rosid_root"
+    },
+    {
+      "item": "aoa3:jungle_thorns"
+    },
+    {
+      "item": "aoa3:power_core"
+    },
+    {
+      "tag": "neoforge:gems/jade"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:gas_blaster"
+  }
+}

@@ -2,10 +2,9 @@ package net.tslat.aoa3.client.render.entity.projectile.cannonshots;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.tslat.aoa3.client.render.entity.projectile.ParticleProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.cannon.MoonShotEntity;
-import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
 public class MoonShotRenderer extends ParticleProjectileRenderer<MoonShotEntity> {
 	public MoonShotRenderer(final EntityRendererProvider.Context manager) {
@@ -41,8 +40,17 @@ public class MoonShotRenderer extends ParticleProjectileRenderer<MoonShotEntity>
 					entity.toggle2 = !entity.toggle2;
 			}
 
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 3, ColourUtil.RGB(255, 105, 180)), entity.getX(), entity.getY() + entity.yOffset1, entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.FLICKERING_SPARKLER.get(), 1, 3, ColourUtil.WHITE), entity.getX(), entity.getY() + entity.yOffset2, entity.getZ(), 0, 0, 0);
+			float colourMod = entity.level().random.nextFloat() * 0.7f + 0.3f;
+
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().subtract(0, entity.yOffset1, 0))
+					.colourOverride(colourMod, colourMod * 105 / 255f, colourMod * 180 / 255f, 1f)
+					.spawnParticles(entity.level());
+
+			colourMod = entity.level().random.nextFloat() * 0.7f + 0.3f;
+
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().subtract(0, entity.yOffset2, 0))
+					.colourOverride(colourMod, colourMod, colourMod, 1f)
+					.spawnParticles(entity.level());
 		}
 	}
 }

@@ -1,0 +1,24 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:helmet_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "minecraft:golden_pickaxe"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "tag": "c:dusts/redstone"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:subterranean_helmet"
+  }
+}

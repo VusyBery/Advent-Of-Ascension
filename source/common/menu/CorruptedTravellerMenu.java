@@ -33,14 +33,14 @@ public class CorruptedTravellerMenu extends AbstractContainerMenu {
 		input = new SimpleContainer(1) {
 			@Override
 			public boolean canPlaceItem(int index, ItemStack stack) {
-				return stack.getItem().getFoodProperties() != null;
+				return stack.getFoodProperties(null) != null;
 			}
 		};
 
 		addSlot(new Slot(input, 0, 80, 34) {
 			@Override
 			public boolean mayPlace(ItemStack stack) {
-				return stack.getItem().getFoodProperties() != null;
+				return stack.getFoodProperties(null) != null;
 			}
 
 			@Override
@@ -67,7 +67,7 @@ public class CorruptedTravellerMenu extends AbstractContainerMenu {
 		if (!handledFood) {
 			ItemStack stack = slots.get(0).container.getItem(0);
 
-			if (!stack.isEmpty() && stack.getItem().getFoodProperties() != null) {
+			if (!stack.isEmpty() && stack.getFoodProperties(this.player) != null) {
 				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.WORN_BOOK.get()));
 				stack.shrink(1);
 			}

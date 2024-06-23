@@ -3,8 +3,8 @@ package net.tslat.aoa3.client.model.entity.animal;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.content.entity.animal.CorateeEntity;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public class CorateeModel extends DefaultedEntityGeoModel<CorateeEntity> {
@@ -22,8 +22,8 @@ public class CorateeModel extends DefaultedEntityGeoModel<CorateeEntity> {
 		super.setCustomAnimations(coratee, instanceId, animationState);
 
 		if (coratee.isBaby()) {
-			CoreGeoBone root = getAnimationProcessor().getBone("bone");
-			CoreGeoBone head = getAnimationProcessor().getBone("head");
+			GeoBone root = getAnimationProcessor().getBone("bone");
+			GeoBone head = getAnimationProcessor().getBone("head");
 
 			root.setScaleX(0.5f);
 			root.setScaleY(0.5f);

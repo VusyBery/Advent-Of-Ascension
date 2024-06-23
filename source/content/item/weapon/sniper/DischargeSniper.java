@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DischargeSniper extends BaseSniper {
-	public DischargeSniper(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public DischargeSniper(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -39,9 +39,9 @@ public class DischargeSniper extends BaseSniper {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.EXPLODES_ON_HIT, LocaleUtil.ItemDescriptionType.BENEFICIAL));
 
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

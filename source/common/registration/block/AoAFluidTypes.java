@@ -21,10 +21,10 @@ import java.util.function.Supplier;
 public final class AoAFluidTypes {
 	public static void init() {}
 
-	private static final ResourceLocation WATER_STILL_TEXTURE = new ResourceLocation("block/water_still");
-	private static final ResourceLocation WATER_FLOWING_TEXTURE = new ResourceLocation("block/water_flow");
-	private static final ResourceLocation WATER_OVERLAY_TEXTURE = new ResourceLocation("block/water_overlay");
-	private static final ResourceLocation UNDERWATER_TEXTURE = new ResourceLocation("textures/misc/underwater.png");
+	private static final ResourceLocation WATER_STILL_TEXTURE = ResourceLocation.withDefaultNamespace("block/water_still");
+	private static final ResourceLocation WATER_FLOWING_TEXTURE = ResourceLocation.withDefaultNamespace("block/water_flow");
+	private static final ResourceLocation WATER_OVERLAY_TEXTURE = ResourceLocation.withDefaultNamespace("block/water_overlay");
+	private static final ResourceLocation UNDERWATER_TEXTURE = ResourceLocation.withDefaultNamespace("textures/misc/underwater.png");
 
 	public static final DeferredHolder<FluidType, FluidType> TOXIC_WASTE = register("toxic_waste", ToxicWaste::new);
 	public static final DeferredHolder<FluidType, FluidType> TAR = register("tar", Tar::new);
@@ -40,7 +40,7 @@ public final class AoAFluidTypes {
 			.fallDistanceModifier(0)
 			.viscosity(1200)
 			.density(1200))
-			.colour(ColourUtil.RGBA(255, 105, 180, 200)));
+			.colour(ColourUtil.ARGB(255, 105, 180, 200)));
 
 	private static <T extends FluidType> DeferredHolder<FluidType, T> register(String id, Supplier<T> fluidType) {
 		return AoARegistries.FLUID_TYPES.register(id, fluidType);

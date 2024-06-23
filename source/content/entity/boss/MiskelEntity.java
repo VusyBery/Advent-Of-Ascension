@@ -40,7 +40,7 @@ public class MiskelEntity extends AoARangedMob<MiskelEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.009375f;
 	}
 
@@ -68,7 +68,7 @@ public class MiskelEntity extends AoARangedMob<MiskelEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

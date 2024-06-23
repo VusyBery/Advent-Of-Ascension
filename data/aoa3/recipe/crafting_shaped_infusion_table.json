@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:gems/amethyst"
+    },
+    "C": {
+      "item": "minecraft:crafting_table"
+    },
+    "E": {
+      "item": "minecraft:enchanting_table"
+    },
+    "R": {
+      "item": "aoa3:ancient_rock"
+    }
+  },
+  "pattern": [
+    "ARA",
+    " E ",
+    "ACA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:infusion_table"
+  }
+}

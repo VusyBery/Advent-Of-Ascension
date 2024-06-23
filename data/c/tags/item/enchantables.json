@@ -1,0 +1,11 @@
+{
+  "values": [
+    "#aoa3:staves_enchantable",
+    "#aoa3:guns_enchantable",
+    "#aoa3:small_guns_enchantable",
+    "#aoa3:shotguns_enchantable",
+    "#aoa3:blasters_enchantable",
+    "#aoa3:greatblades_enchantable",
+    "#aoa3:bullet_firing_enchantable"
+  ]
+}

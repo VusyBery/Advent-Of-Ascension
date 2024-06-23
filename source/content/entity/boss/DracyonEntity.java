@@ -41,7 +41,7 @@ public class DracyonEntity extends AoAFlyingMeleeMob implements AoARangedAttacke
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.15625f;
 	}
 
@@ -64,7 +64,7 @@ public class DracyonEntity extends AoAFlyingMeleeMob implements AoARangedAttacke
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
@@ -119,7 +119,7 @@ public class DracyonEntity extends AoAFlyingMeleeMob implements AoARangedAttacke
 	@Override
 	protected void onAttack(Entity target) {
 		if (target instanceof ServerPlayer)
-			AoAPackets.messagePlayer((ServerPlayer)target, new ScreenOverlayPacket(new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/overlay/effect/scratches.png"), 40));
+			AoAPackets.messagePlayer((ServerPlayer)target, new ScreenOverlayPacket(AdventOfAscension.id("textures/gui/overlay/effect/scratches.png"), 40));
 	}
 
 	@Override

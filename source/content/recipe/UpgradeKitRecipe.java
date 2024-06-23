@@ -1,28 +1,22 @@
 package net.tslat.aoa3.content.recipe;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.inventory.TransientCraftingContainer;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import net.tslat.aoa3.common.menu.generic.GenericRecipeInput;
 import net.tslat.aoa3.common.registration.AoARecipes;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.util.RecipeUtil;
 import org.jetbrains.annotations.Nullable;
 
 
-public class UpgradeKitRecipe implements Recipe<TransientCraftingContainer> {
-	public static final Codec<UpgradeKitRecipe> CODEC = RecordCodecBuilder.create(builder ->
-					RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails).and(builder.group(
-					Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(instance -> instance.input),
-					Ingredient.CODEC_NONEMPTY.fieldOf("upgrade_kit").forGetter(instance -> instance.upgradeKit),
-					ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf("result").forGetter(instance -> instance.output)))
-			.apply(builder, UpgradeKitRecipe::new));
-
+public class UpgradeKitRecipe implements Recipe<GenericRecipeInput> {
 	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
 
 	private final Ingredient input;
@@ -76,37 +70,42 @@ public class UpgradeKitRecipe implements Recipe<TransientCraftingContainer> {
 	}
 
 	@Override
-	public boolean matches(TransientCraftingContainer inv, Level world) {
+	public boolean matches(GenericRecipeInput inv, Level world) {
 		return this.input.test(inv.getItem(0)) && this.upgradeKit.test(inv.getItem(1));
 	}
 
 	@Override
-	public ItemStack assemble(TransientCraftingContainer inv, RegistryAccess registryAccess) {
-		return getResultItem(registryAccess);
+	public ItemStack assemble(GenericRecipeInput inv, HolderLookup.Provider holderLookup) {
+		return getResultItem(holderLookup);
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider holderLookup) {
 		return this.output.copy();
 	}
 
 	public static class Factory implements RecipeSerializer<UpgradeKitRecipe> {
+		public static final MapCodec<UpgradeKitRecipe> CODEC = RecordCodecBuilder.mapCodec(builder ->
+				RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails).and(builder.group(
+								Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(instance -> instance.input),
+								Ingredient.CODEC_NONEMPTY.fieldOf("upgrade_kit").forGetter(instance -> instance.upgradeKit),
+								ItemStack.STRICT_CODEC.fieldOf("result").forGetter(instance -> instance.output)))
+						.apply(builder, UpgradeKitRecipe::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, UpgradeKitRecipe> STREAM_CODEC = StreamCodec.composite(
+				RecipeUtil.RecipeBookDetails.STREAM_CODEC, recipe -> recipe.recipeBookDetails,
+				Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.input,
+				Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.upgradeKit,
+				ItemStack.STREAM_CODEC, recipe -> recipe.output,
+				UpgradeKitRecipe::new);
+
 		@Override
-		public Codec<UpgradeKitRecipe> codec() {
-			return UpgradeKitRecipe.CODEC;
+		public MapCodec<UpgradeKitRecipe> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public UpgradeKitRecipe fromNetwork(FriendlyByteBuf buffer) {
-			return new UpgradeKitRecipe(RecipeUtil.RecipeBookDetails.fromNetwork(buffer), Ingredient.fromNetwork(buffer), Ingredient.fromNetwork(buffer), buffer.readItem());
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, UpgradeKitRecipe recipe) {
-			recipe.recipeBookDetails.toNetwork(buffer);
-			recipe.input.toNetwork(buffer);
-			recipe.upgradeKit.toNetwork(buffer);
-			buffer.writeItem(recipe.output);
+		public StreamCodec<RegistryFriendlyByteBuf, UpgradeKitRecipe> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

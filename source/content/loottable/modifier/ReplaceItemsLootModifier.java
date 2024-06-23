@@ -2,6 +2,7 @@ package net.tslat.aoa3.content.loottable.modifier;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ReplaceItemsLootModifier extends LootModifier {
-	public static final Codec<ReplaceItemsLootModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).and(
+	public static final MapCodec<ReplaceItemsLootModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).and(
 			Codec.pair(
 					AoARegistries.ITEMS.lookupCodec().fieldOf("item").codec(),
 					ItemStack.CODEC.fieldOf("replace_with").codec()
@@ -35,7 +36,7 @@ public class ReplaceItemsLootModifier extends LootModifier {
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 

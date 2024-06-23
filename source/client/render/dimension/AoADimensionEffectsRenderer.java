@@ -17,8 +17,8 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public abstract class AoADimensionEffectsRenderer extends DimensionSpecialEffects {
-    protected static final ResourceLocation MOON_TEXTURE = new ResourceLocation("textures/environment/moon_phases.png");
-    protected static final ResourceLocation SUN_TEXTURE = new ResourceLocation("textures/environment/sun.png");
+    protected static final ResourceLocation MOON_TEXTURE = ResourceLocation.withDefaultNamespace("textures/environment/moon_phases.png");
+    protected static final ResourceLocation SUN_TEXTURE = ResourceLocation.withDefaultNamespace("textures/environment/sun.png");
 
     protected final boolean noClouds;
     protected final boolean noSky;
@@ -52,12 +52,12 @@ public abstract class AoADimensionEffectsRenderer extends DimensionSpecialEffect
     }
 
     @Override
-    public boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f projectionMatrix) {
+    public boolean renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f frustumMatrix, Matrix4f projectionMatrix) {
         return this.noClouds;
     }
 
     @Override
-    public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
+    public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f frustumMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
         return this.noSky;
     }
 

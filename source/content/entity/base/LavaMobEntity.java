@@ -7,7 +7,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidType;
 
@@ -15,8 +15,8 @@ public abstract class LavaMobEntity extends PathfinderMob {
 	protected LavaMobEntity(EntityType<? extends LavaMobEntity> entityType, Level world) {
 		super(entityType, world);
 
-		this.setPathfindingMalus(BlockPathTypes.LAVA, 0);
-		this.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0);
+		this.setPathfindingMalus(PathType.LAVA, 0);
+		this.setPathfindingMalus(PathType.DAMAGE_FIRE, 0);
 	}
 
 	public boolean checkSpawnObstruction(LevelReader pLevel) {

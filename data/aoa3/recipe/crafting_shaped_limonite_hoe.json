@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "tag": "neoforge:ingots/limonite"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "LL",
+    " S",
+    " S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:limonite_hoe"
+  }
+}

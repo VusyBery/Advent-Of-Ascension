@@ -1,7 +1,7 @@
 package net.tslat.aoa3.common.registration;
 
-import net.minecraft.world.Container;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -21,7 +21,7 @@ public final class AoARecipes {
 	public static final RecipeTypeContainer<AshfernCookingRecipe> ASHFERN_COOKING = registerRecipeType("ashfern_cooking", AshfernCookingRecipe.Factory::new);
 	public static final RecipeTypeContainer<WhitewashingRecipe> WHITEWASHING = registerRecipeType("whitewashing", WhitewashingRecipe.Factory::new);
 
-	private static <T extends Recipe<I>, I extends Container> RecipeTypeContainer<T> registerRecipeType(String id, Supplier<RecipeSerializer<T>> serializer) {
+	private static <T extends Recipe<I>, I extends RecipeInput> RecipeTypeContainer<T> registerRecipeType(String id, Supplier<RecipeSerializer<T>> serializer) {
 		return new RecipeTypeContainer<>(AoARegistries.RECIPE_TYPES.register(id, () -> new RecipeType<>() {
 			@Override
 			public String toString() {

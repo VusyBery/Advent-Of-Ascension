@@ -1,5 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -19,12 +22,11 @@ import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class UltimatumStaff extends BaseStaff<Object> {
-	public UltimatumStaff(int durability) {
-		super(durability);
+	public UltimatumStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -33,11 +35,12 @@ public class UltimatumStaff extends BaseStaff<Object> {
 		return AoASounds.ITEM_ULTIMATUM_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.LIFE_RUNE.get(), 5);
-		runes.put(AoAItems.POWER_RUNE.get(), 3);
-		runes.put(AoAItems.DISTORTION_RUNE.get(), 8);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.LIFE_RUNE.get(), 5);
+			runes.put(AoAItems.POWER_RUNE.get(), 3);
+			runes.put(AoAItems.DISTORTION_RUNE.get(), 8);
+		});
 	}
 
 	@Override
@@ -47,7 +50,7 @@ public class UltimatumStaff extends BaseStaff<Object> {
 
 	@Override
 	public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-		if (target instanceof LivingEntity && !EntityUtil.isImmuneToSpecialAttacks(target, shooter)) {
+		if (target instanceof LivingEntity && !EntityUtil.isImmuneToSpecialAttacks(target)) {
 			Vec3 lookVec = shooter.getLookAngle();
 
 			double posX = shooter.getX() + lookVec.x * 4;
@@ -65,9 +68,9 @@ public class UltimatumStaff extends BaseStaff<Object> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SPEC_IMMUNE, LocaleUtil.ItemDescriptionType.HARMFUL));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

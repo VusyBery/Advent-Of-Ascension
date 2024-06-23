@@ -1,6 +1,9 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -27,8 +30,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class FungalStaff extends BaseStaff<Object2BooleanArrayMap<BlockPos>> {
-	public FungalStaff(int durability) {
-		super(durability);
+	public FungalStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -37,10 +40,11 @@ public class FungalStaff extends BaseStaff<Object2BooleanArrayMap<BlockPos>> {
 		return AoASounds.ITEM_FUNGAL_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.DISTORTION_RUNE.get(), 5);
-		runes.put(AoAItems.LIFE_RUNE.get(), 2);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.DISTORTION_RUNE.get(), 5);
+			runes.put(AoAItems.LIFE_RUNE.get(), 2);
+		});
 	}
 
 	@Override
@@ -86,15 +90,15 @@ public class FungalStaff extends BaseStaff<Object2BooleanArrayMap<BlockPos>> {
 						mushroom.performBonemeal((ServerLevel)level, RandomUtil.RANDOM.getSource(), pos, state);
 				}
 
-				level.levelEvent(LevelEvent.PARTICLES_PLANT_GROWTH, pos, 0);
+				level.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, pos, 0);
 			}
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 2));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

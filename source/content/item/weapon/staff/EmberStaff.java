@@ -1,7 +1,10 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
 import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
@@ -28,8 +31,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class EmberStaff extends BaseStaff<Pair<List<BlockPos>, List<Entity>>> {
-	public EmberStaff(int durability) {
-		super(durability);
+	public EmberStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -38,11 +41,12 @@ public class EmberStaff extends BaseStaff<Pair<List<BlockPos>, List<Entity>>> {
 		return AoASounds.ITEM_EMBER_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.KINETIC_RUNE.get(), 1);
-		runes.put(AoAItems.WIND_RUNE.get(), 1);
-		runes.put(AoAItems.FIRE_RUNE.get(), 1);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.KINETIC_RUNE.get(), 1);
+			runes.put(AoAItems.WIND_RUNE.get(), 1);
+			runes.put(AoAItems.FIRE_RUNE.get(), 1);
+		});
 	}
 
 	@Override
@@ -71,8 +75,8 @@ public class EmberStaff extends BaseStaff<Pair<List<BlockPos>, List<Entity>>> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

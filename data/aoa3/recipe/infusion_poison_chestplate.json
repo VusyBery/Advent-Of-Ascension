@@ -1,0 +1,36 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:chestplate_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:toxic_lump"
+    },
+    {
+      "item": "aoa3:toxic_lump"
+    },
+    {
+      "item": "aoa3:toxic_lump"
+    },
+    {
+      "item": "aoa3:toxic_lump"
+    },
+    {
+      "item": "aoa3:armour_plating"
+    },
+    {
+      "item": "aoa3:armour_plating"
+    },
+    {
+      "item": "aoa3:reinforced_cloth"
+    },
+    {
+      "item": "aoa3:reinforced_cloth"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:poison_chestplate"
+  }
+}

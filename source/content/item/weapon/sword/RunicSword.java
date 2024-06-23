@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.item.weapon.sword;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,34 +11,32 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.common.registration.item.AoATiers;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class RunicSword extends BaseSword {
-	public RunicSword() {
-		super(AoATiers.RUNIC);
+	public RunicSword(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 	@Override
-	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack swordStack, float baseDamage) {
-		if (baseDamage / getDamage() > 0.75f) {
+	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack swordStack, DamageSource source, float baseDamage) {
+		if (baseDamage / getBaseDamage(swordStack) > 0.75f) {
 			ItemStack offhandStack = attacker.getOffhandItem();
 
 			if (offhandStack.getItem() == AoAItems.FIRE_RUNE.get() && offhandStack.getCount() >= 5)
-				target.setSecondsOnFire(5);
+				target.igniteForSeconds(5);
 		}
 
-		return super.getDamageForAttack(target, attacker, swordStack, baseDamage);
+		return super.getDamageForAttack(target, attacker, swordStack, source, baseDamage);
 	}
 
 	@Override
@@ -76,7 +75,7 @@ public class RunicSword extends BaseSword {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.HARMFUL, 2));
 	}

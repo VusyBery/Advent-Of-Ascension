@@ -9,7 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.projectile.cannon.CannonballEntity;
@@ -17,13 +16,12 @@ import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public abstract class BaseCannon extends BaseGun {
-	public BaseCannon(float dmg, int durability, int fireDelayTicks, float recoil) {
-		super(dmg, durability, fireDelayTicks, recoil);
+	public BaseCannon(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Override
@@ -42,12 +40,19 @@ public abstract class BaseCannon extends BaseGun {
 			if (target instanceof LivingEntity livingTarget)
 				bulletDmgMultiplier *= 1 + (livingTarget.getAttributeValue(Attributes.ARMOR) * 1.5 + livingTarget.getAttributeValue(Attributes.ARMOR_TOUGHNESS) * 0.5f) / 100f;
 
-			if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, getDamage() * bulletDmgMultiplier)) {
-				if (target instanceof Player && ((Player)target).isBlocking())
-					((Player)target).disableShield(true);
+			ItemStack stack = shooter.getItemInHand(bullet.getHand());
+
+			if (!stack.is(this))
+				stack = getDefaultInstance();
+
+			float damage = getGunDamage(stack) * bulletDmgMultiplier;
+
+			if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, source -> damage)) {
+				if (target instanceof Player pl && pl.isBlocking())
+					pl.disableShield();
 
 				if (target instanceof LivingEntity livingTarget)
-					DamageUtil.doScaledKnockback(livingTarget, shooter, getDamage() * bulletDmgMultiplier / 10f, 1, 1, 1);
+					DamageUtil.doScaledKnockback(livingTarget, shooter, damage / 10f, 1, 1, 1);
 
 				doImpactEffect(target, shooter, bullet, impactPosition, bulletDmgMultiplier);
 			}
@@ -60,8 +65,8 @@ public abstract class BaseCannon extends BaseGun {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 
 		tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.KNOCKBACK, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 		tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.CANNON_ARMOUR_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));

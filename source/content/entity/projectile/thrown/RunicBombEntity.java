@@ -16,7 +16,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
 import net.tslat.aoa3.common.registration.item.AoAWeapons;
-import net.tslat.aoa3.content.entity.mob.mysterium.RunicGolemEntity;
+import net.tslat.aoa3.content.entity.monster.mysterium.RunicGolemEntity;
 import net.tslat.aoa3.content.entity.projectile.HardProjectile;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
@@ -50,7 +50,7 @@ public class RunicBombEntity extends BaseBullet implements HardProjectile, ItemS
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.1f;
 	}
 
@@ -79,7 +79,7 @@ public class RunicBombEntity extends BaseBullet implements HardProjectile, ItemS
 	private void explode() {
 		WorldUtil.createExplosion(shooter, level(), this, explosionStrength);
 
-		for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(3.0D), EntityUtil.Predicates.HOSTILE_MOB)) {
+		for (LivingEntity e : level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(3.0D), EntityUtil::isHostileMob)) {
 			EntityUtil.applyPotions(e, new EffectBuilder(MobEffects.MOVEMENT_SLOWDOWN, 30).level(100));
 
 			if (e instanceof RunicGolemEntity && ((RunicGolemEntity)e).isShielded())

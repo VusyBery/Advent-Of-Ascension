@@ -37,6 +37,10 @@ public final class NumberUtil {
 		return sum / values.length;
 	}
 
+	public static String roundTo2Decimals(float value) {
+		return roundToNthDecimalPlace(value, 2);
+	}
+
 	public static String roundToNthDecimalPlace(float value, int decimals) {
 		float val = Math.round(value * (float)Math.pow(10, decimals)) / (float)Math.pow(10, decimals);
 

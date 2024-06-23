@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aoa3:sharp_claw"
+    },
+    "B": {
+      "tag": "c:ingots/iron"
+    },
+    "C": {
+      "tag": "c:gems/amethyst"
+    },
+    "D": {
+      "tag": "c:rods/wooden"
+    },
+    "E": {
+      "item": "aoa3:confetti_pile"
+    }
+  },
+  "pattern": [
+    " A ",
+    " B ",
+    "CDE"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:supremacy_sword"
+  }
+}

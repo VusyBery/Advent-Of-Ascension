@@ -1,9 +1,8 @@
 package net.tslat.aoa3.content.loottable.entry;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntries;
@@ -19,8 +18,8 @@ import java.util.function.Consumer;
 
 
 public class MultiLootEntry extends LootPoolSingletonContainer  {
-    public static final Codec<MultiLootEntry> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-            ExtraCodecs.strictOptionalField(LootPoolEntries.CODEC.listOf(), "entries", List.of()).forGetter(instance -> instance.entries))
+    public static final MapCodec<MultiLootEntry> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+            LootPoolEntries.CODEC.listOf().optionalFieldOf("entries", List.of()).forGetter(instance -> instance.entries))
             .and(singletonFields(builder))
             .apply(builder, MultiLootEntry::new));
     private final List<LootPoolEntryContainer> entries;

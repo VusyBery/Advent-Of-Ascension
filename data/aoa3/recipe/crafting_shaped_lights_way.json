@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:ingots/shyrestone"
+    },
+    "B": {
+      "tag": "c:rods/wooden"
+    },
+    "C": {
+      "tag": "neoforge:gems/shyregem"
+    }
+  },
+  "pattern": [
+    "A ",
+    "A ",
+    "BC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:lights_way"
+  }
+}

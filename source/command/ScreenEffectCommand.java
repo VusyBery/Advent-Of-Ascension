@@ -55,7 +55,7 @@ public class ScreenEffectCommand implements Command<CommandSourceStack> {
 				.duration(IntegerArgumentType.getInteger(cmd, "duration"))
 				.fullscreen(fullscreen)
 				.scaled(scale)
-				.coloured(colour.packed());
+				.coloured(colour.argbInt());
 
 		Collection<ServerPlayer> players = EntityArgument.getPlayers(cmd, "players");
 

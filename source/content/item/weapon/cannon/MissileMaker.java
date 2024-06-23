@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MissileMaker extends BaseCannon {
-	public MissileMaker(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public MissileMaker(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -39,9 +39,9 @@ public class MissileMaker extends BaseCannon {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

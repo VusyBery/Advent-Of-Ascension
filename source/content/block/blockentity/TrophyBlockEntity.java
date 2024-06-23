@@ -1,9 +1,15 @@
 package net.tslat.aoa3.content.block.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -12,20 +18,20 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.block.AoABlockEntities;
-import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
+import net.tslat.aoa3.content.block.functional.misc.TrophyBlock;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.RegistryUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
-
 public class TrophyBlockEntity extends BlockEntity implements Nameable {
-	private final Block trophyBlock;
+	private static final Component DEFAULT_NAME = LocaleUtil.getLocaleMessage("block.aoa3.trophy");
 
 	@Nullable
-	private Entity cachedEntity = null;
+	private TrophyBlock.TrophyData trophyData;
+
 	@Nullable
-	private String entityId = null;
-	private boolean isOriginal = true;
+	private Component customName;
 
 	private float mobRotation;
 	private float prevMobRotation;
@@ -33,19 +39,6 @@ public class TrophyBlockEntity extends BlockEntity implements Nameable {
 
 	public TrophyBlockEntity(BlockPos pos, BlockState state) {
 		super(AoABlockEntities.TROPHY.get(), pos, state);
-
-		this.trophyBlock = state.getBlock();
-	}
-
-	public void setEntity(String entityId, boolean isEgg) {
-		this.entityId = entityId;
-		this.cachedEntity = null;
-		this.isOriginal = !isEgg;
-	}
-
-	public static void doClientTick(Level level, BlockPos pos, BlockState state, TrophyBlockEntity blockEntity) {
-		blockEntity.prevMobRotation = blockEntity.mobRotation;
-		blockEntity.mobRotation = (blockEntity.mobRotation + 0.05f) % 360;
 	}
 
 	public float getMobRotation() {
@@ -56,107 +49,110 @@ public class TrophyBlockEntity extends BlockEntity implements Nameable {
 		return prevMobRotation;
 	}
 
-	public String getEntityId() {
-		return entityId;
+	@Nullable
+	public TrophyBlock.TrophyData getTrophyData() {
+		return this.trophyData;
 	}
 
-	public boolean isOriginal() {
-		return isOriginal;
+	public void setEntity(EntityType<?> entity, boolean isEgg) {
+		this.trophyData = new TrophyBlock.TrophyData(!isEgg, entity);
+
+		if (this.customName == null)
+			setCustomName(TrophyBlock.getDefaultNameWithEntity(this.trophyData, RegistryUtil.getId(getBlockState()).getPath()));
+
+		markUpdated();
+	}
+
+	public static void doClientTick(Level level, BlockPos pos, BlockState state, TrophyBlockEntity blockEntity) {
+		blockEntity.prevMobRotation = blockEntity.mobRotation;
+		blockEntity.mobRotation = (blockEntity.mobRotation + 0.05f) % 360;
+	}
+
+	private void markUpdated() {
+		this.setChanged();
+		this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+	}
+
+	@Nullable
+	@Override
+	public Packet<ClientGamePacketListener> getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
-
-		if (entityId != null) {
-			tag.putString("EntityID", entityId);
-			tag.putBoolean("OriginalTrophy", isOriginal);
-		}
-
-		return tag;
+	public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
+		return saveCustomOnly(registryLookup);
 	}
 
 	@Override
-	public void handleUpdateTag(CompoundTag tag) {
-		super.handleUpdateTag(tag);
+	protected void saveAdditional(CompoundTag compound, HolderLookup.Provider registryLookup) {
+		super.saveAdditional(compound, registryLookup);
 
-		if (tag.contains("EntityID", Tag.TAG_STRING)) {
-			entityId = tag.getString("EntityID");
-			isOriginal = tag.getBoolean("OriginalTrophy");
+		if (this.trophyData != null) {
+			CompoundTag trophyTag = new CompoundTag();
+
+			trophyTag.putBoolean("is_original", this.trophyData.isOriginalTrophy());
+			trophyTag.put("entity_data", this.trophyData.entityData());
+			compound.put("TrophyData", trophyTag);
 		}
+
+		if (this.customName != null)
+			compound.putString("CustomName", Component.Serializer.toJson(this.customName, registryLookup));
 	}
 
 	@Override
-	protected void saveAdditional(CompoundTag compound) {
-		if (entityId != null) {
-			compound.putString("EntityID", entityId);
-			compound.putBoolean("OriginalTrophy", isOriginal);
-		}
-	}
+	public void loadAdditional(CompoundTag compound, HolderLookup.Provider registryLookup) {
+		super.loadAdditional(compound, registryLookup);
 
-	@Override
-	public void load(CompoundTag compound) {
-		super.load(compound);
-
-		if (compound.contains("EntityID")) {
-			entityId = compound.getString("EntityID");
-			isOriginal = compound.getBoolean("OriginalTrophy");
-		}
+		CompoundTag trophyTag = compound.getCompound("TrophyData");
+		this.trophyData = trophyTag.isEmpty() ? null : new TrophyBlock.TrophyData(trophyTag.getBoolean("is_original"), trophyTag.getCompound("entity_data"));
+		this.customName = compound.contains("CustomName", Tag.TAG_STRING) ? parseCustomNameSafe(compound.getString("CustomName"), registryLookup) : null;
 	}
 
 	@Nullable
 	public Entity getCachedEntity() {
-		if (this.cachedEntity == null && entityId != null) {
-			CompoundTag entityNBT = new CompoundTag();
-
-			entityNBT.putString("id", entityId);
-
-			cachedEntity = EntityType.loadEntityRecursive(entityNBT, getLevel(), Function.identity());
-
-			if (cachedEntity == null) {
-				entityNBT = new CompoundTag();
-				entityId = "minecraft:end_crystal";
-
-				entityNBT.putString("id", entityId);
-
-				cachedEntity = EntityType.loadEntityRecursive(entityNBT, getLevel(), Function.identity());
-			}
-
-			if (cachedEntity != null)
-				cachedEntity.tickCount = 1;
-		}
-
-		return this.cachedEntity;
+		return this.trophyData != null ? this.trophyData.getEntity() : null;
 	}
 
 	@Override
 	public Component getName() {
-		if (trophyBlock == null || entityId == null)
-			return LocaleUtil.getLocaleMessage("block.aoa3.trophy");
+		return this.customName != null ? this.customName : DEFAULT_NAME;
+	}
 
-		if (getCachedEntity() == null)
-			return LocaleUtil.getLocaleMessage("block.aoa3.trophy");
-
-		if (trophyBlock == AoABlocks.TROPHY.get())
-			return LocaleUtil.getLocaleMessage("block.aoa3.trophy.desc", cachedEntity.getName());
-
-		if (trophyBlock == AoABlocks.GOLD_TROPHY.get())
-			return LocaleUtil.getLocaleMessage("block.aoa3.gold_trophy.desc", cachedEntity.getName());
-
-		if (trophyBlock == AoABlocks.ORNATE_TROPHY.get())
-			return LocaleUtil.getLocaleMessage("block.aoa3.ornate_trophy.desc", cachedEntity.getName());
-
-		return LocaleUtil.getLocaleMessage("block.aoa3.trophy");
+	public void setCustomName(@Nullable Component name) {
+		this.customName = name;
 	}
 
 	@Override
-	public boolean hasCustomName() {
-		return entityId != null;
+	public Component getDisplayName() {
+		return Nameable.super.getDisplayName();
 	}
 
 	@Nullable
 	@Override
 	public Component getCustomName() {
-		return getName();
+		return this.customName;
+	}
+
+	@Override
+	protected void applyImplicitComponents(DataComponentInput components) {
+		super.applyImplicitComponents(components);
+
+		this.trophyData = components.get(AoADataComponents.TROPHY_DATA);
+		setCustomName(components.get(DataComponents.CUSTOM_NAME));
+	}
+
+	@Override
+	protected void collectImplicitComponents(DataComponentMap.Builder builder) {
+		super.collectImplicitComponents(builder);
+
+		builder.set(AoADataComponents.TROPHY_DATA, this.trophyData);
+		builder.set(DataComponents.CUSTOM_NAME, this.customName);
+	}
+
+	@Override
+	public void removeComponentsFromTag(CompoundTag tag) {
+		tag.remove("TrophyData");
+		tag.remove("CustomName");
 	}
 }

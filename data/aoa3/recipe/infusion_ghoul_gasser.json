@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:blaster_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:ghoulasm"
+    },
+    {
+      "item": "aoa3:ghoulasm"
+    },
+    {
+      "item": "minecraft:spider_eye"
+    },
+    {
+      "tag": "neoforge:ingots/ghoulish"
+    },
+    {
+      "tag": "c:ingots/netherite"
+    },
+    {
+      "tag": "c:gunpowders"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:ghoul_gasser"
+  }
+}

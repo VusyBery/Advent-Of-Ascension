@@ -28,13 +28,41 @@ public class ArcwormShotRenderer extends ModelledProjectileRenderer<ArcwormShotE
 		super.render(entity, entityYaw, partialTicks, matrix, buffer, packedLight);
 
 		for (int i = 0; i < 3; i++) {
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.75f, 20, ColourUtil.RED), true, entity.getX(), entity.getY() + 0.45, entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.75f, 20, ColourUtil.RGB(223, 153, 0)), true, entity.getX(), entity.getY() + 0.3, entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.75f, 20, ColourUtil.YELLOW), true, entity.getX(), entity.getY() + 0.15, entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.75f, 20, ColourUtil.GREEN), true, entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.75f, 20, ColourUtil.CYAN), true, entity.getX(), entity.getY() - 0.15, entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.75f, 20, ColourUtil.BLUE), true, entity.getX(), entity.getY() - 0.3, entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.75f, 20, ColourUtil.RGB(193, 64, 215)), true, entity.getX(), entity.getY() - 0.45, entity.getZ(), 0, 0, 0);
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().add(0, 0.45f, 0))
+					.scaleMod(0.75f)
+					.lifespan(Mth.ceil(20 / RandomUtil.randomValueBetween(0.2f, 1)))
+					.colourOverride(ColourUtil.RED)
+					.spawnParticles(entity.level());
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().add(0, 0.3f, 0))
+					.scaleMod(0.75f)
+					.lifespan(Mth.ceil(20 / RandomUtil.randomValueBetween(0.2f, 1)))
+					.colourOverride(0xDF9900)
+					.spawnParticles(entity.level());
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().add(0, 0.15f, 0))
+					.scaleMod(0.75f)
+					.lifespan(Mth.ceil(20 / RandomUtil.randomValueBetween(0.2f, 1)))
+					.colourOverride(ColourUtil.YELLOW)
+					.spawnParticles(entity.level());
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+					.scaleMod(0.75f)
+					.lifespan(Mth.ceil(20 / RandomUtil.randomValueBetween(0.2f, 1)))
+					.colourOverride(ColourUtil.GREEN)
+					.spawnParticles(entity.level());
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().subtract(0, 0.15f, 0))
+					.scaleMod(0.75f)
+					.lifespan(Mth.ceil(20 / RandomUtil.randomValueBetween(0.2f, 1)))
+					.colourOverride(ColourUtil.CYAN)
+					.spawnParticles(entity.level());
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().subtract(0, 0.3f, 0))
+					.scaleMod(0.75f)
+					.lifespan(Mth.ceil(20 / RandomUtil.randomValueBetween(0.2f, 1)))
+					.colourOverride(ColourUtil.BLUE)
+					.spawnParticles(entity.level());
+			ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position().subtract(0, 0.45f, 0))
+					.scaleMod(0.75f)
+					.lifespan(Mth.ceil(20 / RandomUtil.randomValueBetween(0.2f, 1)))
+					.colourOverride(0xC140D7)
+					.spawnParticles(entity.level());
 		}
 	}
 }

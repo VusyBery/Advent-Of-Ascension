@@ -48,7 +48,7 @@ public class MultiplyingGrenadeEntity extends BaseBullet implements HardProjecti
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.075f;
 	}
 

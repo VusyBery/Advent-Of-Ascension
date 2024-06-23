@@ -1,9 +1,9 @@
 package net.tslat.aoa3.content.loottable.condition;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -15,8 +15,8 @@ import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.PlayerUtil;
 
 public record PlayerHasResource(AoAResource resource, float amount, boolean consume) implements LootItemCondition {
-	public static final Codec<PlayerHasResource> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					ExtraCodecs.lazyInitializedCodec(AoARegistries.AOA_RESOURCES::lookupCodec).fieldOf("resource").forGetter(PlayerHasResource::resource),
+	public static final MapCodec<PlayerHasResource> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+					Codec.lazyInitialized(AoARegistries.AOA_RESOURCES::lookupCodec).fieldOf("resource").forGetter(PlayerHasResource::resource),
 					Codec.FLOAT.fieldOf("amount").forGetter(PlayerHasResource::amount),
 					Codec.BOOL.optionalFieldOf("consume", false).forGetter(PlayerHasResource::consume))
 			.apply(builder, PlayerHasResource::new));
@@ -36,7 +36,10 @@ public record PlayerHasResource(AoAResource resource, float amount, boolean cons
 
 	@Override
 	public boolean test(LootContext lootContext) {
-		Entity entity = lootContext.getParamOrNull(LootContextParams.KILLER_ENTITY);
+		Entity entity = lootContext.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY);
+
+		if (entity == null)
+			entity = lootContext.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
 
 		if (entity == null)
 			entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);

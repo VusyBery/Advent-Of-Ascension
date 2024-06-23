@@ -1,15 +1,17 @@
 package net.tslat.aoa3.content.item.misc;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.Filterable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.WrittenBookItem;
+import net.minecraft.world.item.component.WrittenBookContent;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.ClientOperations;
@@ -21,9 +23,9 @@ import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
-public class WornBook extends WrittenBookItem {
-	private static final CompoundTag contents = new CompoundTag();
+import java.util.List;
 
+public class WornBook extends WrittenBookItem {
 	public WornBook() {
 		super(new Item.Properties().stacksTo(1));
 	}
@@ -51,31 +53,23 @@ public class WornBook extends WrittenBookItem {
 		return InteractionResultHolder.success(bookStack);
 	}
 
-	public static ItemStack getBook(ItemStack stack) {
-		stack.setTag(getBookContents());
+	public static ItemStack makeBook() {
+		ItemStack book = new ItemStack(AoAItems.WORN_BOOK.get());
+		List<Filterable<Component>> pages = new ObjectArrayList<>();
+		WrittenBookContent content = new WrittenBookContent(Filterable.passThrough(LocaleUtil.getLocaleString("item.aoa3.worn_book")), LocaleUtil.getLocaleString("entity.aoa3.corrupted_traveller"), 0, pages, true);
+		String rawData = MiscellaneousReloadListener.DATA.get(AoAItems.WORN_BOOK.get());
 
-		return stack;
-	}
+		if (rawData != null) {
+			String[] lines = rawData.split("\n");
 
-	public static CompoundTag getBookContents() {
-		contents.putString("author", LocaleUtil.getLocaleString("entity.aoa3.corrupted_traveller"));
-		contents.putString("title", LocaleUtil.getLocaleString("item.aoa3.worn_book"));
-
-		String pageContents = MiscellaneousReloadListener.DATA.get(AoAItems.WORN_BOOK.get());
-
-		if (pageContents == null)
-			return contents;
-
-		String[] lines = pageContents.split("\n");
-		ListTag pages = new ListTag();
-
-		for (String line : lines) {
-			pages.add(StringTag.valueOf(line.replaceAll("<br>", "\n")));
+			for (String line : lines) {
+				pages.add(Filterable.passThrough(Component.literal(line.replaceAll("<br>", "\n"))));
+			}
 		}
 
-		contents.put("pages", pages);
+		book.set(DataComponents.WRITTEN_BOOK_CONTENT, content);
 
-		return contents;
+		return book;
 	}
 
 	@Override

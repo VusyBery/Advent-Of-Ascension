@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:crossbow_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:toxic_lump"
+    },
+    {
+      "item": "aoa3:toxic_lump"
+    },
+    {
+      "item": "aoa3:toxic_lump"
+    },
+    {
+      "item": "minecraft:ink_sac"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:viral_crossbow"
+  }
+}

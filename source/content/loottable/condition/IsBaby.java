@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.loottable.condition;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -13,7 +14,7 @@ import net.tslat.aoa3.common.registration.loot.AoALootConditions;
 import java.util.Set;
 
 public record IsBaby() implements LootItemCondition {
-	public static final Codec<IsBaby> CODEC = Codec.unit(IsBaby::new);
+	public static final MapCodec<IsBaby> CODEC = MapCodec.unit(IsBaby::new);
 
 	@Override
 	public LootItemConditionType getType() {

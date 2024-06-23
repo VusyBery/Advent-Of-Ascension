@@ -5,9 +5,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.blaster.SeaocronEntity;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class Seaocron extends BaseBlaster {
-	public Seaocron(double dmg, int durability, int fireDelayTicks, float energyCost) {
-		super(dmg, durability, fireDelayTicks, energyCost);
+	public Seaocron(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -35,15 +35,15 @@ public class Seaocron extends BaseBlaster {
 
 	@Override
 	protected void doImpactEffect(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-		for (LivingEntity e : shot.level().getEntitiesOfClass(LivingEntity.class, shot.getBoundingBox().inflate(15), EntityUtil.Predicates.HOSTILE_MOB)) {
-			if (!EntityUtil.isImmuneToSpecialAttacks(e, shooter))
+		for (LivingEntity e : shot.level().getEntitiesOfClass(LivingEntity.class, shot.getBoundingBox().inflate(15), EntityUtil::isHostileMob)) {
+			if (!EntityUtil.isImmuneToSpecialAttacks(e))
 				EntityUtil.pullEntityIn(target, e, 0.5f, false);
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

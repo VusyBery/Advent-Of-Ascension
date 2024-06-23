@@ -1,0 +1,39 @@
+{
+  "parent": "aoa3:completionist/root",
+  "criteria": {
+    "100_damage_hit": {
+      "conditions": {
+        "damage": {
+          "dealt": {
+            "max": 999.0,
+            "min": 100.0
+          }
+        }
+      },
+      "trigger": "minecraft:player_hurt_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.completionist.overkill_schmoverkill.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "aoa3:vulcammer_maul"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.completionist.overkill_schmoverkill.title"
+    }
+  },
+  "requirements": [
+    [
+      "100_damage_hit"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -3,12 +3,11 @@ package net.tslat.aoa3.common.registration;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
-import net.minecraft.core.dispenser.AbstractProjectileDispenseBehavior;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.core.dispenser.ProjectileDispenseBehavior;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -19,7 +18,6 @@ import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.item.AoAWeapons;
 import net.tslat.aoa3.content.block.functional.misc.CarvedRuneOfPower;
-import net.tslat.aoa3.content.entity.projectile.thrown.*;
 import net.tslat.aoa3.content.item.misc.BlankRealmstone;
 import net.tslat.aoa3.content.item.misc.Realmstone;
 
@@ -31,61 +29,14 @@ public final class AoADispensables {
 	}
 
 	private static void registerProjectileDispensables() {
-		DispenserBlock.registerBehavior(AoAWeapons.HELLFIRE.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new HellfireEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
-
-		DispenserBlock.registerBehavior(AoAWeapons.GRENADE.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new GrenadeEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
-
-		DispenserBlock.registerBehavior(AoAWeapons.CHAKRAM.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new ChakramEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
-
-		DispenserBlock.registerBehavior(AoAWeapons.GOO_BALL.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new GooBallEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
-
-		DispenserBlock.registerBehavior(AoAWeapons.RUNIC_BOMB.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new RunicBombEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
-
-		DispenserBlock.registerBehavior(AoAWeapons.VULKRAM.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new VulkramEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
-
-		DispenserBlock.registerBehavior(AoAWeapons.SLICE_STAR.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new SliceStarEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
-
-		DispenserBlock.registerBehavior(AoAWeapons.HARDENED_PARAPIRANHA.get(), new AbstractProjectileDispenseBehavior() {
-			@Override
-			protected Projectile getProjectile(Level world, Position dispenserPos, ItemStack stack) {
-				return new HardenedParapiranhaEntity(world, dispenserPos.x(), dispenserPos.y(), dispenserPos.z());
-			}
-		});
+		DispenserBlock.registerBehavior(AoAWeapons.HELLFIRE.get(), new ProjectileDispenseBehavior(AoAWeapons.HELLFIRE.get()));
+		DispenserBlock.registerBehavior(AoAWeapons.GRENADE.get(), new ProjectileDispenseBehavior(AoAWeapons.GRENADE.get()));
+		DispenserBlock.registerBehavior(AoAWeapons.CHAKRAM.get(), new ProjectileDispenseBehavior(AoAWeapons.CHAKRAM.get()));
+		DispenserBlock.registerBehavior(AoAWeapons.GOO_BALL.get(), new ProjectileDispenseBehavior(AoAWeapons.GOO_BALL.get()));
+		DispenserBlock.registerBehavior(AoAWeapons.RUNIC_BOMB.get(), new ProjectileDispenseBehavior(AoAWeapons.RUNIC_BOMB.get()));
+		DispenserBlock.registerBehavior(AoAWeapons.VULKRAM.get(), new ProjectileDispenseBehavior(AoAWeapons.VULKRAM.get()));
+		DispenserBlock.registerBehavior(AoAWeapons.SLICE_STAR.get(), new ProjectileDispenseBehavior(AoAWeapons.SLICE_STAR.get()));
+		DispenserBlock.registerBehavior(AoAWeapons.HARDENED_PARAPIRANHA.get(), new ProjectileDispenseBehavior(AoAWeapons.HARDENED_PARAPIRANHA.get()));
 	}
 
 	private static void registerMiscDispensables() {
@@ -94,11 +45,10 @@ public final class AoADispensables {
 			BlockPos pos = source.pos().offset(direction.getStepX(), direction.getStepY(), direction.getStepZ());
 
 			if (source.level().getBlockState(pos).getBlock() instanceof CarvedRuneOfPower) {
-				if (stack.getItem() instanceof Realmstone) {
-					CarvedRuneOfPower.fillPortal(source.level(), pos, direction, stack, null);
-				}
-				else if (stack.getItem() instanceof BlankRealmstone) {
-					CarvedRuneOfPower.clearPortal(source.level(), pos, direction, stack, null);
+				switch (stack.getItem()) {
+					case Realmstone realmstone -> CarvedRuneOfPower.fillPortal(source.level(), pos, direction, stack, null);
+					case BlankRealmstone blankRealmstone -> CarvedRuneOfPower.clearPortal(source.level(), pos, direction, stack, null);
+					default -> {}
 				}
 
 				return stack;
@@ -139,8 +89,8 @@ public final class AoADispensables {
 			}
 		};
 
-		DispenserBlock.registerBehavior(AoARegistries.ITEMS.getEntry(new ResourceLocation(AdventOfAscension.MOD_ID, "candied_water_bucket")), fluidDispenser);
-		DispenserBlock.registerBehavior(AoARegistries.ITEMS.getEntry(new ResourceLocation(AdventOfAscension.MOD_ID, "toxic_waste_bucket")), fluidDispenser);
-		DispenserBlock.registerBehavior(AoARegistries.ITEMS.getEntry(new ResourceLocation(AdventOfAscension.MOD_ID, "clear_water_bucket")), fluidDispenser);
+		DispenserBlock.registerBehavior(AoARegistries.ITEMS.getEntry(AdventOfAscension.id("candied_water_bucket")), fluidDispenser);
+		DispenserBlock.registerBehavior(AoARegistries.ITEMS.getEntry(AdventOfAscension.id("toxic_waste_bucket")), fluidDispenser);
+		DispenserBlock.registerBehavior(AoARegistries.ITEMS.getEntry(AdventOfAscension.id("clear_water_bucket")), fluidDispenser);
 	}
 }

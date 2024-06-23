@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -19,8 +20,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class Krilinator extends BaseGun {
-	public Krilinator(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public Krilinator(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -36,8 +37,8 @@ public class Krilinator extends BaseGun {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.POISONS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

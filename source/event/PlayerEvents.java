@@ -1,13 +1,9 @@
 package net.tslat.aoa3.event;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
@@ -35,7 +31,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
@@ -43,6 +38,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.advent.Logging;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -58,18 +54,18 @@ import net.tslat.aoa3.event.dimension.LunalusEvents;
 import net.tslat.aoa3.event.dimension.NowhereEvents;
 import net.tslat.aoa3.event.dimension.VoxPondsEvents;
 import net.tslat.aoa3.library.object.PositionAndRotation;
+import net.tslat.aoa3.library.object.Text;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.*;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
-import java.util.UUID;
-
 public class PlayerEvents {
 	public static void preInit() {
 		final IEventBus forgeBus = NeoForge.EVENT_BUS;
 
-		forgeBus.addListener(EventPriority.NORMAL, false, TickEvent.PlayerTickEvent.class, PlayerEvents::onPlayerTick);
+		forgeBus.addListener(EventPriority.NORMAL, false, PlayerTickEvent.Pre.class, PlayerEvents::onPlayerTickStart);
+		forgeBus.addListener(EventPriority.NORMAL, false, PlayerTickEvent.Post.class, PlayerEvents::onPlayerTickEnd);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingEvent.LivingJumpEvent.class, PlayerEvents::onPlayerJump);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingAttackEvent.class, PlayerEvents::onPlayerHit);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingHurtEvent.class, PlayerEvents::onPlayerHurt);
@@ -86,20 +82,23 @@ public class PlayerEvents {
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerEvent.PlayerChangedDimensionEvent.class, PlayerEvents::onDimensionChange);
 	}
 
-	private static void onPlayerTick(final TickEvent.PlayerTickEvent ev) {
-		if (ev.phase == TickEvent.Phase.END) {
-			if (WorldUtil.isWorld(ev.player.level(), AoADimensions.LELYETIA)) {
-				LelyetiaEvents.doPlayerTick(ev.player);
-			}
-			else if (WorldUtil.isWorld(ev.player.level(), AoADimensions.VOX_PONDS)) {
-				VoxPondsEvents.doPlayerTick(ev.player);
-			}
-			else if (WorldUtil.isWorld(ev.player.level(), AoADimensions.LUNALUS)) {
-				LunalusEvents.doPlayerTick(ev.player);
-			}
+	private static void onPlayerTickStart(final PlayerTickEvent.Pre ev) {
+		if (WorldUtil.isWorld(ev.getEntity().level(), AoADimensions.NOWHERE))
+			NowhereEvents.doPlayerTick(ev);
+	}
+
+	private static void onPlayerTickEnd(final PlayerTickEvent.Post ev) {
+		if (WorldUtil.isWorld(ev.getEntity().level(), AoADimensions.LELYETIA)) {
+			LelyetiaEvents.doPlayerTick(ev.getEntity());
+		}
+		else if (WorldUtil.isWorld(ev.getEntity().level(), AoADimensions.VOX_PONDS)) {
+			VoxPondsEvents.doPlayerTick(ev.getEntity());
+		}
+		else if (WorldUtil.isWorld(ev.getEntity().level(), AoADimensions.LUNALUS)) {
+			LunalusEvents.doPlayerTick(ev.getEntity());
 		}
 
-		if (WorldUtil.isWorld(ev.player.level(), AoADimensions.NOWHERE))
+		if (WorldUtil.isWorld(ev.getEntity().level(), AoADimensions.NOWHERE))
 			NowhereEvents.doPlayerTick(ev);
 	}
 
@@ -120,7 +119,7 @@ public class PlayerEvents {
 			ItemStack weapon = ((LivingEntity)attacker).getItemInHand(InteractionHand.MAIN_HAND);
 
 			if (weapon.getItem() instanceof BaseSword baseSword)
-				ev.setAmount(baseSword.getDamageForAttack(ev.getEntity(), (LivingEntity)attacker, weapon, ev.getAmount()));
+				ev.setAmount(baseSword.getDamageForAttack(ev.getEntity(), (LivingEntity)attacker, weapon, ev.getSource(), ev.getAmount()));
 		}
 
 		if (ev.getEntity() instanceof ServerPlayer pl) {
@@ -206,7 +205,7 @@ public class PlayerEvents {
 
 		if (PlayerUtil.isWearingFullSet(player, AdventArmour.Type.HYDRANGIC)) {
 			if (ev.getPlacedBlock().getBlock() instanceof BonemealableBlock && BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), ev.getEntity().level(), ev.getPos(), player)) {
-				ev.getLevel().levelEvent(LevelEvent.PARTICLES_PLANT_GROWTH, ev.getPos(), 0);
+				ev.getLevel().levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, ev.getPos(), 0);
 				player.hurtArmor(player.level().damageSources().generic(), 16);
 			}
 		}
@@ -230,30 +229,20 @@ public class PlayerEvents {
 
 	private static void onPlayerLogin(final PlayerEvent.PlayerLoggedInEvent ev) {
 		if (ev.getEntity() instanceof ServerPlayer player) {
-			UUID uuid = player.getGameProfile().getId();
-			String msg = null;
-
-			if (uuid.compareTo(UUID.fromString("2459b511-ca45-43d8-808d-f0eb30a63be4")) == 0) {
-				msg = ChatFormatting.DARK_RED + "It begins...Is this the end?";
-
-				((ServerLevel)player.level()).sendParticles(ParticleTypes.LARGE_SMOKE, player.getX(), player.getY() + 0.2d, player.getZ(), 16, RandomUtil.randomValueUpTo(0.1f) - 0.05d, RandomUtil.randomValueUpTo(0.1f) - 0.05d, RandomUtil.randomValueUpTo(0.1f) - 0.05d, 1);
+			if (player.getGameProfile().getId().equals(AdventOfAscension.ENTRANCE_MESSAGE_UUID)) {
+				player.getServer().getPlayerList().broadcastSystemMessage(Text.ofLiteral("It begins...Is this the end?", ChatFormatting.DARK_RED), false);
+				player.serverLevel().sendParticles(ParticleTypes.LARGE_SMOKE, player.getX(), player.getY() + 0.2d, player.getZ(), 16, RandomUtil.randomValueUpTo(0.1f) - 0.05d, RandomUtil.randomValueUpTo(0.1f) - 0.05d, RandomUtil.randomValueUpTo(0.1f) - 0.05d, 1);
 			}
-
-			if (msg != null)
-				player.getServer().getPlayerList().broadcastSystemMessage(Component.literal(msg), false);
 
 			ServerPlayerDataManager.syncNewPlayer(player);
 
-			PlayerAdvancements plAdvancements = player.getAdvancements();
-			AdvancementHolder rootAdv = AdvancementUtil.getAdvancement(player.serverLevel(), new ResourceLocation(AdventOfAscension.MOD_ID, "completionist/root"));
+			final PlayerAdvancements plAdvancements = player.getAdvancements();
 
-			if (rootAdv == null) {
-				Logging.logMessage(org.apache.logging.log4j.Level.WARN, "Unable to find inbuilt advancements, another mod is breaking things.");
-			}
-			else if (!plAdvancements.getOrStartProgress(rootAdv).isDone()) {
-				plAdvancements.award(AdvancementUtil.getAdvancement(player.serverLevel(), new ResourceLocation(AdventOfAscension.MOD_ID, "completionist/by_the_books")), "legitimate");
+			AdvancementUtil.getAdvancement(player.serverLevel(), AdventOfAscension.id("completionist/root")).ifPresentOrElse(rootAdv -> {
+				AdvancementUtil.grantCriterion(player, AdventOfAscension.id("completionist/by_the_books"), "legitimate");
 				plAdvancements.award(rootAdv, "playerjoin");
-			}
+
+			}, () -> Logging.logMessage(org.apache.logging.log4j.Level.WARN, "Unable to find inbuilt advancements, another mod is breaking things."));
 		}
 	}
 

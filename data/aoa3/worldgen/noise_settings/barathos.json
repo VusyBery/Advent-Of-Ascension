@@ -417,10 +417,35 @@
                       ]
                     },
                     "then_run": {
-                      "type": "minecraft:block",
-                      "result_state": {
-                        "Name": "aoa3:baron_stone"
-                      }
+                      "type": "minecraft:sequence",
+                      "sequence": [
+                        {
+                          "type": "minecraft:condition",
+                          "if_true": {
+                            "type": "minecraft:not",
+                            "invert": {
+                              "type": "minecraft:y_above",
+                              "add_stone_depth": false,
+                              "anchor": {
+                                "above_bottom": 162
+                              },
+                              "surface_depth_multiplier": 4
+                            }
+                          },
+                          "then_run": {
+                            "type": "minecraft:block",
+                            "result_state": {
+                              "Name": "aoa3:baron_sand"
+                            }
+                          }
+                        },
+                        {
+                          "type": "minecraft:block",
+                          "result_state": {
+                            "Name": "aoa3:baron_stone"
+                          }
+                        }
+                      ]
                     }
                   }
                 ]

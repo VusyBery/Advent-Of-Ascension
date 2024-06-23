@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:blaster_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:white_druse"
+    },
+    {
+      "item": "aoa3:white_druse"
+    },
+    {
+      "item": "aoa3:blue_druse"
+    },
+    {
+      "item": "aoa3:power_core"
+    },
+    {
+      "tag": "c:dusts/redstone"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:ion_blaster"
+  }
+}

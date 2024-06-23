@@ -30,7 +30,7 @@ public class AttuningBowl extends Item {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack pStack) {
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 72000;
 	}
 
@@ -45,7 +45,7 @@ public class AttuningBowl extends Item {
 			@Nullable
 			@Override
 			public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
-				return AoAArmPoses.ATTUNING_BOWL;
+				return AoAArmPoses.ATTUNING_BOWL.getValue();
 			}
 
 			@Override
@@ -70,7 +70,7 @@ public class AttuningBowl extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ATTUNING_BOWL_DESCRIPTION, LocaleUtil.ItemDescriptionType.NEUTRAL));
 	}
 }

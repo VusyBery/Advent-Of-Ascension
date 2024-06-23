@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.item.weapon.gun;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -13,8 +12,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
@@ -28,14 +27,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class ShoeFlinger extends BaseGun {
-	double dmg;
-	int firingDelay;
-
-	public ShoeFlinger(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
-
-		this.dmg = dmg;
-		this.firingDelay = firingDelayTicks;
+	public ShoeFlinger(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -66,8 +59,8 @@ public class ShoeFlinger extends BaseGun {
 
 			DamageUtil.doScaledKnockback(livingTarget, shooter, 1.35f, 1, 1, 1);
 
-			if (shooter instanceof ServerPlayer && livingTarget.getHealth() == 0 && !target.canChangeDimensions())
-				AdvancementUtil.completeAdvancement((ServerPlayer)shooter, new ResourceLocation(AdventOfAscension.MOD_ID, "overworld/la_chancla"), "shoe_flinger_boss_kill");
+			if (shooter instanceof ServerPlayer && livingTarget.getHealth() == 0 && target.getType().is(Tags.EntityTypes.BOSSES))
+				AdvancementUtil.grantCriterion((ServerPlayer)shooter, AdventOfAscension.id("overworld/la_chancla"), "shoe_flinger_boss_kill");
 
 			if (!livingTarget.hasItemInSlot(EquipmentSlot.FEET))
 				livingTarget.setItemSlot(EquipmentSlot.FEET, new ItemStack(Items.LEATHER_BOOTS));
@@ -80,9 +73,9 @@ public class ShoeFlinger extends BaseGun {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

@@ -37,9 +37,5 @@ public final class TagUtil {
 		return vanillaRegistry
 				.map(registry -> registry.getTag(tag))
 				.orElseGet(() -> BuiltInRegistries.REGISTRY.get((ResourceKey)tag.registry()).getTag(tag));
-/*
-		return vanillaRegistry
-				.map(registry -> Streams.stream(registry.getTagOrEmpty(tag)).map(Holder::get))
-				.orElseGet(() -> RegistryManager.ACTIVE.getRegistry(tag.registry()).tags().getTag(tag).stream());*/
 	}
 }

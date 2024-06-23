@@ -5,6 +5,7 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,8 +88,8 @@ public class AdventGuiThemeReloadListener implements PreparableReloadListener {
 	public record AdventGuiTheme(String name, ResourceLocation backgroundTexture, ResourceLocation menuButtonTexture, @Nullable ResourceLocation overlayTexture) {
 		public AdventGuiTheme(String name, @Nullable ResourceLocation backgroundTexture, @Nullable ResourceLocation menuButtonTexture, @Nullable ResourceLocation overlayTexture) {
 			this.name = name;
-			this.backgroundTexture = backgroundTexture == null ? new ResourceLocation("aoa3", "textures/gui/adventgui/themes/default/background.png") : backgroundTexture;
-			this.menuButtonTexture = menuButtonTexture == null ? new ResourceLocation("aoa3", "textures/gui/adventgui/themes/default/tab_buttons.png") : menuButtonTexture;
+			this.backgroundTexture = backgroundTexture == null ? AdventOfAscension.id("textures/gui/adventgui/themes/default/background.png") : backgroundTexture;
+			this.menuButtonTexture = menuButtonTexture == null ? AdventOfAscension.id("textures/gui/adventgui/themes/default/tab_buttons.png") : menuButtonTexture;
 			this.overlayTexture = overlayTexture;
 		}
 	}

@@ -41,7 +41,7 @@ public class VulkramEntity extends BaseBullet implements HardProjectile, ItemSup
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.05f;
 	}
 
@@ -55,7 +55,7 @@ public class VulkramEntity extends BaseBullet implements HardProjectile, ItemSup
 
 	@Override
 	public void doEntityImpact(Entity target, Vec3 impactLocation) {
-		DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.VULKRAM.get().getDamage());
+		DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.VULKRAM.get().getGunDamage(getWeaponStack(AoAWeapons.VULKRAM.asItem())));
 
 		if (getOwner() instanceof LivingEntity owner)
 			EntityUtil.healEntity(owner, 1.0f);

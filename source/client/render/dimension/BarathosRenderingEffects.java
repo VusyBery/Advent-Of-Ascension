@@ -6,6 +6,7 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.LightLayer;
@@ -14,7 +15,7 @@ import net.minecraft.world.level.material.FogType;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.ClientOperations;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
+import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import org.jetbrains.annotations.Nullable;
@@ -56,13 +57,27 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
 
     @Override
     public void spawnAmbientParticle(ClientLevel level, BlockPos pos, Biome biome) {
-        if (pos.getY() >= 90 && pos.getY() <= 125 && 0.01428f < level.random.nextFloat() && level.getBrightness(LightLayer.SKY, pos) == 15) {
-            float rotProgress = ((level.getGameTime() / 60f) % 360) * Mth.DEG_TO_RAD;
-            Vec3 angle = new Vec3(Math.cos(rotProgress), 0, Math.sin(rotProgress)).scale(Mth.sin(((level.getGameTime() / (level.getGameTime() % 1000 > 250 ? 20f : 1f)) % 360) * Mth.DEG_TO_RAD) * 0.4f + 0.6f);
+        if (pos.getY() <= 125 && 0.98572f >= level.random.nextFloat()) {
+            if (pos.getY() >= 90) {
+                if (level.getBrightness(LightLayer.SKY, pos) == 15) {
+                    float rotProgress = ((level.getGameTime() / 60f) % 360) * Mth.DEG_TO_RAD;
+                    Vec3 angle = new Vec3(Math.cos(rotProgress), 0, Math.sin(rotProgress)).scale(Mth.sin(((level.getGameTime() / (level.getGameTime() % 1000 > 250 ? 20f : 1f)) % 360) * Mth.DEG_TO_RAD) * 0.4f + 0.6f);
 
-            ParticleBuilder.forPositions(new CustomisableParticleType.Data(AoAParticleTypes.SANDSTORM.get(), 0.1f, 5, 0xC4C0A1), Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
-                    .velocity(angle)
-                    .spawnParticles(level);
+                    ParticleBuilder.forPositions(EntityTrackingParticleOptions.ambient(AoAParticleTypes.SANDSTORM), Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
+                            .scaleMod(0.1f)
+                            .lifespan(Mth.ceil(5 / (level.random.nextFloat() * 0.8f + 0.2f)))
+                            .colourOverride(0xC4C0A1)
+                            .velocity(angle)
+                            .spawnParticles(level);
+                }
+            }
+            else if (0.1f >= level.random.nextFloat()) {
+                ParticleBuilder.forPositions(ParticleTypes.SMOKE, Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
+                        .lifespan(Mth.ceil(5 / (level.random.nextFloat() * 0.8f + 0.2f)))
+                        //.scaleMod(0.5f)
+                        .velocity(0, 0.05f, 0)
+                        .spawnParticles(level);
+            }
         }
     }
 

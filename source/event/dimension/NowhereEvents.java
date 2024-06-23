@@ -2,6 +2,7 @@ package net.tslat.aoa3.event.dimension;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,13 +16,13 @@ import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.scores.ScoreAccess;
 import net.minecraft.world.scores.criteria.ObjectiveCriteria;
-import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.event.TickEvent;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.AoATags;
@@ -60,10 +61,10 @@ public final class NowhereEvents {
 		return pos.getX() < 250 && pos.getZ() < 250 && pos.getX() > -250 && pos.getZ() > -250;
 	}
 
-	public static void doPlayerTick(final TickEvent.PlayerTickEvent ev) {
-		Player pl = ev.player;
+	public static void doPlayerTick(final PlayerTickEvent ev) {
+		Player pl = ev.getEntity();
 
-		if (ev.phase == TickEvent.Phase.START) {
+		if (ev instanceof PlayerTickEvent.Pre) {
 			if (pl instanceof ServerPlayer serverPl) {
 				if (isInParkourRegion(serverPl.blockPosition())) {
 					if (PlayerUtil.shouldPlayerBeAffected(serverPl))
@@ -73,14 +74,14 @@ public final class NowhereEvents {
 					PlayerUtil.getAdventPlayer(serverPl).leaveAbilityLockRegion();
 				}
 			}
-			else if (isInBossRegion(ev.player.blockPosition())) {
-				List<AoABoss> bosses = EntityRetrievalUtil.getEntities(ev.player, 80, entity -> entity instanceof AoABoss);
+			else if (isInBossRegion(pl.blockPosition())) {
+				List<AoABoss> bosses = EntityRetrievalUtil.getEntities(pl, 80, entity -> entity instanceof AoABoss);
 
 				if (!bosses.isEmpty()) {
 					AoABoss boss = bosses.get(0);
 
 					if (boss.getMusic() != null)
-						new SoundBuilder(boss.getMusic()).isMusic().include(ev.player).execute();
+						new SoundBuilder(boss.getMusic()).isMusic().include(pl).execute();
 				}
 			}
 		}
@@ -211,29 +212,30 @@ public final class NowhereEvents {
 	public static void handleNowhereRightClickBlock(final PlayerInteractEvent.RightClickBlock ev) {
 		BlockState blockState = ev.getLevel().getBlockState(ev.getPos());
 		Block block = blockState.getBlock();
-		Item heldItem = ev.getEntity().getItemInHand(ev.getHand()).getItem();
+		ItemStack heldStack = ev.getEntity().getItemInHand(ev.getHand());
+		Item heldItem = heldStack.getItem();
 
 		if (block == Blocks.JUKEBOX) {
-			if (heldItem == Items.AIR || heldItem instanceof RecordItem) {
-				ev.setUseItem(Event.Result.ALLOW);
-				ev.setUseBlock(Event.Result.ALLOW);
+			if (heldItem == Items.AIR || heldStack.has(DataComponents.JUKEBOX_PLAYABLE)) {
+				ev.setUseItem(TriState.TRUE);
+				ev.setUseBlock(TriState.TRUE);
 				ev.getEntity().getAbilities().mayBuild = true;
 			}
 		}
 		else if (blockState.is(AoATags.Blocks.NOWHERE_SAFE_GUI_BLOCK)) {
-			ev.setUseItem(Event.Result.DENY);
+			ev.setUseItem(TriState.FALSE);
 		}
 		else if (block == Blocks.WATER_CAULDRON) {
-			ev.setUseItem(Event.Result.DENY);
+			ev.setUseItem(TriState.FALSE);
 			AoAScheduler.scheduleSyncronisedTask(() -> ev.getLevel().setBlock(ev.getPos(), blockState.setValue(LayeredCauldronBlock.LEVEL, LayeredCauldronBlock.MAX_FILL_LEVEL), Block.UPDATE_CLIENTS), 1);
 		}
 		else if (block == AoABlocks.TEA_SINK.get()) {
-			ev.setUseItem(Event.Result.DENY);
+			ev.setUseItem(TriState.FALSE);
 			AoAScheduler.scheduleSyncronisedTask(() -> ev.getLevel().setBlock(ev.getPos(), blockState.setValue(TeaSink.FILLED, true), Block.UPDATE_CLIENTS), 1);
 		}
 		else if (heldItem == AoAItems.LOTTO_TOTEM.get()) {
-			ev.setUseItem(Event.Result.ALLOW);
-			ev.setUseBlock(Event.Result.DENY);
+			ev.setUseItem(TriState.TRUE);
+			ev.setUseBlock(TriState.FALSE);
 			ev.getEntity().getAbilities().mayBuild = true;
 		}
 		else {

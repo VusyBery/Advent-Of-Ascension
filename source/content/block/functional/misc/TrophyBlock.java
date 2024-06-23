@@ -1,20 +1,23 @@
 package net.tslat.aoa3.content.block.functional.misc;
 
-import net.minecraft.Util;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ItemLike;
@@ -32,17 +35,22 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.tslat.aoa3.advent.Logging;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.block.AoABlockEntities;
-import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.content.block.WaterloggableBlock;
 import net.tslat.aoa3.content.block.blockentity.TrophyBlockEntity;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.NBTUtil;
 import net.tslat.aoa3.util.RegistryUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+import java.util.function.Function;
 
 public class TrophyBlock extends WaterloggableBlock implements EntityBlock {
 	private static final VoxelShape FULL_AABB = Shapes.or(
@@ -78,171 +86,121 @@ public class TrophyBlock extends WaterloggableBlock implements EntityBlock {
 	}
 
 	@Override
-	public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-		if (stack.hasTag()) {
-			CompoundTag tag = stack.getTag();
-
-			if (tag.contains("BlockEntityTag")) {
-				CompoundTag dataTag = tag.getCompound("BlockEntityTag");
-
-				if (dataTag.contains("EntityID", Tag.TAG_STRING)) {
-					BlockEntity tile = world.getBlockEntity(pos);
-
-					if (tile instanceof TrophyBlockEntity)
-						((TrophyBlockEntity)tile).setEntity(dataTag.getString("EntityID"), dataTag.contains("OriginalTrophy") && !dataTag.getBoolean("OriginalTrophy"));
-				}
-			}
-		}
-	}
-
-	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		ItemStack heldStack = player.getItemInHand(hand);
 
-		if (!WorldUtil.canModifyBlock(world, pos, player, heldStack))
-			return InteractionResult.FAIL;
+		if (!WorldUtil.canModifyBlock(level, pos, player, heldStack))
+			return ItemInteractionResult.FAIL;
 
-		if (heldStack.getItem() instanceof SpawnEggItem) {
-			BlockEntity tile = world.getBlockEntity(pos);
-			SpawnEggItem egg = (SpawnEggItem)heldStack.getItem();
+		if (heldStack.getItem() instanceof SpawnEggItem spawnEgg) {
+			if (!level.isClientSide()) {
+				if (level.getBlockEntity(pos) instanceof TrophyBlockEntity trophyBlockEntity) {
+					trophyBlockEntity.setEntity(spawnEgg.getType(heldStack), true);
 
-			if (tile instanceof TrophyBlockEntity) {
-				((TrophyBlockEntity)tile).setEntity(RegistryUtil.getId(egg.getType(heldStack.getTag())).toString(), true);
-
-				if (!world.isClientSide() && !player.isCreative())
-					heldStack.shrink(1);
+					if (!player.getAbilities().instabuild)
+						heldStack.shrink(1);
+				}
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	@Override
-	public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
-		ItemStack stack = new ItemStack(asItem());
-		BlockEntity tile = world.getBlockEntity(pos);
-		TrophyBlockEntity trophyTile;
+	public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader level, BlockPos pos, Player player) {
+		ItemStack stack = super.getCloneItemStack(state, target, level, pos, player);
 
-		if (tile instanceof TrophyBlockEntity && ((trophyTile = (TrophyBlockEntity)tile).getEntityId() != null)) {
-			CompoundTag nbt = new CompoundTag();
-			CompoundTag dataTag = new CompoundTag();
-
-			dataTag.putString("EntityID", ((TrophyBlockEntity)tile).getEntityId());
-			dataTag.putBoolean("OriginalTrophy", ((TrophyBlockEntity)tile).isOriginal());
-			nbt.put("BlockEntityTag", dataTag);
-
-			stack.setTag(nbt);
-
-			if (trophyTile.getCachedEntity() != null) {
-				Entity cachedEntity = ((TrophyBlockEntity)tile).getCachedEntity();
-				Component entityName = cachedEntity == null ? Component.literal("") : cachedEntity.getName();
-				stack.setHoverName(LocaleUtil.getLocaleMessage("block.aoa3.trophy.desc", entityName));
-			}
-		}
+		level.getBlockEntity(pos, AoABlockEntities.TROPHY.get()).ifPresent(trophy -> trophy.saveToItem(stack, level.registryAccess()));
 
 		return stack;
 	}
 
-	public static CompoundTag getTagForEntity(EntityType<?> entity) {
-		CompoundTag nbt = new CompoundTag();
-		CompoundTag dataTag = new CompoundTag();
-
-		dataTag.putString("EntityID", RegistryUtil.getId(entity).toString());
-		dataTag.putBoolean("OriginalTrophy", true);
-		nbt.put("BlockEntityTag", dataTag);
-
-		return nbt;
+	public static Component getDefaultNameWithEntity(TrophyData trophyData, String trophyId) {
+		return LocaleUtil.getLocaleMessage("block.aoa3." + trophyId + ".desc", trophyData.getEntity().getName());
 	}
 
 	public static ItemStack cloneTrophy(ItemStack sourceTrophy, ItemLike destTrophy) {
-		CompoundTag sourceTag = sourceTrophy.getOrCreateTag();
-		ItemStack newStack = new ItemStack(destTrophy.asItem());
-		CompoundTag destTag = newStack.getOrCreateTag();
+		ItemStack cloneStack = destTrophy.asItem().getDefaultInstance();
+		TrophyData trophyData = sourceTrophy.get(AoADataComponents.TROPHY_DATA);
 
-		try {
-			if (sourceTag.isEmpty())
-				return newStack;
+		if (trophyData == null)
+			trophyData = new TrophyData(false, new NBTUtil.NBTBuilder<>(new CompoundTag()).putString("id", RegistryUtil.getId(EntityType.ITEM).toString()).build());
 
-			if (sourceTag.contains("BlockEntityTag"))
-				destTag.put("BlockEntityTag", sourceTag.getCompound("BlockEntityTag"));
+		cloneStack.set(AoADataComponents.TROPHY_DATA, trophyData);
+		cloneStack.set(DataComponents.CUSTOM_NAME, getDefaultNameWithEntity(trophyData, RegistryUtil.getId(cloneStack).getPath()));
 
-			if (sourceTag.contains("display")) {
-				CompoundTag displayTag = new CompoundTag();
-				String localePrefix = "block.aoa3.trophy.desc";
-
-				if (destTrophy == AoABlocks.GOLD_TROPHY.get()) {
-					localePrefix = "block.aoa3.gold_trophy.desc";
-				}
-				else if (destTrophy == AoABlocks.ORNATE_TROPHY.get()) {
-					localePrefix = "block.aoa3.ornate_trophy.desc";
-				}
-
-				if (sourceTag.contains("BlockEntityTag")) {
-					displayTag.putString("Name", MutableComponent.Serializer.toJson(Component.translatable(localePrefix, Component.translatable(Util.makeDescriptionId("entity", new ResourceLocation(sourceTag.getCompound("BlockEntityTag").getString("EntityID")))))));
-				}
-				else {
-					displayTag = sourceTag.getCompound("display");
-				}
-
-				destTag.put("display", displayTag);
-			}
-		}
-		catch (Exception ex) {
-			Logging.logMessage(org.apache.logging.log4j.Level.ERROR, "Failed to clone trophy data.", ex);
-		}
-
-		return newStack;
-	}
-
-	public static CompoundTag getOriginalTrophyTag(EntityType<?> entity, Block trophyBlock) {
-		CompoundTag tag = TrophyBlock.getTagForEntity(entity);
-		CompoundTag displayTag = new CompoundTag();
-		String localePrefix = "block.aoa3.trophy.desc";
-
-		if (trophyBlock == AoABlocks.GOLD_TROPHY.get()) {
-			localePrefix = "block.aoa3.gold_trophy.desc";
-		}
-		else if (trophyBlock == AoABlocks.ORNATE_TROPHY.get()) {
-			localePrefix = "block.aoa3.ornate_trophy.desc";
-		}
-
-		displayTag.putString("Name", MutableComponent.Serializer.toJson(Component.translatable(localePrefix, Component.translatable(entity.getDescriptionId()))));
-		tag.put("display", displayTag);
-
-		return tag;
+		return cloneStack;
 	}
 
 	public static boolean isOriginal(ItemStack stack) {
-		if (!(stack.getItem() instanceof BlockItem block) || !(block.getBlock() instanceof TrophyBlock))
-			return false;
+		TrophyData trophyData = stack.get(AoADataComponents.TROPHY_DATA);
 
-		if (!stack.hasTag())
-			return false;
-
-		CompoundTag tag = stack.getTag();
-
-		if (!tag.contains("BlockEntityTag", Tag.TAG_COMPOUND))
-			return false;
-
-		CompoundTag subTag = tag.getCompound("BlockEntityTag");
-
-		return subTag.contains("OriginalTrophy", Tag.TAG_BYTE) && subTag.getBoolean("OriginalTrophy");
+		return trophyData != null && trophyData.isOriginalTrophy();
 	}
 
-	@Nullable
-	public static EntityType<?> getCachedEntityType(ItemStack stack) {
-		if (!(stack.getItem() instanceof BlockItem block) || !(block.getBlock() instanceof TrophyBlock))
-			return null;
+	public record TrophyData(boolean isOriginalTrophy, CompoundTag entityData, Function<TrophyData, Entity> cachedEntity) {
+		public static final Codec<TrophyData> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+				Codec.BOOL.fieldOf("is_original").forGetter(TrophyData::isOriginalTrophy),
+				CompoundTag.CODEC.fieldOf("entity_data").forGetter(TrophyData::entityData)
+		).apply(builder, TrophyData::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, TrophyData> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.BOOL, TrophyData::isOriginalTrophy,
+				ByteBufCodecs.COMPOUND_TAG, TrophyData::entityData,
+				TrophyData::new);
 
-		CompoundTag tag = stack.getTag();
+		public TrophyData(boolean isOriginalTrophy, CompoundTag entityData) {
+			this(isOriginalTrophy, entityData, new Function<>() {
+                Entity value = null;
 
-		if (tag == null)
-			return null;
+                @Override
+                public Entity apply(TrophyData trophyData) {
+                    if (this.value == null)
+                        this.value = trophyData.createEntity();
 
-		String entityId = tag.getCompound("BlockEntityTag").getString("EntityID");
+                    return this.value;
+                }
+            });
+		}
 
-		return entityId.isEmpty() ? null : AoARegistries.ENTITIES.getEntry(new ResourceLocation(entityId));
+		public TrophyData(boolean isOriginalTrophy, EntityType<?> entity) {
+			this(isOriginalTrophy, new NBTUtil.NBTBuilder<>(new CompoundTag()).putString("id", RegistryUtil.getId(entity).toString()).build());
+		}
+
+		public Entity getEntity() {
+			return this.cachedEntity.apply(this);
+		}
+
+		@Nullable
+		public EntityType<?> getEntityType() {
+			return AoARegistries.ENTITIES.getEntry(ResourceLocation.read(this.entityData.getString("id")).getOrThrow());
+		}
+
+		private Entity createEntity() {
+			final Level level = FMLEnvironment.dist == Dist.CLIENT ? ClientOperations.getLevel() : WorldUtil.getServer().overworld();
+			Entity entity = EntityType.loadEntityRecursive(entityData(), level, Function.identity());
+
+			if (entity == null)
+				entity = new ItemEntity(level, 0, 0, 0, Items.AIR.getDefaultInstance());
+
+			entity.tickCount = 1;
+
+			return entity;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+
+			if (!(obj instanceof TrophyData otherTrophy))
+				return false;
+
+			if (this.isOriginalTrophy ^ otherTrophy.isOriginalTrophy)
+				return false;
+
+			return Objects.equals(this.entityData, otherTrophy.entityData);
+		}
 	}
 }

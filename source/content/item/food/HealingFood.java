@@ -9,7 +9,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class HealingFood extends Item {
 		float percentHunger = 100;
 
 		if (entity instanceof Player)
-			percentHunger = Math.min((20 - ((Player)entity).getFoodData().getFoodLevel()) / (float)this.getFoodProperties().getNutrition(), 1);
+			percentHunger = Math.min((20 - ((Player)entity).getFoodData().getFoodLevel()) / (float)getFoodProperties(stack, entity).nutrition(), 1);
 
 		ItemStack returnStack = super.finishUsingItem(stack, world, entity);
 
@@ -42,7 +41,7 @@ public class HealingFood extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.HEALING_FOOD_DESCRIPTION, LocaleUtil.ItemDescriptionType.NEUTRAL));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.HEALING_FOOD_AMOUNT, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(Float.toString(healingAmount))));
 	}

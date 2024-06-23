@@ -4,6 +4,8 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -27,9 +29,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 public final class SoundBuilder {
+	public static final StreamCodec<RegistryFriendlyByteBuf, SoundBuilder> STREAM_CODEC = StreamCodec.of(SoundBuilder::toNetwork, SoundBuilder::fromNetwork);
+
 	private SoundEvent sound;
 	private SoundSource category = SoundSource.MASTER;
 	private Level level = null;
@@ -54,8 +57,8 @@ public final class SoundBuilder {
 
 	private boolean stopSound = false;
 
-	public SoundBuilder(Supplier<SoundEvent> sound) {
-		this.sound = sound.get();
+	public SoundBuilder(Holder<SoundEvent> sound) {
+		this.sound = sound.value();
 	}
 
 	public SoundBuilder(SoundEvent sound) {
@@ -329,14 +332,14 @@ public final class SoundBuilder {
 		}
 	}
 
-	public void toNetwork(FriendlyByteBuf buffer) {
-		buffer.writeResourceLocation(RegistryUtil.getId(sound));
-		buffer.writeBoolean(this.stopSound);
+	public static void toNetwork(RegistryFriendlyByteBuf buffer, SoundBuilder builder) {
+		buffer.writeResourceLocation(RegistryUtil.getId(builder.sound));
+		buffer.writeBoolean(builder.stopSound);
 
 		ArrayList<Section> sections = new ArrayList<Section>();
 
 		for (Section section : Section.values()) {
-			if (section.shouldWrite.test(this))
+			if (section.shouldWrite.test(builder))
 				sections.add(section);
 		}
 
@@ -344,11 +347,11 @@ public final class SoundBuilder {
 
 		for (Section section : sections) {
 			buffer.writeEnum(section);
-			section.writer.accept(this, buffer);
+			section.writer.accept(builder, buffer);
 		}
 	}
 
-	public static SoundBuilder fromNetwork(FriendlyByteBuf buffer) {
+	public static SoundBuilder fromNetwork(RegistryFriendlyByteBuf buffer) {
 		SoundEvent sound = AoARegistries.SOUNDS.getEntry(buffer.readResourceLocation());
 		SoundBuilder builder = new SoundBuilder(sound);
 		builder.stopSound = buffer.readBoolean();

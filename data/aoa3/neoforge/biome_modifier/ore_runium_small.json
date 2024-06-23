@@ -2,7 +2,7 @@
   "type": "aoa3:new_feature",
   "biomes": {
     "excluding": [
-      "#forge:is_dead"
+      "#c:is_dead"
     ],
     "if_all": [
       "#minecraft:is_overworld"

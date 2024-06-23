@@ -83,7 +83,7 @@ public final class AoASkill {
 				if (instanceData.has("abilities")) {
 					for (JsonElement entry : instanceData.getAsJsonArray("abilities")) {
 						JsonObject abilityData = entry.getAsJsonObject();
-						AoAAbility ability = AoAAbilities.getAbility(new ResourceLocation(GsonHelper.getAsString(abilityData, "id")));
+						AoAAbility ability = AoAAbilities.getAbility(ResourceLocation.read(GsonHelper.getAsString(abilityData, "id")).getOrThrow());
 						AoAAbility.Instance instance = ability.create(this, abilityData);
 
 						abilities.put(instance.getUniqueIdentifier(), instance);
@@ -100,7 +100,7 @@ public final class AoASkill {
 				CompoundTag abilityData = instanceData.getCompound("abilities");
 
 				for (String key : abilityData.getAllKeys()) {
-					AoAAbility ability = AoAAbilities.getAbility(new ResourceLocation(abilityData.getCompound(key).getString("id")));
+					AoAAbility ability = AoAAbilities.getAbility(ResourceLocation.read(abilityData.getCompound(key).getString("id")).getOrThrow());
 					AoAAbility.Instance instance = ability.loadFromNbt(this, (CompoundTag)abilityData.get(key));
 
 					abilities.put(instance.getUniqueIdentifier(), instance);

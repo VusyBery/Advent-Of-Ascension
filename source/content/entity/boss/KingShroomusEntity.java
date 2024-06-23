@@ -41,7 +41,7 @@ public class KingShroomusEntity extends AoARangedMob<KingShroomusEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.40625f;
 	}
 
@@ -76,7 +76,7 @@ public class KingShroomusEntity extends AoARangedMob<KingShroomusEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

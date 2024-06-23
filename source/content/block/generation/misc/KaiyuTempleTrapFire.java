@@ -32,7 +32,7 @@ public class KaiyuTempleTrapFire extends Block {
 	public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
 		if (entity instanceof Player && !((Player)entity).isCreative()) {
 			EntityUtil.applyPotions(entity, new EffectBuilder(MobEffects.BLINDNESS, 70).level(4).isAmbient());
-			entity.setSecondsOnFire(5);
+			entity.igniteForSeconds(5);
 		}
 	}
 }

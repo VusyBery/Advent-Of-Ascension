@@ -28,16 +28,16 @@ public class VulcammerMaul extends BaseMaul {
 			WorldUtil.createExplosion(attacker, attacker.level(), (attacker.getX() + target.getX()) / 2d, (attacker.getY() + target.getY()) / 2d, (attacker.getZ() + target.getZ()) / 2d, 2f, doWorldDamage ? Level.ExplosionInteraction.BLOCK : Level.ExplosionInteraction.NONE, doWorldDamage);
 
 			if (!doWorldDamage) {
-				for (LivingEntity entity : attacker.level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(2), EntityUtil.Predicates.HOSTILE_MOB)) {
-					entity.setSecondsOnFire(3);
+				for (LivingEntity entity : attacker.level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(2), EntityUtil::isHostileMob)) {
+					entity.igniteForSeconds(3);
 				}
 			}
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 	}
 }

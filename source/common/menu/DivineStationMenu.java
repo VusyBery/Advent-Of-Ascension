@@ -5,10 +5,14 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.tslat.aoa3.common.menu.generic.ExtensibleContainerMenu;
+import net.tslat.aoa3.common.menu.generic.ExtensibleRecipeMenu;
+import net.tslat.aoa3.common.menu.generic.GenericRecipeInput;
 import net.tslat.aoa3.common.menu.provider.GenericMenuProvider;
 import net.tslat.aoa3.common.menu.slot.CraftableResultSlot;
 import net.tslat.aoa3.common.menu.slot.OutputSlot;
@@ -16,11 +20,16 @@ import net.tslat.aoa3.common.registration.AoAMenus;
 import net.tslat.aoa3.common.registration.AoARecipes;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 
-public class DivineStationMenu extends ExtensibleContainerMenu<TransientCraftingContainer> {
+public class DivineStationMenu extends ExtensibleRecipeMenu<TransientCraftingContainer, GenericRecipeInput> {
 	public DivineStationMenu(int screenId, Inventory playerInventory, ContainerLevelAccess accessValidator) {
 		super(AoAMenus.DIVINE_STATION.get(), screenId, playerInventory, accessValidator);
 
 		createPlayerInventory(playerInventory, 8, 60);
+	}
+
+	@Override
+	protected GenericRecipeInput createRecipeInput() {
+		return new GenericRecipeInput(getInventory().getItems());
 	}
 
 	@Override
@@ -45,7 +54,7 @@ public class DivineStationMenu extends ExtensibleContainerMenu<TransientCrafting
 
 	@Override
 	protected Slot createOutputSlot(int slotIndex, Player player) {
-		return new CraftableResultSlot<>(player, this.inventory, new ResultContainer(), AoARecipes.UPGRADE_KIT.type().get(), slotIndex, 134, 23);
+		return new CraftableResultSlot<>(player, this.inventory, new ResultContainer(), AoARecipes.UPGRADE_KIT.type().get(), this::createRecipeInput, slotIndex, 134, 23);
 	}
 
 	@Override

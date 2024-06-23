@@ -13,10 +13,8 @@
       "offset": 2,
       "radius": {
         "type": "minecraft:biased_to_bottom",
-        "value": {
-          "max_inclusive": 3,
-          "min_inclusive": 2
-        }
+        "max_inclusive": 3,
+        "min_inclusive": 2
       }
     },
     "foliage_provider": {

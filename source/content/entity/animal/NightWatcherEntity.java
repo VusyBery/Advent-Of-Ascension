@@ -21,7 +21,7 @@ public class NightWatcherEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.5625f;
 	}
 

@@ -1,0 +1,24 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "tag": "neoforge:rods/metal"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:magic_focus"
+    },
+    {
+      "item": "aoa3:damage_focus"
+    },
+    {
+      "item": "aoa3:change_focus"
+    },
+    {
+      "item": "aoa3:precision_focus"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:vulcane"
+  }
+}

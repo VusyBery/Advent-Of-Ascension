@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.loottable.modifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceKey;
@@ -14,12 +15,13 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+import net.tslat.aoa3.util.LootUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public class RollEntityWorldTableLootModifier extends LootModifier {
-	public static final Codec<RollEntityWorldTableLootModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).and(
+	public static final MapCodec<RollEntityWorldTableLootModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).and(
 			Codec.unboundedMap(
 					Level.RESOURCE_KEY_CODEC,
 					ResourceLocation.CODEC)
@@ -35,7 +37,7 @@ public class RollEntityWorldTableLootModifier extends LootModifier {
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 
@@ -50,7 +52,7 @@ public class RollEntityWorldTableLootModifier extends LootModifier {
 		if (tableId == null)
 			return generatedLoot;
 
-		LootTable table = context.getLevel().getServer().getLootData().getLootTable(tableId);
+		LootTable table = LootUtil.getTable(context.getLevel(), tableId);
 
 		if (table == LootTable.EMPTY || table.getParamSet() != LootContextParamSets.ENTITY)
 			return generatedLoot;

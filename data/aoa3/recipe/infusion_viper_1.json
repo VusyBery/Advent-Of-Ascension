@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:sniper_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "aoa3:jungle_thorns"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:gunpowders"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:viper_1"
+  }
+}

@@ -3,7 +3,7 @@ package net.tslat.aoa3.client.model.entity.mob;
 import it.unimi.dsi.fastutil.floats.FloatFloatPair;
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.content.entity.mob.precasia.VeloraptorEntity;
+import net.tslat.aoa3.content.entity.monster.precasia.VeloraptorEntity;
 
 public class VeloraptorModel extends MultiStageHeadModel<VeloraptorEntity> {
 	public VeloraptorModel() {

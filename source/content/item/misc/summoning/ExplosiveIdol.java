@@ -7,9 +7,8 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.boss.king_bambambam.KingBamBamBamEntity;
 import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -24,17 +23,17 @@ public class ExplosiveIdol extends BossSpawningItem<KingBamBamBamEntity> {
 
 	@Override
 	public KingBamBamBamEntity spawnBoss(ServerLevel level, Vec3 position, ItemStack stack) {
-		return EntitySpawningUtil.spawnEntity(level, AoAMobs.KING_BAMBAMBAM.get(), position, MobSpawnType.TRIGGERED);
+		return EntitySpawningUtil.spawnEntity(level, AoAMonsters.KING_BAMBAMBAM.get(), position, MobSpawnType.TRIGGERED);
 	}
 
 	@Override
 	@Nullable
 	public EntityType<KingBamBamBamEntity> getEntityType(ItemStack stack) {
-		return AoAMobs.KING_BAMBAMBAM.get();
+		return AoAMonsters.KING_BAMBAMBAM.get();
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 2));
 	}

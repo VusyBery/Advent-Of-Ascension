@@ -1,33 +1,28 @@
 package net.tslat.aoa3.common.networking.packets;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.PlayerUtil;
-import net.tslat.aoa3.util.RegistryUtil;
 
-public record AddSkillCyclePacket(AoASkill skill) implements AoAPacket<PlayPayloadContext> {
-	public static final ResourceLocation ID = AdventOfAscension.id("add_skill_cycle");
+public record AddSkillCyclePacket(AoASkill skill) implements AoAPacket {
+	public static final Type<AddSkillCyclePacket> TYPE = new Type<>(AdventOfAscension.id("add_skill_cycle"));
+	public static final StreamCodec<RegistryFriendlyByteBuf, AddSkillCyclePacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.registry(AoARegistries.SKILLS_REGISTRY_KEY),
+			AddSkillCyclePacket::skill,
+			AddSkillCyclePacket::new);
 
 	@Override
-	public ResourceLocation id() {
-		return ID;
+	public Type<? extends AddSkillCyclePacket> type() {
+		return TYPE;
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeResourceLocation(RegistryUtil.getId(this.skill));
-	}
-
-	public static AddSkillCyclePacket decode(FriendlyByteBuf buffer) {
-		return new AddSkillCyclePacket(AoARegistries.AOA_SKILLS.getEntry(buffer.readResourceLocation()));
-	}
-
-	@Override
-	public void receiveMessage(PlayPayloadContext context) {
-		context.workHandler().execute(() -> PlayerUtil.getAdventPlayer(context.player().get()).getSkill(skill).addCycle());
+	public void receiveMessage(IPayloadContext context) {
+		context.enqueueWork(() -> PlayerUtil.getAdventPlayer(context.player()).getSkill(this.skill).addCycle());
 	}
 }

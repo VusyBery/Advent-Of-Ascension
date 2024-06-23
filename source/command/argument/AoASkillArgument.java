@@ -7,7 +7,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.network.chat.Component;
@@ -22,11 +21,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class AoASkillArgument implements ArgumentType<AoASkill> {
 	private static final List<String> EXAMPLES = Arrays.asList("aoa3:alchemy", "aoa3:creation", "aoa3:hauling", "aoa3:innervation");
-	private static final DynamicCommandExceptionType UNKNOWN_SKILL_ERROR = new DynamicCommandExceptionType(input -> Component.translatable("argument.aoa.skill.notFound"));
+	private static final DynamicCommandExceptionType UNKNOWN_SKILL_ERROR = new DynamicCommandExceptionType(input -> Component.translatable("argument.aoa3.skill.notFound"));
 
 	public AoASkillArgument() {}
 
-	public static AoASkillArgument skill(CommandBuildContext context) {
+	public static AoASkillArgument skill() {
 		return new AoASkillArgument();
 	}
 

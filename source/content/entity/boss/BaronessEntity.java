@@ -39,15 +39,15 @@ public class BaronessEntity extends AoARangedMob<BaronessEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.71875f;
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		this.entityData.define(INVULNERABLE, false);
+		builder.define(INVULNERABLE, false);
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class BaronessEntity extends AoARangedMob<BaronessEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

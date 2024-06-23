@@ -1,0 +1,13 @@
+{
+  "type": "aoa3:upgrade_kit",
+  "input": {
+    "item": "aoa3:big_blast"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:blissful_blast"
+  },
+  "upgrade_kit": {
+    "item": "aoa3:smiley_upgrade_kit"
+  }
+}

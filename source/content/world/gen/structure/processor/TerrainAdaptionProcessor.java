@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.world.gen.structure.processor;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -13,8 +13,8 @@ import net.tslat.aoa3.common.registration.worldgen.AoAStructureProcessors;
 import java.util.List;
 
 public class TerrainAdaptionProcessor extends StructureProcessor {
-    public static final Codec<TerrainAdaptionProcessor> CODEC = RecordCodecBuilder.<TerrainAdaptionProcessor>mapCodec(codec -> codec.group(
-            RuleTest.CODEC.fieldOf("pos_test").forGetter(TerrainAdaptionProcessor::posTest)).apply(codec, TerrainAdaptionProcessor::new)).codec();
+    public static final MapCodec<TerrainAdaptionProcessor> CODEC = RecordCodecBuilder.mapCodec(codec -> codec.group(
+            RuleTest.CODEC.fieldOf("pos_test").forGetter(TerrainAdaptionProcessor::posTest)).apply(codec, TerrainAdaptionProcessor::new));
 
     private final RuleTest posTest;
 

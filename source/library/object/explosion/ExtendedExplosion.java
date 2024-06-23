@@ -138,7 +138,7 @@ public class ExtendedExplosion extends Explosion {
 
 		filterAffectedBlocksAndEntities();
 		EventHooks.onExplosionDetonate(this.level, this, this.affectedEntities, (this.info.getBaseDamage() + this.info.getEffectiveRadius()) / 2f);
-		this.level.playSound(null, this.origin.x, this.origin.y, this.origin.z, this.info.getExplosionSound(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F);
+		this.level.playSound(null, this.origin.x, this.origin.y, this.origin.z, this.info.getExplosionSound().value(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F);
 
 		if (this.info.isSingleTickExplosion()) {
 			this.info.doParticles(this, -1);
@@ -190,7 +190,7 @@ public class ExtendedExplosion extends Explosion {
 			if (this.indirectExploder instanceof Player)
 				return AoAGameRules.checkDestructiveWeaponPhysics(this.level);
 
-			return EventHooks.getMobGriefingEvent(this.level, this.indirectExploder);
+			return EventHooks.canEntityGrief(this.level, this.indirectExploder);
 		}
 		else if (this.source != null) {
 			if (this.source instanceof Player)
@@ -199,7 +199,7 @@ public class ExtendedExplosion extends Explosion {
 			if (this.source instanceof OwnableEntity ownable && ownable.getOwner() instanceof Player)
 				return AoAGameRules.checkDestructiveWeaponPhysics(this.level);
 
-			return EventHooks.getMobGriefingEvent(this.level, this.source);
+			return EventHooks.canEntityGrief(this.level, this.source);
 		}
 
 		return true;

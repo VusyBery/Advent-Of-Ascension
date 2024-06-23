@@ -1,5 +1,7 @@
 package net.tslat.aoa3.content.item.weapon.thrown;
 
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -7,6 +9,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -21,8 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class Chakram extends BaseThrownWeapon {
-	public Chakram() {
-		super(4f, 7);
+	public Chakram(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -37,13 +41,18 @@ public class Chakram extends BaseThrownWeapon {
 	}
 
 	@Override
+	public Projectile asProjectile(Level level, Position position, ItemStack stack, Direction direction) {
+		return new ChakramEntity(level, position.x(), position.y(), position.z());
+	}
+
+	@Override
 	protected void doImpactEffect(Entity target, LivingEntity shooter, BaseBullet bullet, Vec3 impactPos, float bulletDmgMultiplier) {
 		EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.POISON, 60).level(2));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.POISONS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

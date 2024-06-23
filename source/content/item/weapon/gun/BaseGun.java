@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.item.weapon.gun;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -10,83 +9,66 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.GunRecoilPacket;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.enchantment.BraceEnchantment;
-import net.tslat.aoa3.content.enchantment.ControlEnchantment;
-import net.tslat.aoa3.content.enchantment.ShellEnchantment;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.entity.projectile.gun.LimoniteBulletEntity;
+import net.tslat.aoa3.content.item.datacomponent.GunStats;
 import net.tslat.aoa3.content.item.weapon.sniper.BaseSniper;
 import net.tslat.aoa3.content.item.weapon.staff.BaseStaff;
-import net.tslat.aoa3.content.item.weapon.thrown.BaseThrownWeapon;
 import net.tslat.aoa3.library.builder.SoundBuilder;
-import net.tslat.aoa3.util.DamageUtil;
-import net.tslat.aoa3.util.ItemUtil;
-import net.tslat.aoa3.util.LocaleUtil;
-import net.tslat.aoa3.util.NumberUtil;
+import net.tslat.aoa3.util.*;
 import net.tslat.smartbrainlib.util.RandomUtil;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 
 public abstract class BaseGun extends Item {
-	private final Multimap<Attribute, AttributeModifier> attributeModifiers = HashMultimap.create();
+	public static final UUID BRACE_DEBUFF = UUID.fromString("a1371c64-c09e-4ed6-adfd-5afbaea79369");
+	public static final UUID ATTACK_SPEED_MAINHAND = UUID.fromString("99fdc256-279e-4c8e-b1c6-9209571f134e");
 
-	protected static final UUID ATTACK_SPEED_MAINHAND = UUID.fromString("99fdc256-279e-4c8e-b1c6-9209571f134e");
-	protected static final UUID ATTACK_SPEED_OFFHAND = UUID.fromString("63f030a6-7269-444d-b26c-ae3514b36e1b");
-
-	protected final float dmg;
-	protected final int firingDelay;
-	protected final float recoilMod;
-	protected double holsterMod;
-
-	public BaseGun(Properties properties, final float dmg, final int fireDelayTicks, final float recoilMod) {
+	public BaseGun(Item.Properties properties) {
 		super(properties);
-
-		this.dmg = dmg;
-		this.firingDelay = fireDelayTicks;
-		this.recoilMod = recoilMod;
-		this.holsterMod = getDamage() == 0 ? 0.85 : this instanceof BaseThrownWeapon ? 0.5 : 0.8 + 0.17 * Math.min(((20 / (double)getFiringDelay()) * getDamage()) / 55, 0.85);
-
-		attributeModifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(ATTACK_SPEED_MAINHAND, "AoAGunMainHand", -getHolsterSpeed(), AttributeModifier.Operation.MULTIPLY_TOTAL));
 	}
 
-	public BaseGun(final float dmg, final int durability, final int fireDelayTicks, final float recoilMod) {
-		this(new Item.Properties().durability(durability), dmg, fireDelayTicks, recoilMod);
+	public GunStats getGunStats() {
+		return getGunStats(getDefaultInstance());
 	}
 
-	public float getDamage() {
-		return this.dmg;
+	public GunStats getGunStats(ItemStack stack) {
+		return stack.get(AoADataComponents.GUN_STATS.get());
 	}
 
-	public float getRecoilModifier() {
-		return 0.35f;
+	public float getGunDamage(ItemStack stack) {
+		return getGunStats(stack).damage();
 	}
 
-	public int getFiringDelay() {
-		return firingDelay;
+	public float getRecoilModifier(ItemStack stack) {
+		return getGunStats(stack).recoilModifier();
 	}
 
-	private double getHolsterSpeed() {
-		return holsterMod;
+	public int getTicksBetweenShots(ItemStack stack) {
+		return getGunStats(stack).ticksBetweenShots();
+	}
+
+	private double getUnholsterTimeModifier(ItemStack stack) {
+		return getGunStats(stack).unholsterTimeModifier();
 	}
 
 	@Nullable
@@ -99,11 +81,11 @@ public abstract class BaseGun extends Item {
 	}
 
 	public float getRecoilForShot(ItemStack stack, LivingEntity shooter) {
-		return (getDamage() == 0 ? 1 : (float)Math.pow(dmg, 1.4f)) * getRecoilModifier();
+		return (getGunDamage(stack) == 0 ? 1 : (float)Math.pow(getGunDamage(stack), 1.4f)) * getRecoilModifier(stack);
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 72000;
 	}
 
@@ -116,8 +98,8 @@ public abstract class BaseGun extends Item {
 		return AoAItems.LIMONITE_BULLET.get();
 	}
 
-	public InteractionHand getGunHand(ItemStack stack) {
-		return ItemUtil.hasEnchantment(stack, AoAEnchantments.BRACE.get()) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+	public InteractionHand getGunHand(Level level, ItemStack stack) {
+		return EnchantmentUtil.hasEnchantment(level, stack, AoAEnchantments.BRACE) ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
 	}
 
 	@Override
@@ -135,10 +117,10 @@ public abstract class BaseGun extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 
-		if (hand != getGunHand(stack))
+		if (hand != getGunHand(level, stack))
 			return InteractionResultHolder.fail(stack);
 
 		if (player.isUsingItem() && player.isBlocking())
@@ -161,19 +143,19 @@ public abstract class BaseGun extends Item {
 
 	@Override
 	public void onUseTick(Level level, LivingEntity shooter, ItemStack stack, int count) {
-		if (!isFullAutomatic() && count < getUseDuration(stack))
+		if (!isFullAutomatic() && count < getUseDuration(stack, shooter))
 			return;
 
 		if (level instanceof ServerLevel serverLevel) {
 			ServerPlayer player = shooter instanceof ServerPlayer ? (ServerPlayer)shooter : null;
 
 			if (player == null || player.getCooldowns().getCooldownPercent(this, 0) == 0) {
-				InteractionHand hand = getGunHand(stack);
+				InteractionHand hand = getGunHand(level, stack);
 
 				if (fireGun(serverLevel, shooter, stack, hand)) {
 					ItemStack offhand;
 
-					if (hand == InteractionHand.MAIN_HAND && ItemUtil.hasEnchantment((offhand = shooter.getOffhandItem()), AoAEnchantments.BRACE.get()))
+					if (hand == InteractionHand.MAIN_HAND && EnchantmentUtil.hasEnchantment(level, (offhand = shooter.getOffhandItem()), AoAEnchantments.BRACE))
 						offhand.onUseTick(serverLevel, shooter, count);
 
 					ItemUtil.damageItem(stack, shooter, 1, hand == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
@@ -181,8 +163,8 @@ public abstract class BaseGun extends Item {
 					if (player != null) {
 						player.awardStat(Stats.ITEM_USED.get(this));
 
-						if (getFiringDelay() > 1)
-							player.getCooldowns().addCooldown(this, getFiringDelay());
+						if (getTicksBetweenShots(stack) > 1)
+							player.getCooldowns().addCooldown(this, getTicksBetweenShots(stack));
 
 						doRecoil(player, stack, hand);
 					}
@@ -207,9 +189,9 @@ public abstract class BaseGun extends Item {
 	}
 
 	public void doRecoil(ServerPlayer player, ItemStack stack, InteractionHand hand) {
-		float recoilAmount = ControlEnchantment.modifyRecoil(stack, getRecoilForShot(stack, player) * 2);
+		float recoilAmount = AoAEnchantments.modifyRecoil(player.serverLevel(), stack, getRecoilForShot(stack, player) * 2);
 
-		AoANetworking.sendToPlayer(player, new GunRecoilPacket(hand == InteractionHand.OFF_HAND ? recoilAmount * 1.25f : recoilAmount, getFiringDelay()));
+		AoANetworking.sendToPlayer(player, new GunRecoilPacket(hand == InteractionHand.OFF_HAND ? recoilAmount * 1.25f : recoilAmount, getTicksBetweenShots(stack)));
 	}
 
 	protected void doFiringEffects(ServerLevel level, LivingEntity shooter, BaseBullet bullet, ItemStack stack, InteractionHand hand) {
@@ -217,26 +199,32 @@ public abstract class BaseGun extends Item {
 
 		level.sendParticles(ParticleTypes.SMOKE, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
 
-		if (this.dmg > 15) {
-			if (this.dmg > 20) {
+		float gunDamage = getGunDamage(stack);
+
+		if (gunDamage > 15) {
+			if (gunDamage > 20)
 				level.sendParticles(ParticleTypes.FLAME, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
-			}
 
 			level.sendParticles(ParticleTypes.POOF, bullet.getX(), bullet.getY(), bullet.getZ(), 2, 0, 0, 0, 0.025f);
 		}
 	}
 
 	public void doImpactDamage(Entity target, LivingEntity shooter, BaseBullet bullet, Vec3 impactPosition, float bulletDmgMultiplier) {
-		if (target != null) {
-			if (bullet.getHand() != null)
-				bulletDmgMultiplier = ShellEnchantment.applyDamageBonus(shooter.getItemInHand(bullet.getHand()), bulletDmgMultiplier);
+		if (target != null && target.level() instanceof ServerLevel level) {
+			ItemStack stack = shooter.getItemInHand(bullet.getHand());
+			float damage = getGunDamage(stack) * bulletDmgMultiplier;
 
-			if (RandomUtil.percentChance(this.firingDelay / 10f)) {
-				if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, getDamage() * bulletDmgMultiplier))
+			if (!stack.is(this))
+				stack = getDefaultInstance();
+
+			final ItemStack gunStack = stack;
+
+			if (RandomUtil.percentChance(getTicksBetweenShots(stack) / 10f)) {
+				if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, source -> EnchantmentHelper.modifyDamage(level, gunStack, target, source, damage)))
 					doImpactEffect(target, shooter, bullet, impactPosition, bulletDmgMultiplier);
 			}
 			else {
-				if (DamageUtil.doGunAttack(shooter, bullet, target, getDamage() * bulletDmgMultiplier))
+				if (DamageUtil.doGunAttack(shooter, bullet, target, source -> EnchantmentHelper.modifyDamage(level, gunStack, target, source, damage)))
 					doImpactEffect(target, shooter, bullet, impactPosition, bulletDmgMultiplier);
 			}
 		}
@@ -251,7 +239,7 @@ public abstract class BaseGun extends Item {
 
 	@Nullable
 	public BaseBullet findAndConsumeAmmo(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
-		if (shooter.getType() != EntityType.PLAYER || ItemUtil.findInventoryItem((Player)shooter, new ItemStack(getAmmoItem()), !shooter.level().isClientSide(), 1 + gunStack.getEnchantmentLevel(AoAEnchantments.GREED.get()), false))
+		if (!(shooter instanceof Player pl) || ItemUtil.findInventoryItem(pl, new ItemStack(getAmmoItem()), !shooter.level().isClientSide(), shooter.level() instanceof ServerLevel level ? AoAEnchantments.modifyAmmoCost(level, gunStack, 1) : 1, false))
 			return createProjectileEntity(shooter, gunStack, hand);
 
 		return null;
@@ -261,35 +249,29 @@ public abstract class BaseGun extends Item {
 		return new LimoniteBulletEntity(shooter, this, hand, 120, 0);
 	}
 
-	@Override
-	public int getDefaultTooltipHideFlags(@NotNull ItemStack stack) {
-		return ItemStack.TooltipPart.MODIFIERS.getMask();
+	public static ItemAttributeModifiers createGunAttributeModifiers(double holsterSpeed) {
+		final ImmutableList.Builder<ItemAttributeModifiers.Entry> entries = ImmutableList.builder();
+
+		entries.add(new ItemAttributeModifiers.Entry(
+				Attributes.ATTACK_SPEED,
+				new AttributeModifier(BASE_ATTACK_SPEED_ID, -holsterSpeed, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+				EquipmentSlotGroup.MAINHAND));
+		entries.add(new ItemAttributeModifiers.Entry(
+				Attributes.MOVEMENT_SPEED,
+				new AttributeModifier(AdventOfAscension.id("brace_debuff"), -0.35, AttributeModifier.Operation.ADD_MULTIPLIED_BASE),
+				EquipmentSlotGroup.OFFHAND));
+
+		return new ItemAttributeModifiers(entries.build(), false);
 	}
 
 	@Override
-	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-		if (slot == EquipmentSlot.MAINHAND) {
-			return HashMultimap.create(attributeModifiers);
-		}
-		else if (slot == EquipmentSlot.OFFHAND) {
-			Multimap<Attribute, AttributeModifier> multimap = HashMultimap.create(attributeModifiers);
-
-			multimap.put(Attributes.MOVEMENT_SPEED, BraceEnchantment.BRACE_DEBUFF);
-
-			return multimap;
-		}
-
-		return super.getAttributeModifiers(slot, stack);
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		float damage = ShellEnchantment.applyDamageBonus(stack, getDamage());
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		float damage = getGunDamage(stack);
 
 		if (damage > 0)
 			tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.GUN_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(NumberUtil.roundToNthDecimalPlace(damage, 2))));
 
-		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(NumberUtil.roundToNthDecimalPlace(20 / (float)getFiringDelay(), 2))));
+		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(NumberUtil.roundToNthDecimalPlace(20 / (float) getTicksBetweenShots(stack), 2))));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, getAmmoItem().getDescription()));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(isFullAutomatic() ? LocaleUtil.Keys.FULLY_AUTOMATIC_GUN : LocaleUtil.Keys.SEMI_AUTOMATIC_GUN, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 	}

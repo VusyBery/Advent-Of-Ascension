@@ -18,7 +18,7 @@ public class PixonRenderer extends EntityRenderer<PixonEntity> {
     }
 
     @Override
-    protected void renderNameTag(PixonEntity pixon, Component name, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {}
+    protected void renderNameTag(PixonEntity pixon, Component name, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, float partialTick) {}
 
     @Override
     protected boolean shouldShowName(PixonEntity pixon) {

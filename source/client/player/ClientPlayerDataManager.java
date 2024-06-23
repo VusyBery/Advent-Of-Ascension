@@ -1,0 +1,254 @@
+package net.tslat.aoa3.client.player;
+
+import com.google.common.collect.ArrayListMultimap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.tslat.aoa3.advent.AoAResourceCaching;
+import net.tslat.aoa3.client.ClientOperations;
+import net.tslat.aoa3.client.gui.adventgui.AdventGuiTabLore;
+import net.tslat.aoa3.common.networking.AoANetworking;
+import net.tslat.aoa3.common.networking.packets.adventplayer.PlayerAbilityKeybindTriggerPacket;
+import net.tslat.aoa3.common.registration.AoARegistries;
+import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.player.AoAPlayerEventListener;
+import net.tslat.aoa3.player.PlayerDataManager;
+import net.tslat.aoa3.player.ability.AoAAbility;
+import net.tslat.aoa3.player.resource.AoAResource;
+import net.tslat.aoa3.player.skill.AoASkill;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.UnknownNullability;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
+
+public final class ClientPlayerDataManager implements PlayerDataManager {
+	public static final ClientPlayerDataManager INSTANCE = Util.make(new ClientPlayerDataManager(), manager -> AoAResourceCaching.onClientLogout(manager::reset));
+
+	private Player player;
+
+	private final ConcurrentSkipListMap<AoASkill, AoASkill.Instance> skills = new ConcurrentSkipListMap<>(Comparator.comparing(AoARegistries.AOA_SKILLS::getKey));
+	private final ConcurrentSkipListMap<AoAResource, AoAResource.Instance> resources = new ConcurrentSkipListMap<>(Comparator.comparing(AoARegistries.AOA_RESOURCES::getKey));
+	private final ArrayListMultimap<AoAPlayerEventListener.ListenerType, AoAPlayerEventListener> eventListeners = ArrayListMultimap.create();
+
+	private final ConcurrentHashMap<Integer, List<AoAPlayerKeybindListener>> keyListeners = new ConcurrentHashMap<>(1);
+
+	private boolean isLegitimate = true;
+	private int totalLevel = 0;
+
+	public static ClientPlayerDataManager get() {
+		return INSTANCE;
+	}
+
+	@Override
+	public void updatePlayerInstance(Player pl) {
+		player = pl;
+	}
+
+	public void reset() {
+		player = null;
+		isLegitimate = true;
+		totalLevel = 0;
+
+		skills.clear();
+		resources.clear();
+		keyListeners.clear();
+	}
+
+	@Override
+	public Player player() {
+		return player;
+	}
+
+	@Override
+	public boolean isLegitimate() {
+		return isLegitimate;
+	}
+
+	@Override
+	public int getTotalLevel() {
+		return totalLevel;
+	}
+
+	@Override
+	public Collection<AoASkill.Instance> getSkills() {
+		return skills.values();
+	}
+
+	@Override
+	@NotNull
+	public AoASkill.Instance getSkill(AoASkill skill) {
+		return skills.getOrDefault(skill, AoASkills.DEFAULT);
+	}
+
+	@Override
+	public Collection<AoAResource.Instance> getResources() {
+		return resources.values();
+	}
+
+	@Override
+	@NotNull
+	public AoAResource.Instance getResource(AoAResource resource) {
+		return resources.getOrDefault(resource, AoAResources.DEFAULT);
+	}
+
+	public void handleKeyInput(int keycode) {
+		if (ClientOperations.getPlayer() == null || keyListeners.isEmpty() || !keyListeners.containsKey(keycode))
+			return;
+
+		List<AoAPlayerKeybindListener> listeners = keyListeners.get(keycode);
+		List<String> abilities = new ObjectArrayList<>(listeners.size());
+
+		for (AoAPlayerKeybindListener listener : listeners) {
+			if (listener.isListenerActive() && listener.shouldSendKeyPress() && listener.getEventListener() instanceof AoAAbility.Instance abilityInstance)
+				abilities.add(abilityInstance.getUniqueIdentifier());
+		}
+
+		if (!abilities.isEmpty())
+			AoANetworking.sendToServer(new PlayerAbilityKeybindTriggerPacket(abilities));
+	}
+
+	private void updateTotalLevel() {
+		totalLevel = 0;
+
+		for (AoASkill.Instance skill : skills.values()) {
+			totalLevel += 100 * skill.getCycles();
+			totalLevel += skill.getLevel(true);
+		}
+	}
+
+	@Override
+	public void loadFromNbt(CompoundTag baseTag) {
+		isLegitimate = baseTag.getBoolean("legitimate");
+		int hash = baseTag.getInt("hash");
+
+		if (hash == 0)
+			isLegitimate = false;
+
+		skills.clear();
+		resources.clear();
+
+		if (baseTag.contains("skills")) {
+			CompoundTag skillsNbt = baseTag.getCompound("skills");
+
+			for (String id : skillsNbt.getAllKeys()) {
+				AoASkill skill = AoASkills.getSkill(ResourceLocation.read(id).getOrThrow());
+				AoASkill.Instance instance = skill.buildClientInstance(skillsNbt.getCompound(id));
+
+				skills.put(skill, instance);
+				checkForListeners(instance);
+
+				for (AoAAbility.Instance ability : instance.getAbilityMap().values()) {
+					checkForListeners(ability);
+				}
+			}
+
+			updateTotalLevel();
+		}
+
+		if (baseTag.contains("resources")) {
+			CompoundTag resourcesNbt = baseTag.getCompound("resources");
+
+			for (String id : resourcesNbt.getAllKeys()) {
+				AoAResource resource = AoAResources.getResource(ResourceLocation.read(id).getOrThrow());
+				AoAResource.Instance instance = resource.buildClientInstance(resourcesNbt.getCompound(id));
+
+				resources.put(resource, instance);
+				checkForListeners(instance);
+			}
+		}
+
+		if (baseTag.contains("PatchouliBooks")) {
+			ArrayList<ResourceLocation> books = new ArrayList<>();
+
+			ListTag booksNbt = baseTag.getList("PatchouliBooks", Tag.TAG_STRING);
+
+			for (Tag book : booksNbt) {
+				books.add(ResourceLocation.read(book.getAsString()).getOrThrow());
+			}
+
+			AdventGuiTabLore.syncBooks(books);
+		}
+	}
+
+	@Override
+	public void addListener(AoAPlayerEventListener listener, boolean active, AoAPlayerEventListener.ListenerType... types) {
+		for (AoAPlayerEventListener.ListenerType type : types) {
+			eventListeners.put(type, listener);
+		}
+	}
+
+	@Override
+	public List<AoAPlayerEventListener> getListeners(AoAPlayerEventListener.ListenerType eventType) {
+		return eventListeners.get(eventType);
+	}
+
+	public void updateData(CompoundTag syncTag) {
+		if (syncTag.contains("skills")) {
+			CompoundTag skillsData = syncTag.getCompound("skills");
+
+			for (String key : skillsData.getAllKeys()) {
+				getSkill(AoASkills.getSkill(ResourceLocation.read(key).getOrThrow())).receiveSyncData(skillsData.getCompound(key));
+			}
+
+			updateTotalLevel();
+		}
+
+		if (syncTag.contains("resources")) {
+			CompoundTag resourcesData = syncTag.getCompound("resources");
+
+			for (String key : resourcesData.getAllKeys()) {
+				getResource(AoAResources.getResource(ResourceLocation.read(key).getOrThrow())).receiveSyncData(resourcesData.getCompound(key));
+			}
+		}
+
+		if (syncTag.contains("PatchouliBooks")) {
+			ArrayList<ResourceLocation> books = new ArrayList<>();
+
+			ListTag booksNbt = syncTag.getList("PatchouliBooks", Tag.TAG_STRING);
+
+			for (Tag book : booksNbt) {
+				books.add(ResourceLocation.read(book.getAsString()).getOrThrow());
+			}
+
+			AdventGuiTabLore.syncBooks(books);
+		}
+
+		if (syncTag.contains("legitimate"))
+			isLegitimate = syncTag.getBoolean("legitimate");
+	}
+
+	private void checkForListeners(AoAPlayerEventListener listener) {
+		if (this.player != ClientOperations.getPlayer())
+			return;
+
+		for (AoAPlayerEventListener.ListenerType type : listener.getListenerTypes()) {
+			if (type == AoAPlayerEventListener.ListenerType.KEY_INPUT) {
+				listener.createKeybindListener(keyListener -> this.keyListeners.computeIfAbsent(keyListener.getKeycode(), keyCode -> new ObjectArrayList<>(1)).add(keyListener));
+
+				return;
+			}
+			else {
+				addListener(listener, listener.meetsRequirements(), type);
+			}
+		}
+	}
+
+	@Override
+	public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider registryLookup) {
+		return new CompoundTag();
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider registryLookup, CompoundTag nbt) {}
+}

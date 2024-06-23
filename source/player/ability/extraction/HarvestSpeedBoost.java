@@ -1,7 +1,6 @@
 package net.tslat.aoa3.player.ability.extraction;
 
 import com.google.gson.JsonObject;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -10,17 +9,19 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.client.AoAKeybinds;
+import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
+
+import java.util.function.Consumer;
 
 public class HarvestSpeedBoost extends AoAAbility.Instance {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_BREAK_SPEED, ListenerType.PLAYER_TICK, ListenerType.KEY_INPUT};
@@ -88,20 +89,26 @@ public class HarvestSpeedBoost extends AoAAbility.Instance {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	public KeyMapping getKeybind() {
-		return AoAKeybinds.ABILITY_ACTION;
-	}
+	public void createKeybindListener(Consumer<AoAPlayerKeybindListener> consumer) {
+		consumer.accept(new AoAPlayerKeybindListener() {
+			@Override
+			public AoAPlayerEventListener getEventListener() {
+				return HarvestSpeedBoost.this;
+			}
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public boolean shouldSendKeyPress() {
-		Player player = Minecraft.getInstance().player;
+			@Override
+			public int getKeycode() {
+				return AoAKeybinds.ABILITY_ACTION.getKey().getValue();
+			}
 
-		if (player.isCreative())
-			return false;
+			@Override
+			public boolean shouldSendKeyPress() {
+				if (getPlayer().getAbilities().instabuild)
+					return false;
 
-		return Minecraft.getInstance().gameMode.isDestroying() || active;
+				return Minecraft.getInstance().gameMode.isDestroying() || HarvestSpeedBoost.this.active;
+			}
+		});
 	}
 
 	@Override
@@ -123,7 +130,7 @@ public class HarvestSpeedBoost extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handlePlayerTick(TickEvent.PlayerTickEvent ev) {
+	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (!active)
 			return;
 

@@ -1,0 +1,24 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:boots_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:reinforced_cloth"
+    },
+    {
+      "item": "aoa3:reinforced_cloth"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "tag": "c:strings"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:hazmat_boots"
+  }
+}

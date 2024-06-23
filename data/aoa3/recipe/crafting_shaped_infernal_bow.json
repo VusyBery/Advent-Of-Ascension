@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:ingots/blazium"
+    },
+    "B": {
+      "tag": "c:strings"
+    },
+    "C": {
+      "item": "aoa3:reinforced_cloth"
+    }
+  },
+  "pattern": [
+    " AB",
+    "C B",
+    " AB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:infernal_bow"
+  }
+}

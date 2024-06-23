@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.item.weapon.gun;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
@@ -11,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class ApocoAssaultRifle extends BaseGun {
-	public ApocoAssaultRifle(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public ApocoAssaultRifle(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

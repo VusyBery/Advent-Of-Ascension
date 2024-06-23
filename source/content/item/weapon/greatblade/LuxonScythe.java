@@ -3,22 +3,20 @@ package net.tslat.aoa3.content.item.weapon.greatblade;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
-import net.tslat.aoa3.common.registration.item.AoATiers;
-import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class LuxonScythe extends BaseGreatblade {
-	public LuxonScythe() {
-		super(AoATiers.LUXON_SCYTHE, AttackSpeed.forAttacksPerSecond(1.2f));
+	public LuxonScythe(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 	@Override
@@ -38,7 +36,7 @@ public class LuxonScythe extends BaseGreatblade {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.LEECHES_SPIRIT, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 	}
 }

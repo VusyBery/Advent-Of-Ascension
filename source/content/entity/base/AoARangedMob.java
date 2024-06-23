@@ -38,7 +38,7 @@ public abstract class AoARangedMob<T extends AoARangedMob<T>> extends AoAMonster
 
 	@Override
 	public int calculateKillXp() {
-		return !this.hasDrops ? 0 : (int)(5 + (getAttributeValue(Attributes.MAX_HEALTH) + getAttributeValue(Attributes.ARMOR) * 1.75f + getAttributeValue(Attributes.ARMOR_TOUGHNESS) * 1.5f + getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()) * 2) / 10f);
+		return !this.hasDrops ? 0 : (int)(5 + (getAttributeValue(Attributes.MAX_HEALTH) + getAttributeValue(Attributes.ARMOR) * 1.75f + getAttributeValue(Attributes.ARMOR_TOUGHNESS) * 1.5f + getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE) * 2) / 10f);
 	}
 
 	protected boolean isStrafingMob() {
@@ -54,10 +54,10 @@ public abstract class AoARangedMob<T extends AoARangedMob<T>> extends AoAMonster
 	public void doRangedAttackEntity(@Nullable BaseMobProjectile projectile, Entity target) {
 		if (projectile != null) {
 			final boolean success = switch (projectile.getProjectileType()) {
-				case MAGIC -> DamageUtil.doMagicProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
-				case GUN -> DamageUtil.doGunAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
-				case PHYSICAL -> DamageUtil.doProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
-				case ENERGY -> DamageUtil.doEnergyProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
+				case MAGIC -> DamageUtil.doMagicProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
+				case GUN -> DamageUtil.doGunAttack(this, projectile, target, source -> (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
+				case PHYSICAL -> DamageUtil.doProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
+				case ENERGY -> DamageUtil.doEnergyProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
 			};
 
 			if (success)

@@ -23,7 +23,7 @@ public class ZalBankerEntity extends AoABanker {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 0.6875f;
 	}
 

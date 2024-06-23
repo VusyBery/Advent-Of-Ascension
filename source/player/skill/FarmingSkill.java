@@ -33,18 +33,11 @@ public class FarmingSkill extends AoASkill.Instance {
 	@Override
 	public void handleBlockBreak(BlockEvent.BreakEvent ev) {
 		if (canGainXp(true) && BlockUtil.canPlayerHarvest(ev.getState(), ev.getPlayer(), ev.getLevel(), ev.getPos())) {
-			Block block = ev.getState().getBlock();
-			int xpTime = 0;
-
-			if (block instanceof CropBlock crop) {
-				xpTime = crop.isMaxAge(ev.getState()) ? 7 * crop.getMaxAge() : 0;
-			}
-			else if (block instanceof NetherWartBlock netherWart) {
-				xpTime = ev.getState().getValue(NetherWartBlock.AGE) == 3 ? 21 : 0;
-			}
-			else if (ev.getState().is(BlockTags.CROPS)) {
-				xpTime = 12;
-			}
+			int xpTime = switch (ev.getState().getBlock()) {
+				case CropBlock crop -> crop.isMaxAge(ev.getState()) ? 7 * crop.getMaxAge() : 0;
+				case NetherWartBlock netherWart -> ev.getState().getValue(NetherWartBlock.AGE) == 3 ? 21 : 0;
+				default -> ev.getState().is(BlockTags.CROPS) ? 12 : 0;
+			};
 
 			if (xpTime > 0)
 				PlayerUtil.giveTimeBasedXpToPlayer((ServerPlayer)ev.getPlayer(), type(), xpTime,  false);

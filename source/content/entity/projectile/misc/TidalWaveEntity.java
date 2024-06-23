@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.projectile.misc;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
@@ -27,12 +28,12 @@ public class TidalWaveEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return (tickCount / 3) % 2 == 0 ? -0.1f : 0.1f;
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
 	@Override
 	public void tick() {

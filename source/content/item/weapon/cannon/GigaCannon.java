@@ -1,13 +1,14 @@
 package net.tslat.aoa3.content.item.weapon.cannon;
 
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.cannon.GigaGreenBallEntity;
@@ -18,8 +19,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class GigaCannon extends BaseCannon {
-	public GigaCannon(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public GigaCannon(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -37,15 +38,15 @@ public class GigaCannon extends BaseCannon {
 	public void doImpactDamage(Entity target, LivingEntity shooter, BaseBullet bullet, Vec3 impactPosition, float bulletDmgMultiplier) {
 		ItemStack gunStack = shooter.getMainHandItem();
 
-		if (!gunStack.isEmpty() && (gunStack.getTag() == null || gunStack.getEnchantmentTags().isEmpty()))
+		if (!gunStack.isEmpty() && !gunStack.has(DataComponents.ENCHANTMENTS) || gunStack.get(DataComponents.ENCHANTMENTS).isEmpty())
 			bulletDmgMultiplier *= 1.2f;
 
 		super.doImpactDamage(target, shooter, bullet, impactPosition, bulletDmgMultiplier);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

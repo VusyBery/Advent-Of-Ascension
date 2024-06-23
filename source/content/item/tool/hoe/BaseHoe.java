@@ -4,11 +4,15 @@ import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Tier;
 
 public class BaseHoe extends HoeItem {
-	public BaseHoe(Tier tier, int damageMod, float speedMod) {
-		this(tier, damageMod, speedMod, new Properties().durability(tier.getUses()));
+	public BaseHoe(Tier tier) {
+		this(tier, 0, 0);
 	}
 
-	public BaseHoe(Tier tier, int attackDamageModifier, float attackSpeedModifier, Properties properties) {
-		super(tier, attackDamageModifier, attackSpeedModifier, properties);
+	public BaseHoe(Tier tier, float damageMod, float speedMod) {
+		this(tier, new Properties().attributes(createAttributes(tier, damageMod, speedMod)));
+	}
+
+	public BaseHoe(Tier tier, Properties properties) {
+		super(tier, properties);
 	}
 }

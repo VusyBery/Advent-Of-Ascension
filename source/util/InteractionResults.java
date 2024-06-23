@@ -3,6 +3,7 @@ package net.tslat.aoa3.util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -275,10 +276,45 @@ public final class InteractionResults {
 	}
 
 	/**
-	 * Specifically for {@link net.minecraft.world.level.block.Block#use Block.use}.<br>
+	 * Specifically for {@link net.minecraft.world.level.block.state.BlockBehaviour#useItemOn Block.useItemOn}.<br>
+	 */
+	public static class BlockUseItemOn {
+		// TODO review this and the other methods after 1.20.5's changes
+
+		public static ItemInteractionResult success() {
+			return ItemInteractionResult.SUCCESS;
+		}
+
+		public static ItemInteractionResult consume() {
+			return ItemInteractionResult.CONSUME;
+		}
+
+		public static ItemInteractionResult consumePartial() {
+			return ItemInteractionResult.CONSUME_PARTIAL;
+		}
+
+		public static ItemInteractionResult noActionTaken() {
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		}
+
+		public static ItemInteractionResult skipBlockInteract() {
+			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
+		}
+
+		public static ItemInteractionResult fail() {
+			return ItemInteractionResult.FAIL;
+		}
+
+		public static ItemInteractionResult succeedAndSwingArmBothSides(boolean clientSide) {
+			return ItemInteractionResult.sidedSuccess(clientSide);
+		}
+	}
+
+	/**
+	 * Specifically for {@link net.minecraft.world.level.block.state.BlockBehaviour#useWithoutItem Block.useWithoutItem}.<br>
 	 * Note that there is no way to prevent the second hand from being checked here without returning a successful result
 	 */
-	public static class BlockUse {
+	public static class BlockUseWithoutItem {
 		/**
 		 * Use if you want to count the call as a success (Your intended functionality occurred successfully),
 		 * and want the player's arm to swing.<br>
@@ -307,7 +343,7 @@ public final class InteractionResults {
 		}
 
 		/**
-		 * Equivalent to {@link BlockUse#succeedAndSwingArmOneSide BlockUse.succeedAndSwingArmOneSide} in functionality,
+		 * Equivalent to {@link BlockUseWithoutItem#succeedAndSwingArmOneSide BlockUse.succeedAndSwingArmOneSide} in functionality,
 		 * but specifically when using this single return call for both server and client logical sides
 		 */
 		public static InteractionResult succeedAndSwingArmBothSides(boolean clientSide) {
@@ -551,12 +587,12 @@ public final class InteractionResults {
 
 	/**
 	 * Specifically for {@link net.minecraft.world.item.BlockItem#place BlockItem.place}.<br>
-	 * This is a subsidiary of {@link net.minecraft.world.item.Item#useOn Item.useOn}.<br>
+	 * This is a subsidiary of {@link net.minecraft.world.item.BlockItem#useOn BlockItem.useOn}.<br>
 	 * Refer to {@link ItemUseOn} for responses, with the single exception of {@link BlockItemPlace#failAndCheckFood}
 	 */
-	public static class BlockItemPlace {
+	public static class BlockItemPlace extends ItemUseOn {
 		/**
-		 * Use this if your BlockItem failed to place, but it is also {@link net.minecraft.world.item.Item#isEdible() edible}.<br>
+		 * Use this if your BlockItem failed to place, but it also has {@link net.minecraft.core.component.DataComponents#FOOD DataComponents.FOOD}.<br>
 		 * The game will then proceed to check for eating actions.<br>
 		 * <br>
 		 * For everything else, use {@link ItemUseOn}'s return options

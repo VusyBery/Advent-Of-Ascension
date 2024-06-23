@@ -1,0 +1,27 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:cannon_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:unstable_gunpowder"
+    },
+    {
+      "item": "aoa3:grenade"
+    },
+    {
+      "tag": "neoforge:ingots/lyon"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:boom_cannon"
+  }
+}

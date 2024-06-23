@@ -20,12 +20,12 @@ public class ShinySquidRenderer extends MobRenderer<ShinySquidEntity, ShinySquid
 	}
 
 	@Override
-	protected void setupRotations(ShinySquidEntity squid, PoseStack matrixStack, float pAgeInTicks, float pRotationYaw, float partialTicks) {
-		matrixStack.translate(0, 0.5d, 0);
-		matrixStack.mulPose(Axis.YP.rotationDegrees(180 - pRotationYaw));
-		matrixStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, squid.xBodyRotO, squid.xBodyRot)));
-		matrixStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, squid.zBodyRotO, squid.zBodyRot)));
-		matrixStack.translate(0, -1.2f, 0);
+	protected void setupRotations(ShinySquidEntity entity, PoseStack poseStack, float bob, float yaw, float partialTick, float scale) {
+		poseStack.translate(0, 0.5d, 0);
+		poseStack.mulPose(Axis.YP.rotationDegrees(180 - yaw));
+		poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTick, entity.xBodyRotO, entity.xBodyRot)));
+		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.zBodyRotO, entity.zBodyRot)));
+		poseStack.translate(0, -1.2f, 0);
 	}
 
 	@Override

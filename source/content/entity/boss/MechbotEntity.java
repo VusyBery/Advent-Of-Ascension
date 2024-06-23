@@ -43,7 +43,7 @@ public class MechbotEntity extends AoAMeleeMob implements AoARangedAttacker {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.21875f;
 	}
 
@@ -72,7 +72,7 @@ public class MechbotEntity extends AoAMeleeMob implements AoARangedAttacker {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

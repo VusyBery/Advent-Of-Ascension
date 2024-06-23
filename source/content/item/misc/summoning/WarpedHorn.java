@@ -7,9 +7,8 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.boss.skeletron.SkeletronEntity;
 import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -24,17 +23,17 @@ public class WarpedHorn extends BossSpawningItem<SkeletronEntity> {
 
 	@Override
 	public SkeletronEntity spawnBoss(ServerLevel level, Vec3 position, ItemStack stack) {
-		return EntitySpawningUtil.spawnEntity(level, AoAMobs.SKELETRON.get(), position, MobSpawnType.TRIGGERED);
+		return EntitySpawningUtil.spawnEntity(level, AoAMonsters.SKELETRON.get(), position, MobSpawnType.TRIGGERED);
 	}
 
 	@Override
 	@Nullable
 	public EntityType<SkeletronEntity> getEntityType(ItemStack stack) {
-		return AoAMobs.SKELETRON.get();
+		return AoAMonsters.SKELETRON.get();
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 2));
 	}

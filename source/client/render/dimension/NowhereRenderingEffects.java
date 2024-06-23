@@ -1,6 +1,5 @@
 package net.tslat.aoa3.client.render.dimension;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
@@ -25,9 +24,9 @@ public class NowhereRenderingEffects extends AoADimensionEffectsRenderer {
     }
 
     @Override
-    public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
+    public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f frustumMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
         if (NowhereEvents.isInParkourRegion(camera.getBlockPosition()))
-            lunalusRenderer.renderSky(level, ticks, partialTick, poseStack, camera, projectionMatrix, isFoggy, setupFog);
+            lunalusRenderer.renderSky(level, ticks, partialTick, frustumMatrix, camera, projectionMatrix, isFoggy, setupFog);
 
         return true;
     }

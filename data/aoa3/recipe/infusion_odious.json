@@ -1,0 +1,33 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:blaster_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:darkly_powder"
+    },
+    {
+      "item": "aoa3:darkly_powder"
+    },
+    {
+      "item": "aoa3:ghostly_powder"
+    },
+    {
+      "item": "aoa3:power_core"
+    },
+    {
+      "item": "aoa3:magnet_shard"
+    },
+    {
+      "tag": "neoforge:gems/bloodstone"
+    },
+    {
+      "tag": "c:ingots/netherite"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:odious"
+  }
+}

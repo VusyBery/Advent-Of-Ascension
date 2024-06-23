@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -57,7 +57,7 @@ public class LottoTotemEntity extends Entity {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
@@ -66,13 +66,13 @@ public class LottoTotemEntity extends Entity {
 		if (isAlive() && (ownerUUID == null || player.getUUID().equals(ownerUUID))) {
 			if (player instanceof ServerPlayer serverPlayer) {
 				if (winnerUUID != null && winnerUUID.equals(getUUID())) {
-					for (ItemStack stack : LootUtil.generateLoot(new ResourceLocation(AdventOfAscension.MOD_ID, "misc/lotto_totem"), LootUtil.getGiftParameters(serverPlayer.serverLevel(), position(), 5, serverPlayer))) {
+					for (ItemStack stack : LootUtil.generateLoot(AdventOfAscension.id("misc/lotto_totem"), LootUtil.getGiftParameters(serverPlayer.serverLevel(), position(), 5, serverPlayer))) {
 						ItemEntity drop = spawnAtLocation(stack, 0);
 
 						if (drop != null)
 							drop.setThrower(serverPlayer);
 
-						AdvancementUtil.completeAdvancement(serverPlayer, new ResourceLocation(AdventOfAscension.MOD_ID, "overworld/winner_winner"), "lotto_win");
+						AdvancementUtil.grantCriterion(serverPlayer, AdventOfAscension.id("overworld/winner_winner"), "lotto_win");
 					}
 
 					ItemEntity drop = spawnAtLocation(new ItemStack(AoABlocks.LOTTO_BANNER.base()), 0);
@@ -106,7 +106,7 @@ public class LottoTotemEntity extends Entity {
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
 	@Override
 	protected void addAdditionalSaveData(CompoundTag compound) {

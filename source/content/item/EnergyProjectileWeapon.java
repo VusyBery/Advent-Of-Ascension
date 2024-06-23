@@ -20,10 +20,10 @@ import java.util.Optional;
 public interface EnergyProjectileWeapon {
 	InteractionHand getWeaponHand(LivingEntity holder);
 
-	@Deprecated(forRemoval = true)
+	//@Deprecated(forRemoval = true)
 	void doBlockImpact(BaseEnergyShot shot, Vec3 hitPos, LivingEntity shooter);
 
-	@Deprecated(forRemoval = true)
+	//@Deprecated(forRemoval = true)
 	boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter);
 
 	default boolean doEntityImpact(ServerLevel level, LivingEntity shooter, ItemStack stack, ShotInfo shotInfo, EntityHitResult rayTrace) {

@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.loottable.modifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.Entity;
@@ -16,14 +17,14 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class ExplosiveIdolBarteringModifier extends LootModifier {
-	public static final Codec<ExplosiveIdolBarteringModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).apply(builder, ExplosiveIdolBarteringModifier::new));
+	public static final MapCodec<ExplosiveIdolBarteringModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).apply(builder, ExplosiveIdolBarteringModifier::new));
 
 	public ExplosiveIdolBarteringModifier(LootItemCondition[] conditions) {
 		super(conditions);
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 

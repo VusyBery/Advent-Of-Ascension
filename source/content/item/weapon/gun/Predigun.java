@@ -4,6 +4,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -13,8 +14,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class Predigun extends BaseGun {
-	public Predigun(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public Predigun(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

@@ -1,53 +1,55 @@
 package net.tslat.aoa3.content.item.weapon.sword;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.TierSortingRegistry;
-import net.tslat.aoa3.common.registration.item.AoATiers;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class TrollBasherAxe extends BaseSword {
-	public TrollBasherAxe() {
-		super(AoATiers.TROLL_BASHER);
+	public TrollBasherAxe(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
-	@Override
-	public float getDestroySpeed(ItemStack stack, BlockState state) {
-		return state.is(BlockTags.MINEABLE_WITH_AXE) ? AoATiers.TROLL_BASHER.getSpeed() : 1;
+	// TODO after Neoforge patch
+	/*public RockPickSword(Tier tier, Item.Properties properties) {
+		super(tier, properties.component(DataComponents.TOOL, createToolProperties()));
 	}
 
-	@Override
-	public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
-		return enchantment == Enchantments.BLOCK_EFFICIENCY || enchantment == Enchantments.BLOCK_FORTUNE || super.canApplyAtEnchantingTable(stack, enchantment);
-	}
+	public static Tool createToolProperties(Tier tier, TagKey<Block> toolMineableTag) {
+		final Tool tierDefaults = tier.createToolProperties(toolMineableTag);
+		final List<Tool.Rule> rules = new ObjectArrayList<>(tierDefaults.rules());
+
+		rules.addAll(List.of(Tool.Rule.minesAndDrops(List.of(Blocks.COBWEB), 15.0F), Tool.Rule.overrideSpeed(BlockTags.SWORD_EFFICIENT, 1.5F)));
+
+		return new Tool(List.copyOf(rules), 1, 2);
+	}*/
 
 	@Override
-	public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
-		if (TierSortingRegistry.isTierSorted(getTier()))
-			return TierSortingRegistry.isCorrectTierForDrops(getTier(), state) && state.is(BlockTags.MINEABLE_WITH_AXE);
+	public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {
+		Tool tool = stack.get(DataComponents.TOOL);
 
-		int tier = this.getTier().getLevel();
-
-		if (tier < 3 && state.is(BlockTags.NEEDS_DIAMOND_TOOL))
+		if (tool == null)
 			return false;
 
-		if (tier < 2 && state.is(BlockTags.NEEDS_IRON_TOOL))
-			return false;
+		if (!level.isClientSide && state.getDestroySpeed(level, pos) != 0 && tool.damagePerBlock() > 0)
+			stack.hurtAndBreak(stack.get(DataComponents.TOOL).isCorrectForDrops(state) ? 1 : tool.damagePerBlock(), miningEntity, EquipmentSlot.MAINHAND);
 
-		return (tier >= 1 || !state.is(BlockTags.NEEDS_STONE_TOOL)) && state.is(BlockTags.MINEABLE_WITH_AXE);
+		return true;
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 	}
 }

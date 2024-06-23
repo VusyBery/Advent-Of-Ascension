@@ -1,10 +1,11 @@
 package net.tslat.aoa3.content.block.functional.portal;
 
 import com.google.common.base.Suppliers;
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -22,95 +23,58 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.common.util.ITeleporter;
-import net.tslat.aoa3.common.particletype.PortalFloaterParticleType;
 import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
-import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
+import net.tslat.aoa3.content.world.teleporter.AoAPortal;
 import net.tslat.aoa3.content.world.teleporter.PortalCoordinatesContainer;
-import net.tslat.aoa3.content.world.teleporter.specific.*;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.PlayerUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.IdentityHashMap;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
-public class PortalBlock extends Block {
-	private static final Supplier<Set<Block>> USEABLE_PORTALS = Suppliers.memoize(() -> Set.of(
-			AoABlocks.NETHER_PORTAL.get(),
-			AoABlocks.NOWHERE_PORTAL.get(),
-			AoABlocks.PRECASIA_PORTAL.get(),
-			AoABlocks.BARATHOS_PORTAL.get(),
-			AoABlocks.LELYETIA_PORTAL.get(),
-			AoABlocks.DEEPLANDS_PORTAL.get(),
-			AoABlocks.LBOREAN_PORTAL.get(),
-			AoABlocks.CELEVE_PORTAL.get(),
-			AoABlocks.ABYSS_PORTAL.get(),
-			AoABlocks.DUSTOPIA_PORTAL.get(),
-			AoABlocks.CRYSTEVIA_PORTAL.get()));
-	private static final IdentityHashMap<ResourceKey<Level>, ITeleporter> TELEPORTERS = Util.make(new IdentityHashMap<>(21), map -> {
-		map.put(AoADimensions.ABYSS, new AbyssTeleporter());
-		map.put(AoADimensions.BARATHOS, new BarathosTeleporter());
-		map.put(AoADimensions.CANDYLAND, new CandylandTeleporter());
-		map.put(AoADimensions.CELEVE, new CeleveTeleporter());
-		map.put(AoADimensions.CREEPONIA, new CreeponiaTeleporter());
-		map.put(AoADimensions.CRYSTEVIA, new CrysteviaTeleporter());
-		map.put(AoADimensions.DEEPLANDS, new DeeplandsTeleporter());
-		map.put(AoADimensions.DUSTOPIA, new DustopiaTeleporter());
-		map.put(AoADimensions.GARDENCIA, new GardenciaTeleporter());
-		map.put(AoADimensions.GRECKON, new GreckonTeleporter());
-		map.put(AoADimensions.HAVEN, new HavenTeleporter());
-		map.put(AoADimensions.IROMINE, new IromineTeleporter());
-		map.put(AoADimensions.LBOREAN, new LBoreanTeleporter());
-		map.put(AoADimensions.LELYETIA, new LelyetiaTeleporter());
-		map.put(AoADimensions.LUNALUS, new LunalusTeleporter());
-		map.put(AoADimensions.MYSTERIUM, new MysteriumTeleporter());
-		map.put(AoADimensions.NOWHERE, new NowhereTeleporter());
-		map.put(AoADimensions.PRECASIA, new PrecasiaTeleporter());
-		map.put(AoADimensions.RUNANDOR, new RunandorTeleporter());
-		map.put(AoADimensions.SHYRELANDS, new ShyrelandsTeleporter());
-		map.put(AoADimensions.VOX_PONDS, new VoxPondsTeleporter());
-	});
-
+public abstract class PortalBlock extends Block implements AoAPortal {
 	private static final VoxelShape X_SHAPE = Shapes.create(new AABB(0.375, 0, 0, 0.625, 1, 1));
 	private static final VoxelShape Z_SHAPE = Shapes.create(new AABB(0, 0, 0.375, 1, 1, 0.625));
 
 	private final int particleColour;
-	private final ResourceKey<Level> world;
+	private final ResourceKey<Level> dimension;
 	private final Supplier<SoundEvent> ambientSound;
 
-	public PortalBlock(BlockBehaviour.Properties properties, ResourceKey<Level> world, int particleColour) {
-		this(properties, world, particleColour, null);
+	public PortalBlock(BlockBehaviour.Properties properties, ResourceKey<Level> dimension, int particleColour) {
+		this(properties, dimension, particleColour, null);
 	}
 
-	public PortalBlock(BlockBehaviour.Properties properties, ResourceKey<Level> world, int particleColour, @Nullable Supplier<SoundEvent> ambientSound) {
+	public PortalBlock(BlockBehaviour.Properties properties, ResourceKey<Level> dimension, int particleColour, @Nullable Supplier<SoundEvent> ambientSound) {
 		super(properties);
 
 		registerDefaultState(getStateDefinition().any().setValue(BlockStateProperties.HORIZONTAL_AXIS, Direction.Axis.X));
 
 		this.particleColour = particleColour;
-		this.world = world;
+		this.dimension = dimension;
 		this.ambientSound = ambientSound;
 	}
 
-	public static void addTeleporter(ResourceKey<Level> dimKey, ITeleporter teleporter) {
-		TELEPORTERS.put(dimKey, teleporter);
+	public ResourceKey<Level> getDimension() {
+		return this.dimension;
 	}
 
-	public static ITeleporter getTeleporterForLevel(ServerLevel level) {
-		return TELEPORTERS.getOrDefault(level.dimension(), level.getPortalForcer());
-	}
-
-	public int getParticleColour() {
+	public int getParticleColour(BlockState state) {
 		return this.particleColour;
+	}
+
+	@Override
+	public PortalBlock getPortalBlock() {
+		return this;
 	}
 
 	@Override
@@ -159,87 +123,34 @@ public class PortalBlock extends Block {
 
 	@Override
 	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-		if (this.ambientSound != null && random.nextInt(100) == 0 && level.dimension() != this.world)
+		if (this.ambientSound != null && random.nextInt(100) == 0 && level.dimension() != this.dimension)
 			level.playLocalSound(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D, this.ambientSound.get(), SoundSource.BLOCKS, 0.5F, random.nextFloat() * 0.4F + 0.8F, false);
 
-		for (int i = 0; i < 4; ++i) {
-			double posXStart = (float)pos.getX() + random.nextFloat();
-			double posYStart = (float)pos.getY() + random.nextFloat();
-			double posZStart = (float)pos.getZ() + random.nextFloat();
-			double motionX = ((double)random.nextFloat() - 0.5D) * 0.5D;
-			double motionY = ((double)random.nextFloat() - 0.5D) * 0.5D;
-			double motionZ = ((double)random.nextFloat() - 0.5D) * 0.5D;
-			int randomMod = random.nextInt(2) * 2 - 1;
+		final boolean offsetX = !level.getBlockState(pos.west()).is(this) && !level.getBlockState(pos.east()).is(this);
+		final int particleColour = getParticleColour(state);
 
-			if (level.getBlockState(pos.west()).getBlock() != this && level.getBlockState(pos.east()).getBlock() != this) {
-				posXStart = (double)pos.getX() + 0.5D + 0.25D * (double)randomMod;
-				motionX = random.nextFloat() * 2.0F * (float)randomMod;
+		for (int i = 0; i < 4; i++) {
+			double posX = pos.getX() + random.nextDouble();
+			double posY = pos.getY() + random.nextDouble();
+			double posZ = pos.getZ() + random.nextDouble();
+			double xVelocity = (random.nextDouble() - 0.5d) * 0.5d;
+			double yVelocity = (random.nextDouble() - 0.5d) * 0.5d;
+			double zVelocity = (random.nextDouble() - 0.5d) * 0.5d;
+			double randomMod = random.nextInt(2) * 2 - 1;
+
+			if (offsetX) {
+				posX = pos.getX() + 0.5f + 0.25f * randomMod;
+				xVelocity = random.nextDouble() * 2 * randomMod;
 			}
 			else {
-				posZStart = (double)pos.getZ() + 0.5D + 0.25D * (double)randomMod;
-				motionZ = random.nextFloat() * 2.0F * (float)randomMod;
+				posZ = pos.getZ() + 0.5f + 0.25f * randomMod;
+				zVelocity = random.nextDouble() * 2 * randomMod;
 			}
 
-			level.addParticle(new PortalFloaterParticleType.Data(new Vec3(pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f), particleColour), posXStart, posYStart, posZStart, motionX, motionY, motionZ);
-		}
-	}
-
-	@Override
-	public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
-		if (!USEABLE_PORTALS.get().contains(this))
-			return;
-
-		if (!world.isClientSide() && !entity.isPassenger() && !entity.isVehicle() && entity.canChangeDimensions()) {
-			if (!AoAConfigs.SERVER.allowNonPlayerPortalTravel.get() & !(entity instanceof Player))
-				return;
-
-			if (entity.isOnPortalCooldown()) {
-				entity.setPortalCooldown();
-
-				return;
-			}
-
-			if (this.world == null || !world.getServer().isNetherEnabled())
-				return;
-
-			ServerLevel targetLevel = world.getServer().getLevel(this.world);
-
-			if (targetLevel == null)
-				return;
-
-			ITeleporter teleporter = this.world == Level.NETHER ? new NetherTeleporter() : getTeleporterForLevel(targetLevel);
-			PortalCoordinatesContainer portalLoc = null;
-
-			if (entity instanceof Player) {
-				ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer((ServerPlayer)entity);
-				portalLoc = plData.getPortalReturnLocation(world.dimension());
-
-				((ServerPlayer)entity).connection.teleport(pos.getX(), pos.getY(), pos.getZ(), entity.getYRot(), entity.getXRot());
-
-				if (portalLoc != null && world.getServer().getLevel(portalLoc.fromDim()) == null)
-					portalLoc = null;
-			}
-			else {
-				entity.teleportTo(pos.getX(), pos.getY(), pos.getZ());
-			}
-
-			if (portalLoc == null) {
-				if (world.dimension() == this.world) {
-					entity = entity.changeDimension(world.getServer().getLevel(Level.OVERWORLD), teleporter);
-				}
-				else {
-					entity = entity.changeDimension(world.getServer().getLevel(this.world), teleporter);
-				}
-			}
-			else if (world.dimension() != this.world) {
-				entity = entity.changeDimension(world.getServer().getLevel(this.world), teleporter);
-			}
-			else {
-				entity = entity.changeDimension(world.getServer().getLevel(portalLoc.fromDim()), teleporter);
-			}
-
-			if (entity != null)
-				entity.setPortalCooldown();
+			ParticleBuilder.forPosition(ParticleTypes.PORTAL, posX, posY, posZ)
+					.power(new Vec3(xVelocity, yVelocity, zVelocity))
+					.colourOverride(particleColour)
+					.spawnParticles(level);
 		}
 	}
 
@@ -296,31 +207,49 @@ public class PortalBlock extends Block {
 		}
 	}
 
+	private static final Supplier<Set<Block>> USEABLE_PORTALS = Suppliers.memoize(() -> Set.of(
+			AoABlocks.NETHER_PORTAL.get(),
+			AoABlocks.NOWHERE_PORTAL.get(),
+			AoABlocks.PRECASIA_PORTAL.get(),
+			AoABlocks.BARATHOS_PORTAL.get(),
+			AoABlocks.LELYETIA_PORTAL.get(),
+			AoABlocks.DEEPLANDS_PORTAL.get(),
+			AoABlocks.LBOREAN_PORTAL.get(),
+			AoABlocks.CELEVE_PORTAL.get(),
+			AoABlocks.ABYSS_PORTAL.get(),
+			AoABlocks.DUSTOPIA_PORTAL.get(),
+			AoABlocks.CRYSTEVIA_PORTAL.get()));
+
+	@Override
+	public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
+		if (!USEABLE_PORTALS.get().contains(this))
+			return;
+
+		if (entity.canUsePortal(false))
+			entity.setAsInsidePortal(this, pos);
+	}
+
 	@Nullable
-	public static Block getInsidePortalBlock(Entity entity) {
-		final AABB entityBounds = entity.getBoundingBox();
-		final BlockPos minPos = BlockPos.containing(entityBounds.minX + 1.0E-7D, entityBounds.minY + 1.0E-7D, entityBounds.minZ + 1.0E-7D);
-		final BlockPos maxPos = BlockPos.containing(entityBounds.maxX - 1.0E-7D, entityBounds.maxY - 1.0E-7D, entityBounds.maxZ - 1.0E-7D);
+	@Override
+	public DimensionTransition getPortalDestination(ServerLevel level, Entity entity, BlockPos pos) {
+		if (!AoAConfigs.SERVER.allowNonPlayerPortalTravel.get() && !(entity instanceof ServerPlayer))
+			return null;
 
-		if (entity.level().hasChunksAt(minPos, maxPos)) {
-			final BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
+		final ResourceKey<Level> currentDimension = level.dimension();
+		final ResourceKey<Level> portalTargetDimension = getDimension();
+		final MinecraftServer server = level.getServer();
+		final Optional<PortalCoordinatesContainer> existingLink = Optional.ofNullable(entity instanceof ServerPlayer pl ? PlayerUtil.getAdventPlayer(pl).getPortalReturnLocation(currentDimension) : null);
+		ServerLevel targetLevel = existingLink
+				.map(link -> server.getLevel(currentDimension != portalTargetDimension ? portalTargetDimension : link.fromDim()))
+				.orElseGet(() -> server.getLevel(currentDimension == portalTargetDimension ? Level.OVERWORLD : portalTargetDimension));
 
-			for(int x = minPos.getX(); x <= maxPos.getX(); ++x) {
-				for(int y = minPos.getY(); y <= maxPos.getY(); ++y) {
-					for(int z = minPos.getZ(); z <= maxPos.getZ(); ++z) {
-						testPos.set(x, y, z);
-						final Block block = entity.level().getBlockState(testPos).getBlock();
+		if (targetLevel == null) {
+			if (currentDimension == Level.OVERWORLD)
+				return null;
 
-						if (block == Blocks.NETHER_PORTAL)
-							return null;
-
-						if (block instanceof PortalBlock portal)
-							return portal;
-					}
-				}
-			}
+			targetLevel = server.overworld();
 		}
 
-		return null;
+		return AoAPortal.getTransitionForLevel(targetLevel, entity, Optional.of(pos), AoAPortal.makeSafeCoords(level, targetLevel, entity.position()), this, existingLink);
 	}
 }

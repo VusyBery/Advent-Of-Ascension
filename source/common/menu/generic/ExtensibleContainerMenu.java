@@ -1,25 +1,17 @@
 package net.tslat.aoa3.common.menu.generic;
 
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.*;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.tslat.aoa3.event.custom.AoAEvents;
 
-import java.util.Optional;
-import java.util.function.Predicate;
-
-public abstract class ExtensibleContainerMenu<I extends Container> extends AbstractContainerMenu {
-	public final I inventory;
+public abstract class ExtensibleContainerMenu<C extends Container> extends AbstractContainerMenu {
+	public final C inventory;
 	protected final ContainerLevelAccess accessValidator;
 
 	public ExtensibleContainerMenu(MenuType<?> type, int containerId, Inventory playerInventory, ContainerLevelAccess accessValidator) {
@@ -37,8 +29,8 @@ public abstract class ExtensibleContainerMenu<I extends Container> extends Abstr
 	}
 
 	public abstract int inputSlotCount();
-	protected abstract I createInventory();
-	protected abstract Slot createInputSlot(int slotIndex, I inventory);
+	protected abstract C createInventory();
+	protected abstract Slot createInputSlot(int slotIndex, C inventory);
 	protected abstract Slot createOutputSlot(int slotIndex, Player player);
 	protected abstract Block getContainerBlock();
 	protected abstract void handleContainerUpdate();
@@ -51,7 +43,7 @@ public abstract class ExtensibleContainerMenu<I extends Container> extends Abstr
 		return getSlot(getOutputSlotIndex());
 	}
 
-	public I getInventory() {
+	public C getInventory() {
 		return this.inventory;
 	}
 
@@ -170,31 +162,5 @@ public abstract class ExtensibleContainerMenu<I extends Container> extends Abstr
 
 	protected int gridYFromIndex(int index) {
 		return index / 3;
-	}
-
-	protected <R extends Recipe<I>> void updateRecipeOutput(RecipeType<R> recipeType, Player player, ResultContainer resultContainer, Predicate<RecipeHolder<R>> recipePredicate) {
-		if (player instanceof ServerPlayer serverPlayer) {
-			final I container = getInventory();
-			final ServerLevel level = serverPlayer.serverLevel();
-			final ItemStack outputStack = getOrFindRecipe(recipeType, container, resultContainer, level)
-					.filter(recipeHolder -> recipePredicate.test(recipeHolder) && resultContainer.setRecipeUsed(level, serverPlayer, recipeHolder))
-					.map(RecipeHolder::value)
-					.map(recipe -> recipe.assemble(container, level.registryAccess()))
-					.filter(recipeResult -> recipeResult.isItemEnabled(level.enabledFeatures()))
-					.filter(stack -> !AoAEvents.firePlayerCraftingEvent(player, stack, getInventory(), resultContainer))
-					.orElse(ItemStack.EMPTY);
-
-			if (!ItemStack.isSameItemSameTags(getOutputItem(), outputStack)) {
-				setOutputItem(outputStack);
-				setRemoteSlot(getOutputSlotIndex(), outputStack);
-				serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(this.containerId, incrementStateId(), getOutputSlotIndex(), outputStack));
-			}
-		}
-	}
-
-	protected <R extends Recipe<I>> Optional<RecipeHolder<R>> getOrFindRecipe(RecipeType<R> recipeType, I container, ResultContainer resultContainer, Level level) {
-		return Optional.ofNullable((RecipeHolder<R>)resultContainer.getRecipeUsed())
-				.filter(holder -> holder.value().matches(container, level))
-				.or(() -> level.getRecipeManager().getRecipeFor(recipeType, container, level));
 	}
 }

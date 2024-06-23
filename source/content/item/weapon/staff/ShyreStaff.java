@@ -1,8 +1,10 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -26,12 +28,11 @@ import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class ShyreStaff extends BaseStaff<Object> {
-	public ShyreStaff(int durability) {
-		super(durability);
+	public ShyreStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -40,10 +41,11 @@ public class ShyreStaff extends BaseStaff<Object> {
 		return AoASounds.ITEM_SHYRE_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.ENERGY_RUNE.get(), 3);
-		runes.put(AoAItems.DISTORTION_RUNE.get(), 3);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.ENERGY_RUNE.get(), 3);
+			runes.put(AoAItems.DISTORTION_RUNE.get(), 3);
+		});
 	}
 
 	@Override
@@ -78,7 +80,7 @@ public class ShyreStaff extends BaseStaff<Object> {
 		shooter.teleportTo(testVec.x(), testVec.y(), testVec.z());
 
 		if (shooter instanceof ServerPlayer && WorldUtil.isWorld(shooter.level(), AoADimensions.LUNALUS))
-			AdvancementUtil.completeAdvancement((ServerPlayer)shooter, new ResourceLocation(AdventOfAscension.MOD_ID, "lunalus/200_iq"), "lunalus_shyre_staff_travel");
+			AdvancementUtil.grantCriterion((ServerPlayer)shooter, AdventOfAscension.id("lunalus/200_iq"), "lunalus_shyre_staff_travel");
 	}
 
 	@Override
@@ -94,8 +96,8 @@ public class ShyreStaff extends BaseStaff<Object> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

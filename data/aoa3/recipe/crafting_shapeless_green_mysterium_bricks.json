@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:whitewash_bricks"
+    },
+    {
+      "item": "aoa3:mystite_ingot"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "aoa3:green_mysterium_bricks"
+  }
+}

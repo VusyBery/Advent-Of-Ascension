@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:ingots/baronyte"
+    },
+    "B": {
+      "tag": "neoforge:rods/metal"
+    },
+    "C": {
+      "item": "aoa3:green_druse"
+    },
+    "D": {
+      "item": "aoa3:hardened_confetti_ball"
+    }
+  },
+  "pattern": [
+    " C ",
+    "DAD",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:show_staff"
+  }
+}

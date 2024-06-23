@@ -30,7 +30,7 @@ import org.joml.Matrix4f;
 public final class RenderUtil {
 	// <-- Textures
 
-	public static void renderTexture(PoseStack matrix, int x, int y, float u, float v, float width, float height) {
+	public static void renderTexture(PoseStack matrix, float x, float y, float u, float v, float width, float height) {
 		renderCustomSizedTexture(matrix, x, y, u, v, width, height, width, height);
 	}
 
@@ -43,7 +43,7 @@ public final class RenderUtil {
 		renderScaledCustomSizedTexture(poseStack, x, y, atlasSprite.getU0(), atlasSprite.getV0(), uWidth, vHeight, atlasSprite.contents().width(), atlasSprite.contents().height(), 1f, 1f);
 	}
 
-	public static void renderCustomSizedTexture(PoseStack matrix, int x, int y, float u, float v, float uWidth, float vHeight, float textureWidth, float textureHeight) {
+	public static void renderCustomSizedTexture(PoseStack matrix, float x, float y, float u, float v, float uWidth, float vHeight, float textureWidth, float textureHeight) {
 		renderScaledCustomSizedTexture(matrix, x, y, u, v, uWidth, vHeight, uWidth, vHeight, textureWidth, textureHeight);
 	}
 
@@ -57,18 +57,17 @@ public final class RenderUtil {
 	}
 
 	public static void renderScaledCustomSizedTexture(PoseStack matrixStack, float x, float y, float u, float v, float uWidth, float vHeight, float renderWidth, float renderHeight, float textureWidth, float textureHeight) {
-		final BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		final BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		final Matrix4f pose = matrixStack.last().pose();
 		final float widthRatio = 1 / textureWidth;
 		final float heightRatio = 1 / textureHeight;
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex(pose, x, y + renderHeight, 0f).uv(u * widthRatio, (v + vHeight) * heightRatio).endVertex();
-		buffer.vertex(pose, x + renderWidth, y + renderHeight, 0f).uv((u + uWidth) * widthRatio, (v + vHeight) * heightRatio).endVertex();
-		buffer.vertex(pose, x + renderWidth, y, 0f).uv((u + uWidth) * widthRatio, v * heightRatio).endVertex();
-		buffer.vertex(pose, x, y, 0f).uv(u * widthRatio, v * heightRatio).endVertex();
-		BufferUploader.drawWithShader(buffer.end());
+		buffer.addVertex(pose, x, y + renderHeight, 0f).setUv(u * widthRatio, (v + vHeight) * heightRatio);
+		buffer.addVertex(pose, x + renderWidth, y + renderHeight, 0f).setUv((u + uWidth) * widthRatio, (v + vHeight) * heightRatio);
+		buffer.addVertex(pose, x + renderWidth, y, 0f).setUv((u + uWidth) * widthRatio, v * heightRatio);
+		buffer.addVertex(pose, x, y, 0f).setUv(u * widthRatio, v * heightRatio);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 	}
 
 	public static void renderFullscreenTexture(GuiGraphics guiGraphics, ResourceLocation texture) {
@@ -98,10 +97,10 @@ public final class RenderUtil {
 		final float blueBottom = (float)(bottomColour & 255) / 255f;
 		final Matrix4f pose = poseStack.last().pose();
 
-		buffer.vertex(pose, x + width, y, 0).color(redTop, greenTop, blueTop, alphaTop).endVertex();
-		buffer.vertex(pose, x, y, 0).color(redTop, greenTop, blueTop, alphaTop).endVertex();
-		buffer.vertex(pose, x, y + height, 0).color(redBottom, greenBottom, blueBottom, alphaBottom).endVertex();
-		buffer.vertex(pose, x + width, y + height, 0).color(redBottom, greenBottom, blueBottom, alphaBottom).endVertex();
+		buffer.addVertex(pose, x + width, y, 0).setColor(redTop, greenTop, blueTop, alphaTop);
+		buffer.addVertex(pose, x, y, 0).setColor(redTop, greenTop, blueTop, alphaTop);
+		buffer.addVertex(pose, x, y + height, 0).setColor(redBottom, greenBottom, blueBottom, alphaBottom);
+		buffer.addVertex(pose, x + width, y + height, 0).setColor(redBottom, greenBottom, blueBottom, alphaBottom);
 	}
 
 	public static void drawRectangle(PoseStack poseStack, float x, float y, float width, float height, int colour) {
@@ -118,10 +117,10 @@ public final class RenderUtil {
 		final float blue = (float)(colour & 255) / 255f;
 		final Matrix4f pose = poseStack.last().pose();
 
-		buffer.vertex(pose, x, y + height, 0).color(red, green, blue, alpha).endVertex();
-		buffer.vertex(pose, x + width, y + height, 0).color(red, green, blue, alpha).endVertex();
-		buffer.vertex(pose, x + width, y, 0).color(red, green, blue, alpha).endVertex();
-		buffer.vertex(pose, x, y, 0).color(red, green, blue, alpha).endVertex();
+		buffer.addVertex(pose, x, y + height, 0).setColor(red, green, blue, alpha);
+		buffer.addVertex(pose, x + width, y + height, 0).setColor(red, green, blue, alpha);
+		buffer.addVertex(pose, x + width, y, 0).setColor(red, green, blue, alpha);
+		buffer.addVertex(pose, x, y, 0).setColor(red, green, blue, alpha);
 	}
 
 	// <-- Text
@@ -220,7 +219,7 @@ public final class RenderUtil {
 
 		for (MobEffectInstance effect : mc.player.getActiveEffects()) {
 			if (effect.getDuration() > 0 && IClientMobEffectExtensions.DEFAULT.isVisibleInGui(effect) && effect.isVisible()) {
-				if (!effect.getEffect().isBeneficial()) {
+				if (!effect.getEffect().value().isBeneficial()) {
 					effectRenderYOffset = 50;
 					break;
 				}

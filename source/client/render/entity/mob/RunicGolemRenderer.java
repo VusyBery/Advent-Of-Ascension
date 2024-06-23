@@ -11,11 +11,11 @@ import net.tslat.aoa3.client.render.entity.layer.InvulnerabilityAuraRenderLayer;
 
 
 public class RunicGolemRenderer extends AoAMobRenderer {
-	private final ResourceLocation texture = new ResourceLocation("aoa3", "textures/entity/mob/mysterium/runic_golem.png");
-	private final ResourceLocation invulnTexture = new ResourceLocation("aoa3", "textures/entity/misc/invulnerability_aura.png");
+	private final ResourceLocation texture = AdventOfAscension.id("textures/entity/mob/mysterium/runic_golem.png");
+	private final ResourceLocation invulnTexture = AdventOfAscension.id("textures/entity/misc/invulnerability_aura.png");
 
 	public RunicGolemRenderer(EntityRendererProvider.Context renderManager) {
-		super(renderManager, new RunicGolemModel(0), AoAMobs.RUNIC_GOLEM.get().getWidth() / 3, 1f, new ResourceLocation("aoa3", "textures/entity/mob/mysterium/runic_golem.png"));
+		super(renderManager, new RunicGolemModel(0), AoAMobs.RUNIC_GOLEM.get().getWidth() / 3, 1f, AdventOfAscension.id("textures/entity/mob/mysterium/runic_golem.png"));
 
 		this.addLayer(new InvulnerabilityAuraRenderLayer(this, new RunicGolemModel(0.5f), invulnTexture));
 	}

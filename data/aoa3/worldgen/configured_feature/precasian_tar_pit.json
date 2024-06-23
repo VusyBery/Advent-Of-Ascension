@@ -23,24 +23,18 @@
     "max_width": 16,
     "sample_blob_count": {
       "type": "minecraft:uniform",
-      "value": {
-        "max_inclusive": 8,
-        "min_inclusive": 4
-      }
+      "max_inclusive": 8,
+      "min_inclusive": 4
     },
     "sample_blob_height": {
       "type": "minecraft:uniform",
-      "value": {
-        "max_exclusive": 6.0,
-        "min_inclusive": 4.0
-      }
+      "max_exclusive": 6.0,
+      "min_inclusive": 4.0
     },
     "sample_blob_width": {
       "type": "minecraft:uniform",
-      "value": {
-        "max_exclusive": 12.0,
-        "min_inclusive": 5.0
-      }
+      "max_exclusive": 12.0,
+      "min_inclusive": 5.0
     }
   }
 }

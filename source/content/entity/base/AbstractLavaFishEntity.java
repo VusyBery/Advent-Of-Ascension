@@ -29,10 +29,6 @@ public abstract class AbstractLavaFishEntity extends LavaMobEntity {
 		this.moveControl = new MoveHelperController(this);
 	}
 
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
-		return size.height * 0.65F;
-	}
-
 	public static AttributeSupplier.Builder createAttributes() {
 		return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 3.0D);
 	}

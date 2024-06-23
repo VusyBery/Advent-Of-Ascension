@@ -1,13 +1,14 @@
 package net.tslat.aoa3.content.item.weapon.sniper;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 import net.tslat.aoa3.common.registration.AoASounds;
 import org.jetbrains.annotations.Nullable;
 
 
 public class Duster extends BaseSniper {
-	public Duster(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public Duster(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

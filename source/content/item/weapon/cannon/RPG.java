@@ -2,7 +2,6 @@ package net.tslat.aoa3.content.item.weapon.cannon;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
@@ -12,7 +11,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoAExplosions;
@@ -28,8 +26,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class RPG extends BaseCannon {
-	public RPG(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public RPG(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -54,18 +52,25 @@ public class RPG extends BaseCannon {
 			if (target instanceof LivingEntity)
 				bulletDmgMultiplier *= 1 + (((LivingEntity)target).getAttribute(Attributes.ARMOR).getValue() * 6.66) / 100;
 
-			if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, (float)getDamage() * bulletDmgMultiplier) && shooter instanceof ServerPlayer) {
-				if (target instanceof LivingEntity && ((LivingEntity)target).getHealth() == 0 && target.hasImpulse) {
+			ItemStack stack = shooter.getItemInHand(bullet.getHand());
+
+			if (!stack.is(this))
+				stack = getDefaultInstance();
+
+			float damage = getGunDamage(stack) * bulletDmgMultiplier;
+
+			if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, source -> damage) && shooter instanceof ServerPlayer pl) {
+				if (target instanceof LivingEntity livingTarget && livingTarget.getHealth() == 0 && target.hasImpulse) {
 					if (target.level().isEmptyBlock(target.blockPosition().below()) && target.level().isEmptyBlock(target.blockPosition().below(2)))
-						AdvancementUtil.completeAdvancement((ServerPlayer)shooter, new ResourceLocation(AdventOfAscension.MOD_ID, "overworld/surface_to_air"), "rpg_air_kill");
+						AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("overworld/surface_to_air"), "rpg_air_kill");
 				}
 			}
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 
 		for (MutableComponent component : LocaleUtil.getExplosionInfoLocale(AoAExplosions.RPG, flag.isAdvanced(), false)) {
 			tooltip.add(2, component);

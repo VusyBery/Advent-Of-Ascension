@@ -10,7 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -23,8 +22,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class HeatWave extends BaseGun {
-	public HeatWave(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public HeatWave(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -61,15 +60,15 @@ public class HeatWave extends BaseGun {
 
 		bullet.level().addFreshEntity(cloud);
 
-		for (LivingEntity entity : bullet.level().getEntitiesOfClass(LivingEntity.class, cloud.getBoundingBox().inflate(2, 1, 2), EntityUtil.Predicates.HOSTILE_MOB)) {
-			entity.setSecondsOnFire(4);
+		for (LivingEntity entity : bullet.level().getEntitiesOfClass(LivingEntity.class, cloud.getBoundingBox().inflate(2, 1, 2), EntityUtil::isHostileMob)) {
+			entity.igniteForSeconds(4);
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

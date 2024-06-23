@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "X": {
+      "tag": "neoforge:ingots/elecanium"
+    }
+  },
+  "pattern": [
+    " R ",
+    "RXR",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:elecanium_lamp"
+  }
+}

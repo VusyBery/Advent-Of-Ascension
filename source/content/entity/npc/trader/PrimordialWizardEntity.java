@@ -31,7 +31,7 @@ public class PrimordialWizardEntity extends AoATrader {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.73125f;
 	}
 

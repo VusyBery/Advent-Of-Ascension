@@ -1,6 +1,6 @@
 package net.tslat.aoa3.common.registration.worldgen;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
@@ -24,15 +24,15 @@ public final class AoATrees {
 
 	public static final DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<OpteryxNestTreeDecorator>> OPTERYX_NEST_DECORATOR = registerDecorator("opteryx_nest", OpteryxNestTreeDecorator.CODEC);
 
-	private static <T extends TrunkPlacer> DeferredHolder<TrunkPlacerType<?>, TrunkPlacerType<T>> registerTrunkPlacer(String id, Codec<T> codec) {
+	private static <T extends TrunkPlacer> DeferredHolder<TrunkPlacerType<?>, TrunkPlacerType<T>> registerTrunkPlacer(String id, MapCodec<T> codec) {
 		return AoARegistries.TRUNK_PLACERS.register(id, () -> new TrunkPlacerType<>(codec));
 	}
 
-	private static <T extends FoliagePlacer> DeferredHolder<FoliagePlacerType<?>, FoliagePlacerType<T>> registerFoliagePlacer(String id, Codec<T> codec) {
+	private static <T extends FoliagePlacer> DeferredHolder<FoliagePlacerType<?>, FoliagePlacerType<T>> registerFoliagePlacer(String id, MapCodec<T> codec) {
 		return AoARegistries.FOLIAGE_PLACERS.register(id, () -> new FoliagePlacerType<>(codec));
 	}
 
-	private static <T extends TreeDecorator> DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<T>> registerDecorator(String id, Codec<T> codec) {
+	private static <T extends TreeDecorator> DeferredHolder<TreeDecoratorType<?>, TreeDecoratorType<T>> registerDecorator(String id, MapCodec<T> codec) {
 		return AoARegistries.TREE_DECORATORS.register(id, () -> new TreeDecoratorType<>(codec));
 	}
 

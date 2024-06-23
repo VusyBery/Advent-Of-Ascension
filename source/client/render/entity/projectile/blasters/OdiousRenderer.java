@@ -2,10 +2,10 @@ package net.tslat.aoa3.client.render.entity.projectile.blasters;
 
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.tslat.aoa3.client.render.entity.projectile.ParticleProjectileRenderer;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.entity.projectile.blaster.OdiousEntity;
 import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
 public class OdiousRenderer extends ParticleProjectileRenderer<OdiousEntity> {
 	public OdiousRenderer(final EntityRendererProvider.Context manager) {
@@ -14,9 +14,15 @@ public class OdiousRenderer extends ParticleProjectileRenderer<OdiousEntity> {
 
 	@Override
 	protected void addParticles(OdiousEntity entity, float partialTicks) {
-		for (int i = 0; i < 3; i++) {
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.25f, 3, ColourUtil.BLACK), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-			entity.level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.SPARKLER.get(), 0.25f, 3, ColourUtil.RED), entity.getX(), entity.getY(), entity.getZ(), 0, 0, 0);
-		}
+		ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+				.spawnNTimes(3)
+				.scaleMod(0.25f)
+				.colourOverride(ColourUtil.BLACK)
+				.spawnParticles(entity.level());
+		ParticleBuilder.forPositions(AoAParticleTypes.GENERIC_DUST.get(), entity.position())
+				.spawnNTimes(3)
+				.scaleMod(0.25f)
+				.colourOverride(ColourUtil.RED)
+				.spawnParticles(entity.level());
 	}
 }

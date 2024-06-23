@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.tslat.aoa3.util.ColourUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -48,7 +49,7 @@ public class ModelledProjectileRenderer<T extends Entity> extends EntityRenderer
 		if (rendertype != null) {
 			VertexConsumer vertexConsumer = buffer.getBuffer(rendertype);
 
-			this.model.renderToBuffer(matrix, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, shade ? 0.15f : 1f);
+			this.model.renderToBuffer(matrix, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, ColourUtil.ARGB(1f, 1f, 1f, shade ? 0.15f : 1f));
 		}
 
 		matrix.popPose();

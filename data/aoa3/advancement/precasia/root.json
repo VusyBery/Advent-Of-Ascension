@@ -1,0 +1,32 @@
+{
+  "criteria": {
+    "access_dim_precasia": {
+      "conditions": {
+        "to": "aoa3:precasia"
+      },
+      "trigger": "minecraft:changed_dimension"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "aoa3:textures/block/stranglewood_leaves.png",
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.precasia.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "aoa3:jungle_thorns"
+    },
+    "title": {
+      "color": "green",
+      "translate": "advancements.aoa3.precasia.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "access_dim_precasia"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

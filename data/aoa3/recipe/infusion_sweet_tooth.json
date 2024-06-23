@@ -1,0 +1,33 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:sniper_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:candy_corn"
+    },
+    {
+      "item": "aoa3:candy_corn"
+    },
+    {
+      "item": "aoa3:candy_cane"
+    },
+    {
+      "item": "aoa3:chocolate_block"
+    },
+    {
+      "item": "aoa3:gingerbread_cookie"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:sweet_tooth"
+  }
+}

@@ -14,7 +14,6 @@ import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.event.dimension.NowhereEvents;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.*;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class ReturnCrystal extends Item {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 20;
 	}
 
@@ -54,7 +53,7 @@ public class ReturnCrystal extends Item {
 				stack.shrink(1);
 
 			if (!NowhereEvents.isInLobbyRegion(pl.blockPosition())) {
-				if (NowhereEvents.isInBossRegion(pl.blockPosition()) && !pl.getAdvancements().getOrStartProgress(AdvancementUtil.getAdvancement(pl.serverLevel(), AdventOfAscension.id("nowhere/root"))).isDone()) {
+				if (NowhereEvents.isInBossRegion(pl.blockPosition()) && !AdvancementUtil.isAdvancementCompleted(pl, AdventOfAscension.id("nowhere/root"))) {
 					AoAScheduler.scheduleSyncronisedTask(() -> {
 						PlayerUtil.resetToDefaultStatus(pl);
 						pl.connection.teleport(17.5d, 452.5d, 3.5d, 0, pl.getXRot());
@@ -77,7 +76,7 @@ public class ReturnCrystal extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.NEUTRAL, 1));
 	}
 }

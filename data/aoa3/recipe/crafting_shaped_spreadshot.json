@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aoa3:limonite_bullet"
+    },
+    "B": {
+      "tag": "c:gunpowders"
+    },
+    "C": {
+      "tag": "neoforge:ingots/limonite"
+    }
+  },
+  "pattern": [
+    " A ",
+    "ABA",
+    " C "
+  ],
+  "result": {
+    "count": 5,
+    "id": "aoa3:spreadshot"
+  }
+}

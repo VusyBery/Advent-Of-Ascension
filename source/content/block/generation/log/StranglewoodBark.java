@@ -20,7 +20,7 @@ public class StranglewoodBark extends LogBlock {
 	public static final VoxelShape BARK_AABB = Shapes.create(new AABB(0.001D, 0.001D, 0.001D, 0.999D, 0.999D, 0.999D));
 
 	public static void build(BlockRegistrar<StranglewoodBark> registrar) {
-		registrar.basedOn(AoABlocks.STRANGLEWOOD_LOG).mapColour(MapColor.TERRACOTTA_BROWN).factory(properties -> new LogBlock(properties, AoABlocks.STRIPPED_STRANGLEWOOD));
+		registrar.basedOn(AoABlocks.STRANGLEWOOD_LOG).mapColour(MapColor.TERRACOTTA_BROWN).factory(properties -> new LogBlock(properties, AoABlocks.STRIPPED_STRANGLEWOOD)).generationBlocksTab();
 	}
 
 	public StranglewoodBark(BlockBehaviour.Properties properties, @Nullable Supplier<? extends Block> strippedBlock) {

@@ -5,20 +5,21 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
-import net.minecraft.world.level.Level;
-import net.tslat.aoa3.common.registration.item.AoATiers;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class NoxiousGreatblade extends BaseGreatblade {
-	public NoxiousGreatblade() {
-		super(AoATiers.NOXIOUS_GREATBLADE);
+	public NoxiousGreatblade(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 	@Override
@@ -27,10 +28,8 @@ public class NoxiousGreatblade extends BaseGreatblade {
 			AreaEffectCloud cloud = new AreaEffectCloud(target.level(), target.getX(), target.getY(), target.getZ());
 
 			cloud.setRadius(2);
-			cloud.setPotion(Potions.STRONG_POISON);
-			cloud.addEffect(new MobEffectInstance(MobEffects.POISON, (int)(60 * attackCooldown), 2, true, true));
+			cloud.setPotionContents(new PotionContents(Optional.of(Potions.STRONG_POISON), Optional.of(ColourUtil.RGB(51, 102, 0)), List.of(new MobEffectInstance(MobEffects.POISON, (int)(60 * attackCooldown), 2, true, true))));
 			cloud.setDuration(6);
-			cloud.setFixedColor(ColourUtil.RGB(51, 102, 0));
 			cloud.setOwner(attacker);
 
 			target.level().addFreshEntity(cloud);
@@ -41,7 +40,7 @@ public class NoxiousGreatblade extends BaseGreatblade {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.POISONS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 	}

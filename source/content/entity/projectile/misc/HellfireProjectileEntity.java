@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.projectile.misc;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
@@ -27,11 +28,11 @@ public class HellfireProjectileEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	public float getGravity() {
-		if (tickCount >= 5)
-			return 1.0f;
+	public double getDefaultGravity() {
+		if (this.tickCount >= 5)
+			return 1;
 
-		return 0.0f;
+		return 0;
 	}
 
 	@Override
@@ -41,5 +42,5 @@ public class HellfireProjectileEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 }

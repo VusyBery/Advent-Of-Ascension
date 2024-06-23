@@ -14,11 +14,8 @@
   ],
   "items": [
     {
-      "Count": 1,
-      "id": "aoa3:gardener",
-      "tag": {
-        "Damage": 0
-      }
+      "count": 1,
+      "id": "aoa3:gardener"
     }
   ]
 }

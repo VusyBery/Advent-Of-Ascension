@@ -2,7 +2,7 @@ package net.tslat.aoa3.client.render.entity.animal;
 
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.content.entity.animal.precasia.HorndronEntity;
-import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public class HorndronModel extends DefaultedEntityGeoModel<HorndronEntity> {

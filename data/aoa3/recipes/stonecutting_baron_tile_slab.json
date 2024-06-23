@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "aoa3:baron_tiles"
-  },
-  "result": "aoa3:baron_tile_slab"
-}

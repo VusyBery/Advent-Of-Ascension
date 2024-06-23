@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "J": {
+      "tag": "neoforge:gems/jade"
+    },
+    "S": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "JJ",
+    " S",
+    " S"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:jade_hoe"
+  }
+}

@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.world.gen.placementmodifier;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -14,7 +15,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
 public class ChunkHighPoint extends PlacementModifier {
-	public static final Codec<ChunkHighPoint> CODEC = Codec.unit(ChunkHighPoint::new);
+	public static final MapCodec<ChunkHighPoint> CODEC = MapCodec.unit(ChunkHighPoint::new);
 
 	private ChunkHighPoint() {}
 

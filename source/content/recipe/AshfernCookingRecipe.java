@@ -1,11 +1,10 @@
 package net.tslat.aoa3.content.recipe;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
@@ -18,10 +17,6 @@ import net.tslat.aoa3.util.WorldUtil;
 import java.util.Optional;
 
 public class AshfernCookingRecipe extends CustomRecipe {
-	public static final Codec<AshfernCookingRecipe> CODEC = RecordCodecBuilder.create(builder ->
-			RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails)
-					.apply(builder, AshfernCookingRecipe::new));
-
 	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
 
 	public AshfernCookingRecipe(String group, CraftingBookCategory category, boolean showObtainNotification) {
@@ -55,11 +50,11 @@ public class AshfernCookingRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public boolean matches(CraftingContainer container, Level level) {
+	public boolean matches(CraftingInput container, Level level) {
 		boolean hasFern = false;
 		boolean hasFood = false;
 
-		for (ItemStack stack : container.getItems()) {
+		for (ItemStack stack : container.items()) {
 			if (stack.isEmpty())
 				continue;
 
@@ -72,10 +67,10 @@ public class AshfernCookingRecipe extends CustomRecipe {
 				continue;
 			}
 
-			if (hasFood || !stack.isEdible())
+			if (hasFood || stack.getFoodProperties(null) == null)
 				return false;
 
-			Optional<RecipeHolder<SmeltingRecipe>> smeltingRecipe = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(stack), level);
+			Optional<RecipeHolder<SmeltingRecipe>> smeltingRecipe = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level);
 
 			if (smeltingRecipe.isPresent() && !smeltingRecipe.get().value().getResultItem(level.registryAccess()).isEmpty()) {
 				hasFood = true;
@@ -89,7 +84,7 @@ public class AshfernCookingRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public ItemStack assemble(CraftingContainer container, RegistryAccess registryAccess) {
+	public ItemStack assemble(CraftingInput container, HolderLookup.Provider holderLookup) {
 		final Level level = WorldUtil.getServer().getLevel(AoADimensions.OVERWORLD);
 
 		if (level == null)
@@ -98,7 +93,7 @@ public class AshfernCookingRecipe extends CustomRecipe {
 		boolean foundFern = false;
 		ItemStack output = ItemStack.EMPTY;
 
-		for (int i = 0; i < container.getContainerSize(); i++) {
+		for (int i = 0; i < container.size(); i++) {
 			final ItemStack stack = container.getItem(i);
 
 			if (stack.isEmpty())
@@ -113,10 +108,10 @@ public class AshfernCookingRecipe extends CustomRecipe {
 				continue;
 			}
 
-			Optional<RecipeHolder<SmeltingRecipe>> smeltingRecipe = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(stack), level);
+			Optional<RecipeHolder<SmeltingRecipe>> smeltingRecipe = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level);
 
 			if (smeltingRecipe.isPresent())
-				output = smeltingRecipe.get().value().getResultItem(registryAccess);
+				output = smeltingRecipe.get().value().getResultItem(holderLookup);
 
 			if (foundFern)
 				break;
@@ -131,19 +126,21 @@ public class AshfernCookingRecipe extends CustomRecipe {
 	}
 
 	public static class Factory implements RecipeSerializer<AshfernCookingRecipe> {
+		public static final MapCodec<AshfernCookingRecipe> CODEC = RecordCodecBuilder.mapCodec(builder ->
+				RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails)
+						.apply(builder, AshfernCookingRecipe::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, AshfernCookingRecipe> STREAM_CODEC = StreamCodec.composite(
+				RecipeUtil.RecipeBookDetails.STREAM_CODEC, recipe -> recipe.recipeBookDetails,
+				AshfernCookingRecipe::new);
+
 		@Override
-		public Codec<AshfernCookingRecipe> codec() {
-			return AshfernCookingRecipe.CODEC;
+		public MapCodec<AshfernCookingRecipe> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public AshfernCookingRecipe fromNetwork(FriendlyByteBuf buffer) {
-			return new AshfernCookingRecipe(RecipeUtil.RecipeBookDetails.fromNetwork(buffer));
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, AshfernCookingRecipe recipe) {
-			recipe.recipeBookDetails.toNetwork(buffer);
+		public StreamCodec<RegistryFriendlyByteBuf, AshfernCookingRecipe> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

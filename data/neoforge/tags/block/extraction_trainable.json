@@ -1,0 +1,15 @@
+{
+  "values": [
+    "#c:stones",
+    "#c:cobblestones/normal",
+    "#c:cobblestones/mossy",
+    "#c:ores",
+    "#minecraft:logs",
+    "#c:sands",
+    "#neoforge:grass",
+    "#minecraft:dirt",
+    "#c:gravels",
+    "#c:netherracks",
+    "#c:obsidians"
+  ]
+}

@@ -26,7 +26,7 @@ public class LBoreanRenderingEffects extends AoADimensionEffectsRenderer {
     }
 
     @Override
-    public boolean renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
+    public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f frustumMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
         setupFog.run();
         
         if (!isFoggy) {
@@ -35,19 +35,22 @@ public class LBoreanRenderingEffects extends AoADimensionEffectsRenderer {
             FogType fogtype = camera.getFluidInCamera();
             
             if (fogtype != FogType.POWDER_SNOW && fogtype != FogType.LAVA && !levelRenderer.doesMobEffectBlockSky(camera)) {
+                PoseStack poseStack = new PoseStack();
                 Vec3 skyColour = level.getSkyColor(mc.gameRenderer.getMainCamera().getPosition(), partialTick);
                 float skyColourRed = (float)skyColour.x;
                 float skyColourGreen = (float)skyColour.y;
                 float skyColourBlue = (float)skyColour.z;
-                BufferBuilder bufferBuilder = Tesselator.getInstance().getBuilder();
+                Tesselator tesselator = Tesselator.getInstance();
+                BufferBuilder bufferBuilder;
                 ShaderInstance shader = RenderSystem.getShader();
 
+                poseStack.mulPose(projectionMatrix);
                 FogRenderer.levelFogColor();
                 RenderSystem.depthMask(false);
                 RenderSystem.setShaderColor(skyColourRed, skyColourGreen, skyColourBlue, 1);
 
                 levelRenderer.skyBuffer.bind();
-                levelRenderer.skyBuffer.drawWithShader(poseStack.last().pose(), projectionMatrix, shader);
+                levelRenderer.skyBuffer.drawWithShader(frustumMatrix, projectionMatrix, shader);
                 VertexBuffer.unbind();
                 RenderSystem.enableBlend();
 
@@ -65,19 +68,18 @@ public class LBoreanRenderingEffects extends AoADimensionEffectsRenderer {
                     float sunriseGreen = sunriseColour[1];
                     float sunriseBlue = sunriseColour[2];
                     Matrix4f pose = poseStack.last().pose();
-                    bufferBuilder.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
-                    bufferBuilder.vertex(pose, 0, 100, 0).color(sunriseRed, sunriseGreen, sunriseBlue, sunriseColour[3]).endVertex();
+                    bufferBuilder = tesselator.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+                    bufferBuilder.addVertex(pose, 0, 100, 0).setColor(sunriseRed, sunriseGreen, sunriseBlue, sunriseColour[3]);
 
                     for (int section = 0; section <= 16; ++section) {
                         float sectionAngle = (float)section * (float) (Math.PI * 2) / 16.0F;
                         float angleX = Mth.sin(sectionAngle);
                         float angleZ = Mth.cos(sectionAngle);
-                        bufferBuilder.vertex(pose, angleX * 120, angleZ * 120, -angleZ * 40 * sunriseColour[3])
-                                .color(sunriseColour[0], sunriseColour[1], sunriseColour[2], 0)
-                                .endVertex();
+                        bufferBuilder.addVertex(pose, angleX * 120, angleZ * 120, -angleZ * 40 * sunriseColour[3])
+                                .setColor(sunriseColour[0], sunriseColour[1], sunriseColour[2], 0);
                     }
 
-                    BufferUploader.drawWithShader(bufferBuilder.end());
+                    BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
                     poseStack.popPose();
                 }
 
@@ -96,12 +98,12 @@ public class LBoreanRenderingEffects extends AoADimensionEffectsRenderer {
 
                 if (dayAngle > 286 || dayAngle < 82) {
                     RenderSystem.setShaderTexture(0, SUN_TEXTURE);
-                    bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-                    bufferBuilder.vertex(pose, -celestialQuadRadius, 100, -celestialQuadRadius).uv(0, 0).endVertex();
-                    bufferBuilder.vertex(pose, celestialQuadRadius, 100, -celestialQuadRadius).uv(1, 0).endVertex();
-                    bufferBuilder.vertex(pose, celestialQuadRadius, 100, celestialQuadRadius).uv(1, 1).endVertex();
-                    bufferBuilder.vertex(pose, -celestialQuadRadius, 100, celestialQuadRadius).uv(0, 1).endVertex();
-                    BufferUploader.drawWithShader(bufferBuilder.end());
+                    bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+                    bufferBuilder.addVertex(pose, -celestialQuadRadius, 100, -celestialQuadRadius).setUv(0, 0);
+                    bufferBuilder.addVertex(pose, celestialQuadRadius, 100, -celestialQuadRadius).setUv(1, 0);
+                    bufferBuilder.addVertex(pose, celestialQuadRadius, 100, celestialQuadRadius).setUv(1, 1);
+                    bufferBuilder.addVertex(pose, -celestialQuadRadius, 100, celestialQuadRadius).setUv(0, 1);
+                    BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
                 }
 
                 if (dayAngle > 101 && dayAngle < 258) {
@@ -115,12 +117,12 @@ public class LBoreanRenderingEffects extends AoADimensionEffectsRenderer {
                     float vMax = (phaseColumn + 1) / 2f;
 
                     RenderSystem.setShaderTexture(0, MOON_TEXTURE);
-                    bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-                    bufferBuilder.vertex(pose, -celestialQuadRadius, -100, celestialQuadRadius).uv(uMax, vMax).endVertex();
-                    bufferBuilder.vertex(pose, celestialQuadRadius, -100, celestialQuadRadius).uv(uMin, vMax).endVertex();
-                    bufferBuilder.vertex(pose, celestialQuadRadius, -100, -celestialQuadRadius).uv(uMin, vMin).endVertex();
-                    bufferBuilder.vertex(pose, -celestialQuadRadius, -100, -celestialQuadRadius).uv(uMax, vMin).endVertex();
-                    BufferUploader.drawWithShader(bufferBuilder.end());
+                    bufferBuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+                    bufferBuilder.addVertex(pose, -celestialQuadRadius, -100, celestialQuadRadius).setUv(uMax, vMax);
+                    bufferBuilder.addVertex(pose, celestialQuadRadius, -100, celestialQuadRadius).setUv(uMin, vMax);
+                    bufferBuilder.addVertex(pose, celestialQuadRadius, -100, -celestialQuadRadius).setUv(uMin, vMin);
+                    bufferBuilder.addVertex(pose, -celestialQuadRadius, -100, -celestialQuadRadius).setUv(uMax, vMin);
+                    BufferUploader.drawWithShader(bufferBuilder.buildOrThrow());
                 }
 
                 float starBrightness = level.getStarBrightness(partialTick) * rainAmount;

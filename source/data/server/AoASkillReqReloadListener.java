@@ -3,6 +3,7 @@ package net.tslat.aoa3.data.server;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -31,7 +32,7 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 	private static final String folder = "player/skill_reqs";
 
 	private static final HashMap<ResourceLocation, SkillReqHandler> REQUIREMENTS_MAP = new HashMap<>();
-	private static Map<ResourceLocation, Map<String, List<Pair<ResourceLocation, Integer>>>> requirementsData = new HashMap<>();
+	private static Map<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> requirementsData = new HashMap<>();
 
 	public AoASkillReqReloadListener() {
 		super(GSON, folder);
@@ -101,10 +102,10 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		parseAll(prepData(jsonMap));
 	}
 
-	public static void parseAll(Map<ResourceLocation, Map<String, List<Pair<ResourceLocation, Integer>>>> restrictions) {
+	public static void parseAll(Map<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> restrictions) {
 		requirementsData = new Object2ObjectOpenHashMap<>(restrictions);
 
-		for (Map.Entry<ResourceLocation, Map<String, List<Pair<ResourceLocation, Integer>>>> entry : requirementsData.entrySet()) {
+		for (Map.Entry<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> entry : requirementsData.entrySet()) {
 			SkillReqHandler handler = parse(entry.getValue());
 
 			if (handler.isValid()) {
@@ -116,7 +117,7 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		}
 	}
 
-	public static SkillReqHandler parse(Map<String, List<Pair<ResourceLocation, Integer>>> reqData) {
+	public static SkillReqHandler parse(Map<String, List<ObjectIntPair<ResourceLocation>>> reqData) {
 		SkillReqHandler handler = new SkillReqHandler();
 
 		if (reqData.containsKey("equip"))
@@ -134,19 +135,19 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		return handler;
 	}
 
-	private static Pair<Predicate<PlayerDataManager>, Consumer<ServerPlayer>> parseRequirements(List<Pair<ResourceLocation, Integer>> reqs) {
+	private static Pair<Predicate<PlayerDataManager>, Consumer<ServerPlayer>> parseRequirements(List<ObjectIntPair<ResourceLocation>> reqs) {
 		Predicate<PlayerDataManager> predicate = plData -> true;
 		Consumer<ServerPlayer> notificationHandler = plData -> {};
 
-		for (Pair<ResourceLocation, Integer> pair : reqs) {
-			AoASkill skill = AoASkills.getSkill(pair.getFirst());
-			int level = pair.getSecond();
+		for (ObjectIntPair<ResourceLocation> pair : reqs) {
+			AoASkill skill = AoASkills.getSkill(pair.first());
+			int level = pair.valueInt();
 
 			if (level <= 0 || level > 1000)
 				throw new IllegalArgumentException("Invalid skill level requirement: " + level + ", must be 1-1000");
 
 			if (skill == null)
-				throw new IllegalArgumentException("Unknown skill: '" + pair.getFirst() + "' for item skill entry.");
+				throw new IllegalArgumentException("Unknown skill: '" + pair.first() + "' for item skill entry.");
 
 			predicate = predicate.and(plData -> plData.getSkill(skill).hasLevel(level));
 			notificationHandler = notificationHandler.andThen(player -> PlayerUtil.notifyPlayerOfInsufficientLevel(player, skill, level));
@@ -155,8 +156,8 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		return Pair.of(predicate, notificationHandler);
 	}
 
-	private Map<ResourceLocation, Map<String, List<Pair<ResourceLocation, Integer>>>> prepData(Map<ResourceLocation, JsonElement> jsonData) {
-		HashMap<ResourceLocation, Map<String, List<Pair<ResourceLocation, Integer>>>> idToReqsMap = new HashMap<>(jsonData.size());
+	private Map<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> prepData(Map<ResourceLocation, JsonElement> jsonData) {
+		HashMap<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> idToReqsMap = new HashMap<>(jsonData.size());
 
 		for (Map.Entry<ResourceLocation, JsonElement> jsonFile : jsonData.entrySet()) {
 			List<ResourceLocation> targetIds;
@@ -164,39 +165,39 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 			JsonElement target = json.get("target");
 
 			if (target.isJsonPrimitive()) {
-				targetIds = List.of(new ResourceLocation(target.getAsString()));
+				targetIds = List.of(ResourceLocation.read(target.getAsString()).getOrThrow());
 			}
 			else if (target.isJsonArray()) {
 				JsonArray array = target.getAsJsonArray();
 				targetIds = new ArrayList<>();
 
 				for (JsonElement element : array) {
-					targetIds.add(new ResourceLocation(element.getAsString()));
+					targetIds.add(ResourceLocation.read(element.getAsString()).getOrThrow());
 				}
 			}
 			else {
 				throw new IllegalArgumentException("Unknown entry type for 'target' in AoA Skill Req json: " + jsonFile.getKey());
 			}
 
-			Map<String, List<Pair<ResourceLocation, Integer>>> reqMap = new HashMap<>();
+			Map<String, List<ObjectIntPair<ResourceLocation>>> reqMap = new HashMap<>();
 
 			for (Map.Entry<String, JsonElement> reqEntry : json.entrySet()) {
 				if (reqEntry.getKey().equals("target"))
 					continue;
 
-				List<Pair<ResourceLocation, Integer>> reqList = new ArrayList<>();
+				List<ObjectIntPair<ResourceLocation>> reqList = new ArrayList<>();
 				JsonElement element = reqEntry.getValue();
 
 				if (element.isJsonObject()) {
 					JsonObject reqEntryObj = element.getAsJsonObject();
 
-					reqList.add(Pair.of(new ResourceLocation(GsonHelper.getAsString(reqEntryObj, "skill")), GsonHelper.getAsInt(reqEntryObj, "level")));
+					reqList.add(ObjectIntPair.of(ResourceLocation.read(GsonHelper.getAsString(reqEntryObj, "skill")).getOrThrow(), GsonHelper.getAsInt(reqEntryObj, "level")));
 				}
-				else if (element.isJsonArray() && element.getAsJsonArray().size() > 0) {
+				else if (element.isJsonArray() && !element.getAsJsonArray().isEmpty()) {
 					for (JsonElement ele2 : element.getAsJsonArray()) {
 						JsonObject reqEntryObj = ele2.getAsJsonObject();
 
-						reqList.add(Pair.of(new ResourceLocation(GsonHelper.getAsString(reqEntryObj, "skill")), GsonHelper.getAsInt(reqEntryObj, "level")));
+						reqList.add(ObjectIntPair.of(ResourceLocation.read(GsonHelper.getAsString(reqEntryObj, "skill")).getOrThrow(), GsonHelper.getAsInt(reqEntryObj, "level")));
 					}
 				}
 
@@ -211,26 +212,26 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		return idToReqsMap;
 	}
 
-	private static void mergeOrAddEntry(ResourceLocation id, Map<String, List<Pair<ResourceLocation, Integer>>> newReqs, Map<ResourceLocation, Map<String, List<Pair<ResourceLocation, Integer>>>> reqMap) {
-		Map<String, List<Pair<ResourceLocation, Integer>>> existingReqsMap = reqMap.putIfAbsent(id, newReqs);
+	private static void mergeOrAddEntry(ResourceLocation id, Map<String, List<ObjectIntPair<ResourceLocation>>> newReqs, Map<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> reqMap) {
+		Map<String, List<ObjectIntPair<ResourceLocation>>> existingReqsMap = reqMap.putIfAbsent(id, newReqs);
 
 		if (existingReqsMap == null)
 			return;
 
-		for (Map.Entry<String, List<Pair<ResourceLocation, Integer>>> newReqEntry : newReqs.entrySet()) {
+		for (Map.Entry<String, List<ObjectIntPair<ResourceLocation>>> newReqEntry : newReqs.entrySet()) {
 			String reqType = newReqEntry.getKey();
-			List<Pair<ResourceLocation, Integer>> newReqsList = newReqEntry.getValue();
-			List<Pair<ResourceLocation, Integer>> existingReqsList = existingReqsMap.putIfAbsent(reqType, newReqsList);
+			List<ObjectIntPair<ResourceLocation>> newReqsList = newReqEntry.getValue();
+			List<ObjectIntPair<ResourceLocation>> existingReqsList = existingReqsMap.putIfAbsent(reqType, newReqsList);
 
 			if (existingReqsList != null) {
-				for (Pair<ResourceLocation, Integer> newReq : newReqsList) {
+				for (ObjectIntPair<ResourceLocation> newReq : newReqsList) {
 					int index = -1;
 
 					for (int i = 0; i < existingReqsList.size(); i++) {
-						Pair<ResourceLocation, Integer> oldReq = existingReqsList.get(i);
+						ObjectIntPair<ResourceLocation> oldReq = existingReqsList.get(i);
 
-						if (oldReq.getFirst().equals(newReq.getFirst())) {
-							if (oldReq.getSecond() < newReq.getSecond())
+						if (oldReq.first().equals(newReq.first())) {
+							if (oldReq.valueInt() < newReq.valueInt())
 								index = i;
 
 							break;
@@ -248,17 +249,17 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		REQUIREMENTS_MAP.put(id, handler);
 	}
 
-	public static void addRequirements(ResourceLocation id, Map<String, List<Pair<ResourceLocation, Integer>>> data) {
+	public static void addRequirements(ResourceLocation id, Map<String, List<ObjectIntPair<ResourceLocation>>> data) {
 		mergeOrAddEntry(id, data, requirementsData);
 		setRequirements(id, parse(getParsedReqDataFor(id)));
 	}
 
-	public static Map<ResourceLocation, Map<String, List<Pair<ResourceLocation, Integer>>>> getParsedReqData() {
+	public static Map<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> getParsedReqData() {
 		return requirementsData;
 	}
 
 	@NotNull
-	public static Map<String, List<Pair<ResourceLocation, Integer>>> getParsedReqDataFor(ResourceLocation itemId) {
+	public static Map<String, List<ObjectIntPair<ResourceLocation>>> getParsedReqDataFor(ResourceLocation itemId) {
 		if (!requirementsData.containsKey(itemId))
 			return new HashMap<>(0);
 

@@ -58,7 +58,7 @@ public class ShadowlordEntity extends Monster implements RangedAttackMob, AoARan
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 3.8375f;
 	}
 
@@ -74,12 +74,12 @@ public class ShadowlordEntity extends Monster implements RangedAttackMob, AoARan
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		this.entityData.define(FIRST_HEAD_TARGET, 0);
-		this.entityData.define(SECOND_HEAD_TARGET, 0);
-		this.entityData.define(THIRD_HEAD_TARGET, 0);
+		builder.define(FIRST_HEAD_TARGET, 0);
+		builder.define(SECOND_HEAD_TARGET, 0);
+		builder.define(THIRD_HEAD_TARGET, 0);
 	}
 
 	@Nullable
@@ -99,7 +99,7 @@ public class ShadowlordEntity extends Monster implements RangedAttackMob, AoARan
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

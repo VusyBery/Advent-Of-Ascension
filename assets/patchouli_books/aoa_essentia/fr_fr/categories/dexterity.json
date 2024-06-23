@@ -1,6 +1,0 @@
-{
-  "parent": "aoa3:skills",
-  "description": "La $(thing)Dextérité$() est une compétence qui tourne autour de l'aptitude à explorer le monde.$(br2)En entraînant cette capacité, il est possible de s'améliorer afin de se déplacer de manière plus efficace et de fuir des ennemis plus facilement.",
-  "icon": "aoa3:textures/gui/aoaskill/dexterity.png",
-  "name": "Dextérité"
-}

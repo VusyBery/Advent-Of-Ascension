@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.menu.FrameBenchMenu;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.util.RenderUtil;
@@ -19,7 +20,7 @@ import net.tslat.aoa3.util.RenderUtil;
 import java.util.function.Supplier;
 
 public class FrameBenchScreen extends AbstractContainerScreen<FrameBenchMenu> {
-	private static final ResourceLocation TEXTURES = new ResourceLocation("aoa3", "textures/gui/containers/frame_bench.png");
+	private static final ResourceLocation TEXTURES = AdventOfAscension.id("textures/gui/containers/frame_bench.png");
 
 	public FrameBenchScreen(FrameBenchMenu container, Inventory inv, Component guiTitle) {
 		super(container, inv, guiTitle);

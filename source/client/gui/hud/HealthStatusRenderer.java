@@ -10,9 +10,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.client.event.RenderGuiOverlayEvent;
-import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoAConfigs;
@@ -24,18 +23,17 @@ import net.tslat.aoa3.util.RenderUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class HealthStatusRenderer {
-	private static final ResourceLocation GUI_ICONS_LOCATION = new ResourceLocation("textures/gui/icons.png");
 	private static final ResourceLocation HEALTH_BAR = AdventOfAscension.id("textures/gui/overlay/misc/health_bar.png");
 	private static float deltaHealth = 0;
 	private static int lastHealthTime = 0;
 	private static float lastTickHealth = 0;
 
 	public static void init() {
-		NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, RenderGuiOverlayEvent.Pre.class, HealthStatusRenderer::onHealthRender);
+		NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, false, RenderGuiLayerEvent.Pre.class, HealthStatusRenderer::onHealthRender);
 	}
 
-	private static void onHealthRender(RenderGuiOverlayEvent.Pre ev) {
-		if (ev.isCanceled() || !ev.getOverlay().id().equals(VanillaGuiOverlay.PLAYER_HEALTH.id()))
+	private static void onHealthRender(RenderGuiLayerEvent.Pre ev) {
+		if (ev.isCanceled() || !ev.getName().equals(VanillaGuiLayers.PLAYER_HEALTH))
 			return;
 
 		HealthRenderType renderType = AoAConfigs.CLIENT.healthRenderType.get();
@@ -45,17 +43,19 @@ public class HealthStatusRenderer {
 
 		Minecraft mc = Minecraft.getInstance();
 
-		if (!(mc.gui instanceof ExtendedGui gui) || mc.options.hideGui || !gui.shouldDrawSurvivalElements())
+		if (mc.options.hideGui || !mc.gameMode.canHurtPlayer())
 			return;
 
 		LocalPlayer player = mc.player;
 		PoseStack matrix = ev.getGuiGraphics().pose();
 
 		int left = (mc.getWindow().getGuiScaledWidth() / 2) - 91;
-		int top = mc.getWindow().getGuiScaledHeight() - gui.leftHeight;
-		gui.leftHeight += 10;
+		int top = mc.getWindow().getGuiScaledHeight() - mc.gui.leftHeight;
+		mc.gui.leftHeight += 10;
 
-		gui.setupOverlayRenderState(true, false);
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.disableDepthTest();
 		ev.setCanceled(true);
 
 		mc.getProfiler().push("health");
@@ -67,23 +67,23 @@ public class HealthStatusRenderer {
 		boolean withered = mc.player.hasEffect(MobEffects.WITHER);
 		boolean frozen = mc.player.isFullyFrozen();
 		float absorption = mc.player.getAbsorptionAmount();
-		boolean bleeding = mc.player.hasEffect(AoAMobEffects.BLEEDING.get());
+		boolean bleeding = mc.player.hasEffect(AoAMobEffects.BLEEDING);
 
 		if (renderType == HealthRenderType.NUMERIC) {
-			renderNumeric(matrix, mc, gui, left, top, currentHealth, maxHealth, poisoned, withered, frozen, absorption);
+			renderNumeric(matrix, mc, left, top, currentHealth, maxHealth, poisoned, withered, frozen, absorption);
 		}
 		else {
-			renderBar(matrix, mc, gui, left, top, currentHealth, maxHealth, poisoned, withered, frozen, absorption, bleeding);
+			renderBar(matrix, mc, left, top, currentHealth, maxHealth, poisoned, withered, frozen, absorption, bleeding);
 
 			if (renderType ==  HealthRenderType.BAR_NUMERIC)
-				renderNumeric(matrix, mc, gui, left, top, currentHealth, maxHealth, poisoned, withered, frozen, absorption);
+				renderNumeric(matrix, mc, left, top, currentHealth, maxHealth, poisoned, withered, frozen, absorption);
 		}
 
 		RenderSystem.disableBlend();
 		mc.getProfiler().pop();
 	}
 
-	private static void renderBar(PoseStack matrix, Minecraft mc, ExtendedGui gui, int left, int top, float currentHealth, float maxHealth, boolean poisoned, boolean withered, boolean frozen, float absorption, boolean bleeding) {
+	private static void renderBar(PoseStack matrix, Minecraft mc, int left, int top, float currentHealth, float maxHealth, boolean poisoned, boolean withered, boolean frozen, float absorption, boolean bleeding) {
 		int uvY = 0;
 
 		if (absorption > 0) {
@@ -169,7 +169,7 @@ public class HealthStatusRenderer {
 		matrix.popPose();
 	}
 
-	private static void renderNumeric(PoseStack matrix, Minecraft mc, ExtendedGui gui, int left, int top, float currentHealth, float maxHealth, boolean poisoned, boolean withered, boolean frozen, float absorption) {
+	private static void renderNumeric(PoseStack matrix, Minecraft mc, int left, int top, float currentHealth, float maxHealth, boolean poisoned, boolean withered, boolean frozen, float absorption) {
 		int healthColour;
 
 		if (poisoned) {
@@ -192,7 +192,7 @@ public class HealthStatusRenderer {
 			matrix.scale(0.9f, 0.9f, 1);
 
 			if (currentHealth > 0) {
-				renderHeart(matrix, mc, currentHealth, maxHealth, handleHealthState(mc.player, gui, (int)Math.ceil(currentHealth)), poisoned, withered, frozen, absorption);
+				renderHeart(matrix, mc, currentHealth, maxHealth, handleHealthState(mc.player, mc.gui, (int)Math.ceil(currentHealth)), poisoned, withered, frozen, absorption);
 
 				RenderUtil.renderCenteredScaledText(matrix, Component.literal(NumberUtil.roundToNthDecimalPlace(currentHealth, 1) + "/" + NumberUtil.roundToNthDecimalPlace(maxHealth, 1)), 34, 0, 1, healthColour, RenderUtil.TextRenderType.OUTLINED);
 
@@ -206,7 +206,7 @@ public class HealthStatusRenderer {
 			}
 		}
 		else {
-			gui.leftHeight += 2;
+			mc.gui.leftHeight += 2;
 
 			if (absorption > 0)
 				left -= 8;
@@ -215,7 +215,7 @@ public class HealthStatusRenderer {
 			matrix.scale(0.8f, 0.8f, 1);
 
 			if (currentHealth > 0) {
-				renderHeart(matrix, mc, currentHealth, maxHealth, handleHealthState(mc.player, gui, (int)Math.ceil(currentHealth)), poisoned, withered, frozen, absorption);
+				renderHeart(matrix, mc, currentHealth, maxHealth, handleHealthState(mc.player, mc.gui, (int)Math.ceil(currentHealth)), poisoned, withered, frozen, absorption);
 
 				RenderUtil.renderCenteredScaledText(matrix, Component.literal(NumberUtil.roundToNthDecimalPlace(currentHealth, 1) + "/" + NumberUtil.roundToNthDecimalPlace(maxHealth, 1)), 34, 0, 1, healthColour, RenderUtil.TextRenderType.OUTLINED);
 
@@ -246,7 +246,7 @@ public class HealthStatusRenderer {
 		RenderUtil.renderSprite(poseStack, Gui.HeartType.forPlayer(mc.player).getSprite(hardcore, currentHealth < maxHealth, flashing), 0, y);
 	}
 
-	private static boolean handleHealthState(LocalPlayer player, ExtendedGui gui, float currentHealth) {
+	private static boolean handleHealthState(LocalPlayer player, Gui gui, float currentHealth) {
 		boolean shouldFlash = gui.healthBlinkTime > (long)gui.tickCount && (gui.healthBlinkTime - (long)gui.tickCount) / 3L % 2L == 1L;
 
 		if (currentHealth < gui.lastHealth && player.invulnerableTime > 0) {

@@ -6,19 +6,19 @@ import net.minecraft.world.item.Tier;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 
 public class BaseShovel extends ShovelItem {
-	public BaseShovel(Tier tier) {
-		this(tier, 0, AttackSpeed.SHOVEL);
-	}
-
 	public BaseShovel(Tier tier, Item.Properties properties) {
-		this(tier, 0, AttackSpeed.SHOVEL, properties);
+		super(tier, properties);
 	}
 
-	public BaseShovel(Tier tier, float damageMod, float digSpeed) {
-		this(tier, damageMod, digSpeed, new Properties().durability(tier.getUses()));
+	public static Item.Properties baseProperties(Tier tier) {
+		return baseProperties(tier, 0, AttackSpeed.SHOVEL);
 	}
 
-	public BaseShovel(Tier tier, float damageMod, float speedMod, Item.Properties properties) {
-		super(tier, damageMod, speedMod, properties);
+	public static Item.Properties baseProperties(Tier tier, float attackSpeed) {
+		return baseProperties(tier, 0, attackSpeed);
+	}
+
+	public static Item.Properties baseProperties(Tier tier, float damageModifier, float attackSpeed) {
+		return new Item.Properties().attributes(ShovelItem.createAttributes(tier, damageModifier, attackSpeed));
 	}
 }

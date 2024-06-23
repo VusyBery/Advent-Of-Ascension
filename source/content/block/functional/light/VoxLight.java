@@ -2,7 +2,7 @@ package net.tslat.aoa3.content.block.functional.light;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -25,10 +25,10 @@ public class VoxLight extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (player.getItemInHand(hand).getItem() == AoAItems.ACTIVE_RUNE_STONE.get() && WorldUtil.isWorld(world, AoADimensions.MYSTERIUM)) {
-			if (!world.isClientSide) {
-				List<ItemEntity> itemsList = world.getEntitiesOfClass(ItemEntity.class, new AABB(pos.getX(), pos.getY() + 1, pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1));
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (stack.getItem() == AoAItems.ACTIVE_RUNE_STONE.get() && WorldUtil.isWorld(level, AoADimensions.MYSTERIUM)) {
+			if (!level.isClientSide) {
+				List<ItemEntity> itemsList = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos.getX(), pos.getY() + 1, pos.getZ(), pos.getX() + 1, pos.getY() + 2, pos.getZ() + 1));
 
 				if (itemsList.size() > 1) {
 					ItemEntity realmstone = null;
@@ -53,9 +53,9 @@ public class VoxLight extends Block {
 				}
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 }

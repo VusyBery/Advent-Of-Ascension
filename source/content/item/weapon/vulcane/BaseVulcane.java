@@ -15,32 +15,33 @@ import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
+import net.tslat.aoa3.content.item.datacomponent.VulcaneStats;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public abstract class BaseVulcane extends Item {
-	protected double baseDmg;
+	public BaseVulcane(Item.Properties properties) {
+		super(properties);
+	}
 
-	public BaseVulcane(double dmg, int durability) {
-		super(new Item.Properties().durability(durability));
+	public VulcaneStats vulcaneStats() {
+		return components().get(AoADataComponents.VULCANE_STATS.get());
+	}
 
-		this.baseDmg = dmg;
+	public double getVulcaneDamage() {
+		return vulcaneStats().damage();
 	}
 
 	@Override
 	public UseAnim getUseAnimation(ItemStack stack) {
 		return UseAnim.BOW;
-	}
-
-	public double getDamage() {
-		return baseDmg;
 	}
 
 	@Override
@@ -61,7 +62,7 @@ public abstract class BaseVulcane extends Item {
 	public InteractionResultHolder<ItemStack> activate(AoAResource.Instance rage, ItemStack vulcane, InteractionHand hand) {
 		Player pl = rage.getPlayerDataManager().player();
 		float targetHealth = pl.getLastHurtByMob().getHealth();
-		float damage = (float)getDamage() * (1 + ((rage.getCurrentValue() - 50) / 100));
+		float damage = (float) getVulcaneDamage() * (1 + ((rage.getCurrentValue() - 50) / 100));
 
 		if (DamageUtil.doVulcaneAttack(pl, pl.getLastHurtByMob(), damage)) {
 			doAdditionalEffect(pl.getLastHurtByMob(), pl, Math.min(targetHealth, damage));
@@ -83,8 +84,8 @@ public abstract class BaseVulcane extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(baseDmg)));
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getVulcaneDamage())));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_COST, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_GRACE_PERIOD, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 	}

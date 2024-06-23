@@ -6,6 +6,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -13,10 +14,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
 import net.tslat.aoa3.common.registration.entity.AoAAnimals;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.base.AoAAnimal;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.brain.task.temp.FixedFollowParent;
@@ -32,9 +33,9 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.FollowTemptation;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.RawAnimation;
 
 public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 	private static final RawAnimation STRUT_ANIM = RawAnimation.begin().thenPlay("misc.charge_up");
@@ -46,11 +47,6 @@ public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 				new AoAEntityPart<>(this, 0.75f, 1.1875f, 0.3725f, 0.75f, -getBbWidth() / 2f - 0.3725f).setDamageMultiplier(0.9f),
 				new AoAEntityPart<>(this, 0.75f, 1.1875f, -0.3725f, 0.75f, -getBbWidth() / 2f - 0.3725f).setDamageMultiplier(0.9f)
 		);
-	}
-
-	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-		return dimensions.height * 0.671875f;
 	}
 
 	@Override
@@ -96,7 +92,7 @@ public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 				new FirstApplicableBehaviour<>(
 						new BreedWithPartner<>().startCondition(entity -> canBreed()),
 						new FixedFollowParent<>(),
-						new FollowTemptation<>().startCondition(entity -> getTemptItem() != null),
+						new FollowTemptation<>().startCondition(entity -> getTemptationTag() != null),
 						new OneRandomBehaviour<>(
 								new SetRandomWalkTarget<>().speedModifier(0.9f),
 								new Idle<>()
@@ -118,7 +114,7 @@ public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 
 			if (isDeadOrDying()) {
 				AoAScheduler.scheduleSyncronisedTask(() -> {
-					EntitySpawningUtil.spawnEntity(level, AoAMobs.SKELETAL_ABOMINATION.get(), position(), MobSpawnType.CONVERSION, abomination -> {
+					EntitySpawningUtil.spawnEntity(level, AoAMonsters.SKELETAL_ABOMINATION.get(), position(), MobSpawnType.CONVERSION, abomination -> {
 						abomination.setXRot(getXRot());
 						abomination.setYRot(getYRot());
 						abomination.setYHeadRot(getYHeadRot());
@@ -155,7 +151,7 @@ public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 
 	@Nullable
 	@Override
-	protected Item getTemptItem() {
-		return AoABlocks.CALAB_GRASS.get().asItem();
+	protected TagKey<Item> getFoodTag() {
+		return AoATags.Items.HORNDRON_FOOD;
 	}
 }

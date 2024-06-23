@@ -6,7 +6,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -25,6 +24,8 @@ import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
 import net.tslat.aoa3.content.item.armour.AdventArmour;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Function;
 
 
 public final class DamageUtil {
@@ -60,12 +61,16 @@ public final class DamageUtil {
 		return safelyDealDamage(positionedEntityDamage(AoADamageTypes.VULCANE, attacker, target.position()), target, dmg);
 	}
 
-	public static boolean doGunAttack(@Nullable Entity attacker, @Nullable Entity projectile, Entity target, float dmg) {
-		return safelyDealDamage(indirectEntityDamage(AoADamageTypes.GUN, attacker, projectile), target, dmg);
+	public static boolean doGunAttack(@Nullable Entity attacker, @Nullable Entity projectile, Entity target, Function<DamageSource, Float> damage) {
+		final DamageSource source = indirectEntityDamage(AoADamageTypes.GUN, attacker, projectile);
+
+		return safelyDealDamage(source, target, damage.apply(source));
 	}
 
-	public static boolean doHeavyGunAttack(@Nullable Entity attacker, @Nullable Entity projectile, Entity target, float dmg) {
-		return safelyDealDamage(indirectEntityDamage(AoADamageTypes.HEAVY_GUN, attacker, projectile), target, dmg);
+	public static boolean doHeavyGunAttack(@Nullable Entity attacker, @Nullable Entity projectile, Entity target, Function<DamageSource, Float> damage) {
+		final DamageSource source = indirectEntityDamage(AoADamageTypes.HEAVY_GUN, attacker, projectile);
+
+		return safelyDealDamage(source, target, damage.apply(source));
 	}
 
 	public static boolean doEnergyProjectileAttack(@Nullable Entity attacker, @Nullable Entity projectile, Entity target, float dmg) {
@@ -181,7 +186,7 @@ public final class DamageUtil {
 	}
 
 	public static boolean isMeleeDamage(DamageSource source) {
-		return source.getEntity() != null && source.getDirectEntity() == source.getEntity() && isPhysicalDamage(source);
+		return source.getEntity() != null && source.getDirectEntity() == source.getEntity() && isPhysicalDamage(source) && !isEnvironmentalDamage(source);
 	}
 
 	public static boolean isEnergyDamage(DamageSource source) {
@@ -201,11 +206,11 @@ public final class DamageUtil {
 	}
 
 	public static boolean isPoisonDamage(DamageSource source) {
-		return !source.is(Tags.DamageTypes.IS_POISON);
+		return source.is(Tags.DamageTypes.IS_POISON);
 	}
 
 	public static boolean isPhysicalDamage(DamageSource source) {
-		return !source.is(DamageTypeTags.BYPASSES_ARMOR) && !source.is(DamageTypeTags.IS_EXPLOSION) && !source.is(DamageTypes.THORNS) && !isEnvironmentalDamage(source);
+		return source.is(Tags.DamageTypes.IS_PHYSICAL);
 	}
 
 	public static boolean isVulcaneDamage(DamageSource source) {

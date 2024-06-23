@@ -1,28 +1,22 @@
 package net.tslat.aoa3.content.item.weapon.maul;
 
-import com.google.common.collect.Multimap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.tslat.aoa3.common.registration.AoADataAttachments;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.*;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.ConcurrentModificationException;
 import java.util.List;
 
 public class ElectronMaul extends BaseMaul {
@@ -33,51 +27,45 @@ public class ElectronMaul extends BaseMaul {
 	@Override
 	public void inventoryTick(ItemStack stack, Level world, Entity entity, int itemSlot, boolean isSelected) {
 		if (world.getGameTime() % 10 == 0 && entity instanceof LivingEntity livingEntity) {
-			float damageScaling = stack.getData(AoADataAttachments.DAMAGE_SCALING);
+			float damageScaling = stack.getOrDefault(AoADataComponents.DAMAGE_SCALING, 0f);
 
-			try {
-				if (isSelected) {
-					float currentCalcBuff = getKnockbackMultiplier(entity);
+			if (isSelected) {
+				float currentCalcBuff = getKnockbackMultiplier(entity);
 
-					if (damageScaling != currentCalcBuff) {
-						livingEntity.getAttributes().removeAttributeModifiers(getAttributeModifiers(EquipmentSlot.MAINHAND, stack));
-						stack.setData(AoADataAttachments.DAMAGE_SCALING, currentCalcBuff);
-						livingEntity.getAttributes().addTransientAttributeModifiers(getAttributeModifiers(EquipmentSlot.MAINHAND, stack));
-					}
-				}
-				else if (damageScaling != 0 && livingEntity.getMainHandItem().isEmpty()) {
-					livingEntity.getAttributes().removeAttributeModifiers(getAttributeModifiers(EquipmentSlot.MAINHAND, stack));
-					stack.setData(AoADataAttachments.DAMAGE_SCALING, 0f);
+				if (damageScaling != currentCalcBuff) {
+					stack.set(AoADataComponents.DAMAGE_SCALING, currentCalcBuff);
+					livingEntity.getAttribute(Attributes.ATTACK_KNOCKBACK).addOrUpdateTransientModifier(getKnockbackModifier(damageScaling == 0 ? 1 : damageScaling));
 				}
 			}
-			catch (ConcurrentModificationException ex) {
-				// Don't really have a way of pre-empting this issue, and I hate this solution but idk what else I can do
+			else if (damageScaling != 0 && livingEntity.getMainHandItem().isEmpty()) {
+				livingEntity.getAttribute(Attributes.ATTACK_KNOCKBACK).addOrUpdateTransientModifier(getKnockbackModifier(1));
+				stack.set(AoADataComponents.DAMAGE_SCALING, 0f);
 			}
 		}
 	}
 
 	@Override
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-		float attackStr = player.getAttackStrengthScale(0.0f);
+		float attackStr = player.getAttackStrengthScale(0);
 
-		stack.setData(AoADataAttachments.MELEE_SWING_STRENGTH, attackStr);
-		EntityUtil.reapplyAttributeModifier(player, Attributes.ATTACK_KNOCKBACK, getKnockbackModifier(attackStr * getKnockbackMultiplier(player)), false);
+		stack.set(AoADataComponents.MELEE_SWING_STRENGTH, attackStr);
+		player.getAttribute(Attributes.ATTACK_KNOCKBACK).addOrUpdateTransientModifier(getKnockbackModifier(attackStr * getKnockbackMultiplier(player)));
 
 		return false;
 	}
 
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		doMeleeEffect(stack, target, attacker, stack.getData(AoADataAttachments.MELEE_SWING_STRENGTH));
+		doMeleeEffect(stack, target, attacker, stack.getOrDefault(AoADataComponents.MELEE_SWING_STRENGTH, 1f));
 		ItemUtil.damageItem(stack, attacker, InteractionHand.MAIN_HAND);
-		EntityUtil.reapplyAttributeModifier(attacker, Attributes.ATTACK_KNOCKBACK, getKnockbackModifier(1 * getKnockbackMultiplier(attacker)), false);
+		attacker.getAttribute(Attributes.ATTACK_KNOCKBACK).addOrUpdateTransientModifier(getKnockbackModifier(1 * getKnockbackMultiplier(attacker)));
 
 		return true;
 	}
 
 	@Override
 	protected void doMeleeEffect(ItemStack stack, Entity target, LivingEntity attacker, float attackCooldown) {
-		if (stack.getData(AoADataAttachments.DAMAGE_SCALING) > 0.75f)
+		if (stack.getOrDefault(AoADataComponents.DAMAGE_SCALING, 0f) > 0.75f)
 			WorldUtil.spawnLightning((ServerLevel)attacker.level(), (ServerPlayer)attacker, target.getX(), target.getY(), target.getZ(), false, false);
 
 		if (attacker instanceof ServerPlayer player) {
@@ -98,21 +86,8 @@ public class ElectronMaul extends BaseMaul {
 	}
 
 	@Override
-	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-		Multimap<Attribute, AttributeModifier> modifierMap = super.getAttributeModifiers(slot, stack);
-
-		if (slot == EquipmentSlot.MAINHAND) {
-			float damageScaling = stack.getData(AoADataAttachments.DAMAGE_SCALING);
-
-			ItemUtil.setAttribute(modifierMap, Attributes.ATTACK_KNOCKBACK, KNOCKBACK_MODIFIER_UUID, getBaseKnockback() * (damageScaling == 0 ? 1 : damageScaling));
-		}
-
-		return modifierMap;
-	}
-
-	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		super.appendHoverText(stack, context, tooltip, tooltipFlag);
 	}
 }

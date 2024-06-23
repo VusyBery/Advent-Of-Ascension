@@ -3,6 +3,7 @@ package net.tslat.aoa3.client.gui.adventgui;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -10,7 +11,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.achievement.StatsUpdateListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +24,8 @@ import net.tslat.aoa3.util.*;
 import org.jetbrains.annotations.Nullable;
 
 
-public class AdventMainGui extends Screen implements StatsUpdateListener {	
-	private static final ResourceLocation TITLE = HolidayUtil.isAprilFools() ? new ResourceLocation("aoa3", "textures/gui/adventgui/aoa_title_alt.png") : new ResourceLocation("aoa3", "textures/gui/adventgui/aoa_title.png");
+public class AdventMainGui extends Screen {
+	private static final ResourceLocation TITLE = HolidayUtil.isAprilFools() ? AdventOfAscension.id("textures/gui/adventgui/aoa_title_alt.png") : AdventOfAscension.id("textures/gui/adventgui/aoa_title.png");
 	protected static final int GUI_WIDTH = 1024;
 	protected static final int GUI_HEIGHT = 512;
 	protected static final int BACKGROUND_TEXTURE_WIDTH = 976;
@@ -74,20 +74,19 @@ public class AdventMainGui extends Screen implements StatsUpdateListener {
 	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		renderBackground(guiGraphics, mouseX, mouseY, partialTicks);
 
-		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-		RenderSystem.setShaderTexture(0, theme.backgroundTexture());
-
 		PoseStack poseStack = guiGraphics.pose();
 
 		poseStack.pushPose();
-		RenderSystem.setShaderColor(1, 1, 1, 1);
 		poseStack.scale(SCALE, SCALE, SCALE);
 
+		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+		RenderSystem.setShaderTexture(0, theme.backgroundTexture());
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 		RenderUtil.renderCustomSizedTexture(poseStack, scaledRootX, scaledRootY, 24, 16, BACKGROUND_TEXTURE_WIDTH, BACKGROUND_TEXTURE_HEIGHT, GUI_WIDTH, GUI_HEIGHT);
 		RenderSystem.setShaderTexture(0, TITLE);
 		RenderUtil.renderCustomSizedTexture(poseStack, scaledRootX - ((GUI_WIDTH - BACKGROUND_TEXTURE_WIDTH) / 2) + 68, scaledRootY - ((GUI_HEIGHT - BACKGROUND_TEXTURE_HEIGHT) / 2) + 21, 0, 0, 892, 112, 892, 112);
 
-		for(Renderable renderable : this.renderables) {
+		for (Renderable renderable : this.renderables) {
 			renderable.render(guiGraphics, mouseX, mouseY, partialTicks);
 		}
 
@@ -100,7 +99,14 @@ public class AdventMainGui extends Screen implements StatsUpdateListener {
 			RenderSystem.disableBlend();
 		}
 
-		RenderUtil.renderScaledText(poseStack, Component.literal("v" + AdventOfAscension.VERSION + " (1.20.4)"), scaledRootX + 175, scaledRootY + 85, 1.25f, ColourUtil.RGB(255, 223, 0), RenderUtil.TextRenderType.DROP_SHADOW);
+		if (HolidayUtil.isAnniversary()) {
+			RenderSystem.setShaderTexture(0, AdventOfAscension.id("textures/gui/adventgui/birthday.png"));
+			RenderSystem.enableBlend();
+			RenderUtil.renderCustomSizedTexture(poseStack, scaledRootX - ((GUI_WIDTH - BACKGROUND_TEXTURE_WIDTH) / 2) + 68, scaledRootY - ((GUI_HEIGHT - BACKGROUND_TEXTURE_HEIGHT) / 2) + 21, 0, 0, 42, 42, 42, 42);
+			RenderSystem.disableBlend();
+		}
+
+		RenderUtil.renderScaledText(poseStack, Component.literal("v" + AdventOfAscension.getVersion() + " (" + SharedConstants.getCurrentVersion().getName() + ")"), scaledRootX + 175, scaledRootY + 85, 1.25f, ColourUtil.RGB(255, 223, 0), RenderUtil.TextRenderType.DROP_SHADOW);
 
 		if (WebUtil.isUpdateAvailable()) {
 			updateMessageTicker--;
@@ -132,10 +138,9 @@ public class AdventMainGui extends Screen implements StatsUpdateListener {
 		return false;
 	}
 
-	@Override
 	public void onStatsUpdated() {
-		if (tabScreen instanceof StatsUpdateListener)
-			((StatsUpdateListener)tabScreen).onStatsUpdated();
+		if (tabScreen instanceof AdventGuiTabBestiary bestiary)
+			bestiary.onStatsUpdated();
 	}
 
 	protected enum ADVENT_WINDOW_TAB {

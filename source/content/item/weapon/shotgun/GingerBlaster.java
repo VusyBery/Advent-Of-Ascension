@@ -1,13 +1,14 @@
 package net.tslat.aoa3.content.item.weapon.shotgun;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 import net.tslat.aoa3.common.registration.AoASounds;
 import org.jetbrains.annotations.Nullable;
 
 
 public class GingerBlaster extends BaseShotgun {
-	public GingerBlaster(final float dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
-		super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
+	public GingerBlaster(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

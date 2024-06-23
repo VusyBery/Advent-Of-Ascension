@@ -2,13 +2,15 @@ package net.tslat.aoa3.client.model;
 
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.tslat.aoa3.common.registration.AoADataAttachments;
+import net.minecraft.world.item.component.ChargedProjectiles;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.common.registration.item.AoAWeapons;
@@ -78,7 +80,7 @@ public final class ModelProperties {
 				if (entity == null || entity.getUseItem() != stack)
 					return 0;
 
-				return ((BaseBow)stack.getItem()).getDrawSpeedMultiplier() * (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / 20.0F;
+				return ((BaseBow)stack.getItem()).getDrawSpeedMultiplier() * (float)(stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / 20.0F;
 			});
 			registerItemProperty(bow, "pulling", (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1 : 0);
 		}
@@ -90,20 +92,25 @@ public final class ModelProperties {
 				if (entity == null || CrossbowItem.isCharged(stack))
 					return 0;
 
-				return (float)(stack.getUseDuration() - entity.getUseItemRemainingTicks()) / (float)CrossbowItem.getChargeDuration(stack);
+				return (float)(stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / (float)CrossbowItem.getChargeDuration(stack, entity);
 			});
 			registerItemProperty(crossbow, "pulling", (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack && !CrossbowItem.isCharged(stack) ? 1 : 0);
 			registerItemProperty(crossbow, "charged", (stack, world, entity, seed) -> entity != null && CrossbowItem.isCharged(stack) ? 1 : 0);
-			registerItemProperty(crossbow, "firework", (stack, world, entity, seed) -> entity != null && CrossbowItem.isCharged(stack) && CrossbowItem.containsChargedProjectile(stack, Items.FIREWORK_ROCKET) ? 1.0F : 0.0F);
+			registerItemProperty(crossbow, "firework", (stack, world, entity, seed) -> {
+				ChargedProjectiles loadedProjectiles = stack.get(DataComponents.CHARGED_PROJECTILES);
+
+				return loadedProjectiles != null && loadedProjectiles.contains(Items.FIREWORK_ROCKET) ? 1 : 0;
+			});
+
 		}
 	}
 
 	private static void registerItemProperty(Item item, String propertyName, ItemPropertyFunction propertyProvider) {
-		ItemProperties.register(item, new ResourceLocation(propertyName), propertyProvider);
+		ItemProperties.register(item, ResourceLocation.read(propertyName).getOrThrow(), propertyProvider);
 	}
 
 	private static void registerExpFlask() {
-		registerItemProperty(AoATools.EXP_FLASK.get(), "filled", (stack, world, entity, seed) -> stack.getData(AoADataAttachments.CHARGE) <= 0 ? 0 : 1);
+		registerItemProperty(AoATools.EXP_FLASK.get(), "filled", (stack, world, entity, seed) -> stack.getOrDefault(AoADataComponents.CHARGE, 0f) <= 0 ? 0 : 1);
 	}
 
 	private static void registerParalyzer() {
@@ -121,7 +128,7 @@ public final class ModelProperties {
 	}
 
 	private static void registerGuardiansSword() {
-		registerItemProperty(AoAWeapons.GUARDIANS_SWORD.get(), "charged", (stack, world, entity, seed) -> stack.getData(AoADataAttachments.CHARGE) <= 0 ? 0 : 1);
+		registerItemProperty(AoAWeapons.GUARDIANS_SWORD.get(), "charged", (stack, world, entity, seed) -> stack.getOrDefault(AoADataComponents.CHARGE, 0f) <= 0 ? 0 : 1);
 	}
 
 	private static void registerRods() {

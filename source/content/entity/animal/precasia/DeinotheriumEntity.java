@@ -5,8 +5,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.schedule.Activity;
@@ -15,7 +19,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoAAnimals;
 import net.tslat.aoa3.content.entity.base.AoAAnimal;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
@@ -40,9 +44,9 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyPlayersSensor;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.RawAnimation;
 
 import java.util.List;
 import java.util.Map;
@@ -58,11 +62,6 @@ public class DeinotheriumEntity extends AoAAnimal<DeinotheriumEntity> {
 				new AoAEntityPart<>(this, 1, 1, 0, 1.9375f, getBbWidth() + 1.5f).setDamageMultiplier(1.25f),
 				new AoAEntityPart<>(this, getBbWidth(), 1.75f, 0, 1.3125f, -getBbWidth() * 0.5f).setDamageMultiplier(0.9f)
 		);
-	}
-
-	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-		return dimensions.height * 0.8f;
 	}
 
 	@Override
@@ -112,7 +111,7 @@ public class DeinotheriumEntity extends AoAAnimal<DeinotheriumEntity> {
 	@Override
 	public List<ExtendedSensor<? extends DeinotheriumEntity>> getSensors() {
 		return ObjectArrayList.of(
-				new ItemTemptingSensor<DeinotheriumEntity>().temptedWith((entity, stack) -> stack.getItem() == getTemptItem()),
+				new ItemTemptingSensor<DeinotheriumEntity>().temptedWith((entity, stack) -> isFood(stack)),
 				new NearbyPlayersSensor<>(),
 				new NearbyLivingEntitySensor<DeinotheriumEntity>().setScanRate(entity -> 40),
 				new HurtBySensor<>(),
@@ -128,7 +127,7 @@ public class DeinotheriumEntity extends AoAAnimal<DeinotheriumEntity> {
 				new FirstApplicableBehaviour<>(
 						new BreedWithPartner<>().startCondition(entity -> canBreed()),
 						new FixedFollowParent<>(),
-						new FollowTemptation<>().startCondition(entity -> getTemptItem() != null),
+						new FollowTemptation<>().startCondition(entity -> getTemptationTag() != null),
 						new OneRandomBehaviour<>(
 								new SequentialBehaviour<>(
 										new SetWalkTargetToBlock<>()
@@ -181,8 +180,8 @@ public class DeinotheriumEntity extends AoAAnimal<DeinotheriumEntity> {
 
 	@Nullable
 	@Override
-	protected Item getTemptItem() {
-		return AoABlocks.LUCALUS_LEAVES.get().asItem();
+	protected TagKey<Item> getFoodTag() {
+		return AoATags.Items.DEINOTHERIUM_FOOD;
 	}
 
 	@Override

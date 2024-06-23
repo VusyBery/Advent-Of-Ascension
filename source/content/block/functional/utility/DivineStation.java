@@ -2,7 +2,6 @@ package net.tslat.aoa3.content.block.functional.utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -18,9 +17,9 @@ public class DivineStation extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit) {
-		if (player instanceof ServerPlayer)
-			DivineStationMenu.openContainer((ServerPlayer)player, pos);
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		if (player instanceof ServerPlayer pl)
+			DivineStationMenu.openContainer(pl, pos);
 
 		return InteractionResult.SUCCESS;
 	}

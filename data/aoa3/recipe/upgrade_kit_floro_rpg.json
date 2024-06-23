@@ -1,0 +1,13 @@
+{
+  "type": "aoa3:upgrade_kit",
+  "input": {
+    "item": "aoa3:rpg"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:floro_rpg"
+  },
+  "upgrade_kit": {
+    "item": "aoa3:floro_upgrade_kit"
+  }
+}

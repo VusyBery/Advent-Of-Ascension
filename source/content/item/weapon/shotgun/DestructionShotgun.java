@@ -5,9 +5,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.entity.projectile.gun.LimoniteBulletEntity;
@@ -18,8 +18,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DestructionShotgun extends BaseShotgun {
-	public DestructionShotgun(final float dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
-		super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
+	public DestructionShotgun(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -35,7 +35,7 @@ public class DestructionShotgun extends BaseShotgun {
 		if (bullet == null)
 			return false;
 
-		int pellets = getPelletCount();
+		int pellets = getPelletCount(stack);
 		float spreadFactor = getSpreadFactor(shooter, stack, pellets);
 		boolean charged = RandomUtil.oneInNChance(5);
 
@@ -51,9 +51,9 @@ public class DestructionShotgun extends BaseShotgun {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

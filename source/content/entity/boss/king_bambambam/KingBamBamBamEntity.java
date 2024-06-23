@@ -5,8 +5,10 @@ import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -28,27 +30,25 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAExplosions;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.base.AoARangedAttacker;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
-import net.tslat.aoa3.content.entity.mob.nether.EmbrakeEntity;
-import net.tslat.aoa3.content.entity.mob.nether.LittleBamEntity;
+import net.tslat.aoa3.content.entity.monster.nether.EmbrakeEntity;
+import net.tslat.aoa3.content.entity.monster.nether.LittleBamEntity;
 import net.tslat.aoa3.content.entity.projectile.mob.BaseMobProjectile;
 import net.tslat.aoa3.content.entity.projectile.mob.StickyFireballEntity;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.library.object.TriFunction;
 import net.tslat.aoa3.library.object.explosion.StandardExplosion;
-import net.tslat.aoa3.util.DamageUtil;
-import net.tslat.aoa3.util.EntityUtil;
-import net.tslat.aoa3.util.PlayerUtil;
-import net.tslat.aoa3.util.PositionAndMotionUtil;
+import net.tslat.aoa3.util.*;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -70,16 +70,12 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3d;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 	public static final EntityDataHolder<Boolean> EXHAUSTED = EntityDataHolder.register(KingBamBamBamEntity.class, EntityDataSerializers.BOOLEAN, false, entity -> entity.exhausted, (entity, value) -> entity.exhausted = value);
@@ -111,6 +107,8 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 	private boolean staffCharged = false;
 	private int energy = 100;
 
+	public Vector3d orbPos = null;
+
 	public KingBamBamBamEntity(EntityType<? extends KingBamBamBamEntity> entityType, Level level) {
 		super(entityType, level);
 	}
@@ -123,17 +121,12 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		registerDataParams(EXHAUSTED);
-		registerDataParams(STAFF_CHARGED);
-		registerDataParams(ENERGY_LEVEL);
-	}
-
-	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
-		return 2.15625f;
+		registerDataParams(builder, EXHAUSTED);
+		registerDataParams(builder, STAFF_CHARGED);
+		registerDataParams(builder, ENERGY_LEVEL);
 	}
 
 	@Override
@@ -228,6 +221,18 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 	}
 
 	@Override
+	public void aiStep() {
+		super.aiStep();
+
+		if (!level().isClientSide && this.orbPos != null) {
+			ParticleBuilder.forPosition(ParticleTypes.FLAME, this.orbPos.x + getRandom().nextGaussian() * 0.1f, this.orbPos.y + getRandom().nextGaussian() * 0.1f, this.orbPos.z + getRandom().nextGaussian() * 0.1f)
+					.ignoreDistanceAndLimits()
+					.velocity(0, 0.05, 0)
+					.spawnParticles(level());
+		}
+	}
+
+	@Override
 	protected void customServerAiStep() {
 		super.customServerAiStep();
 
@@ -303,8 +308,8 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 
 	@Override
 	public void doRangedAttackEntity(@Nullable BaseMobProjectile projectile, Entity target) {
-		if (DamageUtil.doProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get())))
-			target.setSecondsOnFire((int)Math.ceil(Math.max(0, target.getRemainingFireTicks()) / 20f) + 2);
+		if (DamageUtil.doProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE)))
+			target.igniteForSeconds((int)Math.ceil(Math.max(0, target.getRemainingFireTicks()) / 20f) + 2);
 	}
 
 	@Override
@@ -471,7 +476,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 
 		@Nullable
 		private static LivingEntity summonLittleBam(AoABoss entity, Vec3 pos, @Nullable LivingEntity target) {
-			LittleBamEntity littleBam = new LittleBamEntity(AoAMobs.LITTLE_BAM.get(), entity.level()) {
+			LittleBamEntity littleBam = new LittleBamEntity(AoAMonsters.LITTLE_BAM.get(), entity.level()) {
 				private final AoABoss kingBamBamBam = entity;
 
 				@Override
@@ -493,7 +498,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 				}
 
 				@Override
-				protected void dropAllDeathLoot(DamageSource source) {
+				protected void dropAllDeathLoot(ServerLevel level, DamageSource source) {
 					for (int i = 0; i < 3; i++) {
 						createMagnetisedItemStack(entity, getEyePosition().add(0, 0.1f, 0), new Vec3(entity.rand().randomScaledGaussianValue(0.5f), 0.5f, entity.rand().randomScaledGaussianValue(0.5f)), entity.rand().getRandomSelection(LOOT_ITEMS));
 					}
@@ -510,7 +515,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 
 			littleBam.setTarget(target);
 			littleBam.setPos(pos);
-			littleBam.finalizeSpawn((ServerLevel)littleBam.level(), littleBam.level().getCurrentDifficultyAt(littleBam.blockPosition()), MobSpawnType.REINFORCEMENT, null, null);
+			EventHooks.finalizeMobSpawn(littleBam, (ServerLevel)littleBam.level(), littleBam.level().getCurrentDifficultyAt(littleBam.blockPosition()), MobSpawnType.REINFORCEMENT, null);
 
 			return entity.level().addFreshEntity(littleBam) ? littleBam : null;
 		}
@@ -539,7 +544,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 				}
 
 				@Override
-				protected void dropAllDeathLoot(DamageSource source) {
+				protected void dropAllDeathLoot(ServerLevel level, DamageSource source) {
 					for (int i = 0; i < 3; i++) {
 						createMagnetisedItemStack(entity, getEyePosition().add(0, 0.1f, 0), new Vec3(entity.rand().randomScaledGaussianValue(0.5f), 0.25f, entity.rand().randomScaledGaussianValue(0.5f)), entity.rand().getRandomSelection(LOOT_ITEMS));
 					}
@@ -556,14 +561,14 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 
 			piglin.setTarget(target);
 			piglin.setPos(pos);
-			piglin.finalizeSpawn((ServerLevel)piglin.level(), piglin.level().getCurrentDifficultyAt(piglin.blockPosition()), MobSpawnType.REINFORCEMENT, null, null);
+			EventHooks.finalizeMobSpawn(piglin, (ServerLevel)piglin.level(), piglin.level().getCurrentDifficultyAt(piglin.blockPosition()), MobSpawnType.REINFORCEMENT, null);
 
 			return entity.level().addFreshEntity(piglin) ? piglin : null;
 		}
 
 		@Nullable
 		private static LivingEntity summonEmbrake(AoABoss entity, Vec3 pos, @Nullable LivingEntity target) {
-			EmbrakeEntity embrake = new EmbrakeEntity(AoAMobs.EMBRAKE.get(), entity.level()) {
+			EmbrakeEntity embrake = new EmbrakeEntity(AoAMonsters.EMBRAKE.get(), entity.level()) {
 				private final AoABoss kingBamBamBam = entity;
 
 				@Override
@@ -585,7 +590,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 				}
 
 				@Override
-				protected void dropAllDeathLoot(DamageSource source) {
+				protected void dropAllDeathLoot(ServerLevel level, DamageSource source) {
 					for (int i = 0; i < 3; i++) {
 						createMagnetisedItemStack(entity, getEyePosition().add(0, 0.1f, 0), new Vec3(entity.rand().randomScaledGaussianValue(0.3f), 0.25f, entity.rand().randomScaledGaussianValue(0.3f)), entity.rand().getRandomSelection(LOOT_ITEMS));
 					}
@@ -602,7 +607,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 
 			embrake.setTarget(target);
 			embrake.setPos(pos);
-			embrake.finalizeSpawn((ServerLevel)embrake.level(), embrake.level().getCurrentDifficultyAt(embrake.blockPosition()), MobSpawnType.REINFORCEMENT, null, null);
+			EventHooks.finalizeMobSpawn(embrake, (ServerLevel)embrake.level(), embrake.level().getCurrentDifficultyAt(embrake.blockPosition()), MobSpawnType.REINFORCEMENT, null);
 
 			return entity.level().addFreshEntity(embrake) ? embrake : null;
 		}
@@ -610,7 +615,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 		private static void createMagnetisedItemStack(AoABoss boss, Vec3 pos, Vec3 velocity, Item item) {
 			ItemStack stack = item.getDefaultInstance();
 
-			stack.enchant(Enchantments.VANISHING_CURSE, 1);
+			EnchantmentUtil.addEnchantment(boss.level(), stack, Enchantments.VANISHING_CURSE);
 
 			ItemEntity itemEntity = new ItemEntity(boss.level(), pos.x, pos.y, pos.z, stack, velocity.x, velocity.y, velocity.z) {
 				private final AoABoss magnetisedTo = boss;
@@ -689,11 +694,11 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 			PIGLIN_BRUTE(AoASounds.ENTITY_KING_BAMBAMBAM_SUMMON_2, 30, SummonMinions::summonPiglinBrute),
 			EMBRAKE(AoASounds.ENTITY_KING_BAMBAMBAM_SUMMON_3, 40, SummonMinions::summonEmbrake);
 
-			private final Supplier<SoundEvent> summonSound;
+			private final Holder<SoundEvent> summonSound;
 			private final int energyCost;
 			private final TriFunction<AoABoss, Vec3, LivingEntity, LivingEntity> spawnFunction;
 
-			Variant(Supplier<SoundEvent> summonSound, int energyCost, TriFunction<AoABoss, Vec3, LivingEntity, LivingEntity> spawnFunction) {
+			Variant(Holder<SoundEvent> summonSound, int energyCost, TriFunction<AoABoss, Vec3, LivingEntity, LivingEntity> spawnFunction) {
 				this.summonSound = summonSound;
 				this.energyCost = energyCost;
 				this.spawnFunction = spawnFunction;

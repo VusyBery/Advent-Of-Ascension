@@ -2,8 +2,8 @@ package net.tslat.aoa3.client.model.entity.animal;
 
 import net.minecraft.util.Mth;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.content.entity.animal.MeganeuropsisEntity;
-import software.bernie.geckolib.core.animation.AnimationState;
+import net.tslat.aoa3.content.entity.monster.precasia.MeganeuropsisEntity;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public class MeganeuropsisModel extends DefaultedEntityGeoModel<MeganeuropsisEntity> {

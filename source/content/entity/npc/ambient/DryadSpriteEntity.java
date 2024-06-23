@@ -2,8 +2,8 @@ package net.tslat.aoa3.content.entity.npc.ambient;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
@@ -29,9 +29,9 @@ import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -50,18 +50,18 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		registerDataParams(VARIANT, OWNER, SUCCESS_TIMER);
+		registerDataParams(builder, VARIANT, OWNER, SUCCESS_TIMER);
 	}
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-		spawnData = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+		spawnData = super.finalizeSpawn(world, difficulty, reason, spawnData);
 
-		VARIANT.set(this, DryadSpriteVariant.getVariantForSpawn(world.getLevel(), difficulty, reason, this, Suppliers.memoize(() -> level().getBiome(blockPosition())), spawnData, dataTag));
+		VARIANT.set(this, DryadSpriteVariant.getVariantForSpawn(world.getLevel(), difficulty, reason, this, Suppliers.memoize(() -> level().getBiome(blockPosition())), spawnData));
 
 		return spawnData;
 	}
@@ -164,7 +164,7 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 
 				if (player != null) {
 					setLastHurtByPlayer(player);
-					dropAllDeathLoot(this.level().damageSources().playerAttack(player));
+					dropAllDeathLoot((ServerLevel)level(), level().damageSources().playerAttack(player));
 				}
 			});
 

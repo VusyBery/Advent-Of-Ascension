@@ -11,9 +11,9 @@ import net.tslat.aoa3.client.render.entity.layer.InvulnerabilityAuraRenderLayer;
 
 
 public class BaronessRenderer extends AoAMobRenderer {
-	private static final ResourceLocation TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/baroness/baroness.png");
-	private static final ResourceLocation INVULN_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/baroness/invulnerable_baroness.png");
-	private static final ResourceLocation AURA_TEXTURE = new ResourceLocation("aoa3", "textures/entity/misc/invulnerability_aura.png");
+	private static final ResourceLocation TEXTURE = AdventOfAscension.id("textures/entity/boss/baroness/baroness.png");
+	private static final ResourceLocation INVULN_TEXTURE = AdventOfAscension.id("textures/entity/boss/baroness/invulnerable_baroness.png");
+	private static final ResourceLocation AURA_TEXTURE = AdventOfAscension.id("textures/entity/misc/invulnerability_aura.png");
 
 	public BaronessRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new BaronessModel(0), AoAMobs.BARONESS.get().getWidth() / 3, 1f, TEXTURE);

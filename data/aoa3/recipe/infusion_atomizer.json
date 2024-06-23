@@ -1,0 +1,33 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:blaster_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:runic_energy"
+    },
+    {
+      "item": "aoa3:runic_energy"
+    },
+    {
+      "item": "aoa3:runic_energy"
+    },
+    {
+      "item": "aoa3:power_core"
+    },
+    {
+      "tag": "neoforge:ingots/elecanium"
+    },
+    {
+      "tag": "c:gems/diamond"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:atomizer"
+  }
+}

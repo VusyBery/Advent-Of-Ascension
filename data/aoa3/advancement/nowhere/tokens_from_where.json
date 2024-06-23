@@ -1,0 +1,36 @@
+{
+  "parent": "aoa3:nowhere/root",
+  "criteria": {
+    "obtain_archaic_token": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:archaic_token"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.nowhere.tokens_from_where.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "aoa3:archaic_token"
+    },
+    "title": {
+      "color": "dark_green",
+      "translate": "advancements.aoa3.nowhere.tokens_from_where.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_archaic_token"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

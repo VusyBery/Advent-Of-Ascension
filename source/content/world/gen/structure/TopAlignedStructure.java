@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.world.gen.structure;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -11,6 +11,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -24,9 +25,9 @@ import static net.tslat.aoa3.content.world.gen.structure.AoAStructure.Settings.a
 public class TopAlignedStructure extends AoAStructure {
 	protected int nextGenHeight = 0;
 
-	public static final Codec<TopAlignedStructure> CODEC = RecordCodecBuilder.<TopAlignedStructure>mapCodec(codec ->
+	public static final MapCodec<TopAlignedStructure> CODEC = RecordCodecBuilder.mapCodec(codec ->
 			codec.group(aoaSettings())
-					.apply(codec, TopAlignedStructure::new)).codec();
+					.apply(codec, TopAlignedStructure::new));
 
 	public TopAlignedStructure(Settings settings) {
 		super(settings);
@@ -43,14 +44,14 @@ public class TopAlignedStructure extends AoAStructure {
 		this.nextGenHeight = this.settings.startHeight().sample(genContext.random(), new WorldGenerationContext(genContext.chunkGenerator(), genContext.heightAccessor()));
 		BlockPos blockpos = new BlockPos(chunkpos.getMinBlockX(), this.nextGenHeight, chunkpos.getMinBlockZ());
 
-		return assembler.addPieces(genContext, this.settings.startPool(), this.settings.startJigsawName(), this.settings.maxPieces(), blockpos, this.settings.startHeightmap(), 128);
+		return assembler.addPieces(genContext, this.settings.startPool(), this.settings.startJigsawName(), this.settings.maxPieces(), blockpos, this.settings.startHeightmap(), 128, this.settings.liquidSettings());
 	}
 
 	@Override
 	protected AoAJigsawAssembler getJigsawAssembler() {
 		return new AoAJigsawAssembler() {
 			@Override
-			protected Optional<GenerationStub> buildGenerationStub(PoolElementStructurePiece startPiece, BoundingBox startPieceBounds, GenerationContext genContext, int startX, int startY, int startZ, int maxPieces, int maxRadius) {
+			protected Optional<GenerationStub> buildGenerationStub(PoolElementStructurePiece startPiece, BoundingBox startPieceBounds, GenerationContext genContext, int startX, int startY, int startZ, int maxPieces, int maxRadius, LiquidSettings liquidSettings) {
 				return Optional.of(new Structure.GenerationStub(getStartPos(startPiece, startX, startY, startZ), pieceBuilder -> {
 					List<PoolElementStructurePiece> pieces = new ObjectArrayList<>();
 
@@ -69,7 +70,8 @@ public class TopAlignedStructure extends AoAStructure {
 								pieces,
 								Shapes.join(
 										Shapes.create(new AABB(startX - maxRadius, -4000, startZ - maxRadius, startX + maxRadius + 1, 4000, startZ + maxRadius + 1)),
-										Shapes.create(AABB.of(startPieceBounds)), BooleanOp.ONLY_FIRST));
+										Shapes.create(AABB.of(startPieceBounds)), BooleanOp.ONLY_FIRST),
+								liquidSettings);
 						pieces.forEach(pieceBuilder::addPiece);
 					}
 

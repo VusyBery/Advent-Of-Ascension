@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "cookingtime": 100,
+  "experience": 3.0,
+  "ingredient": {
+    "item": "aoa3:charred_char"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:cooked_fish"
+  }
+}

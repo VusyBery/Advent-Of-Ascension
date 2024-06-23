@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.entity.animal;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
@@ -21,18 +22,16 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.IExtensibleEnum;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.entity.AoAAnimals;
 import net.tslat.aoa3.content.entity.ai.movehelper.RoamingSwimmingMovementController;
 import net.tslat.aoa3.content.entity.base.AoAAnimalOld;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.util.EntityUtil;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
 
 public class CorateeEntity extends AoAAnimalOld {
 	private static final EntityDataHolder<String> TYPE = EntityDataHolder.register(CorateeEntity.class, EntityDataSerializers.STRING, Type.DEFAULT.name, entity -> entity.type.name, (entity, value) -> entity.type = Type.fromString(value));
@@ -42,13 +41,13 @@ public class CorateeEntity extends AoAAnimalOld {
 	public CorateeEntity(EntityType<? extends Animal> entityType, Level world) {
 		super(entityType, world);
 
-		setPathfindingMalus(BlockPathTypes.WATER, 0.0F);
+		setPathfindingMalus(PathType.WATER, 0.0F);
 		this.moveControl = new RoamingSwimmingMovementController(this);
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 		//registerDataParams(TYPE);
 	}
@@ -71,7 +70,7 @@ public class CorateeEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 0.6875f;
 	}
 
@@ -106,21 +105,16 @@ public class CorateeEntity extends AoAAnimalOld {
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @org.jetbrains.annotations.Nullable SpawnGroupData spawnData, @org.jetbrains.annotations.Nullable CompoundTag dataTag) {
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
 		//TYPE.set(this, (RandomUtil.fiftyFifty() ? VeloraptorEntity.Type.BROWN : VeloraptorEntity.Type.GREEN).name);
 
-		return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+		return super.finalizeSpawn(world, difficulty, reason, spawnData);
 	}
 
 	@Nullable
 	@Override
 	public AgeableMob getBreedOffspring(ServerLevel world, AgeableMob partner) {
-		return new CorateeEntity(AoAAnimals.CORATEE.get(), this.level());
-	}
-
-	@Override
-	public MobType getMobType() {
-		return MobType.WATER;
+		return null;//new CorateeEntity(AoAAnimals.CORATEE.get(), this.level());
 	}
 
 	@Override
@@ -149,7 +143,7 @@ public class CorateeEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	public boolean canBeLeashed(Player player) {
+	public boolean canBeLeashed() {
 		return false;
 	}
 
@@ -196,7 +190,7 @@ public class CorateeEntity extends AoAAnimalOld {
 		controllers.add(DefaultAnimations.genericSwimIdleController(this));
 	}
 
-	public enum Type implements IExtensibleEnum {
+	public enum Type {
 		DEFAULT("default"),
 		OVERGROWN("overgrown");
 
@@ -212,11 +206,6 @@ public class CorateeEntity extends AoAAnimalOld {
 				case "overgrown" -> OVERGROWN;
 				default -> DEFAULT;
 			};
-		}
-
-		// Use this to create additional variants of Coratees if you're an addon creator
-		public static Type create(String name, String variant) {
-			throw new IllegalStateException("Enum not extended");
 		}
 	}
 }

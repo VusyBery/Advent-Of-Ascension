@@ -2,10 +2,11 @@ package net.tslat.aoa3.player.skill;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.PlayerUtil;
@@ -33,14 +34,15 @@ public class DexteritySkill extends AoASkill.Instance {
 	}
 
 	@Override
-	public void handlePlayerTick(TickEvent.PlayerTickEvent ev) {
-		if (!canGainXp(true) || ev.player.isPassenger())
+	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
+		if (!canGainXp(true) || ev.getEntity().isPassenger())
 			return;
 
-		Vec3 pos = ev.player.position();
+		final Player pl = ev.getEntity();
+		Vec3 pos = pl.position();
 
-		if (ev.player.isSprinting()) {
-			if (ev.player.onGround() || ev.player.isSwimming()) {
+		if (pl.isSprinting()) {
+			if (pl.onGround() || pl.isSwimming()) {
 				if (lastX != 0 && lastZ != 0) {
 					double distX = pos.x() - this.lastX;
 					double distZ = pos.z() - this.lastZ;
@@ -59,7 +61,7 @@ public class DexteritySkill extends AoASkill.Instance {
 			this.lastZ = 0;
 		}
 
-		if (ev.player.tickCount % 200 == 0) {
+		if (pl.tickCount % 200 == 0) {
 			if (cumulativeDistance > 0) {
 				cumulativeXp += PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 100) * Math.min(1.75f, (float)(cumulativeDistance / 56f));
 				cumulativeDistance = 0;
@@ -91,6 +93,6 @@ public class DexteritySkill extends AoASkill.Instance {
 		if (!canGainXp(true))
 			return;
 
-		cumulativeXp += ev.getDamageModifier() * PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 12);
+		cumulativeXp += ev.getDamageMultiplier() * PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 12);
 	}
 }

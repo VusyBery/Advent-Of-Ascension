@@ -8,24 +8,23 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
-import net.tslat.aoa3.common.registration.item.AoATiers;
 import net.tslat.aoa3.content.item.ChargeableItem;
-import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class EnergisticPickaxe extends BasePickaxe implements ChargeableItem {
-	public EnergisticPickaxe() {
-		super(AoATiers.ENERGISTIC, -2, AttackSpeed.PICKAXE);
+	public EnergisticPickaxe(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 	@Override
@@ -73,7 +72,7 @@ public class EnergisticPickaxe extends BasePickaxe implements ChargeableItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ENERGISTIC_TOOL_CHARGE, LocaleUtil.ItemDescriptionType.NEUTRAL));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ENERGISTIC_TOOL_STORED, LocaleUtil.ItemDescriptionType.NEUTRAL,  Component.literal(Integer.toString((int)getCharge(stack)))));

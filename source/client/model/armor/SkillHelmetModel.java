@@ -22,8 +22,8 @@ public class SkillHelmetModel extends Model implements HeadedModel {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		this.head.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack matrixStack, VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
+		this.head.render(matrixStack, buffer, packedLight, packedOverlay, colour);
 	}
 
 	@Override

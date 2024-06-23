@@ -19,7 +19,7 @@ public class GorbCitizenEntity extends AoAAmbientNPC {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.5f;
 	}
 

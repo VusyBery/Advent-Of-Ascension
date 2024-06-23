@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:ingots/shyrestone"
+    },
+    "B": {
+      "tag": "neoforge:gems/shyregem"
+    },
+    "C": {
+      "tag": "neoforge:rods/metal"
+    },
+    "D": {
+      "item": "minecraft:glowstone"
+    }
+  },
+  "pattern": [
+    " A ",
+    "BDB",
+    "ACA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:shyre_sword"
+  }
+}

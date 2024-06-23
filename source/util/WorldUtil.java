@@ -3,7 +3,6 @@ package net.tslat.aoa3.util;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -16,9 +15,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CommandBlock;
-import net.minecraft.world.level.block.JigsawBlock;
-import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
@@ -49,7 +45,7 @@ public final class WorldUtil {
 	}
 
 	public static Explosion createExplosion(@NotNull Entity exploder, Level world, float strength) {
-		return createExplosion(exploder, world, exploder.getX(), exploder.getY(), exploder.getZ(), strength, EventHooks.getMobGriefingEvent(world, exploder) ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE, false);
+		return createExplosion(exploder, world, exploder.getX(), exploder.getY(), exploder.getZ(), strength, EventHooks.canEntityGrief(world, exploder) ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE, false);
 	}
 
 	public static Explosion createExplosion(@Nullable Entity exploder, Level world, @NotNull Entity explodingEntity, float strength) {
@@ -63,7 +59,7 @@ public final class WorldUtil {
 				exploder = explodingEntity;
 
 			if (exploder instanceof LivingEntity || explodingEntity instanceof LivingEntity) {
-				doGriefing = EventHooks.getMobGriefingEvent(world, exploder);
+				doGriefing = EventHooks.canEntityGrief(world, exploder);
 			}
 			else {
 				doGriefing = AoAGameRules.checkDestructiveWeaponPhysics(world);
@@ -116,64 +112,47 @@ public final class WorldUtil {
 		world.addFreshEntity(lightning);
 	}
 
-	public static boolean harvestAdditionalBlock(Level world, Player pl, BlockPos breakPos, boolean forceDropsInCreative) {
-		BlockState blockState = world.getBlockState(breakPos);
+	public static boolean harvestAdditionalBlock(Level level, Player pl, BlockPos breakPos, boolean forceDropsInCreative) {
+		BlockState blockState = level.getBlockState(breakPos);
 		Block block = blockState.getBlock();
 
-		if (blockState.isAir() || !world.mayInteract(pl, breakPos))
+		if (blockState.isAir() || !level.mayInteract(pl, breakPos))
 			return false;
 
-		if (!world.isClientSide()) {
-			ServerPlayer player = (ServerPlayer)pl;
-			GameType gameMode = player.gameMode.getGameModeForPlayer();
-			int blockXp = CommonHooks.onBlockBreakEvent(world, gameMode, player, breakPos);
+		if (pl instanceof ServerPlayer serverPlayer) {
+			GameType gameMode = serverPlayer.gameMode.getGameModeForPlayer();
 
-			if (blockXp == -1)
+			if (CommonHooks.fireBlockBreak(level, gameMode, serverPlayer, breakPos, blockState).isCanceled())
 				return false;
 
-			BlockEntity blockEntity = world.getBlockEntity(breakPos);
-
-			if (!pl.canUseGameMasterBlocks() && (block instanceof CommandBlock || block instanceof StructureBlock || block instanceof JigsawBlock)) {
-				world.sendBlockUpdated(breakPos, blockState, blockState, Block.UPDATE_ALL);
-
-				return false;
-			}
-
-			if (pl.getMainHandItem().onBlockStartBreak(breakPos, pl) || pl.blockActionRestricted(world, breakPos, gameMode))
-				return false;
+			BlockEntity blockEntity = level.getBlockEntity(breakPos);
 
 			if (pl.isCreative()) {
-				boolean canHarvest = forceDropsInCreative && blockState.canHarvestBlock(world, breakPos, pl);
-				boolean removed = blockState.onDestroyedByPlayer(world, breakPos, player, false, world.getFluidState(breakPos));
+				boolean canHarvest = forceDropsInCreative && blockState.canHarvestBlock(level, breakPos, pl);
+				boolean removed = blockState.onDestroyedByPlayer(level, breakPos, serverPlayer, false, level.getFluidState(breakPos));
 
 				if (removed) {
-					blockState.getBlock().destroy(world, breakPos, blockState);
+					blockState.getBlock().destroy(level, breakPos, blockState);
 
 					if (canHarvest)
-						block.playerDestroy(world, pl, breakPos, blockState, blockEntity, pl.getMainHandItem().copy());
-
-					if (forceDropsInCreative && blockXp > 0)
-						blockState.getBlock().popExperience((ServerLevel)world, breakPos, blockXp);
+						block.playerDestroy(level, pl, breakPos, blockState, blockEntity, pl.getMainHandItem().copy());
 				}
 			}
 			else {
 				ItemStack toolStack = pl.getMainHandItem();
 				ItemStack toolStackCopy = toolStack.copy();
-				boolean canHarvest = blockState.canHarvestBlock(world, breakPos, pl);
+				boolean canHarvest = blockState.canHarvestBlock(level, breakPos, pl);
 
 				if (toolStack.isEmpty() && !toolStackCopy.isEmpty())
 					EventHooks.onPlayerDestroyItem(pl, toolStackCopy, InteractionHand.MAIN_HAND);
 
-				boolean removedBlock = blockState.onDestroyedByPlayer(world, breakPos, player, false, world.getFluidState(breakPos));
+				boolean removedBlock = blockState.onDestroyedByPlayer(level, breakPos, serverPlayer, false, level.getFluidState(breakPos));
 
 				if (removedBlock) {
-					blockState.getBlock().destroy(world, breakPos, blockState);
+					blockState.getBlock().destroy(level, breakPos, blockState);
 
 					if (canHarvest)
-						block.playerDestroy(world, pl, breakPos, blockState, blockEntity, toolStackCopy);
-
-					if (blockXp > 0)
-						blockState.getBlock().popExperience((ServerLevel)world, breakPos, blockXp);
+						block.playerDestroy(level, pl, breakPos, blockState, blockEntity, toolStackCopy);
 				}
 			}
 
@@ -265,7 +244,7 @@ public final class WorldUtil {
 				if (stack.isEmpty())
 					return false;
 
-				return stack.hasAdventureModePlaceTagForBlock(RegistryUtil.getRegistry(Registries.BLOCK), new BlockInWorld(activeWorld, pos, false));
+				return stack.canPlaceOnBlockInAdventureMode(new BlockInWorld(activeWorld, pos, false));
 			}
 		}
 
@@ -294,7 +273,7 @@ public final class WorldUtil {
 				if (stack.isEmpty())
 					return false;
 
-				return stack.hasAdventureModeBreakTagForBlock(RegistryUtil.getRegistry(Registries.BLOCK), new BlockInWorld(activeWorld, pos, false));
+				return stack.canBreakBlockInAdventureMode(new BlockInWorld(activeWorld, pos, false));
 			}
 		}
 

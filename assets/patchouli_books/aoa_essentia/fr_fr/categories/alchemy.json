@@ -1,6 +1,0 @@
-{
-  "parent": "aoa3:skills",
-  "description": "L'$(thing)Alchimie$() est une compétence qui tourne autour des liens alchimiques et des ingrédients.$(br2)Entraîner cette compétence permet d'accéder à de nouvelles recettes et à de nouveaux moyens de se servir de l'alchimie.",
-  "icon": "aoa3:textures/gui/aoaskill/alchemy.png",
-  "name": "Alchimie"
-}

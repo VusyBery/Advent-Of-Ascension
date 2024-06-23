@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "neoforge:ingots/mystite"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "aoa3:mystite_nugget"
+  }
+}

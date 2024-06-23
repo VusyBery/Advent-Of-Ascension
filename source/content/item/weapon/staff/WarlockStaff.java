@@ -1,5 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,8 +20,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class WarlockStaff extends BaseStaff<Boolean> {
-	public WarlockStaff(int durability) {
-		super(durability);
+	public WarlockStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -27,10 +30,11 @@ public class WarlockStaff extends BaseStaff<Boolean> {
 		return AoASounds.ITEM_SHADOW_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.POWER_RUNE.get(), 3);
-		runes.put(AoAItems.KINETIC_RUNE.get(), 2);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.POWER_RUNE.get(), 3);
+			runes.put(AoAItems.KINETIC_RUNE.get(), 2);
+		});
 	}
 
 	@Override
@@ -44,8 +48,8 @@ public class WarlockStaff extends BaseStaff<Boolean> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

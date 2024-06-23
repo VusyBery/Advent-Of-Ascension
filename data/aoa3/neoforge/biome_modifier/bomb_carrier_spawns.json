@@ -1,0 +1,25 @@
+{
+  "type": "aoa3:new_mob_spawn",
+  "biomes": {
+    "excluding": [
+      "#neoforge:no_mob_spawns",
+      "#c:is_snowy"
+    ],
+    "if_all": [
+      "#minecraft:is_overworld"
+    ],
+    "if_any": [
+      "minecraft:badlands",
+      "minecraft:eroded_badlands",
+      "#c:is_cave"
+    ]
+  },
+  "spawn": [
+    {
+      "type": "aoa3:bomb_carrier",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 10
+    }
+  ]
+}

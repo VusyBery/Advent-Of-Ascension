@@ -1,8 +1,6 @@
 package net.tslat.aoa3.player.ability.innervation;
 
 import com.google.gson.JsonObject;
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -10,18 +8,21 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Mob;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.event.TickEvent;
+import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.client.AoAKeybinds;
+import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.library.constant.ScreenImageEffect;
+import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
+
+import java.util.function.Consumer;
 
 public class InnervationMobLure extends AoAAbility.Instance {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.PLAYER_TICK, ListenerType.INCOMING_ATTACK_DURING};
@@ -59,16 +60,24 @@ public class InnervationMobLure extends AoAAbility.Instance {
 		return LISTENERS;
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	@Override
-	public KeyMapping getKeybind() {
-		return AoAKeybinds.ABILITY_ACTION;
-	}
+	public void createKeybindListener(Consumer<AoAPlayerKeybindListener> consumer) {
+		consumer.accept(new AoAPlayerKeybindListener() {
+			@Override
+			public AoAPlayerEventListener getEventListener() {
+				return InnervationMobLure.this;
+			}
 
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public boolean shouldSendKeyPress() {
-		return Minecraft.getInstance().player.isCrouching();
+			@Override
+			public int getKeycode() {
+				return AoAKeybinds.ABILITY_ACTION.getKey().getValue();
+			}
+
+			@Override
+			public boolean shouldSendKeyPress() {
+				return getPlayer().isCrouching();
+			}
+		});
 	}
 
 	@Override
@@ -84,21 +93,23 @@ public class InnervationMobLure extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handlePlayerTick(TickEvent.PlayerTickEvent ev) {
+	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (!isLuring)
 			return;
 
-		if (luringEntity == null || luringEntity.isDeadOrDying() || ev.player.isDeadOrDying() || !ev.player.isCrouching() || !skill.getPlayerDataManager().getResource(AoAResources.SPIRIT.get()).consume(this.perTickDrain, true)) {
+		final Player pl = ev.getEntity();
+
+		if (luringEntity == null || luringEntity.isDeadOrDying() || pl.isDeadOrDying() || !pl.isCrouching() || !skill.getPlayerDataManager().getResource(AoAResources.SPIRIT.get()).consume(this.perTickDrain, true)) {
 			resetLureState();
 
 			return;
 		}
 
-		if (ev.player.level().getGameTime() % 10 == 0 && ev.player instanceof ServerPlayer pl)
-			new ScreenImageEffect(ScreenImageEffect.Type.ACTION_KEY_VIGNETTE).fullscreen(true).duration(10).sendToPlayer(pl);
+		if (pl.level().getGameTime() % 10 == 0 && pl instanceof ServerPlayer serverPl)
+			new ScreenImageEffect(ScreenImageEffect.Type.ACTION_KEY_VIGNETTE).fullscreen(true).duration(10).sendToPlayer(serverPl);
 
-		if (luringEntity.getTarget() != ev.player)
-			luringEntity.setTarget(ev.player);
+		if (luringEntity.getTarget() != pl)
+			luringEntity.setTarget(pl);
 	}
 
 	@Override

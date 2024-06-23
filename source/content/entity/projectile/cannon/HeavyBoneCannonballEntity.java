@@ -28,7 +28,7 @@ public class HeavyBoneCannonballEntity extends BaseBullet implements HardProject
 	}
 
 	@Override
-	protected float getGravity() {
+	public double getDefaultGravity() {
 		return 0.1f;
 	}
 }

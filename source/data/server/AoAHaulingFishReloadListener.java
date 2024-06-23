@@ -95,7 +95,7 @@ public class AoAHaulingFishReloadListener extends SimpleJsonResourceReloadListen
 			JsonArray tagArray = json.getAsJsonArray("tags");
 
 			for (JsonElement element : tagArray) {
-				tags.add(TagKey.create(Registries.BIOME, new ResourceLocation(element.getAsString())));
+				tags.add(TagKey.create(Registries.BIOME, ResourceLocation.read(element.getAsString()).getOrThrow()));
 			}
 		}
 
@@ -103,7 +103,7 @@ public class AoAHaulingFishReloadListener extends SimpleJsonResourceReloadListen
 			JsonArray biomeArray = json.getAsJsonArray("biomes");
 
 			for (JsonElement element : biomeArray) {
-				biomes.add(ResourceKey.create(Registries.BIOME, new ResourceLocation(element.getAsString())));
+				biomes.add(ResourceKey.create(Registries.BIOME, ResourceLocation.read(element.getAsString()).getOrThrow()));
 			}
 		}
 
@@ -147,7 +147,7 @@ public class AoAHaulingFishReloadListener extends SimpleJsonResourceReloadListen
 				Function<Level, Entity> factory;
 
 				if (obj.has("item")) {
-					Item item = AoARegistries.ITEMS.getEntry(new ResourceLocation(obj.get("item").getAsString()));
+					Item item = AoARegistries.ITEMS.getEntry(ResourceLocation.read(obj.get("item").getAsString()).getOrThrow());
 
 					if (item == null)
 						continue;
@@ -167,7 +167,7 @@ public class AoAHaulingFishReloadListener extends SimpleJsonResourceReloadListen
 					};
 				}
 				else {
-					EntityType<?> entityType = AoARegistries.ENTITIES.getEntry(new ResourceLocation(obj.get("entity").getAsString()));
+					EntityType<?> entityType = AoARegistries.ENTITIES.getEntry(ResourceLocation.read(obj.get("entity").getAsString()).getOrThrow());
 
 					if (entityType == null)
 						continue;

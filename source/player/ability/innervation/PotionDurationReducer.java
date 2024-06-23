@@ -9,6 +9,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -50,11 +51,11 @@ public class PotionDurationReducer extends AoAAbility.Instance {
 			JsonElement effects = data.get("match_effects");
 
 			if (effects.isJsonPrimitive()) {
-				matchEffects.add(new ResourceLocation(effects.getAsString()));
+				matchEffects.add(ResourceLocation.read(effects.getAsString()).getOrThrow());
 			}
 			else if (effects.isJsonArray()) {
 				for (JsonElement element : effects.getAsJsonArray()) {
-					matchEffects.add(new ResourceLocation(element.getAsString()));
+					matchEffects.add(ResourceLocation.read(element.getAsString()).getOrThrow());
 				}
 			}
 
@@ -86,11 +87,11 @@ public class PotionDurationReducer extends AoAAbility.Instance {
 			Tag effects = data.get("match_effects");
 
 			if (effects.getType() == StringTag.TYPE) {
-				matchEffects.add(new ResourceLocation(effects.getAsString()));
+				matchEffects.add(ResourceLocation.read(effects.getAsString()).getOrThrow());
 			}
 			else if (effects.getType() == ListTag.TYPE) {
 				for (Tag element : ((ListTag)effects)) {
-					matchEffects.add(new ResourceLocation(element.getAsString()));
+					matchEffects.add(ResourceLocation.read(element.getAsString()).getOrThrow());
 				}
 			}
 
@@ -130,9 +131,9 @@ public class PotionDurationReducer extends AoAAbility.Instance {
 
 	private boolean effectMatches(MobEffectInstance effect) {
 		if (matchType != null)
-			return effect.getEffect().getCategory() == matchType;
+			return effect.getEffect().value().getCategory() == matchType;
 
-		return matchEffects.contains(RegistryUtil.getId(effect.getEffect()));
+		return matchEffects.contains(effect.getEffect().unwrapKey().map(ResourceKey::location).orElseGet(() -> RegistryUtil.getId(effect.getEffect().value())));
 	}
 
 	private void reduceEffectDuration(MobEffectInstance effect, Consumer<MobEffectInstance> modifier) {

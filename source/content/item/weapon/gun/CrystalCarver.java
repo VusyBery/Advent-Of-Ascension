@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.item.weapon.gun;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -8,8 +9,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class CrystalCarver extends BaseGun {
-	public CrystalCarver(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public CrystalCarver(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

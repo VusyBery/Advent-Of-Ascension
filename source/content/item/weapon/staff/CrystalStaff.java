@@ -1,5 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,13 +18,12 @@ import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class CrystalStaff extends BaseStaff<List<Player>> {
-	public CrystalStaff(int durability) {
-		super(durability);
+	public CrystalStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -37,10 +39,11 @@ public class CrystalStaff extends BaseStaff<List<Player>> {
 		return Optional.ofNullable(players.isEmpty() ? null : players);
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.DISTORTION_RUNE.get(), 2);
-		runes.put(AoAItems.LIFE_RUNE.get(), 5);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.DISTORTION_RUNE.get(), 2);
+			runes.put(AoAItems.LIFE_RUNE.get(), 5);
+		});
 	}
 
 	@Override
@@ -61,9 +64,9 @@ public class CrystalStaff extends BaseStaff<List<Player>> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 2));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

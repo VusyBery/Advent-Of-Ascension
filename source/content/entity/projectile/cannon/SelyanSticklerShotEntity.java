@@ -28,7 +28,7 @@ public class SelyanSticklerShotEntity extends BaseBullet implements HardProjecti
 	}
 
 	@Override
-	protected float getGravity() {
+	public double getDefaultGravity() {
 		return 0.015f;
 	}
 }

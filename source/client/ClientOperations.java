@@ -27,8 +27,9 @@ import net.tslat.aoa3.client.gui.realmstone.BlankRealmstoneScreen;
 import net.tslat.aoa3.client.render.entity.misc.OccultBlockRenderer;
 import net.tslat.aoa3.common.networking.packets.UpdateClientMovementPacket;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.entity.mob.greckon.SilencerEntity;
+import net.tslat.aoa3.content.entity.monster.greckon.SilencerEntity;
 import net.tslat.aoa3.content.item.misc.WornBook;
+import net.tslat.aoa3.content.item.tool.pickaxe.OccultPickaxe;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 
 import java.util.List;
@@ -47,7 +48,7 @@ public final class ClientOperations {
 		Player player = Minecraft.getInstance().player;
 		ItemStack bookStack = player.getMainHandItem().getItem() == AoAItems.WORN_BOOK.get() ? player.getMainHandItem() : player.getOffhandItem();
 
-		Minecraft.getInstance().setScreen(new BookViewScreen(new BookViewScreen.WrittenBookAccess(WornBook.getBook(bookStack))));
+		Minecraft.getInstance().setScreen(new BookViewScreen(BookViewScreen.BookAccess.fromItem(WornBook.makeBook())));
 	}
 
 	public static void displayBlankRealmstoneGui() {
@@ -58,7 +59,7 @@ public final class ClientOperations {
 		RecoilRenderer.addRecoil(recoil);
 	}
 
-	public static void addOccultBlocks(int renderUntil, List<OccultBlockRenderer.OccultBlock> blocks) {
+	public static void addOccultBlocks(int renderUntil, List<OccultPickaxe.LocatedBlock> blocks) {
 		OccultBlockRenderer.addOccultBlocks(renderUntil, blocks);
 	}
 
@@ -168,7 +169,7 @@ public final class ClientOperations {
 	}
 
 	public static void applyFluidRenderType(LiquidBlock liquid) {
-		ItemBlockRenderTypes.setRenderLayer(liquid.getFluid().getFlowing(), RenderType.translucent());
-		ItemBlockRenderTypes.setRenderLayer(liquid.getFluid().getSource(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(liquid.fluid.getFlowing(), RenderType.translucent());
+		ItemBlockRenderTypes.setRenderLayer(liquid.fluid.getSource(), RenderType.translucent());
 	}
 }

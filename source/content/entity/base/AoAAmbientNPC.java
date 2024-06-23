@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,8 +29,8 @@ import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 
@@ -42,8 +43,8 @@ public abstract class AoAAmbientNPC extends PathfinderMob implements Npc, GeoEnt
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 		if (this.dataParams == null)
 			this.dataParams = new EntityDataHolder<?>[0];
@@ -59,14 +60,14 @@ public abstract class AoAAmbientNPC extends PathfinderMob implements Npc, GeoEnt
 		}
 	}
 
-	protected final void registerDataParams(EntityDataHolder<?>... params) {
+	protected final void registerDataParams(SynchedEntityData.Builder builder, EntityDataHolder<?>... params) {
 		EntityDataHolder<?>[] newArray = new EntityDataHolder[this.dataParams.length + params.length];
 
 		System.arraycopy(this.dataParams, 0, newArray, 0, this.dataParams.length);
 		System.arraycopy(params, 0, newArray, this.dataParams.length, params.length);
 
 		for (EntityDataHolder<?> param : params) {
-			param.defineDefault(this);
+			param.defineDefault(builder);
 		}
 
 		this.dataParams = newArray;

@@ -7,11 +7,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -35,16 +38,16 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForgeMod;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoAAnimals;
-import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.base.AoAAnimal;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.brain.task.temp.FixedFollowParent;
 import net.tslat.aoa3.content.entity.brain.task.temp.SetRandomFlyingTarget;
 import net.tslat.aoa3.library.object.EntityDataHolder;
-import net.tslat.aoa3.util.EntityUtil;
+import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
@@ -55,16 +58,16 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarge
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.UUID;
 
 public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAnimal, OwnableEntity {
-	protected static final AttributeModifier EGG_HEALTH_MOD = new AttributeModifier(UUID.fromString("b8ccb450-74b3-44a9-9490-c71b329cb5fd"), "Baby Health Mod", -0.75f, AttributeModifier.Operation.MULTIPLY_TOTAL);
+	protected static final AttributeModifier EGG_HEALTH_MOD = new AttributeModifier(AdventOfAscension.id("baby_base_health"), -0.75f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 	public static final EntityDataHolder<Boolean> IS_EGG = EntityDataHolder.register(OpteryxEntity.class, EntityDataSerializers.BOOLEAN, false, entity -> entity.isEgg, (entity, value) -> entity.isEgg = value);
 	protected static final EntityDimensions EGG_DIMENSIONS = EntityDimensions.fixed(0.375f, 0.5f);
 	private static final RawAnimation TAKEOFF_ANIM = RawAnimation.begin().thenPlay("move.fly_start");
@@ -97,15 +100,15 @@ public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAni
 	}
 
 	@Override
-	public EntityDimensions getDimensions(Pose pPose) {
-		return isEgg() ? EGG_DIMENSIONS : super.getDimensions(pPose);
+	protected EntityDimensions getDefaultDimensions(Pose pose) {
+		return isEgg() ? EGG_DIMENSIONS : super.getDefaultDimensions(pose);
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		registerDataParams(IS_EGG);
+		registerDataParams(builder, IS_EGG);
 	}
 
 	@Override
@@ -131,7 +134,7 @@ public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAni
 				new BreedWithPartner<>().startCondition(entity -> canBreed() && !isVehicle()),
 				new FirstApplicableBehaviour<>(
 						new FixedFollowParent<>(),
-						new FollowTemptation<>().startCondition(entity -> getTemptItem() != null),
+						new FollowTemptation<>().startCondition(entity -> getTemptationTag() != null),
 						new OneRandomBehaviour<>(
 								new FirstApplicableBehaviour<>(
 										new SetRandomWalkTarget<OpteryxEntity>()
@@ -174,19 +177,15 @@ public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAni
 			super.pushEntities();
 	}
 
+	@Nullable
 	@Override
-	protected @Nullable Item getTemptItem() {
-		return AoAItems.RAW_GIANT_LIZARD_MEAT.get();
+	protected TagKey<Item> getFoodTag() {
+		return AoATags.Items.OPTERYX_FOOD;
 	}
 
 	@Override
 	public boolean isFood(ItemStack stack) {
-		return stack.isEdible() && stack.getFoodProperties(this).isMeat();
-	}
-
-	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-		return dimensions.height * 0.9f;
+		return stack.getFoodProperties(this) != null && stack.is(ItemTags.MEAT);
 	}
 
 	@Nullable
@@ -275,18 +274,16 @@ public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAni
 					}
 				}
 
-				setDeltaMovement(getDeltaMovement().multiply(0.25f, 1, 0.25f).subtract(0, getAttributeValue(NeoForgeMod.ENTITY_GRAVITY.value()), 0));
+				setDeltaMovement(getDeltaMovement().multiply(0.25f, 1, 0.25f).subtract(0, getAttributeValue(Attributes.GRAVITY), 0));
 				move(MoverType.SELF, getDeltaMovement());
-
-				if (!EntityUtil.hasAttributeModifier(this, Attributes.MAX_HEALTH, EGG_HEALTH_MOD))
-					EntityUtil.applyAttributeModifierSafely(this, Attributes.MAX_HEALTH, EGG_HEALTH_MOD, true);
+				AttributeUtil.applyPermanentModifier(this, Attributes.MAX_HEALTH, EGG_HEALTH_MOD, true);
 			}
-			else if (EntityUtil.hasAttributeModifier(this, Attributes.MAX_HEALTH, EGG_HEALTH_MOD)) {
-				EntityUtil.removeAttributeModifier(this, Attributes.MAX_HEALTH, EGG_HEALTH_MOD);
+			else {
+				AttributeUtil.removeModifier(this, Attributes.MAX_HEALTH, EGG_HEALTH_MOD);
 			}
 
 			if (isVehicle() && this.isFlying) {
-				setDeltaMovement(getDeltaMovement().subtract(0, getAttributeValue(NeoForgeMod.ENTITY_GRAVITY.value()) * 0.5f, 0));
+				setDeltaMovement(getDeltaMovement().subtract(0, getAttributeValue(Attributes.GRAVITY) * 0.5f, 0));
 			}
 		}
 	}
@@ -408,7 +405,7 @@ public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAni
 			ItemStack stack = player.getItemInHand(hand);
 
 			if (isFood(stack) && getHealth() < getMaxHealth()) {
-				heal(stack.getFoodProperties(this).getNutrition());
+				heal(stack.getFoodProperties(this).nutrition());
 
 				if (!player.getAbilities().instabuild)
 					stack.shrink(1);

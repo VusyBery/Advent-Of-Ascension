@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.item.misc;
 
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -19,27 +18,32 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.item.AoAWeapons;
-import net.tslat.aoa3.content.entity.mob.shyrelands.ArcwormEntity;
+import net.tslat.aoa3.content.entity.monster.shyrelands.ArcwormEntity;
 import net.tslat.aoa3.content.item.weapon.blaster.ExperimentW801;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.RegistryUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
 
-public class ReservedItem extends Item {
-	private final String sequenceId;
+public class ReservedItem extends Item implements SequenceVerifiedItem {
+	private final String sequenceName;
 
 	public ReservedItem(String sequenceName) {
-		super(new Item.Properties().rarity(Rarity.EPIC));
+		super(new Item.Properties().rarity(Rarity.EPIC).component(AoADataComponents.RESERVED_ITEM_STAGE, ""));
 
-		this.sequenceId = sequenceName;
+		this.sequenceName = sequenceName;
+	}
+
+	@Override
+	public String getSequenceName() {
+		return this.sequenceName;
 	}
 
 	@Override
@@ -109,28 +113,11 @@ public class ReservedItem extends Item {
 	}
 
 	public ItemStack newValidStack() {
-		ItemStack stack = new ItemStack(this);
-		CompoundTag tag = new CompoundTag();
+		ItemStack stack = getDefaultInstance();
 
-		tag.putBoolean(sequenceId, true);
-		stack.setTag(tag);
+		stack.set(AoADataComponents.RESERVED_ITEM_STAGE, this.sequenceName);
 
 		return stack;
-	}
-
-	private boolean verifyStack(ItemStack stack) {
-		if (stack.isEmpty())
-			return false;
-
-		if (!stack.hasTag())
-			return false;
-
-		CompoundTag tag = stack.getTag();
-
-		if (!tag.contains(sequenceId))
-			return false;
-
-		return tag.getBoolean(sequenceId);
 	}
 
 	public static void handlePlayerToss(ItemTossEvent ev) {
@@ -180,7 +167,7 @@ public class ReservedItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		if (stack.getItem() == AoAItems.ALIEN_ORB.get())
 			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 	}

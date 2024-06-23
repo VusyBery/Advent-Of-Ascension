@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.item.tool.misc;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -34,7 +35,6 @@ import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LootUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +45,7 @@ public class HaulingRod extends FishingRodItem {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack pStack) {
+	public int getUseDuration(ItemStack pStack, LivingEntity user) {
 		return 72000;
 	}
 
@@ -53,36 +53,36 @@ public class HaulingRod extends FishingRodItem {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 
-		if (!level.isClientSide()) {
-			if (player.fishing != null && player.fishing.level() == player.level()) {
-				if (player.fishing instanceof HaulingFishingBobberEntity) {
-					HaulingFishingBobberEntity bobber = (HaulingFishingBobberEntity)player.fishing;
+		if (player instanceof ServerPlayer pl) {
+			if (pl.fishing != null && pl.fishing.level() == pl.level()) {
+				if (pl.fishing instanceof HaulingFishingBobberEntity) {
+					HaulingFishingBobberEntity bobber = (HaulingFishingBobberEntity)pl.fishing;
 
 					if (bobber.getState() == HaulingFishingBobberEntity.State.HOOKED_FISH) {
-						reelIn((ServerPlayer)player, bobber, stack, hand);
-						player.startUsingItem(hand);
+						reelIn(pl, bobber, stack, hand);
+						pl.startUsingItem(hand);
 					}
 					else if (bobber.getState() == HaulingFishingBobberEntity.State.HOOKED_IN_ENTITY) {
-						landEntity(player, stack, hand, bobber);
-						player.startUsingItem(hand);
+						landEntity(pl, stack, hand, bobber);
+						pl.startUsingItem(hand);
 					}
 					else {
 						bobber.discard();
-						player.fishing = null;
+						pl.fishing = null;
 					}
 				}
 				else {
-					player.fishing.discard();
-					player.fishing = null;
+					pl.fishing.discard();
+					pl.fishing = null;
 				}
 			}
 			else {
-				HaulingFishingBobberEntity bobber = getNewBobber(player, stack, getLureMod(player, stack), getLuckMod(player, stack));
+				HaulingFishingBobberEntity bobber = getNewBobber(pl, stack, getLureMod(pl, stack), getLuckMod(pl, stack));
 
 				if (bobber != null) {
 					level.addFreshEntity(bobber);
-					player.awardStat(Stats.ITEM_USED.get(this));
-					playCastSound(player, bobber, stack);
+					pl.awardStat(Stats.ITEM_USED.get(this));
+					playCastSound(pl, bobber, stack);
 				}
 			}
 		}
@@ -177,29 +177,22 @@ public class HaulingRod extends FishingRodItem {
 		if (bobber.getState() == HaulingFishingBobberEntity.State.HOOKED_IN_ENTITY)
 			return Collections.emptyList();
 
-		ArrayList<ItemStack> loot = new ArrayList<ItemStack>();
-
-		if (hookedEntity instanceof ItemEntity) {
-			loot.add(((ItemEntity)hookedEntity).getItem());
-
-			return loot;
-		}
-		else if (hookedEntity instanceof LivingEntity livingEntity) {
-			loot.addAll(LootUtil.generateLoot(livingEntity.getLootTable(), new LootParams.Builder(player.serverLevel())
-					.withParameter(LootContextParams.ORIGIN, bobber.position())
-					.withParameter(LootContextParams.DAMAGE_SOURCE, killHaulingEntity(bobber, player, livingEntity))
-					.withParameter(LootContextParams.TOOL, stack)
-					.withParameter(LootContextParams.THIS_ENTITY, bobber)
-					.withParameter(LootContextParams.KILLER_ENTITY, player)
-					.withParameter(LootContextParams.DIRECT_KILLER_ENTITY, bobber)
-					.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
-					.withLuck(bobber.getLuck())
-					.create(LootContextParamSets.ENTITY)));
-
-			return loot;
-		}
-
-		return Collections.emptyList();
+		return switch (hookedEntity) {
+			case ItemEntity itemEntity -> ObjectArrayList.of(itemEntity.getItem());
+			case LivingEntity livingEntity -> {
+				yield ObjectArrayList.of(LootUtil.generateLoot(livingEntity.getLootTable(), new LootParams.Builder(player.serverLevel())
+						.withParameter(LootContextParams.ORIGIN, bobber.position())
+						.withParameter(LootContextParams.DAMAGE_SOURCE, killHaulingEntity(bobber, player, livingEntity))
+						.withParameter(LootContextParams.TOOL, stack)
+						.withParameter(LootContextParams.THIS_ENTITY, bobber)
+						.withParameter(LootContextParams.ATTACKING_ENTITY, player)
+						.withParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, bobber)
+						.withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
+						.withLuck(bobber.getLuck())
+						.create(LootContextParamSets.ENTITY)).toArray(new ItemStack[0]));
+			}
+			case null, default -> Collections.emptyList();
+		};
 	}
 
 	protected void handleLureRetrieval(ServerPlayer player, ItemStack stack, HaulingFishingBobberEntity bobber, Collection<ItemStack> loot) {
@@ -216,7 +209,7 @@ public class HaulingRod extends FishingRodItem {
 		player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.FISHING_BOBBER_THROW, SoundSource.NEUTRAL, 0.5f, 0.4f / (float)RandomUtil.randomValueBetween(0.8f, 1.2f));
 	}
 
-	protected HaulingFishingBobberEntity getNewBobber(Player player, ItemStack stack, int lureMod, int luckMod) {
+	protected HaulingFishingBobberEntity getNewBobber(Player player, ItemStack stack, float lureMod, float luckMod) {
 		return new HaulingFishingBobberEntity(player, player.level(), stack, luckMod, lureMod);
 	}
 
@@ -224,12 +217,12 @@ public class HaulingRod extends FishingRodItem {
 		return 1;
 	}
 
-	public int getLureMod(Player player, ItemStack stack) {
-		return EnchantmentHelper.getFishingSpeedBonus(stack);
+	public float getLureMod(ServerPlayer player, ItemStack stack) {
+		return EnchantmentHelper.getFishingTimeReduction(player.serverLevel(), stack, player);
 	}
 
-	public int getLuckMod(Player player, ItemStack stack) {
-		return EnchantmentHelper.getFishingLuckBonus(stack);
+	public int getLuckMod(ServerPlayer player, ItemStack stack) {
+		return EnchantmentHelper.getFishingLuckBonus(player.serverLevel(), stack, player);
 	}
 
 	private DamageSource killHaulingEntity(FishingHook bobber, Player player, LivingEntity target) {

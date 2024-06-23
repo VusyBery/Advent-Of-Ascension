@@ -1,5 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffects;
@@ -21,8 +24,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class CrystonStaff extends BaseStaff<Integer> {
-	public CrystonStaff(int durability) {
-		super(durability);
+	public CrystonStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -33,15 +36,16 @@ public class CrystonStaff extends BaseStaff<Integer> {
 
 	@Override
 	public Optional<Integer> checkPreconditions(LivingEntity caster, ItemStack staff) {
-		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 10, entity -> entity instanceof LivingEntity livingEntity && EntityUtil.Predicates.HOSTILE_MOB.test(livingEntity));
+		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 10, entity -> entity instanceof LivingEntity livingEntity && EntityUtil.isHostileMob(livingEntity));
 
 		return Optional.ofNullable(targets.isEmpty() ? null : targets.size());
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.DISTORTION_RUNE.get(), 2);
-		runes.put(AoAItems.ENERGY_RUNE.get(), 4);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.DISTORTION_RUNE.get(), 2);
+			runes.put(AoAItems.ENERGY_RUNE.get(), 4);
+		});
 	}
 
 	@Override
@@ -50,8 +54,8 @@ public class CrystonStaff extends BaseStaff<Integer> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

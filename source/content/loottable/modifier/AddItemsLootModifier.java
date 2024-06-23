@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.loottable.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.item.ItemStack;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class AddItemsLootModifier extends LootModifier {
-	public static final Codec<AddItemsLootModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).and(
+	public static final MapCodec<AddItemsLootModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).and(
 			ItemStack.CODEC.listOf().fieldOf("items").forGetter(instance -> instance.additionalStacks)
 	).apply(builder, AddItemsLootModifier::new));
 
@@ -26,7 +26,7 @@ public class AddItemsLootModifier extends LootModifier {
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 

@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:ingots/lyon"
+    },
+    "B": {
+      "tag": "c:rods/wooden"
+    },
+    "C": {
+      "item": "aoa3:enchanted_gunpowder"
+    },
+    "D": {
+      "tag": "neoforge:ingots/blazium"
+    },
+    "E": {
+      "tag": "c:gunpowders"
+    }
+  },
+  "pattern": [
+    "CDE",
+    " A ",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:explochron_sword"
+  }
+}

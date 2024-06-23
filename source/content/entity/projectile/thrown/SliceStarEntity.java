@@ -43,14 +43,14 @@ public class SliceStarEntity extends BaseBullet implements HardProjectile, ItemS
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.05f;
 	}
 
 	@Override
 	public void doEntityImpact(Entity target, Vec3 impactLocation) {
-		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.SLICE_STAR.get().getDamage()) && target instanceof LivingEntity livingEntity && RandomUtil.oneInNChance(10))
-			livingEntity.addEffect(new EffectBuilder(AoAMobEffects.BLEEDING.get(), 80).hideParticles().build());
+		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.SLICE_STAR.get().getGunDamage(getWeaponStack(AoAWeapons.SLICE_STAR.asItem()))) && target instanceof LivingEntity livingEntity && RandomUtil.oneInNChance(10))
+			livingEntity.addEffect(new EffectBuilder(AoAMobEffects.BLEEDING, 80).hideParticles().build());
 	}
 
 	@Override

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aoa3:balloon"
+    },
+    "B": {
+      "tag": "c:ingots/iron"
+    },
+    "C": {
+      "item": "aoa3:hardened_confetti_ball"
+    },
+    "D": {
+      "tag": "c:rods/wooden"
+    }
+  },
+  "pattern": [
+    "ABA",
+    " C ",
+    " D "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:goofy_pickaxe"
+  }
+}

@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
@@ -33,8 +34,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class SoulSpark extends BaseBlaster {
-	public SoulSpark(double dmg, int durability, int fireDelayTicks, float energyCost) {
-		super(dmg, durability, fireDelayTicks, 20, energyCost);
+	public SoulSpark(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -64,11 +65,11 @@ public class SoulSpark extends BaseBlaster {
 	}
 
 	@Override
-	public float getEnergyCost(ItemStack stack, @Nullable LivingEntity shooter, boolean forDisplay) {
+	public float getSpiritCost(ItemStack stack, @Nullable LivingEntity shooter, boolean forDisplay) {
 		if (forDisplay)
 			return 200;
 
-		return super.getEnergyCost(stack, shooter, forDisplay);
+		return super.getSpiritCost(stack, shooter, forDisplay);
 	}
 
 	@Override
@@ -81,7 +82,7 @@ public class SoulSpark extends BaseBlaster {
 		if (player.getAttackStrengthScale(0.0f) < 1)
 			return InteractionResults.ItemUse.denyUsage(stack);
 
-		final float energyCost = getEnergyCost(stack, player, true);
+		final float energyCost = getSpiritCost(stack, player, true);
 
 		if (player.getAbilities().instabuild || PlayerUtil.getResourceValue(player, AoAResources.SPIRIT.get()) >= energyCost) {
 			player.startUsingItem(hand);
@@ -103,7 +104,7 @@ public class SoulSpark extends BaseBlaster {
 
 	@Override
 	public boolean doEntityImpact(ServerLevel level, LivingEntity shooter, ItemStack stack, ShotInfo shotInfo, EntityHitResult rayTrace) {
-		if (!EntityUtil.isImmuneToSpecialAttacks(rayTrace.getEntity(), shooter)) {
+		if (!EntityUtil.isImmuneToSpecialAttacks(rayTrace.getEntity())) {
 			if (shooter instanceof ServerPlayer player && !player.getAbilities().instabuild) {
 				if (PlayerUtil.consumeResource(player, AoAResources.SPIRIT.get(), 200, false)) {
 					InteractionHand hand = player.getUsedItemHand();
@@ -151,7 +152,7 @@ public class SoulSpark extends BaseBlaster {
 
 	@Override
 	public void onUseTick(Level level, LivingEntity shooter, ItemStack stack, int count) {
-		if (getUseDuration(stack) - count < getChargeTime(stack) - 2)
+		if (getUseDuration(stack, shooter) - count < getChargeTime(stack) - 2)
 			return;
 
 		if (level instanceof ServerLevel serverLevel) {
@@ -162,8 +163,8 @@ public class SoulSpark extends BaseBlaster {
 					if (player != null) {
 						player.awardStat(Stats.ITEM_USED.get(this));
 
-						if (getFiringDelay() > 1)
-							player.getCooldowns().addCooldown(this, getFiringDelay());
+						if (getTicksBetweenShots(stack) > 1)
+							player.getCooldowns().addCooldown(this, getTicksBetweenShots(stack));
 					}
 				}
 				else {
@@ -199,10 +200,10 @@ public class SoulSpark extends BaseBlaster {
 	public void releaseUsing(ItemStack stack, Level world, LivingEntity player, int useTicksRemaining) {}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SPEC_IMMUNE, LocaleUtil.ItemDescriptionType.HARMFUL));
 
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

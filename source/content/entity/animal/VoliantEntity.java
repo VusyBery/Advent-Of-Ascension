@@ -35,7 +35,7 @@ public class VoliantEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 3.875f;
 	}
 

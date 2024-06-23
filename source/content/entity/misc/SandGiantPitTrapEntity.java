@@ -9,14 +9,14 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.library.builder.EntityPredicate;
 import net.tslat.effectslib.api.util.EffectBuilder;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimatableManager;
 
 public class SandGiantPitTrapEntity extends BasicMiscEntity {
-	private static final EntityPredicate<LivingEntity> damagePredicate = new EntityPredicate<LivingEntity>().isAlive().isSubtypeOf(LivingEntity.class).isNot(AoAMobs.SAND_GIANT.get()).isDamageable();
+	private static final EntityPredicate<LivingEntity> damagePredicate = new EntityPredicate<LivingEntity>().isAlive().isSubtypeOf(LivingEntity.class).isNot(AoAMonsters.SAND_GIANT.get()).isDamageable();
 
 	public SandGiantPitTrapEntity(EntityType<?> entityType, Level level) {
 		super(entityType, level);

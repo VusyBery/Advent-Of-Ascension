@@ -5,7 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -26,28 +26,29 @@ public class ClunkheadAltar extends BossAltarBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		ItemStack heldItem = player.getItemInHand(hand);
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (getActivationItem() != null && stack.getItem() != getActivationItem())
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-		if (getActivationItem() != null && heldItem.getItem() != getActivationItem())
-			return InteractionResult.PASS;
+		if (level.getDifficulty() == Difficulty.PEACEFUL) {
+			if (!level.isClientSide)
+				PlayerUtil.notifyPlayer(player, Component.translatable(LocaleUtil.createFeedbackLocaleKey("spawnBoss.difficultyFail")));
+
+			return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+		}
 
 		if (player instanceof ServerPlayer) {
-			if (getActivationItem() == null || (heldItem.getItem() == getActivationItem())) {
-				if (world.getDifficulty() == Difficulty.PEACEFUL) {
-					PlayerUtil.notifyPlayer(player, Component.translatable(LocaleUtil.createFeedbackLocaleKey("spawnBoss.difficultyFail")));
-					return InteractionResult.FAIL;
-				}
-				else if (checkActivationConditions(player, hand, state, pos)) {
-					if (!player.isCreative())
-						ItemUtil.damageItem(heldItem, player, hand);
+			if (getActivationItem() == null || stack.getItem() == getActivationItem()) {
+				if (checkActivationConditions(player, hand, state, pos)) {
+					if (!player.getAbilities().instabuild)
+						ItemUtil.damageItem(stack, player, hand);
 
 					doActivationEffect(player, hand, state, pos);
 				}
 			}
 		}
 
-		return InteractionResult.SUCCESS;
+		return ItemInteractionResult.sidedSuccess(level.isClientSide);
 	}
 
 	@Override

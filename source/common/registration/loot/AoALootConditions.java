@@ -1,6 +1,6 @@
 package net.tslat.aoa3.common.registration.loot;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -17,7 +17,7 @@ public final class AoALootConditions {
 	public static final DeferredHolder<LootItemConditionType, LootItemConditionType> IS_HOSTILE_ENTITY = register("is_hostile_entity", IsHostileEntity.CODEC);
 	public static final DeferredHolder<LootItemConditionType, LootItemConditionType> IS_BABY = register("is_baby", IsBaby.CODEC);
 
-	private static DeferredHolder<LootItemConditionType, LootItemConditionType> register(String id, Codec<? extends LootItemCondition> codec) {
+	private static DeferredHolder<LootItemConditionType, LootItemConditionType> register(String id, MapCodec<? extends LootItemCondition> codec) {
 		return AoARegistries.LOOT_CONDITIONS.register(id, () -> new LootItemConditionType(codec));
 	}
 }

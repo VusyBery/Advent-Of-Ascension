@@ -48,15 +48,15 @@ public class RockRiderEntity extends AoAMeleeMob<RockRiderEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 3.0625f;
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		this.entityData.define(ALTERNATE_FORM, false);
+		builder.define(ALTERNATE_FORM, false);
 	}
 
 	@Nullable
@@ -78,7 +78,7 @@ public class RockRiderEntity extends AoAMeleeMob<RockRiderEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

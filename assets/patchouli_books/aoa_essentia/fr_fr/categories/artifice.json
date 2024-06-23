@@ -1,6 +1,0 @@
-{
-  "parent": "aoa3:skills",
-  "description": "L'$(thing)Artifice$() est une compétence qui permet de fabriquer des outils et des gadgets pour simplifier différents aspects du jeu.$(br2)Entraîner l'$(thing)Artifice$() permet de créer de nouveaux gadgets et d'améliorer ceux déjà construits.",
-  "icon": "aoa3:textures/gui/aoaskill/artifice.png",
-  "name": "Artifice"
-}

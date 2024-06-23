@@ -1,13 +1,14 @@
 package net.tslat.aoa3.content.item.weapon.gun;
 
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 import net.tslat.aoa3.common.registration.AoASounds;
 import org.jetbrains.annotations.Nullable;
 
 
 public class Stampede extends BaseGun {
-	public Stampede(final float dmg, final int durability, final int firingDelayTicks, final float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public Stampede(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

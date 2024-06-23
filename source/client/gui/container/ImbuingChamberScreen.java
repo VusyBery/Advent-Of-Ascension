@@ -9,17 +9,19 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.common.menu.ImbuingChamberMenu;
 import net.tslat.aoa3.content.item.misc.AspectFocusItem;
 import net.tslat.aoa3.content.item.misc.PowerStone;
 import net.tslat.aoa3.util.ColourUtil;
+import net.tslat.aoa3.util.EnchantmentUtil;
 import net.tslat.aoa3.util.RenderUtil;
 
 import java.util.List;
 
 public class ImbuingChamberScreen extends AbstractContainerScreen<ImbuingChamberMenu> {
-	private static final ResourceLocation TEXTURES = new ResourceLocation("aoa3", "textures/gui/containers/imbuing_chamber.png");
+	private static final ResourceLocation TEXTURES = AdventOfAscension.id("textures/gui/containers/imbuing_chamber.png");
 
 	public ImbuingChamberScreen(ImbuingChamberMenu container, Inventory inv, Component guiTitle) {
 		super(container, inv, guiTitle);
@@ -61,7 +63,7 @@ public class ImbuingChamberScreen extends AbstractContainerScreen<ImbuingChamber
 			RenderUtil.renderCustomSizedTexture(guiGraphics.pose(), this.leftPos + 138, this.topPos + 34, 4, 170, 18, 18, 256, 256);
 
 			((ImbuingChamberMenu.ImbuingResultSlot)getMenu().getOutputSlot()).getCurrentRecipe().ifPresent(recipe -> {
-				final Component enchant = recipe.getEnchant().left().getFullname(recipe.getEnchant().rightInt());
+				final Component enchant = EnchantmentUtil.getFormattedName(recipe.getEnchant().left(), recipe.getEnchant().rightInt());
 
 				RenderUtil.drawRectangle(guiGraphics.pose(), this.leftPos + 16, this.topPos + 59, Minecraft.getInstance().font.width(enchant) + 1, 10, 0xCC000000);
 				RenderUtil.renderText(guiGraphics.pose(), enchant, this.leftPos + 17, this.topPos + 60, 0xB2B2B2, RenderUtil.TextRenderType.NORMAL);

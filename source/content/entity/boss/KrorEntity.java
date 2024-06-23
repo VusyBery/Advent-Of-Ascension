@@ -35,7 +35,7 @@ public class KrorEntity extends AoAMeleeMob<KrorEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 3.28125f;
 	}
 
@@ -64,7 +64,7 @@ public class KrorEntity extends AoAMeleeMob<KrorEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

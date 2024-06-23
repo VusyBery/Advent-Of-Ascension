@@ -3,7 +3,6 @@ package net.tslat.aoa3.content.entity.base;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -25,6 +24,7 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
@@ -37,11 +37,12 @@ import net.tslat.aoa3.content.entity.ai.trader.TraderRestockGoal;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 public abstract class AoATrader extends Villager implements GeoEntity {
@@ -68,8 +69,8 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-		SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+		SpawnGroupData data = super.finalizeSpawn(world, difficulty, reason, spawnData);
 
 		setVillagerData(getVillagerData().setProfession(AoAProfessions.WANDERER.get()));
 
@@ -209,7 +210,7 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 		setRemainingFireTicks(getRemainingFireTicks() + 1);
 
 		if (getRemainingFireTicks() == 0)
-			setSecondsOnFire(8);
+			igniteForSeconds(8);
 
 		hurt(level().damageSources().lightningBolt(), 5.0F);
 	}
@@ -231,8 +232,8 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 
 				getCombatTracker().recheckStatus();
 
-				if (this.level() instanceof ServerLevel) {
-					dropAllDeathLoot(cause);
+				if (this.level() instanceof ServerLevel level) {
+					dropAllDeathLoot(level, cause);
 					createWitherRose(killer);
 				}
 
@@ -263,9 +264,9 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 
 	public static class BuildableTrade implements VillagerTrades.ItemListing {
 		private final Supplier<ItemStack> item;
-		private Supplier<ItemStack> cost1 = null;
+		private Supplier<ItemCost> cost1 = null;
 		@Nullable
-		private Supplier<ItemStack> cost2 = null;
+		private Supplier<ItemCost> cost2 = null;
 
 		private int xpValue = 2;
 		private float priceMultiplier = 0.05f;
@@ -310,10 +311,18 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 
 		public BuildableTrade stackCost(Supplier<ItemStack> cost) {
 			if (this.cost1 == null) {
-				this.cost1 = cost;
+				this.cost1 = () -> {
+					final ItemStack baseCost = cost.get();
+
+					return new ItemCost(baseCost.getItem(), baseCost.getCount());
+				};
 			}
 			else if (this.cost2 == null) {
-				this.cost2 = cost;
+				this.cost2 = () -> {
+					final ItemStack baseCost = cost.get();
+
+					return new ItemCost(baseCost.getItem(), baseCost.getCount());
+				};
 			}
 
 			return this;
@@ -343,7 +352,7 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 			MerchantOffer offer;
 
 			if (cost2 != null) {
-				offer = new MerchantOffer(cost1.get(), cost2.get(), item.get(), maxUses, xpValue, priceMultiplier);
+				offer = new MerchantOffer(cost1.get(), Optional.of(cost2.get()), item.get(), maxUses, xpValue, priceMultiplier);
 			}
 			else if (cost1 != null) {
 				offer = new MerchantOffer(cost1.get(), item.get(), maxUses, xpValue, priceMultiplier);

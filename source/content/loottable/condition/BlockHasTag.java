@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.loottable.condition;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 public record BlockHasTag(List<TagKey<Block>> tags, boolean requireAll) implements LootItemCondition {
-	public static final Codec<BlockHasTag> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+	public static final MapCodec<BlockHasTag> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
 			TagKey.codec(Registries.BLOCK).listOf().fieldOf("tags").forGetter(BlockHasTag::tags),
 			Codec.BOOL.optionalFieldOf("require_all", false).forGetter(BlockHasTag::requireAll))
 			.apply(builder, BlockHasTag::new));

@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.world.gen.feature.tree.trunkplacer;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -20,7 +20,7 @@ import java.util.OptionalInt;
 import java.util.function.BiConsumer;
 
 public class BaobabTrunkPlacer extends AoATrunkPlacer {
-	public static final Codec<BaobabTrunkPlacer> CODEC = RecordCodecBuilder.create(builder ->
+	public static final MapCodec<BaobabTrunkPlacer> CODEC = RecordCodecBuilder.mapCodec(builder ->
 			heightValues(builder).apply(builder, BaobabTrunkPlacer::new));
 
 	public BaobabTrunkPlacer(final IntProvider baseHeight, final IntProvider additionalHeight) {

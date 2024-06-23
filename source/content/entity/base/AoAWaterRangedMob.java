@@ -34,8 +34,8 @@ import net.tslat.aoa3.content.entity.projectile.mob.BaseMobProjectile;
 import net.tslat.aoa3.util.DamageUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 
@@ -60,9 +60,9 @@ public abstract class AoAWaterRangedMob extends WaterAnimal implements RangedAtt
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		getEntityData().define(INVULNERABLE, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(INVULNERABLE, false);
 	}
 
 	@Override
@@ -72,14 +72,14 @@ public abstract class AoAWaterRangedMob extends WaterAnimal implements RangedAtt
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-		xpReward = reason == MobSpawnType.MOB_SUMMONED ? 0 : (int)(5 + (getAttributeValue(Attributes.MAX_HEALTH) + getAttributeValue(Attributes.ARMOR) * 1.75f + getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()) * 2) / 10f);
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
+		xpReward = reason == MobSpawnType.MOB_SUMMONED ? 0 : (int)(5 + (getAttributeValue(Attributes.MAX_HEALTH) + getAttributeValue(Attributes.ARMOR) * 1.75f + getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE) * 2) / 10f);
 
-		return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+		return super.finalizeSpawn(world, difficulty, reason, spawnData);
 	}
 
 	@Override
-	protected abstract float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn);
+	public abstract float getEyeHeightAccess(Pose pose);
 
 	@Nullable
 	@Override
@@ -161,10 +161,10 @@ public abstract class AoAWaterRangedMob extends WaterAnimal implements RangedAtt
 	@Override
 	public void doRangedAttackEntity(BaseMobProjectile projectile, Entity target) {
 		boolean success = switch (projectile.getProjectileType()) {
-			case MAGIC -> DamageUtil.doMagicProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
-			case GUN -> DamageUtil.doGunAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
-			case PHYSICAL -> DamageUtil.doProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
-			case ENERGY -> DamageUtil.doEnergyProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
+			case MAGIC -> DamageUtil.doMagicProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
+			case GUN -> DamageUtil.doGunAttack(this, projectile, target, source -> (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
+			case PHYSICAL -> DamageUtil.doProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
+			case ENERGY -> DamageUtil.doEnergyProjectileAttack(this, projectile, target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
 		};
 
 		if (success)

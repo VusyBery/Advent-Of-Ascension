@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:campfire_cooking",
+  "category": "food",
+  "cookingtime": 600,
+  "experience": 3.0,
+  "ingredient": {
+    "item": "aoa3:parapiranha"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:hardened_parapiranha"
+  }
+}

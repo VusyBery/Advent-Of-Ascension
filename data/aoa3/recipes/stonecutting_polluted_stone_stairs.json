@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 1,
-  "ingredient": {
-    "item": "aoa3:polluted_stone"
-  },
-  "result": "aoa3:polluted_stone_stairs"
-}

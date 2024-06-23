@@ -12,14 +12,14 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 public class ToxicWasteRenderProperties implements IClientFluidTypeExtensions {
-	public static final ResourceLocation OVERLAY = new ResourceLocation(AdventOfAscension.MOD_ID, "block/toxic_waste_overlay");
-	public static final ResourceLocation UNDERWATER = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/block/toxic_waste_overlay.png");
-	public static final ResourceLocation FLOWING = new ResourceLocation(AdventOfAscension.MOD_ID, "block/toxic_waste_flow");
-	public static final ResourceLocation STILL = new ResourceLocation(AdventOfAscension.MOD_ID, "block/toxic_waste_still");
+	public static final ResourceLocation OVERLAY = AdventOfAscension.id("block/toxic_waste_overlay");
+	public static final ResourceLocation UNDERWATER = AdventOfAscension.id("textures/block/toxic_waste_overlay.png");
+	public static final ResourceLocation FLOWING = AdventOfAscension.id("block/toxic_waste_flow");
+	public static final ResourceLocation STILL = AdventOfAscension.id("block/toxic_waste_still");
 
 	@Override
 	public int getTintColor() {
-		return ColourUtil.RGBA(38, 42, 23, 255);
+		return ColourUtil.ARGB(38, 42, 23, 255);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class ToxicWasteRenderProperties implements IClientFluidTypeExtensions {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderTexture(0, getRenderOverlayTexture(mc));
 
-		BufferBuilder buffer = Tesselator.getInstance().getBuilder();
+		BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 		float uOffset = mc.player.getYRot() / 512f + (mc.player.tickCount / 1800f);
 		float vOffset = mc.player.getXRot() / 1024f + (mc.player.tickCount / 3600f);
 		Matrix4f matrixStack = stack.last().pose();
@@ -56,12 +56,11 @@ public class ToxicWasteRenderProperties implements IClientFluidTypeExtensions {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShaderColor(0.5f, 0.5f, 0.5f, 0.5f);
-		buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
-		buffer.vertex(matrixStack, -1.0F, -1.0F, -0.5F).uv(uOffset, 1 + vOffset).normal(0.0F, 1.0F, 0.0F).endVertex();
-		buffer.vertex(matrixStack, 1.0F, -1.0F, -0.5F).uv(1 + uOffset, 1 + vOffset).normal(0.0F, 1.0F, 0.0F).endVertex();
-		buffer.vertex(matrixStack, 1.0F, 1.0F, -0.5F).uv(1 + uOffset, vOffset).normal(0.0F, 1.0F, 0.0F).endVertex();
-		buffer.vertex(matrixStack, -1.0F, 1.0F, -0.5F).uv(uOffset, vOffset).normal(0.0F, 1.0F, 0.0F).endVertex();
-		BufferUploader.drawWithShader(buffer.end());
+		buffer.addVertex(matrixStack, -1.0F, -1.0F, -0.5F).setUv(uOffset, 1 + vOffset).setNormal(0.0F, 1.0F, 0.0F);
+		buffer.addVertex(matrixStack, 1.0F, -1.0F, -0.5F).setUv(1 + uOffset, 1 + vOffset).setNormal(0.0F, 1.0F, 0.0F);
+		buffer.addVertex(matrixStack, 1.0F, 1.0F, -0.5F).setUv(1 + uOffset, vOffset).setNormal(0.0F, 1.0F, 0.0F);
+		buffer.addVertex(matrixStack, -1.0F, 1.0F, -0.5F).setUv(uOffset, vOffset).setNormal(0.0F, 1.0F, 0.0F);
+		BufferUploader.drawWithShader(buffer.buildOrThrow());
 		RenderSystem.disableBlend();
 	}
 }

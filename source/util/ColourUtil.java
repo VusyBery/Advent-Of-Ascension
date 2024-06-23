@@ -4,39 +4,39 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.Mth;
 
 public final class ColourUtil {
-	public static final int WHITE = RGB(255, 255, 255);
-	public static final int BLACK = RGB(0, 0, 0);
-	public static final int RED = RGB(255, 0, 0);
-	public static final int GREEN = RGB(0, 255, 0);
-	public static final int BLUE = RGB(0, 0, 255);
-	public static final int YELLOW = RGB(255, 255, 0);
-	public static final int CYAN = RGB(0, 255, 255);
+	public static final int WHITE = 0xFFFFFF;
+	public static final int BLACK = 0x000000;
+	public static final int RED = 0xFF0000;
+	public static final int GREEN = 0x00FF00;
+	public static final int BLUE = 0x0000FF;
+	public static final int YELLOW = 0xFFFF00;
+	public static final int CYAN = 0x00FFFF;
 
 	public static int RGB(int red, int green, int blue) {
 		return red << 16 | green << 8 | blue;
 	}
 
-	public static int RGBA(int red, int green, int blue, int alpha) {
-		return addAlpha(RGB(red, green, blue), alpha);
+	public static int ARGB(int red, int green, int blue, int alpha) {
+		return makeARGB(RGB(red, green, blue), alpha);
 	}
 
 	public static int RGB(float red, float green, float blue) {
 		return (int)(red * 255f) << 16 | (int)(green * 255f) << 8 | (int)(blue * 255f);
 	}
 
-	public static int RGBA(float red, float green, float blue, float alpha) {
-		return addAlpha(RGB(red, green, blue), (int)(alpha * 255f));
+	public static int ARGB(float red, float green, float blue, float alpha) {
+		return makeARGB(RGB(red, green, blue), (int)(alpha * 255f));
 	}
 
 	public static int RGB(double red, double green, double blue) {
 		return (int)(red * 255f) << 16 | (int)(green * 255f) << 8 | (int)(blue * 255f);
 	}
 
-	public static int RGBA(double red, double green, double blue, double alpha) {
-		return addAlpha(RGB(red, green, blue), (int)(alpha * 255f));
+	public static int ARGB(double red, double green, double blue, double alpha) {
+		return makeARGB(RGB(red, green, blue), (int)(alpha * 255f));
 	}
 
-	public static int addAlpha(int colour, int alpha) {
+	public static int makeARGB(int colour, int alpha) {
 		return alpha << 24 | colour;
 	}
 
@@ -60,7 +60,7 @@ public final class ColourUtil {
 		Colour from = new Colour(fromColour);
 		Colour to = new Colour(toColour);
 
-		return RGBA(lerpColourSegment(from.red, to.red, delta), lerpColourSegment(from.green, to.green, delta), lerpColourSegment(from.blue, to.blue, delta), lerpAlpha(from.alpha, to.alpha, delta));
+		return ARGB(lerpColourSegment(from.red, to.red, delta), lerpColourSegment(from.green, to.green, delta), lerpColourSegment(from.blue, to.blue, delta), lerpAlpha(from.alpha, to.alpha, delta));
 	}
 
 	public static float lerpColourSegment(float from, float to, float delta) {
@@ -80,12 +80,20 @@ public final class ColourUtil {
 			this(getRed(rgb) / 255f, getGreen(rgb) / 255f, getBlue(rgb) / 255f, getAlpha(rgb) / 255f);
 		}
 
-		public String hex() {
+		public String rgbHex() {
 			return Integer.toHexString((int)(red * 255f)) + Integer.toHexString((int)(green * 255f)) + Integer.toHexString((int)(blue * 255f));
 		}
 
-		public int packed() {
-			return RGBA(red, green, blue, alpha);
+		public String argbHex() {
+			return Integer.toHexString((int)(alpha * 255f)) + Integer.toHexString((int)(red * 255f)) + Integer.toHexString((int)(green * 255f)) + Integer.toHexString((int)(blue * 255f));
+		}
+
+		public int rgbInt() {
+			return RGB(this.red, this.green, this.blue);
+		}
+
+		public int argbInt() {
+			return ARGB(this.red, this.green, this.blue, this.alpha);
 		}
 
 		public Colour multiply(float red, float green, float blue, float alpha) {

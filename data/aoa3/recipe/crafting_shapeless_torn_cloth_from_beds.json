@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "minecraft:beds"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:torn_cloth"
+  }
+}

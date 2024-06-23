@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.world.spawner;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -13,9 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.CustomSpawner;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.NaturalSpawner;
@@ -43,19 +42,19 @@ public interface AoACustomSpawner<E extends Entity> extends CustomSpawner {
 	).apply(builder, GenericSettings::new));
 
 	boolean shouldAddToDimension(ServerLevel level);
-	AoACustomSpawner copy();
-	Type getType();
+	AoACustomSpawner<E> copy();
+	Type<E> getType();
 
 	default Heightmap.Types getHeightmapForSpawn(EntityType<E> entityType, ServerLevel level, RandomSource random, BlockPos pos) {
 		return SpawnPlacements.getHeightmapType(entityType);
 	}
 
-	default SpawnPlacements.Type getSpawnPlacementTypeForSpawn(EntityType<E> entityType, ServerLevel level, RandomSource random, BlockPos pos) {
+	default SpawnPlacementType getSpawnPlacementTypeForSpawn(EntityType<E> entityType, ServerLevel level, RandomSource random, BlockPos pos) {
 		return SpawnPlacements.getPlacementType(entityType);
 	}
 
-	default boolean canSpawnAt(EntityType<E> entityType, ServerLevel level, RandomSource random, BlockPos pos, SpawnPlacements.Type spawnPlacement) {
-		return NaturalSpawner.isSpawnPositionOk(spawnPlacement, level, pos, entityType) && level.noCollision(entityType.getAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d));
+	default boolean canSpawnAt(EntityType<E> entityType, ServerLevel level, RandomSource random, BlockPos pos, SpawnPlacementType spawnPlacement) {
+		return NaturalSpawner.isValidEmptySpawnBlock(level, pos, level.getBlockState(pos), level.getFluidState(pos), entityType) && level.noCollision(entityType.getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d));
 	}
 
 	default List<Pair<EntityType<E>, BlockPos>> findNearbySpawnPositions(ServerLevel level, RandomSource random, BlockPos centerPos, int minRadius, int maxRadius, int maxTries, Supplier<Optional<EntityType<E>>> entityTypeSupplier) {
@@ -80,9 +79,9 @@ public interface AoACustomSpawner<E extends Entity> extends CustomSpawner {
 					mutablePos.set(level.getHeightmapPos(getHeightmapForSpawn(entityType, level, random, mutablePos.set(newX, 0, newZ)), mutablePos));
 				}
 
-				SpawnPlacements.Type spawnPlacement = getSpawnPlacementTypeForSpawn(entityType, level, random, mutablePos);
+				SpawnPlacementType spawnPlacement = getSpawnPlacementTypeForSpawn(entityType, level, random, mutablePos);
 
-				if (spawnPlacement == SpawnPlacements.Type.ON_GROUND)
+				if (spawnPlacement == SpawnPlacementTypes.ON_GROUND)
 					while (level.getBlockState(mutablePos.move(Direction.DOWN)).isAir() && mutablePos.getY() > level.getMinBuildHeight()) {}
 
 				mutablePos.move(Direction.UP);
@@ -95,6 +94,6 @@ public interface AoACustomSpawner<E extends Entity> extends CustomSpawner {
 		return positions;
 	}
 
-	record Type(Codec<? extends AoACustomSpawner> codec) {}
+	record Type<E extends Entity>(MapCodec<? extends AoACustomSpawner<E>> codec) {}
 	record GenericSettings(IntProvider spawnInterval, IntProvider extraDelayPerSpawn, float chancePerPlayer, IntProvider spawnAttemptsPerPlayer, Optional<HolderSet<Biome>> biomeList, Set<ResourceKey<Level>> dimensions, boolean whitelistMode, Optional<SpawnData.CustomSpawnRules> spawnRules, boolean spawnInSuperflat) {}
 }

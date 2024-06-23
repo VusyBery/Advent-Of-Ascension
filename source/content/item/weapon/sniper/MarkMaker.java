@@ -2,14 +2,15 @@ package net.tslat.aoa3.content.item.weapon.sniper;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.AoASounds;
 import org.jetbrains.annotations.Nullable;
 
 
 public class MarkMaker extends BaseSniper {
-	public MarkMaker(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public MarkMaker(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

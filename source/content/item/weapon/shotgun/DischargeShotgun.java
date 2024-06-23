@@ -9,7 +9,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -24,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DischargeShotgun extends BaseShotgun {
-	public DischargeShotgun(final float dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
-		super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
+	public DischargeShotgun(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -51,7 +50,7 @@ public class DischargeShotgun extends BaseShotgun {
 		if (bullet == null)
 			return false;
 
-		int pellets = getPelletCount();
+		int pellets = getPelletCount(stack);
 		float spreadFactor = getSpreadFactor(shooter, stack, pellets);
 
 		for (int i = 0; i < pellets; i++) {
@@ -66,10 +65,10 @@ public class DischargeShotgun extends BaseShotgun {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 
 		tooltip.set(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.EXPLODES_ON_HIT, LocaleUtil.ItemDescriptionType.BENEFICIAL));
-		tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(NumberUtil.roundToNthDecimalPlace(20 / (float)getFiringDelay(), 2))));
+		tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(NumberUtil.roundToNthDecimalPlace(20 / (float) getTicksBetweenShots(stack), 2))));
 	}
 }

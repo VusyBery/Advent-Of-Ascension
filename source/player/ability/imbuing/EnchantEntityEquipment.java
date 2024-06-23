@@ -7,7 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -19,6 +19,8 @@ import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
+
+import java.util.Optional;
 
 public class EnchantEntityEquipment extends AoAAbility.Instance {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.ENTITY_INTERACT};
@@ -38,24 +40,23 @@ public class EnchantEntityEquipment extends AoAAbility.Instance {
 
 	@Override
 	public void handleEntityInteraction(PlayerInteractEvent.EntityInteractSpecific ev) {
-		if (ev.getItemStack().getItem() instanceof PowerStone powerStone) {
+		if (ev.getItemStack().getItem() instanceof PowerStone powerStone && ev.getTarget() instanceof LivingEntity target) {
 			final ServerPlayer player = (ServerPlayer)ev.getEntity();
 			final ServerLevel level = player.serverLevel();
-			final Entity target = ev.getTarget();
 
 			final int enchantLevel = powerStone.getEnchantLevel();
 			int totalEnchants = 0;
 
 			for (ItemStack heldItem : target.getHandSlots()) {
 				if (heldItem.isEnchantable() && heldItem.getItem() != Items.BOOK) {
-					EnchantmentHelper.enchantItem(player.getRandom(), heldItem, enchantLevel, false);
+					EnchantmentHelper.enchantItem(player.getRandom(), heldItem, enchantLevel, level.registryAccess(), Optional.empty());
 					totalEnchants++;
 				}
 			}
 
 			for (ItemStack armourItem : target.getArmorSlots()) {
 				if (armourItem.isEnchantable() && armourItem.getItem() != Items.BOOK) {
-					EnchantmentHelper.enchantItem(player.getRandom(), armourItem, enchantLevel, false);
+					EnchantmentHelper.enchantItem(player.getRandom(), armourItem, enchantLevel, level.registryAccess(), Optional.empty());
 					totalEnchants++;
 				}
 			}

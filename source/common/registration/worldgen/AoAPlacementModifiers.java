@@ -1,6 +1,6 @@
 package net.tslat.aoa3.common.registration.worldgen;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -14,7 +14,7 @@ public final class AoAPlacementModifiers {
 	public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<PercentChance>> PERCENT_CHANCE = register("percent_chance", PercentChance.CODEC);
 	public static final DeferredHolder<PlacementModifierType<?>, PlacementModifierType<ChunkHighPoint>> CHUNK_HIGH_POINT = register("chunk_high_point", ChunkHighPoint.CODEC);
 
-	private static <T extends PlacementModifier> DeferredHolder<PlacementModifierType<?>, PlacementModifierType<T>> register(String id, Codec<T> codec) {
+	private static <T extends PlacementModifier> DeferredHolder<PlacementModifierType<?>, PlacementModifierType<T>> register(String id, MapCodec<T> codec) {
 		return AoARegistries.PLACEMENT_MODIFIERS.register(id, () -> () -> codec);
 	}
 }

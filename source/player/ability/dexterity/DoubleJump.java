@@ -1,7 +1,6 @@
 package net.tslat.aoa3.player.ability.dexterity;
 
 import com.google.gson.JsonObject;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -11,17 +10,19 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.UpdateClientMovementPacket;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
+
+import java.util.function.Consumer;
 
 public class DoubleJump extends AoAAbility.Instance {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.PLAYER_FALL};
@@ -53,26 +54,34 @@ public class DoubleJump extends AoAAbility.Instance {
 	}
 
 	@Override
-	@OnlyIn(Dist.CLIENT)
-	public KeyMapping getKeybind() {
-		return Minecraft.getInstance().options.keyJump;
-	}
+	public void createKeybindListener(Consumer<AoAPlayerKeybindListener> consumer) {
+		consumer.accept(new AoAPlayerKeybindListener() {
+			@Override
+			public AoAPlayerEventListener getEventListener() {
+				return DoubleJump.this;
+			}
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public boolean shouldSendKeyPress() {
-		Player player = Minecraft.getInstance().player;
+			@Override
+			public int getKeycode() {
+				return Minecraft.getInstance().options.keyJump.getKey().getValue();
+			}
 
-		if (player.onGround() || player.jumpTriggerTime > 0)
-			return false;
+			@Override
+			public boolean shouldSendKeyPress() {
+				Player player = getPlayer();
 
-		if (player.getItemBySlot(EquipmentSlot.CHEST).canElytraFly(player))
-			return false;
+				if (player.onGround() || player.jumpTriggerTime > 0)
+					return false;
 
-		if (!player.isCreative())
-			player.jumpTriggerTime = 7;
+				if (player.getItemBySlot(EquipmentSlot.CHEST).canElytraFly(player))
+					return false;
 
-		return true;
+				if (!player.getAbilities().mayfly)
+					player.jumpTriggerTime = 7;
+
+				return true;
+			}
+		});
 	}
 
 	@Override

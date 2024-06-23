@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.item.*;
 import net.tslat.aoa3.common.registration.item.AoAWeapons;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
-import net.tslat.aoa3.util.EntityUtil;
+import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class CounterTargetWeaponTask extends Behavior<Mob> {
@@ -69,7 +69,7 @@ public class CounterTargetWeaponTask extends Behavior<Mob> {
 		if (mainHandItem.getItem() instanceof ShieldItem || target.getItemInHand(InteractionHand.OFF_HAND).getItem() instanceof ShieldItem)
 			return ThreatType.SHIELD;
 
-		if (mainHandItem.getItem() instanceof SwordItem || EntityUtil.safelyGetAttributeValue(target, Attributes.ATTACK_DAMAGE) > 5) {
+		if (mainHandItem.getItem() instanceof SwordItem || AttributeUtil.getAttributeValue(target, Attributes.ATTACK_DAMAGE) > 5) {
 			if (!(owner.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof SwordItem))
 				return ThreatType.MELEE;
 

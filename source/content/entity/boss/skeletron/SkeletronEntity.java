@@ -2,21 +2,21 @@ package net.tslat.aoa3.content.entity.boss.skeletron;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
 
 public class SkeletronEntity extends AoABoss {
     public static final EntityDataHolder<Boolean> WOUNDED = EntityDataHolder.register(SkeletronEntity.class, EntityDataSerializers.BOOLEAN, false, entity -> entity.wounded, (entity, value) -> entity.wounded = value);
@@ -34,15 +34,10 @@ public class SkeletronEntity extends AoABoss {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
 
-        registerDataParams(WOUNDED);
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
-        return 1.0625f;
+        registerDataParams(builder, WOUNDED);
     }
 
     @Override
@@ -66,8 +61,8 @@ public class SkeletronEntity extends AoABoss {
     }
 
     @Override
-    protected void dropCustomDeathLoot(DamageSource damageSource, int lootingLevel, boolean recentlyHit) {
-        super.dropCustomDeathLoot(damageSource, lootingLevel, recentlyHit);
+    protected void dropCustomDeathLoot(ServerLevel level, DamageSource damageSource, boolean killedByPlayer) {
+        super.dropCustomDeathLoot(level, damageSource, killedByPlayer);
 
         if (WOUNDED.is(this, true))
             spawnAtLocation(AoAItems.WARPED_HORN.get());

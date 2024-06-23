@@ -2,7 +2,6 @@ package net.tslat.aoa3.common.registration.entity.variant;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.MobSpawnType;
@@ -43,11 +42,11 @@ public record DryadSpriteVariant(String name, boolean isPriorityVariant, Ingredi
 
     private static final Supplier<DryadSpriteVariant[]> SORTED_VARIANTS = Suppliers.memoize(() -> AoARegistries.DRYAD_SPRITE_VARIANTS.getAllRegisteredObjects().filter(variant -> variant != WOOD.get()).sorted(Comparator.comparing(DryadSpriteVariant::isPriorityVariant).reversed()).toArray(DryadSpriteVariant[]::new));
 
-    public static DryadSpriteVariant getVariantForSpawn(ServerLevel level, DifficultyInstance difficulty, MobSpawnType spawnReason, DryadSpriteEntity dryadSprite, Supplier<Holder<Biome>> biome, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public static DryadSpriteVariant getVariantForSpawn(ServerLevel level, DifficultyInstance difficulty, MobSpawnType spawnReason, DryadSpriteEntity dryadSprite, Supplier<Holder<Biome>> biome, @Nullable SpawnGroupData spawnData) {
         DryadSpriteVariant variant = DryadSpriteVariant.WOOD.get();
 
         for (DryadSpriteVariant testVariant : SORTED_VARIANTS.get()) {
-            if (testVariant.spawnPredicate().canSpawnVariant(level, difficulty, spawnReason, dryadSprite, biome, spawnData, dataTag)) {
+            if (testVariant.spawnPredicate().canSpawnVariant(level, difficulty, spawnReason, dryadSprite, biome, spawnData)) {
                 variant = testVariant;
 
                 break;

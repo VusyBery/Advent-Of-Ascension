@@ -1,9 +1,10 @@
 package net.tslat.aoa3.content.loottable.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -16,14 +17,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Iterator;
 
 public class LootModifyingItemLootModifier extends LootModifier {
-	public static final Codec<LootModifyingItemLootModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).apply(builder, LootModifyingItemLootModifier::new));
+	public static final MapCodec<LootModifyingItemLootModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).apply(builder, LootModifyingItemLootModifier::new));
 
 	public LootModifyingItemLootModifier(LootItemCondition[] conditions) {
 		super(conditions);
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 
@@ -38,11 +39,11 @@ public class LootModifyingItemLootModifier extends LootModifier {
 			if (tool == null)
 				return generatedLoot;
 		}
-		else if (context.hasParam(LootContextParams.KILLER_ENTITY)) {
-			Entity entity = context.getParamOrNull(LootContextParams.KILLER_ENTITY);
+		else if (context.hasParam(LootContextParams.ATTACKING_ENTITY)) {
+			Entity entity = context.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
 
-			if (entity != null) {
-				Iterator<ItemStack> heldItems = entity.getHandSlots().iterator();
+			if (entity instanceof LivingEntity killer) {
+				Iterator<ItemStack> heldItems = killer.getHandSlots().iterator();
 
 				if (heldItems.hasNext())
 					tool = heldItems.next();

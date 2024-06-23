@@ -14,7 +14,7 @@ public class FullbrightCube extends ModelPart.Cube {
 	}
 
 	@Override
-	public void compile(PoseStack.Pose pPose, VertexConsumer pVertexConsumer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
-		super.compile(pPose, pVertexConsumer, LightTexture.FULL_BRIGHT, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+	public void compile(PoseStack.Pose pPose, VertexConsumer pVertexConsumer, int pPackedLight, int pPackedOverlay, int colour) {
+		super.compile(pPose, pVertexConsumer, LightTexture.FULL_BRIGHT, pPackedOverlay, colour);
 	}
 }

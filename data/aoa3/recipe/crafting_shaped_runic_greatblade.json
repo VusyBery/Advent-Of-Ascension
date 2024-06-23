@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:ingots/iron"
+    },
+    "B": {
+      "tag": "neoforge:ingots/elecanium"
+    },
+    "C": {
+      "tag": "neoforge:rods/metal"
+    },
+    "D": {
+      "item": "aoa3:runic_energy"
+    }
+  },
+  "pattern": [
+    "DAD",
+    "DAD",
+    "BCB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:runic_greatblade"
+  }
+}

@@ -28,7 +28,7 @@ public class ZalVendorEntity extends AoATrader {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 0.6875f;
 	}
 

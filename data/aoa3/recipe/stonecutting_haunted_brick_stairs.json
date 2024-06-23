@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "aoa3:haunted_bricks"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:haunted_brick_stairs"
+  }
+}

@@ -18,7 +18,6 @@ import net.tslat.aoa3.util.AdvancementUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -44,7 +43,7 @@ public class Rosidons extends Item {
 				return stack;
 
 			if (calculatedY - entity.getY() >= 350 && entity instanceof ServerPlayer pl)
-				pl.getAdvancements().award(AdvancementUtil.getAdvancement(pl.serverLevel(), AdventOfAscension.id("completionist/super_escape_rope")), "350_blocks");
+				AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("completionist/super_escape_rope"), "350_blocks");
 
 			world.gameEvent(GameEvent.TELEPORT, entity.position(), GameEvent.Context.of(entity));
 			world.playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.CHORUS_FRUIT_TELEPORT, SoundSource.PLAYERS, 1, 1);
@@ -55,7 +54,7 @@ public class Rosidons extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.NEUTRAL, 1));
 	}
 }

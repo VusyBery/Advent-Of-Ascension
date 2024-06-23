@@ -11,17 +11,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.content.item.ChargeableItem;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ExpFlask extends Item implements ChargeableItem {
 	public ExpFlask() {
-		super(new Item.Properties().stacksTo(1));
+		super(new Item.Properties().stacksTo(1).component(AoADataComponents.CHARGE, 0f));
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class ExpFlask extends Item implements ChargeableItem {
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 100;
 	}
 
@@ -71,7 +71,7 @@ public class ExpFlask extends Item implements ChargeableItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		int storedValue = (int)getCharge(stack);
 
 		if (storedValue > 0)

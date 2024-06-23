@@ -1,13 +1,9 @@
 package net.tslat.aoa3.content.recipe;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
@@ -16,7 +12,7 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 /**
  * Just a dummy recipe for JEI
  */
-public class FrameBenchRecipe implements Recipe<Inventory> {
+public class FrameBenchRecipe implements Recipe<SingleRecipeInput> {
 	private final RecipeType<FrameBenchRecipe> RECIPE_TYPE = new RecipeType<FrameBenchRecipe>() {
 		@Override
 		public String toString() {
@@ -45,12 +41,12 @@ public class FrameBenchRecipe implements Recipe<Inventory> {
 	}
 
 	@Override
-	public boolean matches(Inventory inv, Level world) {
+	public boolean matches(SingleRecipeInput inv, Level world) {
 		return inv.getItem(0).getItem() == input.getItem();
 	}
 
 	@Override
-	public ItemStack assemble(Inventory inv, RegistryAccess registryAccess) {
+	public ItemStack assemble(SingleRecipeInput inv, HolderLookup.Provider holderLookup) {
 		return output.copy();
 	}
 
@@ -60,7 +56,7 @@ public class FrameBenchRecipe implements Recipe<Inventory> {
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider holderLookup) {
 		return output.copy();
 	}
 
@@ -75,7 +71,7 @@ public class FrameBenchRecipe implements Recipe<Inventory> {
 	}
 
 	@Override
-	public NonNullList<ItemStack> getRemainingItems(Inventory inv) {
+	public NonNullList<ItemStack> getRemainingItems(SingleRecipeInput inv) {
 		return NonNullList.create();
 	}
 

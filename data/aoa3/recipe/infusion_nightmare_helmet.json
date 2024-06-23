@@ -1,0 +1,33 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:helmet_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:charged_runium_chunk"
+    },
+    {
+      "item": "aoa3:ghoulasm"
+    },
+    {
+      "item": "aoa3:armour_plating"
+    },
+    {
+      "item": "aoa3:armour_plating"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "tag": "neoforge:ingots/ghoulish"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:nightmare_helmet"
+  }
+}

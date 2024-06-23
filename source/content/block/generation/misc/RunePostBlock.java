@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -34,27 +35,25 @@ public class RunePostBlock extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		ItemStack heldItem = player.getItemInHand(hand);
-
-		if (heldItem.getItem() instanceof RuneSource) {
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (stack.getItem() instanceof RuneSource) {
 			if (level.getBlockState(pos.above()).blocksMotion()) {
 				if (!level.isClientSide())
 					player.sendSystemMessage(Component.translatable(LocaleUtil.createFeedbackLocaleKey("runeShrine.blocked")));
 
-				return InteractionResult.FAIL;
+				return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 			}
 
 			if (!level.isClientSide()) {
-				AoAScheduler.scheduleSyncronisedTask(new RuneCreationTask((ServerLevel)level, pos, getRune(), heldItem.getCount() * ((RuneSource)heldItem.getItem()).getRuneGenFactor(), player), 1);
+				AoAScheduler.scheduleSyncronisedTask(new RuneCreationTask((ServerLevel)level, pos, getRune(), stack.getCount() * ((RuneSource)stack.getItem()).getRuneGenFactor(), player), 1);
 
 				if (!player.isCreative())
-					heldItem.shrink(heldItem.getCount());
+					stack.shrink(stack.getCount());
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide());
 		}
 
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 }

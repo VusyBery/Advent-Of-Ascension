@@ -30,9 +30,9 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 public class BlankRealmstoneScreen extends Screen {
-	private static final ResourceLocation background = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/realmstonegui/background.png");
-	private static final ResourceLocation windowFrame = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/realmstonegui/window_frame.png");
-	private static final ResourceLocation widgets = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/realmstonegui/widgets.png");
+	private static final ResourceLocation background = AdventOfAscension.id("textures/gui/realmstonegui/background.png");
+	private static final ResourceLocation windowFrame = AdventOfAscension.id("textures/gui/realmstonegui/window_frame.png");
+	private static final ResourceLocation widgets = AdventOfAscension.id("textures/gui/realmstonegui/widgets.png");
 	private static final Random rand = new Random(0);
 	private static final int backgroundHeight = 2000;
 	private static final int backgroundWidth = 2000;
@@ -128,7 +128,7 @@ public class BlankRealmstoneScreen extends Screen {
 			this.posX = posX;
 			this.posY = posY;
 			this.parentNodes = parentNodes;
-			this.texture = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/realmstonegui/worlds/" + id + ".png");
+			this.texture = AdventOfAscension.id("textures/gui/realmstonegui/worlds/" + id + ".png");
 
 			hoverTexts = Suppliers.memoize(() -> {
 				ArrayList<FormattedCharSequence> texts = new ArrayList<>(2);

@@ -68,8 +68,8 @@ public class LottoTotemModel extends EntityModel<LottoTotemEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
-		this.root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
-		this.coin.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, int colour) {
+		this.root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, colour);
+		this.coin.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, colour);
 	}
 }

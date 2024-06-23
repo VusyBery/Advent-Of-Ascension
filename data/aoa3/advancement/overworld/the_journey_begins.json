@@ -1,0 +1,36 @@
+{
+  "parent": "aoa3:overworld/nostalgia_trip",
+  "criteria": {
+    "obtain_worn_book": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:worn_book"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.overworld.the_journey_begins.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "aoa3:worn_book"
+    },
+    "title": {
+      "color": "dark_green",
+      "translate": "advancements.aoa3.overworld.the_journey_begins.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_worn_book"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

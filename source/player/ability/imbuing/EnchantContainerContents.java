@@ -25,6 +25,8 @@ import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 
+import java.util.Optional;
+
 public class EnchantContainerContents extends AoAAbility.Instance {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_INTERACT};
 
@@ -69,7 +71,7 @@ public class EnchantContainerContents extends AoAAbility.Instance {
 					ItemStack stack = container.getItem(i);
 
 					if (stack.isEnchantable() && stack.getItem() != Items.BOOK) {
-						EnchantmentHelper.enchantItem(player.getRandom(), stack, enchantLevel, false);
+						EnchantmentHelper.enchantItem(player.getRandom(), stack, enchantLevel, level.registryAccess(), Optional.empty());
 						enchantedCount++;
 					}
 				}

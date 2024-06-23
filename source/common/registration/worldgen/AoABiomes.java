@@ -24,6 +24,8 @@ public final class AoABiomes {
 
 	public static final ResourceKey<Biome> BARATHOS_FLATS = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("barathos_flats"));
 	public static final ResourceKey<Biome> THE_BURNING_PITS = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("the_burning_pits"));
+	public static final ResourceKey<Biome> BARREN_OASIS = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("barren_oasis"));
+	public static final ResourceKey<Biome> THE_SPEARS = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("the_spears"));
 
 	public static final ResourceKey<Biome> LELYETIAN_PLAINS = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("lelyetian_plains"));
 	public static final ResourceKey<Biome> LELYETIAN_FOREST = ResourceKey.create(Registries.BIOME, AdventOfAscension.id("lelyetian_forest"));

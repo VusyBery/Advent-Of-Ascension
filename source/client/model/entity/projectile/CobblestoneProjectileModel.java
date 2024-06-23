@@ -29,8 +29,8 @@ public class CobblestoneProjectileModel extends EntityModel<Entity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack matrix, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		block.render(matrix, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void renderToBuffer(PoseStack matrix, VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
+		block.render(matrix, buffer, packedLight, packedOverlay, colour);
 	}
 
 	@Override

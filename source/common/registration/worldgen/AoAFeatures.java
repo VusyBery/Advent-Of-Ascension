@@ -2,12 +2,14 @@ package net.tslat.aoa3.common.registration.worldgen;
 
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.content.world.gen.feature.config.StructureFeatureConfig;
 import net.tslat.aoa3.content.world.gen.feature.lakes.BigLakeFeature;
 import net.tslat.aoa3.content.world.gen.feature.misc.BetterBlockBlobFeature;
 import net.tslat.aoa3.content.world.gen.feature.misc.FluidChuteFeature;
+import net.tslat.aoa3.content.world.gen.feature.misc.FluidOreFeature;
 import net.tslat.aoa3.content.world.gen.feature.misc.StructurePieceFeature;
 import net.tslat.aoa3.content.world.gen.feature.ore.BrushableBlockOreFeature;
 
@@ -19,6 +21,7 @@ public final class AoAFeatures {
 	public static final DeferredHolder<Feature<?>, BrushableBlockOreFeature> BRUSHABLE_BLOCK_ORE = register("brushable_block_ore", () -> new BrushableBlockOreFeature(BrushableBlockOreFeature.Configuration.CODEC));
 	public static final DeferredHolder<Feature<?>, StructurePieceFeature> STRUCTURE_PIECE = register("structure_piece", () -> new StructurePieceFeature(StructureFeatureConfig.CODEC));
 	public static final DeferredHolder<Feature<?>, BetterBlockBlobFeature> BETTER_BLOCK_BLOB = register("better_block_blob", () -> new BetterBlockBlobFeature(BetterBlockBlobFeature.Configuration.CODEC));
+	public static final DeferredHolder<Feature<?>, FluidOreFeature> FLUID_ORE = register("fluid_ore", () -> new FluidOreFeature(OreConfiguration.CODEC));
 
 /*
 	public static final DeferredHolder<Feature<?>, AchonyTreeFeature> ACHONY_TREE = register("achony_tree", () -> new AchonyTreeFeature(BlockStatePlacementConfig.CODEC, (DeferredHolder)AoABlocks.ACHONY_SAPLING.plant));

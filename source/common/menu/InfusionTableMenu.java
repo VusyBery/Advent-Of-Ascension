@@ -12,7 +12,8 @@ import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.tslat.aoa3.common.menu.generic.ExtensibleContainerMenu;
+import net.tslat.aoa3.common.menu.generic.ExtensibleRecipeMenu;
+import net.tslat.aoa3.common.menu.generic.GenericRecipeInput;
 import net.tslat.aoa3.common.menu.slot.CraftableResultSlot;
 import net.tslat.aoa3.common.menu.slot.OutputSlot;
 import net.tslat.aoa3.common.registration.AoAMenus;
@@ -20,11 +21,16 @@ import net.tslat.aoa3.common.registration.AoARecipes;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.content.block.blockentity.InfusionTableBlockEntity;
 
-public class InfusionTableMenu extends ExtensibleContainerMenu<TransientCraftingContainer> {
+public class InfusionTableMenu extends ExtensibleRecipeMenu<TransientCraftingContainer, GenericRecipeInput> {
 	public InfusionTableMenu(int screenId, Inventory playerInventory, ContainerLevelAccess accessValidator) {
 		super(AoAMenus.INFUSION_TABLE.get(), screenId, playerInventory, accessValidator);
 
 		createPlayerInventory(playerInventory, 8, 84);
+	}
+
+	@Override
+	protected GenericRecipeInput createRecipeInput() {
+		return new GenericRecipeInput(getInventory().getItems());
 	}
 
 	@Override
@@ -52,7 +58,7 @@ public class InfusionTableMenu extends ExtensibleContainerMenu<TransientCrafting
 
 	@Override
 	protected Slot createOutputSlot(int slotIndex, Player player) {
-		return new CraftableResultSlot<>(player, getInventory(), new ResultContainer(), AoARecipes.INFUSION.type().get(), slotIndex, 139, 35);
+		return new CraftableResultSlot<>(player, getInventory(), new ResultContainer(), AoARecipes.INFUSION.type().get(), this::createRecipeInput, slotIndex, 139, 35);
 	}
 
 	@Override

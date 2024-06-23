@@ -1,0 +1,29 @@
+{
+  "criteria": {
+    "null": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "background": "aoa3:textures/block/dimensional_fabric.png",
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.completionist.root.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "aoa3:alien_orb"
+    },
+    "title": {
+      "color": "gold",
+      "translate": "advancements.aoa3.completionist.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "null"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

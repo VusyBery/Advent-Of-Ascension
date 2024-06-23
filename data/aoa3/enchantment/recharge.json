@@ -1,0 +1,39 @@
+{
+  "anvil_cost": 3,
+  "description": {
+    "translate": "enchantment.aoa3.recharge"
+  },
+  "effects": {
+    "aoa3:spirit_consumption": [
+      {
+        "effect": {
+          "type": "aoa3:clamp",
+          "max": 9999.0,
+          "min": 0.0,
+          "value": {
+            "type": "minecraft:multiply",
+            "factor": {
+              "type": "minecraft:linear",
+              "base": 0.93,
+              "per_level_above_first": -0.07
+            }
+          }
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 20,
+    "per_level_above_first": 6
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 6
+  },
+  "slots": [
+    "hand"
+  ],
+  "supported_items": "#aoa3:blasters_enchantable",
+  "weight": 5
+}

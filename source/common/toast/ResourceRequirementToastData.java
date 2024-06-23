@@ -1,8 +1,10 @@
 package net.tslat.aoa3.common.toast;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.custom.AoAToastTypes;
@@ -11,20 +13,17 @@ import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.ToastUtil;
 
-public record ResourceRequirementToastData(AoAResource resource, Float value) implements CustomToastData<AoAResource, Float> {
-    public ResourceRequirementToastData(FriendlyByteBuf buffer) {
-        this(buffer.readById(AoARegistries.AOA_RESOURCES), buffer.readFloat());
-    }
+public record ResourceRequirementToastData(AoAResource resource, float value) implements CustomToastData {
+    public static final StreamCodec<RegistryFriendlyByteBuf, ResourceRequirementToastData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.registry(AoARegistries.RESOURCES_REGISTRY_KEY),
+            ResourceRequirementToastData::resource,
+            ByteBufCodecs.FLOAT,
+            ResourceRequirementToastData::value,
+            ResourceRequirementToastData::new);
 
     @Override
     public Type<ResourceRequirementToastData> type() {
         return AoAToastTypes.RESOURCE_REQUIREMENT.get();
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeId(AoARegistries.AOA_RESOURCES, this.resource);
-        buffer.writeFloat(this.value);
     }
 
     public static void sendToastPopupTo(ServerPlayer pl, AoAResource resource, float value) {

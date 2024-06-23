@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.model.entity.mob.MultiStageHeadModel;
 import net.tslat.aoa3.content.entity.animal.precasia.OpteryxEntity;
-import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.animation.AnimationState;
 
 public class OpteryxModel extends MultiStageHeadModel<OpteryxEntity> {
 	public OpteryxModel() {

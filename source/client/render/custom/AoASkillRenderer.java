@@ -13,7 +13,7 @@ import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.*;
 
 public interface AoASkillRenderer {
-	ResourceLocation SKILL_ICON_BASE = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/aoaskill/skill_icon_base.png");
+	ResourceLocation SKILL_ICON_BASE = AdventOfAscension.id("textures/gui/aoaskill/skill_icon_base.png");
 
 	void renderInHud(RenderContext renderContext, AoASkill.Instance skill, float partialTicks, ProgressRenderType progressRenderType, boolean renderLevel);
 	void renderInGui(RenderContext renderContext, AoASkill.Instance skill, float partialTicks, int mouseX, int mouseY, ProgressRenderType progressRenderType, boolean renderLevel);
@@ -51,7 +51,7 @@ public interface AoASkillRenderer {
 
 			RenderSystem.setShaderTexture(0, SKILL_ICON_BASE);
 			RenderUtil.renderScaledCustomSizedTexture(poseStack, 0, 0, 0, 0, renderWidth, renderHeight, renderWidth, renderHeight, renderWidth * 4, renderHeight * 2);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(RegistryUtil.getId(skill.type()).getNamespace(), "textures/gui/aoaskill/" + RegistryUtil.getId(skill.type()).getPath() + ".png"));
+			RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(RegistryUtil.getId(skill.type()).getNamespace(), "textures/gui/aoaskill/" + RegistryUtil.getId(skill.type()).getPath() + ".png"));
 			RenderUtil.renderScaledCustomSizedTexture(poseStack, 0, 0, 0, 0, renderWidth, renderHeight, renderWidth, renderHeight, renderWidth, renderHeight);
 			RenderSystem.setShaderTexture(0, SKILL_ICON_BASE);
 

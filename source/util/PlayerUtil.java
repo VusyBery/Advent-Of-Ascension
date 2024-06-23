@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +33,7 @@ import net.tslat.aoa3.common.toast.ItemRequirementToastData;
 import net.tslat.aoa3.common.toast.ResourceRequirementToastData;
 import net.tslat.aoa3.common.toast.SkillRequirementToastData;
 import net.tslat.aoa3.content.item.armour.AdventArmour;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.PlayerDataManager;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.resource.AoAResource;
@@ -171,7 +170,7 @@ public final class PlayerUtil {
 
         AdventArmour.Type type = bootsArmour.getSetType();
 
-        if (!(player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof AdventArmour feetArmour) || feetArmour.getSetType() != type)
+        if (!(player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof AdventArmour legsArmour) || legsArmour.getSetType() != type)
             return AdventArmour.Type.NONE;
 
         if (!(player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof AdventArmour chestArmour) || chestArmour.getSetType() != type)
@@ -308,10 +307,6 @@ public final class PlayerUtil {
             return player;
 
         return null;
-    }
-
-    public static EquipmentSlot handToEquipmentSlotType(InteractionHand hand) {
-        return hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
     }
 
     public static GameType getGameMode(Player player) {

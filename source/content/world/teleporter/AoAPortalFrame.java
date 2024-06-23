@@ -173,7 +173,7 @@ public class AoAPortalFrame {
 
     public static void lightPortalFrame(ServerLevel level, BlockPos basePos, PortalDirection direction, PortalBlock portalBlock) {
         final TELParticlePacket packet = new TELParticlePacket();
-        final int colour = portalBlock.getParticleColour();
+        final int colour = portalBlock.getParticleColour(portalBlock.defaultBlockState());
 
         switch (direction) {
             case NORTH_SOUTH:

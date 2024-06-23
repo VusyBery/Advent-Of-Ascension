@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.loottable.condition;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.util.StringRepresentable;
@@ -17,7 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 public record WearingOrHoldingItem(LootContext.EntityTarget target, ItemPredicate predicate, Optional<EquipmentSlot> slot) implements LootItemCondition {
-	public static final Codec<WearingOrHoldingItem> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+	public static final MapCodec<WearingOrHoldingItem> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
 					LootContext.EntityTarget.CODEC.fieldOf("target").forGetter(WearingOrHoldingItem::target),
 					ItemPredicate.CODEC.fieldOf("predicate").forGetter(WearingOrHoldingItem::predicate),
 					StringRepresentable.fromEnum(EquipmentSlot::values).optionalFieldOf("slot").forGetter(WearingOrHoldingItem::slot))
@@ -44,9 +44,9 @@ public record WearingOrHoldingItem(LootContext.EntityTarget target, ItemPredicat
 	@Override
 	public boolean test(LootContext lootContext) {
 		if (lootContext.getParamOrNull(this.target.getParam()) instanceof LivingEntity entity) {
-			return this.slot.map(specifiedSlot -> this.predicate.matches(entity.getItemBySlot(specifiedSlot))).orElseGet(() -> {
+			return this.slot.map(specifiedSlot -> this.predicate.test(entity.getItemBySlot(specifiedSlot))).orElseGet(() -> {
 				for (EquipmentSlot slot : EquipmentSlot.values()) {
-					if (this.predicate.matches(entity.getItemBySlot(slot)))
+					if (this.predicate.test(entity.getItemBySlot(slot)))
 						return true;
 				}
 

@@ -7,7 +7,6 @@ import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.player.skill.*;
 import org.jetbrains.annotations.Nullable;
 
-
 public class AoASkills {
 	public static void init() {}
 

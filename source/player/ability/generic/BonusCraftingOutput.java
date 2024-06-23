@@ -31,11 +31,11 @@ public class BonusCraftingOutput extends ScalableModAbility {
 
 		if (data.has("item")) {
 			outputTargetTag = null;
-			outputTarget = AoARegistries.ITEMS.getEntry(new ResourceLocation(GsonHelper.getAsString(data, "item")));
+			outputTarget = AoARegistries.ITEMS.getEntry(ResourceLocation.read(GsonHelper.getAsString(data, "item")).getOrThrow());
 		}
 		else {
 			outputTarget = null;
-			outputTargetTag = ItemTags.create(new ResourceLocation(GsonHelper.getAsString(data, "tag")));
+			outputTargetTag = ItemTags.create(ResourceLocation.read(GsonHelper.getAsString(data, "tag")).getOrThrow());
 		}
 	}
 
@@ -44,11 +44,11 @@ public class BonusCraftingOutput extends ScalableModAbility {
 
 		if (data.contains("item")) {
 			outputTargetTag = null;
-			outputTarget = AoARegistries.ITEMS.getEntry(new ResourceLocation(data.getString("item")));
+			outputTarget = AoARegistries.ITEMS.getEntry(ResourceLocation.read(data.getString("item")).getOrThrow());
 		}
 		else {
 			outputTarget = null;
-			outputTargetTag = ItemTags.create(new ResourceLocation(data.getString("tag")));
+			outputTargetTag = ItemTags.create(ResourceLocation.read(data.getString("tag")).getOrThrow());
 		}
 	}
 

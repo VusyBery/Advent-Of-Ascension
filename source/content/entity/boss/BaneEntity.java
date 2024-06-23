@@ -39,7 +39,7 @@ public class BaneEntity extends AoAMeleeMob<BaneEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.1875f;
 	}
 
@@ -62,7 +62,7 @@ public class BaneEntity extends AoAMeleeMob<BaneEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

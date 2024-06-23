@@ -1,6 +1,6 @@
 package net.tslat.aoa3.common.registration.loot;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -12,7 +12,7 @@ public final class AoALootEntryTypes {
 
     public static final DeferredHolder<LootPoolEntryType, LootPoolEntryType> MULTI = register("multi", MultiLootEntry.CODEC);
 
-    private static DeferredHolder<LootPoolEntryType, LootPoolEntryType> register(String id, Codec<? extends LootPoolEntryContainer> codec) {
+    private static DeferredHolder<LootPoolEntryType, LootPoolEntryType> register(String id, MapCodec<? extends LootPoolEntryContainer> codec) {
         return AoARegistries.LOOT_ENTRY_TYPES.register(id, () -> new LootPoolEntryType(codec));
     }
 }

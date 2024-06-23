@@ -7,7 +7,6 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.tslat.aoa3.common.registration.AoAAdvancementTriggers;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -44,9 +43,9 @@ public final class AoALevelUpTrigger extends SimpleCriterionTrigger<AoALevelUpTr
 
 	public record Instance(Optional<ContextAwarePredicate> player, Optional<AoASkill> skill, Optional<Integer> levelReq) implements SimpleCriterionTrigger.SimpleInstance {
 		private static final Codec<Instance> CODEC = RecordCodecBuilder.create(codec -> codec.group(
-				ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(Instance::player),
-				ExtraCodecs.strictOptionalField(AoARegistries.AOA_SKILLS.lookupCodec(), "skill").forGetter(Instance::skill),
-				ExtraCodecs.strictOptionalField(Codec.intRange(1, 1000), "level").forGetter(Instance::levelReq)
+				EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(Instance::player),
+				AoARegistries.AOA_SKILLS.lookupCodec().optionalFieldOf("skill").forGetter(Instance::skill),
+				Codec.intRange(1, 1000).optionalFieldOf("level").forGetter(Instance::levelReq)
 		).apply(codec, Instance::new));
 
 		public boolean test(AoASkill skill, int level) {

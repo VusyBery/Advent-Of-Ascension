@@ -1,13 +1,18 @@
 package net.tslat.aoa3.content.item.misc;
 
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
+import net.tslat.aoa3.content.item.armour.AdventArmour;
 
-public class OldBoot extends ArmorItem {
+public class OldBoot extends AdventArmour {
 	public OldBoot() {
-		super(ItemUtil.customArmourMaterial("aoa3:old_boot", 30, new int[] {2, 2, 2, 2}, 0, SoundEvents.ARMOR_EQUIP_LEATHER, 0), Type.BOOTS, new Item.Properties().rarity(Rarity.RARE));
+		super(AoAArmourMaterials.OLD_BOOT, ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(30)).rarity(Rarity.RARE));
+	}
+
+	@Override
+	public Type getSetType() {
+		return Type.NONE;
 	}
 }

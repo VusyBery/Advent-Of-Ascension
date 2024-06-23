@@ -1,0 +1,36 @@
+{
+  "parent": "aoa3:completionist/root",
+  "criteria": {
+    "obtain_tidal_greatblade": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:tidal_greatblade"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.completionist.basically_poseidon.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "aoa3:tidal_greatblade"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.completionist.basically_poseidon.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_tidal_greatblade"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

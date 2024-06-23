@@ -3,6 +3,8 @@ package net.tslat.aoa3.content.world.gen.feature.ore;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -12,6 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.OreFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.OreConfiguration;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.tslat.aoa3.library.object.PositionTableSet;
 
 public class BrushableBlockOreFeature extends OreFeature {
@@ -27,7 +30,7 @@ public class BrushableBlockOreFeature extends OreFeature {
 		final double[] blobPoints = new double[size * 4];
 		int placeCount = 0;
 
-		for(int i = 0; i < size; ++i) {
+		for (int i = 0; i < size; ++i) {
 			final float step = (float)i / (float)size;
 			final double blobSize = rand.nextDouble() * (double)size / 16;
 
@@ -37,11 +40,11 @@ public class BrushableBlockOreFeature extends OreFeature {
 			blobPoints[i * 4 + 3] = ((double)(Mth.sin((float)Math.PI * step) + 1) * blobSize + 1) / 2d;
 		}
 
-		for(int i = 0; i < size - 1; ++i) {
+		for (int i = 0; i < size - 1; ++i) {
 			if (blobPoints[i * 4 + 3] <= 0)
 				continue;
 
-			for(int j = i + 1; j < size; ++j) {
+			for (int j = i + 1; j < size; ++j) {
 				if (blobPoints[j * 4 + 3] <= 0)
 					continue;
 
@@ -55,7 +58,7 @@ public class BrushableBlockOreFeature extends OreFeature {
 			}
 		}
 
-		for(int i = 0; i < size; ++i) {
+		for (int i = 0; i < size; ++i) {
 			final double blobPointRadius = blobPoints[i * 4 + 3];
 
 			if (blobPointRadius < 0)
@@ -71,19 +74,19 @@ public class BrushableBlockOreFeature extends OreFeature {
 			final int blobMaxY = Math.max(Mth.floor(blobPointY + blobPointRadius), blobMinY);
 			final int blobMaxZ = Math.max(Mth.floor(blobPointZ + blobPointRadius), blobMinZ);
 
-			for(int oreX = blobMinX; oreX <= blobMaxX; ++oreX) {
+			for (int oreX = blobMinX; oreX <= blobMaxX; ++oreX) {
 				final double oreXRadius = ((double)oreX + 0.5D - blobPointX) / blobPointRadius;
 
 				if (oreXRadius * oreXRadius >= 1)
 					continue;
 
-				for(int oreY = blobMinY; oreY <= blobMaxY; ++oreY) {
+				for (int oreY = blobMinY; oreY <= blobMaxY; ++oreY) {
 					final double oreYRadius = ((double)oreY + 0.5D - blobPointY) / blobPointRadius;
 
 					if (oreXRadius * oreXRadius + oreYRadius * oreYRadius >= 1)
 						continue;
 
-					for(int oreZ = blobMinZ; oreZ <= blobMaxZ; ++oreZ) {
+					for (int oreZ = blobMinZ; oreZ <= blobMaxZ; ++oreZ) {
 						final double oreZRadius = ((double)oreZ + 0.5D - blobPointZ) / blobPointRadius;
 
 						if (oreXRadius * oreXRadius + oreYRadius * oreYRadius + oreZRadius * oreZRadius >= 1 || level.isOutsideBuildHeight(oreY))
@@ -120,18 +123,22 @@ public class BrushableBlockOreFeature extends OreFeature {
 	public static class Configuration extends OreConfiguration {
 		public static final Codec<Configuration> CODEC = RecordCodecBuilder.create(builder ->
 				builder.group(OreConfiguration.CODEC.fieldOf("ore_config").forGetter(config -> config))
-						.and(ResourceLocation.CODEC.fieldOf("loot_table").forGetter(Configuration::lootTable))
+						.and(ResourceLocation.CODEC.fieldOf("loot_table").xmap(id -> ResourceKey.create(Registries.LOOT_TABLE, id), ResourceKey::location).forGetter(Configuration::lootTable))
 						.apply(builder, Configuration::new));
 
-		public final ResourceLocation lootTable;
+		public final ResourceKey<LootTable> lootTable;
 
 		public Configuration(OreConfiguration oreConfig, ResourceLocation lootTable) {
+			this(oreConfig, ResourceKey.create(Registries.LOOT_TABLE, lootTable));
+		}
+
+		public Configuration(OreConfiguration oreConfig, ResourceKey<LootTable> lootTable) {
 			super(oreConfig.targetStates, oreConfig.size, oreConfig.discardChanceOnAirExposure);
 
 			this.lootTable = lootTable;
 		}
 
-		public ResourceLocation lootTable() {
+		public ResourceKey<LootTable> lootTable() {
 			return this.lootTable;
 		}
 	}

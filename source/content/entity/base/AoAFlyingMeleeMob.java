@@ -28,8 +28,8 @@ import net.tslat.aoa3.content.entity.ai.movehelper.RoamingFlightMovementControll
 import net.tslat.aoa3.util.PlayerUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 
@@ -54,17 +54,17 @@ public abstract class AoAFlyingMeleeMob extends FlyingMob implements Enemy, GeoE
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		getEntityData().define(INVULNERABLE, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(INVULNERABLE, false);
 	}
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
 		xpReward = reason == MobSpawnType.MOB_SUMMONED ? 0 : (int)(5 + (getAttributeValue(Attributes.MAX_HEALTH) + getAttributeValue(Attributes.ARMOR) * 1.75f + getAttributeValue(Attributes.ATTACK_DAMAGE) * 2) / 10f);
 
-		return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+		return super.finalizeSpawn(world, difficulty, reason, spawnData);
 	}
 
 
@@ -74,7 +74,7 @@ public abstract class AoAFlyingMeleeMob extends FlyingMob implements Enemy, GeoE
 	}
 
 	@Override
-	protected abstract float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn);
+	public abstract float getEyeHeightAccess(Pose pose);
 
 	@Override
 	public SoundSource getSoundSource() {

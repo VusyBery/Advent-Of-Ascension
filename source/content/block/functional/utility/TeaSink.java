@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -61,10 +61,10 @@ public class TeaSink extends HorizontalDirectionalBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (state.getValue(FILLED)) {
-			if (player.getItemInHand(hand).getItem() == AoAItems.CUP.get() && player.getInventory().contains(new ItemStack(AoAItems.TEA_SHREDDINGS.get()))) {
-				if (!world.isClientSide()) {
+			if (stack.getItem() == AoAItems.CUP.get() && player.getInventory().contains(new ItemStack(AoAItems.TEA_SHREDDINGS.get()))) {
+				if (!level.isClientSide()) {
 					boolean success = false;
 
 					if (ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.MYSTIC_SHROOMS.get()), true, 1, false)) {
@@ -87,35 +87,35 @@ public class TeaSink extends HorizontalDirectionalBlock {
 
 					if (success) {
 						if (!player.isCreative())
-							player.getItemInHand(hand).shrink(1);
+							stack.shrink(1);
 
-						world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_TEA_SINK_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+						level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_TEA_SINK_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 
 						if (RandomUtil.oneInNChance(7))
-							world.setBlockAndUpdate(pos, AoABlocks.TEA_SINK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, state.getValue(HorizontalDirectionalBlock.FACING)));
+							level.setBlockAndUpdate(pos, AoABlocks.TEA_SINK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, state.getValue(HorizontalDirectionalBlock.FACING)));
 					}
 				}
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 		else {
-			if (player.getItemInHand(hand).getItem() == Items.WATER_BUCKET) {
-				if (!world.isClientSide()) {
+			if (stack.getItem() == Items.WATER_BUCKET) {
+				if (!level.isClientSide()) {
 					if (!player.isCreative()) {
-						player.getItemInHand(hand).shrink(1);
+						stack.shrink(1);
 						ItemUtil.givePlayerItemOrDrop(player, new ItemStack(Items.BUCKET));
 					}
 
-					world.setBlockAndUpdate(pos, defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, state.getValue(HorizontalDirectionalBlock.FACING)).setValue(FILLED, true));
-					world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_TEA_SINK_FILL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+					level.setBlockAndUpdate(pos, defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, state.getValue(HorizontalDirectionalBlock.FACING)).setValue(FILLED, true));
+					level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_TEA_SINK_FILL.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 				}
 
-				return InteractionResult.SUCCESS;
+				return ItemInteractionResult.sidedSuccess(level.isClientSide);
 			}
 		}
 
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	@Nullable

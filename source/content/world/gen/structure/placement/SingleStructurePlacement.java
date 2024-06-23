@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.world.gen.structure.placement;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -13,10 +14,10 @@ import net.tslat.aoa3.common.registration.worldgen.AoAStructurePlacements;
 import java.util.Optional;
 
 public class SingleStructurePlacement extends StructurePlacement {
-	public static final Codec<SingleStructurePlacement> CODEC = RecordCodecBuilder.<SingleStructurePlacement>mapCodec(codec -> codec.group(
+	public static final MapCodec<SingleStructurePlacement> CODEC = RecordCodecBuilder.mapCodec(codec -> codec.group(
 			Codec.INT.fieldOf("salt").forGetter(SingleStructurePlacement::salt),
 			BlockPos.CODEC.fieldOf("pos").forGetter(SingleStructurePlacement::pos)
-	).apply(codec, SingleStructurePlacement::new)).codec();
+	).apply(codec, SingleStructurePlacement::new));
 
 	private final BlockPos pos;
 	private final ChunkPos chunkPos;

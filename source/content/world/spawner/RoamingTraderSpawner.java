@@ -1,12 +1,12 @@
 package net.tslat.aoa3.content.world.spawner;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.Difficulty;
@@ -22,9 +22,9 @@ import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.registration.entity.AoACustomSpawners;
 
 public class RoamingTraderSpawner implements AoACustomSpawner<Entity> {
-	public static final Codec<RoamingTraderSpawner> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+	public static final MapCodec<RoamingTraderSpawner> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
 			AoACustomSpawner.GENERIC_SETTINGS_CODEC.fieldOf("base_settings").forGetter(spawner -> spawner.baseSettings),
-			ExtraCodecs.lazyInitializedCodec(() -> WeightedRandomList.codec(MobSpawnSettings.SpawnerData.CODEC)).fieldOf("spawns").forGetter(spawner -> spawner.spawns)
+			Codec.lazyInitialized(() -> WeightedRandomList.codec(MobSpawnSettings.SpawnerData.CODEC)).fieldOf("spawns").forGetter(spawner -> spawner.spawns)
 	).apply(builder, RoamingTraderSpawner::new));
 
 	private final GenericSettings baseSettings;
@@ -46,7 +46,7 @@ public class RoamingTraderSpawner implements AoACustomSpawner<Entity> {
 	}
 
 	@Override
-	public AoACustomSpawner<Entity> copy() {
+	public RoamingTraderSpawner copy() {
 		return new RoamingTraderSpawner(this.baseSettings, this.spawns);
 	}
 
@@ -86,7 +86,7 @@ public class RoamingTraderSpawner implements AoACustomSpawner<Entity> {
 						continue;
 				}
 
-				Entity entity = spawn.left().create(level, null, null, pos, MobSpawnType.NATURAL, false, false);
+				Entity entity = spawn.left().create(level, null, pos, MobSpawnType.NATURAL, false, false);
 
 				if (entity == null)
 					continue;
@@ -95,7 +95,7 @@ public class RoamingTraderSpawner implements AoACustomSpawner<Entity> {
 					if (this.baseSettings.spawnRules().isEmpty() && !mob.checkSpawnRules(level, MobSpawnType.NATURAL) || !mob.checkSpawnObstruction(level))
 						continue;
 
-					EventHooks.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(pos), MobSpawnType.NATURAL, null, null);
+					EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(pos), MobSpawnType.NATURAL, null);
 				}
 
 				level.addFreshEntityWithPassengers(entity);

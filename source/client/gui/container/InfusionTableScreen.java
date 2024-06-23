@@ -5,11 +5,12 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.menu.InfusionTableMenu;
 import net.tslat.aoa3.util.RenderUtil;
 
 public class InfusionTableScreen extends AbstractContainerScreen<InfusionTableMenu> {
-	private static final ResourceLocation textures = new ResourceLocation("aoa3", "textures/gui/containers/infusion_table.png");
+	private static final ResourceLocation textures = AdventOfAscension.id("textures/gui/containers/infusion_table.png");
 
 	public InfusionTableScreen(InfusionTableMenu container, Inventory inv, Component guiTitle) {
 		super(container, inv, guiTitle);

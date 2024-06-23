@@ -1,0 +1,27 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:cannon_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:nightmare_flakes"
+    },
+    {
+      "item": "aoa3:nightmare_flakes"
+    },
+    {
+      "tag": "neoforge:gems/bloodstone"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:shadow_blaster"
+  }
+}

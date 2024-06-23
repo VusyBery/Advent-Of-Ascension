@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:brain_coral_block"
+    },
+    "B": {
+      "item": "aoa3:coral_stone"
+    },
+    "C": {
+      "tag": "neoforge:rods/metal"
+    }
+  },
+  "pattern": [
+    " B ",
+    "ABA",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:coral_greatblade"
+  }
+}

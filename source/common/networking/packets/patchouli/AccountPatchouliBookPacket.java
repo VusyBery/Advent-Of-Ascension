@@ -1,32 +1,28 @@
 package net.tslat.aoa3.common.networking.packets.patchouli;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.packets.AoAPacket;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.PlayerUtil;
 
-public record AccountPatchouliBookPacket(ResourceLocation book) implements AoAPacket<PlayPayloadContext> {
-	public static final ResourceLocation ID = AdventOfAscension.id("account_patchouli_book");
+public record AccountPatchouliBookPacket(ResourceLocation book) implements AoAPacket {
+	public static final Type<AccountPatchouliBookPacket> TYPE = new Type<>(AdventOfAscension.id("account_patchouli_book"));
+	public static final StreamCodec<FriendlyByteBuf, AccountPatchouliBookPacket> CODEC = StreamCodec.composite(
+			ResourceLocation.STREAM_CODEC,
+			AccountPatchouliBookPacket::book,
+			AccountPatchouliBookPacket::new);
 
 	@Override
-	public ResourceLocation id() {
-		return ID;
+	public Type<? extends AccountPatchouliBookPacket> type() {
+		return TYPE;
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeResourceLocation(book);
-	}
-
-	public static AccountPatchouliBookPacket decode(FriendlyByteBuf buffer) {
-		return new AccountPatchouliBookPacket(buffer.readResourceLocation());
-	}
-
-	@Override
-	public void receiveMessage(PlayPayloadContext context) {
-		((ServerPlayerDataManager)PlayerUtil.getAdventPlayer(context.player().get())).addPatchouliBook(book);
+	public void receiveMessage(IPayloadContext context) {
+		((ServerPlayerDataManager)PlayerUtil.getAdventPlayer(context.player())).addPatchouliBook(book);
 	}
 }

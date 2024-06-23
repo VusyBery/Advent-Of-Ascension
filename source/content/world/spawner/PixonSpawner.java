@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.world.spawner;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
@@ -9,13 +10,12 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.SpawnPlacementType;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -32,9 +32,9 @@ import net.tslat.aoa3.content.entity.misc.PixonEntity;
 import java.util.Optional;
 
 public class PixonSpawner implements AoACustomSpawner<PixonEntity> {
-	public static final Codec<PixonSpawner> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+	public static final MapCodec<PixonSpawner> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
 			AoACustomSpawner.GENERIC_SETTINGS_CODEC.fieldOf("base_settings").forGetter(spawner -> spawner.baseSettings),
-			ExtraCodecs.lazyInitializedCodec(() -> SimpleWeightedRandomList.wrappedCodec(AoARegistries.PIXON_VARIANTS.lookupCodec())).fieldOf("variants").forGetter(spawner -> spawner.variants)
+			Codec.lazyInitialized(() -> SimpleWeightedRandomList.wrappedCodec(AoARegistries.PIXON_VARIANTS.lookupCodec())).fieldOf("variants").forGetter(spawner -> spawner.variants)
 	).apply(builder, PixonSpawner::new));
 
 	private final GenericSettings baseSettings;
@@ -54,14 +54,14 @@ public class PixonSpawner implements AoACustomSpawner<PixonEntity> {
 
 		final ResourceKey<Level> dimension = level.dimension();
 
-		if (!dimension.location().getNamespace().equals("minecraft") && !dimension.location().getNamespace().equals(AdventOfAscension.MOD_ID))
+		if (!dimension.location().getNamespace().equals("minecraft") && !AdventOfAscension.isAoA(dimension.location()))
 			return false;
 
 		return this.baseSettings.whitelistMode() == this.baseSettings.dimensions().contains(dimension);
 	}
 
 	@Override
-	public AoACustomSpawner<PixonEntity> copy() {
+	public PixonSpawner copy() {
 		return new PixonSpawner(this.baseSettings, this.variants);
 	}
 
@@ -96,12 +96,12 @@ public class PixonSpawner implements AoACustomSpawner<PixonEntity> {
 						continue;
 				}
 
-				PixonEntity pixon = spawn.left().create(level, null, null, spawn.right(), MobSpawnType.NATURAL, false, false);
+				PixonEntity pixon = spawn.left().create(level, null, spawn.right(), MobSpawnType.NATURAL, false, false);
 
 				if (pixon == null)
 					continue;
 
- 				pixon.finalizeSpawn(level, level.getCurrentDifficultyAt(pixon.blockPosition()), this.variants.getRandom(random).map(WeightedEntry.Wrapper::getData).orElse(null));
+ 				pixon.finalizeSpawn(level, level.getCurrentDifficultyAt(pixon.blockPosition()), this.variants.getRandom(random).map(WeightedEntry.Wrapper::data).orElse(null));
 				level.addFreshEntityWithPassengers(pixon);
 
 				this.nextSpawnTick += this.baseSettings.extraDelayPerSpawn().sample(random);
@@ -113,8 +113,8 @@ public class PixonSpawner implements AoACustomSpawner<PixonEntity> {
 	}
 
 	@Override
-	public boolean canSpawnAt(EntityType entityType, ServerLevel level, RandomSource random, BlockPos pos, SpawnPlacements.Type spawnPlacement) {
-		return canSpawnInBiome(level, pos) && canSpawnOn(level, level.getBlockState(pos.below()), pos.below()) && canSpawnInside(level, level.getBlockState(pos), pos) && level.noCollision(entityType.getAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d));
+	public boolean canSpawnAt(EntityType entityType, ServerLevel level, RandomSource random, BlockPos pos, SpawnPlacementType spawnPlacement) {
+		return canSpawnInBiome(level, pos) && canSpawnOn(level, level.getBlockState(pos.below()), pos.below()) && canSpawnInside(level, level.getBlockState(pos), pos) && level.noCollision(entityType.getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d));
 	}
 
 	private boolean canSpawnInBiome(ServerLevel level, BlockPos pos) {

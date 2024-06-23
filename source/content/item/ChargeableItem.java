@@ -2,7 +2,7 @@ package net.tslat.aoa3.content.item;
 
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
-import net.tslat.aoa3.common.registration.AoADataAttachments;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 
 public interface ChargeableItem {
     default float minRequiredCharge() {
@@ -18,15 +18,15 @@ public interface ChargeableItem {
     }
 
     default float getCharge(ItemStack stack) {
-        return stack.getData(AoADataAttachments.CHARGE);
+        return stack.getOrDefault(AoADataComponents.CHARGE, 0f);
     }
 
     default void setCharge(ItemStack stack, float charge) {
-        stack.setData(AoADataAttachments.CHARGE, Mth.clamp(charge, 0, maxCharge()));
+        stack.set(AoADataComponents.CHARGE, Mth.clamp(charge, 0, maxCharge()));
     }
 
     default void addCharge(ItemStack stack, float charge) {
-        stack.setData(AoADataAttachments.CHARGE, Math.min(getCharge(stack) + charge, maxCharge()));
+        stack.set(AoADataComponents.CHARGE, Math.min(getCharge(stack) + charge, maxCharge()));
     }
 
     default float subtractCharge(ItemStack stack, float charge, boolean force) {
@@ -37,7 +37,7 @@ public interface ChargeableItem {
 
         float newValue = Math.max(0, currentCharge - charge);
 
-        stack.setData(AoADataAttachments.CHARGE, newValue);
+        setCharge(stack, newValue);
 
         return currentCharge - newValue;
     }

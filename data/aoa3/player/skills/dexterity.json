@@ -5,9 +5,9 @@
       "base_value": 0.0,
       "id": "aoa3:attribute_modification",
       "level_req": 5,
-      "operation": 1.0,
+      "operation": 1,
       "per_level_mod": 0.002,
-      "unique_id": "-555905532"
+      "unique_id": "-1632793115"
     },
     {
       "base_value": 0.0,
@@ -30,18 +30,18 @@
       "base_value": 0.05,
       "id": "aoa3:attribute_modification",
       "level_req": 40,
-      "operation": 1.0,
+      "operation": 1,
       "per_level_mod": 0.0,
-      "unique_id": "-1239512341"
+      "unique_id": "1978567372"
     },
     {
       "attribute": "neoforge:swim_speed",
       "base_value": 0.0,
       "id": "aoa3:attribute_modification",
       "level_req": 50,
-      "operation": 1.0,
+      "operation": 1,
       "per_level_mod": 0.003,
-      "unique_id": "1363873904"
+      "unique_id": "286986321"
     },
     {
       "base_value": 0.0,
@@ -65,9 +65,9 @@
       "base_value": 0.05,
       "id": "aoa3:attribute_modification",
       "level_req": 80,
-      "operation": 1.0,
+      "operation": 1,
       "per_level_mod": 0.0,
-      "unique_id": "-1239513085"
+      "unique_id": "1978566628"
     },
     {
       "energy_consumption": 20.0,

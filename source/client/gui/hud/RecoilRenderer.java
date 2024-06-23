@@ -3,8 +3,8 @@ package net.tslat.aoa3.client.gui.hud;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
 import net.tslat.aoa3.client.gui.overlay.ScopeOverlayRenderer;
 
 public final class RecoilRenderer {
@@ -12,11 +12,11 @@ public final class RecoilRenderer {
 	private static float totalRecoil;
 
 	public static void init() {
-		NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, TickEvent.RenderTickEvent.class, RecoilRenderer::onRender);
+		NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, RenderFrameEvent.Post.class, RecoilRenderer::onRender);
 	}
 
-	private static void onRender(TickEvent.RenderTickEvent ev) {
-		if (ev.phase != TickEvent.Phase.END || Minecraft.getInstance().isPaused())
+	private static void onRender(RenderFrameEvent.Post ev) {
+		if (Minecraft.getInstance().isPaused())
 			return;
 
 		LocalPlayer pl = Minecraft.getInstance().player;

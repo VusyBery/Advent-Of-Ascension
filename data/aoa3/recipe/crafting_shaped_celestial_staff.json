@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:gems/crystallite"
+    },
+    "B": {
+      "tag": "neoforge:rods/metal"
+    }
+  },
+  "pattern": [
+    " A ",
+    "A A",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:celestial_staff"
+  }
+}

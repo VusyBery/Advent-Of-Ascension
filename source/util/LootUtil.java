@@ -1,6 +1,8 @@
 package net.tslat.aoa3.util;
 
-import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -17,18 +19,27 @@ import java.util.List;
 import java.util.function.Function;
 
 public final class LootUtil {
-	public static LootTable getTable(ServerLevel world, ResourceLocation table) {
-		return world.getServer().getLootData().getLootTable(table);
+	public static LootTable getTable(ServerLevel level, ResourceLocation table) {
+		return getTable(level, ResourceKey.create(Registries.LOOT_TABLE, table));
+	}
+
+	public static LootTable getTable(ServerLevel level, ResourceKey<LootTable> table) {
+		return level.getServer().reloadableRegistries().getLootTable(table);
 	}
 
 	@NotNull
 	public static List<ItemStack> generateLoot(ResourceLocation table, LootParams context) {
-		LootTable lootTable = getTable(context.getLevel(), table);
+		return generateLoot(ResourceKey.create(Registries.LOOT_TABLE, table), context);
+	}
+
+	@NotNull
+	public static List<ItemStack> generateLoot(ResourceKey<LootTable> table, LootParams params) {
+		LootTable lootTable = getTable(params.getLevel(), table);
 
 		if (lootTable == LootTable.EMPTY)
-			return Lists.newArrayList();
+			return new ObjectArrayList<>();
 
-		return lootTable.getRandomItems(context);
+		return lootTable.getRandomItems(params);
 	}
 
 	public static LootContext createContext(ServerLevel level, Function<LootParams.Builder, LootParams> params) {

@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:boulder_dash"
+  }
+}

@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,8 +18,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 import net.tslat.aoa3.content.item.EnergyProjectileWeapon;
+import net.tslat.aoa3.content.item.datacomponent.StaffRuneCost;
 import net.tslat.aoa3.content.item.weapon.blaster.BaseBlaster;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import net.tslat.aoa3.library.builder.SoundBuilder;
@@ -27,16 +30,20 @@ import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapon {
-	protected final HashMap<Item, Integer> runes = new HashMap<Item, Integer>(2);
+	public BaseStaff(Item.Properties properties) {
+		super(properties);
+	}
 
-	public BaseStaff(int durability) {
-		super(new Item.Properties().durability(durability));
+	public StaffRuneCost runeCost() {
+		return runeCost(getDefaultInstance());
+	}
+
+	public StaffRuneCost runeCost(ItemStack stack) {
+		return stack.get(AoADataComponents.STAFF_RUNE_COST.get());
 	}
 
 	@Override
@@ -51,7 +58,7 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 		}
 
 		if (player instanceof ServerPlayer) {
-			return checkPreconditions(player, stack).filter(data -> findAndConsumeRunes(getRunes(), (ServerPlayer)player, true, stack)).map(data -> {
+			return checkPreconditions(player, stack).filter(data -> findAndConsumeRunes(runeCost(stack).runeCosts(), (ServerPlayer)player, true, stack)).map(data -> {
 				if (getCastingSound() != null)
 					AoANetworking.sendToAllPlayersTrackingEntity(new AoASoundBuilderPacket(new SoundBuilder(getCastingSound()).isPlayer().followEntity(player)), player);
 
@@ -67,7 +74,7 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 		return InteractionResultHolder.success(stack);
 	}
 
-	public boolean findAndConsumeRunes(HashMap<Item, Integer> runes, ServerPlayer player, boolean allowBuffs, ItemStack staff) {
+	public boolean findAndConsumeRunes(Object2IntMap<Item> runes, ServerPlayer player, boolean allowBuffs, ItemStack staff) {
 		return ItemUtil.findAndConsumeRunes(runes, player, allowBuffs, staff);
 	}
 
@@ -75,19 +82,10 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 		return Optional.of((T)new Object());
 	}
 
-	public HashMap<Item, Integer> getRunes() {
-		if (runes.isEmpty())
-			populateRunes(runes);
-
-		return runes;
-	}
-
 	@Nullable
 	public SoundEvent getCastingSound() {
 		return null;
 	}
-
-	protected abstract void populateRunes(HashMap<Item, Integer> runes);
 
 	public abstract void cast(Level world, ItemStack staff, LivingEntity caster, T args);
 
@@ -117,14 +115,14 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		if (getDmg() > 0)
 			tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.MAGIC_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getDmg())));
 
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.STAFF_RUNE_COST, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST));
 
-		for (Map.Entry<Item, Integer> runeEntry : getRunes().entrySet()) {
-			tooltip.add(LocaleUtil.getLocaleMessage(LocaleUtil.Keys.STAFF_RUNE_COST_LINE, ChatFormatting.WHITE, LocaleUtil.numToComponent(runeEntry.getValue()), LocaleUtil.getLocaleMessage(runeEntry.getKey().getDescriptionId())));
+		for (Object2IntMap.Entry<Item> runeEntry : runeCost(stack).runeCosts().object2IntEntrySet()) {
+			tooltip.add(LocaleUtil.getLocaleMessage(LocaleUtil.Keys.STAFF_RUNE_COST_LINE, ChatFormatting.WHITE, LocaleUtil.numToComponent(runeEntry.getIntValue()), LocaleUtil.getLocaleMessage(runeEntry.getKey().getDescriptionId())));
 		}
 	}
 }

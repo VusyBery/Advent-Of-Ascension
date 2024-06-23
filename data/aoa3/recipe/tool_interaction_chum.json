@@ -1,0 +1,18 @@
+{
+  "type": "aoa3:tool_interaction",
+  "ingredients": [
+    {
+      "tag": "neoforge:rawfish"
+    },
+    {
+      "tag": "minecraft:swords"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:chum"
+  },
+  "tool": {
+    "tag": "minecraft:swords"
+  }
+}

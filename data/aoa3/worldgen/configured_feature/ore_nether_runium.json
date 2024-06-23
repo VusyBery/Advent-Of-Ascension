@@ -6,7 +6,7 @@
     "targets": [
       {
         "state": {
-          "Name": "aoa3:netherrack_runium_ore"
+          "Name": "aoa3:nether_runium_ore"
         },
         "target": {
           "block": "minecraft:netherrack",

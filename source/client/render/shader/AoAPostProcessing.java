@@ -10,8 +10,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.advent.Logging;
 import net.tslat.aoa3.client.ClientOperations;
@@ -92,10 +92,7 @@ public final class AoAPostProcessing {
         }
     }
 
-    private static void clientTick(final TickEvent.ClientTickEvent ev) {
-        if (ev.phase == TickEvent.Phase.END)
-            return;
-
+    private static void clientTick(final ClientTickEvent.Pre ev) {
         checkNightVisionGogglesShader(ClientOperations.getPlayer());
     }
 

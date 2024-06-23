@@ -1,7 +1,6 @@
 package net.tslat.aoa3.player.ability.innervation;
 
 import com.google.gson.JsonObject;
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -11,19 +10,22 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
+import net.minecraft.world.TickRateManager;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
 import net.tslat.aoa3.client.AoAKeybinds;
+import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
+
+import java.util.function.Consumer;
 
 public class InnervationDodge extends AoAAbility.Instance {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.INCOMING_ATTACK_BEFORE};
@@ -54,33 +56,43 @@ public class InnervationDodge extends AoAAbility.Instance {
 		return LISTENERS;
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	@Override
-	public KeyMapping getKeybind() {
-		return AoAKeybinds.ABILITY_ACTION;
-	}
+	public void createKeybindListener(Consumer<AoAPlayerKeybindListener> consumer) {
+		consumer.accept(new AoAPlayerKeybindListener() {
+			@Override
+			public AoAPlayerEventListener getEventListener() {
+				return InnervationDodge.this;
+			}
 
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public boolean shouldSendKeyPress() {
-		LocalPlayer player = Minecraft.getInstance().player;
-		float yRot = player.getViewYRot(Minecraft.getInstance().getDeltaFrameTime());
+			@Override
+			public int getKeycode() {
+				return AoAKeybinds.ABILITY_ACTION.getKey().getValue();
+			}
 
-		if (player.input.leftImpulse == 0 || player.input.hasForwardImpulse() || player.level().getGameTime() <= activationTime + 5 || player.getAbilities().flying)
-			return false;
+			@Override
+			public boolean shouldSendKeyPress() {
+				Minecraft mc = Minecraft.getInstance();
+				LocalPlayer player = mc.player;
+				TickRateManager tickRateManager = mc.level.tickRateManager();
+				float yRot = player.getViewYRot(mc.getTimer().getGameTimeDeltaPartialTick(!tickRateManager.isEntityFrozen(player)));
 
-		if (ClientPlayerDataManager.get().getResource(AoAResources.ENERGY.get()).hasAmount(this.energyCost)) {
-			Vec3 movement = player.getDeltaMovement();
-			double limit = player.onGround() ? 2.5d : 0.9d;
-			double velocityX = Mth.clamp(movement.x() + (Mth.cos(yRot * ((float)Math.PI / 180F)) * player.input.leftImpulse), -limit, limit);
-			double velocityZ = Mth.clamp(movement.z() + (Mth.sin(yRot * ((float)Math.PI / 180F)) * player.input.leftImpulse), -limit, limit);
+				if (player.input.leftImpulse == 0 || player.input.hasForwardImpulse() || player.level().getGameTime() <= activationTime + 5 || player.getAbilities().flying)
+					return false;
 
-			player.setDeltaMovement(new Vec3(velocityX, movement.y(), velocityZ));
+				if (ClientPlayerDataManager.get().getResource(AoAResources.ENERGY.get()).hasAmount(InnervationDodge.this.energyCost)) {
+					Vec3 movement = player.getDeltaMovement();
+					double limit = player.onGround() ? 2.5d : 0.9d;
+					double velocityX = Mth.clamp(movement.x() + (Mth.cos(yRot * ((float)Math.PI / 180F)) * player.input.leftImpulse), -limit, limit);
+					double velocityZ = Mth.clamp(movement.z() + (Mth.sin(yRot * ((float)Math.PI / 180F)) * player.input.leftImpulse), -limit, limit);
 
-			activationTime = player.level().getGameTime();
-		}
+					player.setDeltaMovement(new Vec3(velocityX, movement.y(), velocityZ));
 
-		return true;
+					activationTime = player.level().getGameTime();
+				}
+
+				return true;
+			}
+		});
 	}
 
 	@Override

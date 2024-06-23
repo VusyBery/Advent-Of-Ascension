@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
 import net.tslat.aoa3.client.render.custom.AoASkillRenderer;
 import net.tslat.aoa3.library.object.RenderContext;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.RegistryUtil;
@@ -35,7 +35,7 @@ public class LevelRequirementToast extends GenericToast {
 		poseStack.pushPose();
 		poseStack.scale(0.9f, 0.9f, 1f);
 		poseStack.translate(5.5f, 5, 0);
-		AoAGuiElementRenderers.getSkillRenderer(this.skill).renderInHud(RenderContext.of(guiGraphics), ClientPlayerDataManager.get().getSkill(this.skill), Minecraft.getInstance().getDeltaFrameTime(), AoASkillRenderer.ProgressRenderType.None, false);
+		AoAGuiElementRenderers.getSkillRenderer(this.skill).renderInHud(RenderContext.of(guiGraphics), ClientPlayerDataManager.get().getSkill(this.skill), Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), AoASkillRenderer.ProgressRenderType.None, false);
 		poseStack.popPose();
 	}
 }

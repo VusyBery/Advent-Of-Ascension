@@ -141,8 +141,10 @@ public class BigLakeFeature extends Feature<BigLakeFeature.Configuration> {
 			if (canReplaceBlock(level.getBlockState(fluidPos))) {
 				level.setBlock(fluidPos, fluidState, Block.UPDATE_CLIENTS);
 
-				if (pos.getY() >= depth)
+				if (pos.getY() >= depth) {
+					level.scheduleTick(fluidPos, fluidState.getFluidState().getType(), 0);
 					markAboveForPostProcessing(level, fluidPos);
+				}
 			}
 		}
 	}

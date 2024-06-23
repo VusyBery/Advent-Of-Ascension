@@ -2,6 +2,7 @@ package net.tslat.aoa3.content.entity.base;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -136,7 +137,7 @@ public class AoAEntityPart<T extends LivingEntity> extends PartEntity<T> {
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
 	@Override
 	protected void readAdditionalSaveData(CompoundTag tag) {

@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "aoa3:charged_runium_chunk"
+  },
+  "result": {
+    "count": 16,
+    "id": "aoa3:charged_rune"
+  }
+}

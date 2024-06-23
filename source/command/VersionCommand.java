@@ -21,7 +21,7 @@ public class VersionCommand implements Command<CommandSourceStack> {
 
 	@Override
 	public int run(CommandContext<CommandSourceStack> context) {
-		AoACommand.feedback(context.getSource(), "Version", "command.aoa.version.desc", AoACommand.CommandFeedbackType.INFO, Component.literal(AdventOfAscension.VERSION).withStyle(ChatFormatting.GREEN), Component.literal(NeoForgeVersion.getVersion()).withStyle(ChatFormatting.GREEN));
+		AoACommand.feedback(context.getSource(), "Version", "command.aoa.version.desc", AoACommand.CommandFeedbackType.INFO, Component.literal(AdventOfAscension.getVersion()).withStyle(ChatFormatting.GREEN), Component.literal(NeoForgeVersion.getVersion()).withStyle(ChatFormatting.GREEN));
 
 		return 1;
 	}

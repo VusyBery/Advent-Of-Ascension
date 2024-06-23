@@ -24,7 +24,7 @@ public class StickyFireballEntity extends FireballEntity {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.1f;
 	}
 

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "neoforge:ingots/limonite"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "aoa3:limonite_nugget"
+  }
+}

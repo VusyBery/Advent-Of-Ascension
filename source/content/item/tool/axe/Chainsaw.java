@@ -7,18 +7,19 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.item.AoATiers;
 import net.tslat.aoa3.content.block.generation.log.LogBlock;
 import net.tslat.aoa3.util.ItemUtil;
 
 public class Chainsaw extends BaseAxe {
-	public Chainsaw() {
-		super(AoATiers.CHAINSAW);
+	public Chainsaw(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 	@Override
@@ -27,17 +28,15 @@ public class Chainsaw extends BaseAxe {
 	}
 
 	@Override
-	public boolean onBlockStartBreak(ItemStack itemstack, BlockPos pos, Player player) {
-		if (!player.level().isClientSide) {
-			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), AoASounds.ITEM_CHAINSAW_USE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
-
-			BlockState state = player.level().getBlockState(pos);
+	public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity entity) {
+		if (!entity.level().isClientSide) {
+			entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), AoASounds.ITEM_CHAINSAW_USE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
 
 			if (state.getBlock() instanceof LogBlock || state.is(BlockTags.LOGS))
-				player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 10, 30, true, false));
+				entity.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 10, 30, true, false));
 		}
 
-		return false;
+		return super.mineBlock(stack, level, state, pos, entity);
 	}
 
 	@Override

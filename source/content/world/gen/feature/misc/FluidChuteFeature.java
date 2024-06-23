@@ -53,10 +53,11 @@ public class FluidChuteFeature extends Feature<FluidChuteFeature.Configuration> 
 
 							level.setBlock(pos, fluid, Block.UPDATE_CLIENTS);
 
-							if (aboveState.isAir()) {
-								level.scheduleTick(pos.immutable(), fluid.getBlock(), 0);
+							if (aboveState.isAir())
 								markAboveForPostProcessing(level, pos.immutable());
-							}
+
+							if (pos.getY() >= startPos.getY())
+								level.scheduleTick(pos.immutable(), fluid.getFluidState().getType(), 0);
 						}
 					}
 				}

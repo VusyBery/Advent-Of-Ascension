@@ -1,0 +1,27 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:gun_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:flammable_dust"
+    },
+    {
+      "item": "aoa3:flammable_dust"
+    },
+    {
+      "tag": "neoforge:ingots/emberstone"
+    },
+    {
+      "tag": "neoforge:ingots/emberstone"
+    },
+    {
+      "tag": "neoforge:ingots/limonite"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:hot_shot"
+  }
+}

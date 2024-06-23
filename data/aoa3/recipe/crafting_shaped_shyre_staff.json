@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:ingots/shyrestone"
+    },
+    "B": {
+      "tag": "neoforge:rods/metal"
+    },
+    "C": {
+      "tag": "neoforge:gems/crystallite"
+    },
+    "D": {
+      "tag": "neoforge:gems/shyregem"
+    },
+    "E": {
+      "item": "minecraft:ender_pearl"
+    }
+  },
+  "pattern": [
+    "DCD",
+    "EAE",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:shyre_staff"
+  }
+}

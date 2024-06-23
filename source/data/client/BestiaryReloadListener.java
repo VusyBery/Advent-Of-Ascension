@@ -41,7 +41,7 @@ public class BestiaryReloadListener implements ResourceManagerReloadListener {
 					continue;
 				}
 
-				ResourceLocation entryId = new ResourceLocation(pathParts[0], pathParts[1].substring(0, pathParts[1].length() - 4));
+				ResourceLocation entryId = ResourceLocation.fromNamespaceAndPath(pathParts[0], pathParts[1].substring(0, pathParts[1].length() - 4));
 
 				try (BufferedReader reader = new BufferedReader(new InputStreamReader(entry.getValue().open(), StandardCharsets.UTF_8)) ) {
 					BESTIARY.put(entryId, ObjectUtil.bufferedReaderToString(reader));

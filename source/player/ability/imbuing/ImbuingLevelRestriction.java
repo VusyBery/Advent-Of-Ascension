@@ -14,6 +14,7 @@ import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.content.recipe.ImbuingRecipe;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
+import net.tslat.aoa3.util.EnchantmentUtil;
 
 import java.util.Optional;
 
@@ -26,13 +27,13 @@ public class ImbuingLevelRestriction extends AoAAbility.Instance {
 	public ImbuingLevelRestriction(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.IMBUING_LEVEL_RESTRICTION.get(), skill, data);
 
-		this.recipeId = new ResourceLocation(GsonHelper.getAsString(data, "recipe_id"));
+		this.recipeId = ResourceLocation.read(GsonHelper.getAsString(data, "recipe_id")).getOrThrow();
 	}
 
 	public ImbuingLevelRestriction(AoASkill.Instance skill, CompoundTag data) {
 		super(AoAAbilities.IMBUING_LEVEL_RESTRICTION.get(), skill, data);
 
-		this.recipeId = new ResourceLocation(data.getString("recipe_id"));
+		this.recipeId = ResourceLocation.read(data.getString("recipe_id")).getOrThrow();
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class ImbuingLevelRestriction extends AoAAbility.Instance {
 		if (this.cachedRecipe == null)
 			this.cachedRecipe = (Optional<ImbuingRecipe>)getPlayer().level().getRecipeManager().byKey(this.recipeId).filter(holder -> holder.value() instanceof ImbuingRecipe).map(RecipeHolder::value);
 
-		super.updateDescription(Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey(), this.cachedRecipe.map(recipe -> recipe.getEnchant().left().getFullname(recipe.getEnchant().rightInt())).orElseGet(() -> Component.literal(this.recipeId.getPath()))));
+		super.updateDescription(Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey(), this.cachedRecipe.map(recipe -> EnchantmentUtil.getFormattedName(recipe.getEnchant().left(), recipe.getEnchant().rightInt())).orElseGet(() -> Component.literal(this.recipeId.getPath()))));
 	}
 
 	@Override

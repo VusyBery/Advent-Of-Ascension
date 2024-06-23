@@ -7,6 +7,7 @@ import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -24,7 +25,6 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -55,8 +55,8 @@ import net.tslat.smartbrainlib.util.BrainUtils;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
@@ -86,31 +86,28 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 		this.dataParams = new EntityDataHolder<?>[] {ATTACK_STATE, INVULNERABLE, IMMOBILE};
 
 		for (EntityDataHolder<?> dataHolder : this.dataParams) {
-			dataHolder.defineDefault(this);
+			dataHolder.defineDefault(builder);
 		}
 	}
 
-	protected final void registerDataParams(EntityDataHolder<?>... params) {
+	protected final void registerDataParams(SynchedEntityData.Builder builder, EntityDataHolder<?>... params) {
 		EntityDataHolder<?>[] newArray = new EntityDataHolder[this.dataParams.length + params.length];
 
 		System.arraycopy(this.dataParams, 0, newArray, 0, this.dataParams.length);
 		System.arraycopy(params, 0, newArray, this.dataParams.length, params.length);
 
 		for (EntityDataHolder<?> param : params) {
-			param.defineDefault(this);
+			param.defineDefault(builder);
 		}
 
 		this.dataParams = newArray;
 	}
-
-	@Override
-	protected abstract float getStandingEyeHeight(Pose pose, EntityDimensions size);
 
 	@Nullable
 	@Override
@@ -186,7 +183,7 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 	}
 
 	public static AttributeSupplier.Builder getDefaultAttributes() {
-		return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE).add(Attributes.ATTACK_KNOCKBACK).add(AoAAttributes.AGGRO_RANGE.get());
+		return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE).add(Attributes.ATTACK_KNOCKBACK).add(AoAAttributes.AGGRO_RANGE);
 	}
 
 	@Override
@@ -196,14 +193,14 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-		this.hasDrops = reason != MobSpawnType.MOB_SUMMONED;
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
+		this.hasDrops = spawnType != MobSpawnType.MOB_SUMMONED;
 		this.xpReward = calculateKillXp();
 
-		if (reason == MobSpawnType.SPAWNER)
+		if (spawnType == MobSpawnType.SPAWNER)
 			this.xpReward *= 0.5d;
 
-		return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+		return super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
 	}
 
 	public int calculateKillXp() {
@@ -244,30 +241,27 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 
 	@Override
 	public boolean doHurtTarget(Entity target) {
-		float damage = (float)this.getAttributeValue(Attributes.ATTACK_DAMAGE);
-		float knockback = (float)this.getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+		float damage = (float)getAttributeValue(Attributes.ATTACK_DAMAGE);
+		DamageSource damageSource = damageSources().mobAttack(this);
 
-		if (target instanceof LivingEntity livingTarget) {
-			damage += EnchantmentHelper.getDamageBonus(getMainHandItem(), livingTarget.getMobType());
-			knockback += EnchantmentHelper.getKnockbackBonus(this);
-		}
+		if (level() instanceof ServerLevel serverLevel)
+			damage = EnchantmentHelper.modifyDamage(serverLevel, getWeaponItem(), target, damageSource, damage);
 
-		if (target.hurt(getAttackDamageSource(target), damage)) {
-			final int fireAspect = EnchantmentHelper.getFireAspect(this);
+		if (target.hurt(damageSource, damage)) {
+			if (target instanceof LivingEntity livingTarget) {
+				float knockback = getKnockback(target, damageSource);
 
-			if (fireAspect > 0)
-				target.setSecondsOnFire(fireAspect * 4);
-
-			if (knockback > 0 && target instanceof LivingEntity livingTarget) {
-				livingTarget.knockback(knockback * 0.5f,  Mth.sin(getYRot() * Mth.DEG_TO_RAD), -Mth.cos(getYRot() * Mth.DEG_TO_RAD));
-				setDeltaMovement(getDeltaMovement().multiply(0.6d, 1, 0.6d));
+				if (knockback > 0) {
+					livingTarget.knockback(knockback * 0.5f, Mth.sin(getYRot() * Mth.DEG_TO_RAD), -Mth.cos(getYRot() * Mth.DEG_TO_RAD));
+					setDeltaMovement(getDeltaMovement().multiply(0.6, 1.0, 0.6));
+				}
 			}
 
-			if (target instanceof Player pl)
-				maybeDisableShield(pl, this.getMainHandItem(), pl.isUsingItem() ? pl.getUseItem() : ItemStack.EMPTY);
+			if (level() instanceof ServerLevel serverLevel)
+				EnchantmentHelper.doPostAttackEffects(serverLevel, target, damageSource);
 
-			doEnchantDamageEffects(this, target);
 			setLastHurtMob(target);
+			playAttackSound();
 			onAttack(target);
 
 			return true;
@@ -334,7 +328,7 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 			if (level() instanceof ServerLevel serverLevel) {
 				if (lastAttacker == null || lastAttacker.killedEntity(serverLevel, this)) {
 					gameEvent(GameEvent.ENTITY_DIE);
-					dropAllDeathLoot(source);
+					dropAllDeathLoot(serverLevel, source);
 					createWitherRose(killer);
 				}
 

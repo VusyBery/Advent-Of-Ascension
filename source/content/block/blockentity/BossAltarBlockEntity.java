@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.block.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -33,32 +34,32 @@ public class BossAltarBlockEntity extends BlockEntity {
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
+		CompoundTag tag = super.getUpdateTag(registryLookup);
 
-		tag.putString("entityType", entityType == null ? "" : RegistryUtil.getId(entityType).toString());
+		tag.putString("entityType", this.entityType == null ? "" : RegistryUtil.getId(this.entityType).toString());
 
 		return tag;
 	}
 
 	@Override
-	public void load(CompoundTag tag) {
-		super.load(tag);
+	protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registryLookup) {
+		super.loadAdditional(tag, registryLookup);
 
 		if (tag.contains("entityType")) {
 			String entityTypeString = tag.getString("entityType");
 
 			if (entityTypeString.isEmpty()) {
-				entityType = null;
+				this.entityType = null;
 			}
 			else {
-				entityType = AoARegistries.ENTITIES.getEntry(new ResourceLocation(entityTypeString));
+				this.entityType = AoARegistries.ENTITIES.getEntry(ResourceLocation.read(entityTypeString).getOrThrow());
 			}
 
-			if (cachedEntity != null)
-				cachedEntity.discard();
+			if (this.cachedEntity != null)
+				this.cachedEntity.discard();
 
-			cachedEntity = entityType == null || level == null ? null : entityType.create(level);
+			this.cachedEntity = this.entityType == null || this.level == null ? null : this.entityType.create(this.level);
 		}
 	}
 

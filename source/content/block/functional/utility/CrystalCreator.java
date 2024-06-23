@@ -3,7 +3,7 @@ package net.tslat.aoa3.content.block.functional.utility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -31,20 +31,18 @@ public class CrystalCreator extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		ItemStack stack = player.getItemInHand(hand);
-
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (stack.getItem() == gemstone.get() || stack.getItem() == gemtrap.get()) {
-			if (!world.isClientSide()) {
+			if (!level.isClientSide()) {
 				player.setItemInHand(hand, ItemStack.EMPTY);
 
 				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(crystal.get(), stack.getCount()));
-				world.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_CRYSTAL_CREATOR_CONVERT.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+				level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_CRYSTAL_CREATOR_CONVERT.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 
-		return InteractionResult.FAIL;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 }

@@ -49,7 +49,7 @@ public class RockFragmentEntity extends BaseBullet implements HardProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
+	public double getDefaultGravity() {
 		return 0.06f;
 	}
 }

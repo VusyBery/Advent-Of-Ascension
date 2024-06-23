@@ -1,25 +1,24 @@
 package net.tslat.aoa3.content.recipe;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectIntPair;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.util.ExtraCodecs;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
 import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -33,32 +32,17 @@ import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.content.item.misc.AspectFocusItem;
 import net.tslat.aoa3.util.PlayerUtil;
+import net.tslat.aoa3.util.StreamCodecUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
-public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory> {
-	public static final Codec<ImbuingRecipe> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					ExtraCodecs.strictOptionalField(Codec.intRange(1, 1000), "imbuing_level", 1).forGetter(ImbuingRecipe::getImbuingLevelReq),
-					FloatProvider.CODEC.optionalFieldOf("imbuing_xp_override").forGetter(ImbuingRecipe::getXpOverrideProvider),
-					AoARegistries.ENCHANTMENTS.lookupCodec().fieldOf("enchantment").forGetter(instance -> instance.getEnchant().left()),
-					Codec.intRange(0, 255).fieldOf("enchantment_level").forGetter(instance -> instance.getEnchant().rightInt()),
-					AoARegistries.AOA_ASPECT_FOCI.lookupCodec().listOf().fieldOf("aspect_foci").xmap(foci ->
-							foci.stream().map(Ingredient::of).<NonNullList<Ingredient>>collect(NonNullList::create, NonNullList::add, NonNullList::addAll), ingredients ->
-							ingredients.stream()
-									.skip(1)
-									.map(ingredient -> ingredient.getItems()[0])
-                                    .map(ItemStack::getItem)
-                                    .map(AspectFocusItem.class::cast)
-                                    .map(AspectFocusItem::getFocus).toList()).forGetter(ImbuingRecipe::getIngredients),
-					Ingredient.CODEC_NONEMPTY.fieldOf("power_source").forGetter(ImbuingRecipe::getPowerSource),
-					ExtraCodecs.strictOptionalField(Codec.BOOL, "show_notification", true).forGetter(instance -> instance.showUnlockNotification))
-			.apply(builder, ImbuingRecipe::new));
-
+public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 	private final boolean showUnlockNotification;
 
-	private final ObjectIntPair<Enchantment> enchant;
+	private final ObjectIntPair<Holder<Enchantment>> enchant;
 	private final NonNullList<Ingredient> ingredients;
 	private final int imbuingLevelReq;
 	private final Optional<FloatProvider> xpOverride;
@@ -69,7 +53,7 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 	@Nullable
 	private Boolean lastConfigValue = null;
 
-	public ImbuingRecipe(int imbuingLevelReq, Optional<FloatProvider> xpOverride, Enchantment enchant, int enchantLevel, NonNullList<Ingredient> foci, Ingredient powerSource, boolean showUnlockNotification) {
+	public ImbuingRecipe(int imbuingLevelReq, Optional<FloatProvider> xpOverride, Holder<Enchantment> enchant, int enchantLevel, NonNullList<Ingredient> foci, Ingredient powerSource, boolean showUnlockNotification) {
 		this.enchant = ObjectIntPair.of(enchant, enchantLevel);
 		this.ingredients = NonNullList.withSize(foci.size() + 1, Ingredient.EMPTY);
 		this.showUnlockNotification = showUnlockNotification;
@@ -108,13 +92,13 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 
     }
 
-	public ObjectIntPair<Enchantment> getEnchant() {
+	public ObjectIntPair<Holder<Enchantment>> getEnchant() {
 		return this.enchant;
 	}
 
 	@Override
 	public boolean showNotification() {
-		return this.showUnlockNotification && (AoAConfigs.SERVER.allowUnsafeInfusion.get() || getEnchant().rightInt() <= getEnchant().left().getMaxLevel());
+		return this.showUnlockNotification && (AoAConfigs.SERVER.allowUnsafeInfusion.get() || getEnchant().rightInt() <= getEnchant().left().value().getMaxLevel());
 	}
 
 	@Override
@@ -137,18 +121,18 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 	}
 
 	@Override
-	public boolean matches(ImbuingChamberMenu.ImbuingInventory inventory, Level level) {
+	public boolean matches(ImbuingRecipeInput input, Level level) {
 		if (!checkEnchantSafety())
 			return false;
 
-		final ItemStack targetStack = inventory.getItem(6);
+		final ItemStack targetStack = input.getItem(6);
 
-		if (!targetStack.isEmpty() && !inventory.imbuing && !canEnchantInput(targetStack))
+		if (!targetStack.isEmpty() && !input.inventory.imbuing && !canEnchantInput(targetStack))
 			return false;
 
 		final List<Ingredient> ingredients = getIngredients();
 
-		return this.isSimpleIngredients ? checkSimpleIngredients(inventory, ingredients.size(), targetStack) : checkNonSimpleIngredients(inventory, ingredients, targetStack);
+		return this.isSimpleIngredients ? checkSimpleIngredients(input, ingredients.size(), targetStack) : checkNonSimpleIngredients(input, ingredients, targetStack);
 	}
 
 	private boolean checkEnchantSafety() {
@@ -158,7 +142,7 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 			return this.isSafeToEnchant;
 
 		this.lastConfigValue = configValue;
-		this.isSafeToEnchant = configValue || getEnchant().rightInt() <= getEnchant().left().getMaxLevel();
+		this.isSafeToEnchant = configValue || getEnchant().rightInt() <= getEnchant().left().value().getMaxLevel();
 
 		return this.isSafeToEnchant;
 	}
@@ -167,23 +151,23 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 		if (inputStack.is(Items.BOOK))
 			return false;
 
-		final Enchantment enchant = getEnchant().left();
+		final Holder<Enchantment> enchant = getEnchant().left();
 
-		if (!enchant.canEnchant(inputStack) || inputStack.getEnchantmentLevel(enchant) >= getEnchant().rightInt())
+		if (!enchant.value().canEnchant(inputStack) || inputStack.getEnchantmentLevel(enchant) >= getEnchant().rightInt())
 			return false;
 
-		for (Enchantment existingEnchant : EnchantmentHelper.getEnchantments(inputStack).keySet()) {
-			if (existingEnchant != enchant && (!existingEnchant.isCompatibleWith(enchant) || !enchant.isCompatibleWith(existingEnchant)))
+		for (Holder<Enchantment> existingEnchant : EnchantmentHelper.getEnchantmentsForCrafting(inputStack).keySet()) {
+			if (!existingEnchant.is(enchant) && !Enchantment.areCompatible(existingEnchant, enchant))
 				return false;
 		}
 
 		return true;
 	}
 
-	private boolean checkSimpleIngredients(ImbuingChamberMenu.ImbuingInventory inventory, int ingredientsCount, ItemStack inputStack) {
+	private boolean checkSimpleIngredients(ImbuingRecipeInput input, int ingredientsCount, ItemStack inputStack) {
 		StackedContents itemHelper = new StackedContents();
 
-		for (ItemStack ingredient : inventory.getItems()) {
+		for (ItemStack ingredient : input.inventory.getItems()) {
 			if (ingredient.isEmpty() || ingredient == inputStack)
 				continue;
 
@@ -196,11 +180,11 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 		return ingredientsCount == 0 && itemHelper.canCraft(this, null);
 	}
 
-	private boolean checkNonSimpleIngredients(ImbuingChamberMenu.ImbuingInventory inventory, List<Ingredient> ingredients, ItemStack inputStack) {
+	private boolean checkNonSimpleIngredients(ImbuingRecipeInput input, List<Ingredient> ingredients, ItemStack inputStack) {
 		int ingredientsCount = ingredients.size();
 		List<ItemStack> foundIngredients = new ObjectArrayList<>(ingredientsCount);
 
-		for (ItemStack ingredient : inventory.getItems()) {
+		for (ItemStack ingredient : input.inventory.getItems()) {
 			if (ingredient.isEmpty() || ingredient == inputStack)
 				continue;
 
@@ -214,11 +198,11 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 	}
 
 	@Override
-	public NonNullList<ItemStack> getRemainingItems(ImbuingChamberMenu.ImbuingInventory inv) {
-		final NonNullList<ItemStack> returns = NonNullList.withSize(inv.getContainerSize() - 1, ItemStack.EMPTY);
+	public NonNullList<ItemStack> getRemainingItems(ImbuingRecipeInput input) {
+		final NonNullList<ItemStack> returns = NonNullList.withSize(input.size() - 1, ItemStack.EMPTY);
 
 		for (int i = 0; i < returns.size() - 1; i++) {
-			ItemStack stack = inv.getItem(i);
+			ItemStack stack = input.getItem(i);
 
 			if (!stack.isEmpty()) {
 				if (stack.hasCraftingRemainingItem()) {
@@ -247,55 +231,90 @@ public class ImbuingRecipe implements Recipe<ImbuingChamberMenu.ImbuingInventory
 	}
 
 	@Override
-	public ItemStack assemble(ImbuingChamberMenu.ImbuingInventory inv, RegistryAccess registryAccess) {
-		final ItemStack input = inv.getItem(6).copy();
+	public ItemStack assemble(ImbuingRecipeInput input, HolderLookup.Provider holderLookup) {
+		final ItemStack target = input.getItem(6).copy();
 
-		if (input.isEmpty())
-			return input;
+		if (target.isEmpty())
+			return target;
 
-		input.enchant(getEnchant().left(), getEnchant().rightInt());
+		target.enchant(getEnchant().left(), getEnchant().rightInt());
 
-		return input;
+		return target;
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider holderLookup) {
 		return ItemStack.EMPTY.copy();
 	}
 
 	public static class Factory implements RecipeSerializer<ImbuingRecipe> {
+		public static final MapCodec<ImbuingRecipe> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+						Codec.intRange(1, 1000).optionalFieldOf("imbuing_level", 1).forGetter(ImbuingRecipe::getImbuingLevelReq),
+						FloatProvider.CODEC.optionalFieldOf("imbuing_xp_override").forGetter(ImbuingRecipe::getXpOverrideProvider),
+						Enchantment.CODEC.fieldOf("enchantment").forGetter(instance -> instance.getEnchant().left()),
+						Codec.intRange(0, 255).fieldOf("enchantment_level").forGetter(instance -> instance.getEnchant().rightInt()),
+						AoARegistries.AOA_ASPECT_FOCI.lookupCodec().listOf().fieldOf("aspect_foci").xmap(foci ->
+								foci.stream().map(Ingredient::of).<NonNullList<Ingredient>>collect(net.minecraft.core.NonNullList::create, NonNullList::add, NonNullList::addAll), ingredients ->
+								ingredients.stream()
+										.skip(1)
+										.map(ingredient -> ingredient.getItems()[0])
+										.map(ItemStack::getItem)
+										.map(AspectFocusItem.class::cast)
+										.map(AspectFocusItem::getFocus).toList()).forGetter(ImbuingRecipe::getIngredients),
+						Ingredient.CODEC_NONEMPTY.fieldOf("power_source").forGetter(ImbuingRecipe::getPowerSource),
+						Codec.BOOL.optionalFieldOf("show_notification", true).forGetter(instance -> instance.showUnlockNotification))
+				.apply(builder, ImbuingRecipe::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, ImbuingRecipe> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.VAR_INT, ImbuingRecipe::getImbuingLevelReq,
+				ByteBufCodecs.optional(ByteBufCodecs.fromCodec(FloatProvider.CODEC)), ImbuingRecipe::getXpOverrideProvider,
+				ByteBufCodecs.BOOL, ImbuingRecipe::showNotification,
+				ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT), recipe -> recipe.enchant.left(),
+				ByteBufCodecs.VAR_INT, recipe -> recipe.enchant.rightInt(),
+				StreamCodecUtil.nonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), ImbuingRecipe::getIngredients,
+				(imbuingLevelReq, xpOverride, showUnlockNotification, enchant, enchantLevel, foci) -> {
+					Ingredient powerSource = foci.getFirst();
+
+					foci.set(0, Ingredient.EMPTY);
+
+					return new ImbuingRecipe(imbuingLevelReq, xpOverride, enchant, enchantLevel, foci, powerSource, showUnlockNotification);
+				});
+
 		@Override
-		public Codec<ImbuingRecipe> codec() {
-			return ImbuingRecipe.CODEC;
+		public MapCodec<ImbuingRecipe> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public ImbuingRecipe fromNetwork(FriendlyByteBuf buffer) {
-			int infusionLevelReq = buffer.readVarInt();
-			Optional<FloatProvider> xpProvider = buffer.readOptional(friendlyByteBuf -> friendlyByteBuf.readWithCodecTrusted(NbtOps.INSTANCE, FloatProvider.CODEC));
-			boolean showNotification = buffer.readBoolean();
-			Enchantment enchant = buffer.readById(BuiltInRegistries.ENCHANTMENT);
-			int enchantLevel = buffer.readVarInt();
-			NonNullList<Ingredient> ingredients = NonNullList.withSize(buffer.readVarInt(), Ingredient.EMPTY);
+		public StreamCodec<RegistryFriendlyByteBuf, ImbuingRecipe> streamCodec() {
+			return STREAM_CODEC;
+		}
+	}
 
-			ingredients.replaceAll(list -> Ingredient.fromNetwork(buffer));
-			Ingredient powerSource = ingredients.get(0);
-			ingredients.set(0, Ingredient.EMPTY);
-
-			return new ImbuingRecipe(infusionLevelReq, xpProvider, enchant, enchantLevel, ingredients, powerSource, showNotification);
+	public record ImbuingRecipeInput(ImbuingChamberMenu.ImbuingInventory inventory) implements RecipeInput {
+		@Override
+		public ItemStack getItem(int index) {
+			return this.inventory.getItem(index);
 		}
 
 		@Override
-		public void toNetwork(FriendlyByteBuf buffer, ImbuingRecipe recipe) {
-			buffer.writeVarInt(recipe.getImbuingLevelReq());
-			buffer.writeOptional(recipe.getXpOverrideProvider(), (friendlyByteBuf, floatProvider) -> friendlyByteBuf.writeWithCodec(NbtOps.INSTANCE, FloatProvider.CODEC, floatProvider));
+		public int size() {
+			return this.inventory.getContainerSize();
+		}
 
-			buffer.writeBoolean(recipe.showNotification());
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == this)
+				return true;
 
-			buffer.writeId(BuiltInRegistries.ENCHANTMENT, recipe.getEnchant().left());
-			buffer.writeVarInt(recipe.getEnchant().rightInt());
-			buffer.writeVarInt(recipe.getIngredients().size());
-			recipe.getIngredients().forEach(ingredient -> ingredient.toNetwork(buffer));
+			if (!(obj instanceof ImbuingRecipeInput imbuingRecipeInput))
+				return false;
+
+			return Objects.equals(this, imbuingRecipeInput);
+		}
+
+		@Override
+		public int hashCode() {
+			return 0;
 		}
 	}
 }

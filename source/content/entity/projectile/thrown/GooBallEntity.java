@@ -45,13 +45,13 @@ public class GooBallEntity extends BaseBullet implements HardProjectile, ItemSup
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.05f;
 	}
 
 	@Override
 	public void doEntityImpact(Entity target, Vec3 impactLocation) {
-		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.GOO_BALL.get().getDamage()))
+		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.GOO_BALL.get().getGunDamage(getWeaponStack(AoAWeapons.GOO_BALL.get()))))
 			EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.MOVEMENT_SLOWDOWN, 60).level(2));
 
 		level().playSound(null, getX(), getY(), getZ(), AoASounds.GOO_BALL_IMPACT.get(), SoundSource.PLAYERS, 1.0f, 1.0f);

@@ -12,7 +12,7 @@ import net.tslat.aoa3.content.entity.mob.abyss.WebReaperEntity;
 
 public class WebReaperRenderer extends AoAMobRenderer {
 	public WebReaperRenderer(EntityRendererProvider.Context renderManager) {
-		super(renderManager, new WebReaperModel(), AoAMobs.WEB_REAPER.get().getWidth() / 3f, 1.0f, new ResourceLocation("aoa3", "textures/entity/mob/abyss/web_reaper.png"));
+		super(renderManager, new WebReaperModel(), AoAMobs.WEB_REAPER.get().getWidth() / 3f, 1.0f, AdventOfAscension.id("textures/entity/mob/abyss/web_reaper.png"));
 	}
 
 	@Override

@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:cannon_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:void_scales"
+    },
+    {
+      "item": "minecraft:tnt"
+    },
+    {
+      "tag": "neoforge:ingots/limonite"
+    },
+    {
+      "tag": "neoforge:ingots/limonite"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:ingots/iron"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:rpg"
+  }
+}

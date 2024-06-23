@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aoa3:blue_druse"
+    },
+    "B": {
+      "tag": "c:strings"
+    },
+    "C": {
+      "item": "aoa3:white_druse"
+    },
+    "D": {
+      "item": "aoa3:ghostly_powder"
+    }
+  },
+  "pattern": [
+    "DAB",
+    "C B",
+    "DAB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:spectral_bow"
+  }
+}

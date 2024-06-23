@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "Q": {
+      "tag": "c:gems/quartz"
+    },
+    "R": {
+      "tag": "c:dusts/redstone"
+    },
+    "X": {
+      "tag": "c:dyes/light_gray"
+    }
+  },
+  "pattern": [
+    " Q ",
+    "RXR",
+    " R "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:grey_stained_glass_lamp"
+  }
+}

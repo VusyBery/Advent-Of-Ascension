@@ -18,7 +18,7 @@ import net.tslat.aoa3.content.entity.base.AoATrader;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimatableManager;
 
 
 public class SkillMasterEntity extends AoATrader {
@@ -44,10 +44,10 @@ public class SkillMasterEntity extends AoATrader {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		getEntityData().define(TRADING, false);
+		builder.define(TRADING, false);
 	}
 
 	@Override

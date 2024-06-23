@@ -5,12 +5,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.entity.PartEntity;
-import net.tslat.aoa3.common.registration.AoADataAttachments;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.content.entity.projectile.blaster.IroMinerShotEntity;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 import net.tslat.aoa3.util.DamageUtil;
@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class IroMiner extends BaseBlaster {
-	public IroMiner(double dmg, int durability, int fireDelayTicks, float energyCost) {
-		super(dmg, durability, fireDelayTicks, energyCost);
+	public IroMiner(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -42,26 +42,26 @@ public class IroMiner extends BaseBlaster {
 		float damageMod = 1;
 
 		if (heldStack.getItem() == this) {
-			float damageScaling = heldStack.getData(AoADataAttachments.DAMAGE_SCALING);
-			UUID lastTarget = heldStack.getData(AoADataAttachments.LAST_TARGET);
+			float damageScaling = heldStack.getOrDefault(AoADataComponents.DAMAGE_SCALING, 1f);
+			UUID lastTarget = heldStack.getOrDefault(AoADataComponents.LAST_TARGET, null);
 			UUID targetUUID = target instanceof PartEntity<?> partEntity ? partEntity.getParent().getUUID() : target.getUUID();
 
 			if (targetUUID.equals(lastTarget)) {
 				damageMod = damageScaling + 0.02f;
-				heldStack.setData(AoADataAttachments.DAMAGE_SCALING, damageMod);
+				heldStack.set(AoADataComponents.DAMAGE_SCALING, damageMod);
 			}
 			else {
-				heldStack.setData(AoADataAttachments.LAST_TARGET, targetUUID);
-				heldStack.setData(AoADataAttachments.DAMAGE_SCALING, 1f);
+				heldStack.set(AoADataComponents.LAST_TARGET, targetUUID);
+				heldStack.set(AoADataComponents.DAMAGE_SCALING, 1f);
 			}
 		}
 
-		return DamageUtil.doEnergyProjectileAttack(shooter, shot, target, (float)getDamage() * damageMod);
+		return DamageUtil.doEnergyProjectileAttack(shooter, shot, target, getBlasterDamage(heldStack) * damageMod);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

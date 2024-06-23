@@ -16,6 +16,9 @@ public final class HolidayUtil {
 		if (date.isEqual(forDay(Month.OCTOBER, 31)))
 			return Holiday.HALLOWEEN;
 
+		if (date.isEqual(forDay(Month.JUNE, 24)))
+			return Holiday.ANNIVERSARY;
+
 		return Holiday.NONE;
 	}
 
@@ -31,6 +34,10 @@ public final class HolidayUtil {
 		return getCurrentHoliday() == Holiday.APRIL_FOOLS;
 	}
 
+	public static boolean isAnniversary() {
+		return getCurrentHoliday() == Holiday.ANNIVERSARY;
+	}
+
 	private static LocalDate forDay(Month month, int number) {
 		return LocalDate.of(LocalDate.now().getYear(), month, number);
 	}
@@ -39,6 +46,7 @@ public final class HolidayUtil {
 		NONE,
 		CHRISTMAS,
 		HALLOWEEN,
-		APRIL_FOOLS
+		APRIL_FOOLS,
+		ANNIVERSARY
 	}
 }

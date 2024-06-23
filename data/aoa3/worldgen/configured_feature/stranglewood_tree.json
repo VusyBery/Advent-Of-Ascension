@@ -50,10 +50,8 @@
       "type": "aoa3:aoa_giant_jungle",
       "additional_height": {
         "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 37,
-          "min_inclusive": 0
-        }
+        "max_inclusive": 37,
+        "min_inclusive": 0
       },
       "base_height": 10
     },

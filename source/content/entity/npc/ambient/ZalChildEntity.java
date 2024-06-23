@@ -25,7 +25,7 @@ public class ZalChildEntity extends AoAAmbientNPC {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 0.20625f;
 	}
 

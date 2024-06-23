@@ -26,15 +26,15 @@ public class PrimordialShrine extends BossAltarBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (world.getDifficulty() == Difficulty.PEACEFUL && player instanceof ServerPlayer) {
+	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+		if (level.getDifficulty() == Difficulty.PEACEFUL && player instanceof ServerPlayer) {
 			PlayerUtil.notifyPlayer(player, Component.translatable(LocaleUtil.createFeedbackLocaleKey("spawnBoss.difficultyFail")));
 
 			return InteractionResult.FAIL;
 		}
 
-		if (!world.isClientSide && checkActivationConditions(player, hand, state, pos))
-			doActivationEffect(player, hand, state, pos);
+		if (!level.isClientSide && checkActivationConditions(player, InteractionHand.MAIN_HAND, state, pos))
+			doActivationEffect(player, InteractionHand.MAIN_HAND, state, pos);
 
 		return InteractionResult.SUCCESS;
 	}

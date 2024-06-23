@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "aoa3:ornate_lapis_ivory"
-  },
-  "result": "aoa3:ornate_lapis_ivory_slab"
-}

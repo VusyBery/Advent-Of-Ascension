@@ -2,7 +2,7 @@ package net.tslat.aoa3.client.model.entity.mob;
 
 import net.minecraft.resources.ResourceLocation;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.content.entity.mob.overworld.ChargerEntity;
+import net.tslat.aoa3.content.entity.monster.overworld.ChargerEntity;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public class ChargerModel extends DefaultedEntityGeoModel<ChargerEntity> {

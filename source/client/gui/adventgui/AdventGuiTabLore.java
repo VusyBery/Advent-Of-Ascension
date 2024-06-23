@@ -4,10 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +17,6 @@ import net.minecraft.world.item.Items;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.patchouli.AccountPatchouliBookPacket;
-import net.tslat.aoa3.common.networking.packets.patchouli.GivePatchouliBookPacket;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.integration.IntegrationManager;
 import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
@@ -67,14 +66,16 @@ public class AdventGuiTabLore extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		this.adjustedMouseX = (int)(mouseX * (1 / AdventMainGui.SCALE));
 		this.adjustedMouseY = (int)(mouseY * (1 / AdventMainGui.SCALE));
 
-		super.render(guiGraphics, mouseX, mouseY, partialTicks);
+		for (Renderable renderable : this.renderables) {
+			renderable.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTick);
+		}
 
 		for (GuiEventListener book : children()) {
-			((PatchouliBook)book).render(guiGraphics, mouseX, mouseY, partialTicks);
+			((PatchouliBook)book).render(guiGraphics, mouseX, mouseY, partialTick);
 		}
 	}
 
@@ -99,17 +100,17 @@ public class AdventGuiTabLore extends Screen {
 		if (!IntegrationManager.isPatchouliActive())
 			return;
 
-		Item guideBook = AoARegistries.ITEMS.getEntry(new ResourceLocation("patchouli", "guide_book"));
+		Item guideBook = AoARegistries.ITEMS.getEntry(ResourceLocation.fromNamespaceAndPath("patchouli", "guide_book"));
 
 		for (ResourceLocation id : bookIds) {
 			if (!PatchouliIntegration.isBookLoaded(id))
 				continue;
 
-			ItemStack book = new ItemStack(guideBook);
+			/*ItemStack book = new ItemStack(guideBook);
 			CompoundTag tag = book.getOrCreateTag();
 
 			tag.putString("patchouli:book", id.toString());
-			loreBooks.put(id, book);
+			loreBooks.put(id, book);*/
 		}
 	}
 
@@ -155,12 +156,12 @@ public class AdventGuiTabLore extends Screen {
 							mouseX / AdventMainGui.SCALE > AdventMainGui.scaledRootX + AdventMainGui.BACKGROUND_TEXTURE_WIDTH ||
 							mouseY / AdventMainGui.SCALE > AdventMainGui.scaledRootY + AdventMainGui.BACKGROUND_TEXTURE_HEIGHT) {
 						Player pl = Minecraft.getInstance().player;
-						Item patchouliBook = AoARegistries.ITEMS.getEntry(new ResourceLocation("patchouli", "guide_book"));
+						Item patchouliBook = AoARegistries.ITEMS.getEntry(ResourceLocation.fromNamespaceAndPath("patchouli", "guide_book"));
 
 						if (patchouliBook == null || patchouliBook == Items.AIR)
 							return true;
 
-						for (ItemStack stack : pl.getInventory().items) {
+						/*for (ItemStack stack : pl.getInventory().items) {
 							if (stack.getItem() == patchouliBook && stack.hasTag()) {
 								CompoundTag bookTag = stack.getTag();
 
@@ -169,7 +170,7 @@ public class AdventGuiTabLore extends Screen {
 							}
 						}
 
-						AoANetworking.sendToServer(new GivePatchouliBookPacket(id));
+						AoANetworking.sendToServer(new GivePatchouliBookPacket(id));*/
 
 						return true;
 					}

@@ -44,7 +44,7 @@ public class AutoHarvestingTrash extends AoAAbility.Instance {
 		super(AoAAbilities.AUTO_HARVESTING_TRASH.get(), skill, data);
 
 		String itemId = data.getString("item");
-		this.consumingItem = itemId.isEmpty() ? null : AoARegistries.ITEMS.getEntry(new ResourceLocation(itemId));
+		this.consumingItem = itemId.isEmpty() ? null : AoARegistries.ITEMS.getEntry(ResourceLocation.read(itemId).getOrThrow());
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class AutoHarvestingTrash extends AoAAbility.Instance {
 		super.loadFromNbt(data);
 
 		if (data.contains("item")) {
-			this.consumingItem = AoARegistries.ITEMS.getEntry(new ResourceLocation(data.getString("item")));
+			this.consumingItem = AoARegistries.ITEMS.getEntry(ResourceLocation.read(data.getString("item")).getOrThrow());
 
 			updateDescription(Component.translatable(Util.makeDescriptionId("ability", AoARegistries.AOA_ABILITIES.getKey(type())) + ".description"));
 			markForClientSync();
@@ -107,7 +107,7 @@ public class AutoHarvestingTrash extends AoAAbility.Instance {
 			this.consumingItem = null;
 		}
 		else {
-			this.consumingItem = AoARegistries.ITEMS.getEntry(new ResourceLocation(data.getString("item")));
+			this.consumingItem = AoARegistries.ITEMS.getEntry(ResourceLocation.read(data.getString("item")).getOrThrow());
 		}
 
 		updateDescription(Component.translatable(Util.makeDescriptionId("ability", AoARegistries.AOA_ABILITIES.getKey(type())) + ".description"));
@@ -119,7 +119,7 @@ public class AutoHarvestingTrash extends AoAAbility.Instance {
 			consumingItem = null;
 		}
 		else {
-			consumingItem = AoARegistries.ITEMS.getEntry(new ResourceLocation(data));
+			consumingItem = AoARegistries.ITEMS.getEntry(ResourceLocation.read(data).getOrThrow());
 		}
 
 		markForClientSync();

@@ -1,0 +1,24 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:shotgun_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:spreadshot"
+    },
+    {
+      "tag": "c:leathers"
+    },
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:gunpowders"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:brown_blaster"
+  }
+}

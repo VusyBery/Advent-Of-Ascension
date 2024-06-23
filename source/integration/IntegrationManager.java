@@ -1,68 +1,78 @@
 package net.tslat.aoa3.integration;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.Util;
 import net.neoforged.fml.ModList;
 import net.tslat.aoa3.advent.Logging;
-import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
 import net.tslat.aoa3.integration.tes.TESIntegration;
 
+import java.util.Map;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+
 public class IntegrationManager {
-	static boolean jeiActive = false;
-	static boolean tesActive = false;
-	static boolean patchouliActive = false;
+	public static final String JEI = "jei";
+	public static final String PATCHOULI = "patchouli";
+	public static final String TES = "tslatentitystatus";
+
+	private static final Map<String, CallableIntegration> INTEGRATIONS = Util.make(new Object2ObjectOpenHashMap<>(), map -> {
+		map.put(JEI, new CallableIntegration(JEI, () -> {}, () -> {}, () -> {}));
+		map.put(PATCHOULI, new CallableIntegration(PATCHOULI, PatchouliIntegration::preInit, () -> {}, () -> {}));
+		map.put(TES, new CallableIntegration(TES, () -> {}, () -> {}, TESIntegration::clientInit));
+	});
+
+	public static boolean isModPresent(String modId) {
+		return ModList.get().isLoaded(modId);
+	}
 
 	public static boolean isJEIActive() {
-		return jeiActive && AoAConfigs.INTEGRATIONS.jeiIntegrationEnabled.get();
+		return INTEGRATIONS.get(JEI).enabled();
 	}
 
 	public static boolean isPatchouliActive() {
-		return patchouliActive && AoAConfigs.INTEGRATIONS.patchouliEnabled.get();
+		return INTEGRATIONS.get(PATCHOULI).enabled();
 	}
 
 	public static boolean isTESActive() {
-		return tesActive && AoAConfigs.INTEGRATIONS.tesEnabled.get();
+		return INTEGRATIONS.get(JEI).enabled();
 	}
 
 	public static void init() {
 		Logging.logStatusMessage("Checking for third-party integrations");
 
-		if (isModPresent("jei"))
-			jeiPreInit();
+		callSetupStage(integration -> {
+			Logging.logStatusMessage("Found '" + integration.modId() + "', integrating");
 
-		if (isModPresent("patchouli"))
-			patchouliPreInit();
-
-		if (isModPresent("tslatentitystatus"))
-			tesPreInit();
+			return integration.init();
+		});
 	}
 
-	public static void lateInit() {}
+	public static void lateInit() {
+		callSetupStage(CallableIntegration::postInit);
+	}
 
 	public static void clientInit() {
-		if (isTESActive())
-			TESIntegration.clientInit();
+		callSetupStage(CallableIntegration::clientInit);
 	}
 
-	private static void jeiPreInit() {
-		Logging.logStatusMessage("Found JEI, integrating");
+	private static void callSetupStage(Function<CallableIntegration, Runnable> stageTask) {
+		for (Map.Entry<String, CallableIntegration> entry : INTEGRATIONS.entrySet()) {
+			if (entry.getValue().enabled()) {
+				Logging.logStatusMessage("Found '" + entry.getKey() + "', integrating");
 
-		jeiActive = true;
+				stageTask.apply(entry.getValue()).run();
+			}
+		}
 	}
 
-	private static void tesPreInit() {
-		Logging.logStatusMessage("Found TES, integrating");
+	public record CallableIntegration(String modId, BooleanSupplier isActive, Runnable init, Runnable postInit, Runnable clientInit) {
+		public CallableIntegration(String modId, Runnable init, Runnable postInit, Runnable clientInit) {
+			this(modId, () -> isModPresent(modId), init, postInit, clientInit);
+		}
 
-		tesActive = true;
-	}
-
-	private static void patchouliPreInit() {
-		Logging.logStatusMessage("Found Patchouli, Integrating");
-
-		patchouliActive = true;
-		PatchouliIntegration.preInit();
-	}
-
-	public static boolean isModPresent(String modId) {
-		return ModList.get().isLoaded(modId);
+		public boolean enabled() {
+			return isActive.getAsBoolean();
+		}
 	}
 }

@@ -31,8 +31,8 @@ import net.tslat.aoa3.content.entity.ai.mob.TelegraphedMeleeAttackGoal;
 import net.tslat.aoa3.content.entity.ai.movehelper.RoamingSwimmingMovementController;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashMap;
@@ -61,10 +61,10 @@ public abstract class AoAWaterMeleeMobOld extends WaterAnimal implements Enemy, 
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		getEntityData().define(ATTACK_STATE, 0);
-		getEntityData().define(INVULNERABLE, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(ATTACK_STATE, 0);
+		builder.define(INVULNERABLE, false);
 	}
 
 	@Override
@@ -74,14 +74,14 @@ public abstract class AoAWaterMeleeMobOld extends WaterAnimal implements Enemy, 
 
 	@Nullable
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, MobSpawnType reason, @Nullable SpawnGroupData spawnData) {
 		xpReward = reason == MobSpawnType.MOB_SUMMONED ? 0 : (int)(5 + (getAttributeValue(Attributes.MAX_HEALTH) + getAttributeValue(Attributes.ARMOR) * 1.75f + getAttributeValue(Attributes.ATTACK_DAMAGE) * 2) / 10f);
 
-		return super.finalizeSpawn(world, difficulty, reason, spawnData, dataTag);
+		return super.finalizeSpawn(world, difficulty, reason, spawnData);
 	}
 
 	@Override
-	protected abstract float getStandingEyeHeight(Pose poseIn, EntityDimensions sizeIn);
+	public abstract float getEyeHeightAccess(Pose pose);
 
 	@Nullable
 	@Override

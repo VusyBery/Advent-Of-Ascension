@@ -38,7 +38,7 @@ public class SmoothSwimmingMoveControlFixed extends MoveControl {
             }
 
             final float attemptedRot = (float)(Mth.atan2(distance.z, distance.x) * (double)Mth.RAD_TO_DEG) - 90;
-            final float speed = (float)(this.speedModifier * this.mob.getAttributeValue(NeoForgeMod.SWIM_SPEED.value()));
+            final float speed = (float)(this.speedModifier * this.mob.getAttributeValue(NeoForgeMod.SWIM_SPEED));
 
             this.mob.setYRot(rotlerp(this.mob.getYRot(), attemptedRot, (float)this.maxTurnY));
             this.mob.yBodyRot = this.mob.getYRot();

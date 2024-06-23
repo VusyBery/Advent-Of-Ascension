@@ -2,6 +2,7 @@ package net.tslat.aoa3.content.entity.projectile.gun;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -10,6 +11,8 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -83,14 +86,14 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 		}
 
 		setOwner(shooter);
-		shoot(-Mth.sin(getYRot() * (float)Math.PI / 180.0F) * Mth.cos(getXRot() * (float)Math.PI / 180.0F) + xMod, -Mth.sin(getXRot() * (float)Math.PI / 180.0F) + yMod, Mth.cos(getYRot() * (float)Math.PI / 180.0F) * Mth.cos(getXRot() * (float)Math.PI / 180.0F) + zMod,
+		shoot(-Mth.sin(getYRot() * Mth.DEG_TO_RAD) * Mth.cos(getXRot() * Mth.DEG_TO_RAD) + xMod, -Mth.sin(getXRot() * Mth.DEG_TO_RAD) + yMod, Mth.cos(getYRot() * Mth.DEG_TO_RAD) * Mth.cos(getXRot() * Mth.DEG_TO_RAD) + zMod,
 				3.0f,2.0f);
 
 		if (right) {
-			setPos(getDeltaMovement().x() * 0.5f + getX() - ((double)(Mth.cos(getYRot() / 180.0F * (float)Math.PI) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() + ((double)(Mth.sin(getYRot() / 180.0F * (float)Math.PI) * 0.4F)));
+			setPos(getDeltaMovement().x() * 0.5f + getX() - ((double)(Mth.cos(getYRot() / Mth.RAD_TO_DEG) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() + ((double)(Mth.sin(getYRot() / Mth.RAD_TO_DEG) * 0.4F)));
 		}
 		else {
-			setPos(getDeltaMovement().x() * 0.5f + getX() + ((double)(Mth.cos(getYRot() / 180.0F * (float)Math.PI) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() - ((double)(Mth.sin(getYRot() / 180.0F * (float)Math.PI) * 0.4F)));
+			setPos(getDeltaMovement().x() * 0.5f + getX() + ((double)(Mth.cos(getYRot() / Mth.RAD_TO_DEG) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() - ((double)(Mth.sin(getYRot() / Mth.RAD_TO_DEG) * 0.4F)));
 		}
 	}
 
@@ -119,14 +122,14 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 			}
 		}
 
-		shoot(-Mth.sin(getYRot() * (float)Math.PI / 180.0F) * Mth.cos(getXRot() * (float)Math.PI / 180.0F), -Mth.sin(getXRot() * (float)Math.PI / 180.0F), Mth.cos(getYRot() * (float)Math.PI / 180.0F) * Mth.cos(getXRot() * (float)Math.PI / 180.0F),
+		shoot(-Mth.sin(getYRot() * Mth.DEG_TO_RAD) * Mth.cos(getXRot() * Mth.DEG_TO_RAD), -Mth.sin(getXRot() * Mth.DEG_TO_RAD), Mth.cos(getYRot() * Mth.DEG_TO_RAD) * Mth.cos(getXRot() * Mth.DEG_TO_RAD),
 				3f,0);
 
 		if (right) {
-			setPos(getDeltaMovement().x() * 0.5f + getX() - ((double)(Mth.cos(getYRot() / 180.0F * (float)Math.PI) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() + ((double)(Mth.sin(getYRot() / 180.0F * (float)Math.PI) * 0.4F)));
+			setPos(getDeltaMovement().x() * 0.5f + getX() - ((double)(Mth.cos(getYRot() / Mth.RAD_TO_DEG) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() + ((double)(Mth.sin(getYRot() / Mth.RAD_TO_DEG) * 0.4F)));
 		}
 		else {
-			setPos(getDeltaMovement().x() * 0.5f + getX() + ((double)(Mth.cos(getYRot() / 180.0F * (float)Math.PI) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() - ((double)(Mth.sin(getYRot() / 180.0F * (float)Math.PI) * 0.4F)));
+			setPos(getDeltaMovement().x() * 0.5f + getX() + ((double)(Mth.cos(getYRot() / Mth.RAD_TO_DEG) * 0.4F)), getDeltaMovement().y() * 0.5f + getY() - 0.3D, getDeltaMovement().z() * 0.5f + getZ() - ((double)(Mth.sin(getYRot() / Mth.RAD_TO_DEG) * 0.4F)));
 		}
 	}
 
@@ -157,10 +160,11 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 		setDeltaMovement(motionVec);
 
 		double lat = motionVec.horizontalDistance();
-		setYRot((float)(Mth.atan2(motionVec.x, motionVec.z) * (double)(180F / (float)Math.PI)));
-		setXRot((float)(Mth.atan2(motionVec.y, lat) * (double)(180F / (float)Math.PI)));
-		yRotO = getYRot();
-		xRotO = getXRot();
+		setYRot((float)(Mth.atan2(motionVec.x, motionVec.z) * Mth.RAD_TO_DEG));
+		setXRot((float)(Mth.atan2(motionVec.y, lat) * Mth.RAD_TO_DEG));
+		this.yRotO = getYRot();
+		this.xRotO = getXRot();
+		this.hasImpulse = true;
 	}
 
 	@Override
@@ -198,8 +202,8 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 		Entity entityResult = rayTrace.getEntity();
 
 		if (entityResult != lastPierceTarget) {
-			if (this.weapon != null && getOwner() instanceof LivingEntity)
-				weapon.doImpactDamage(entityResult, (LivingEntity)getOwner(), this, rayTrace.getLocation(), dmgMulti);
+			if (this.weapon != null && getOwner() instanceof LivingEntity owner)
+				weapon.doImpactDamage(entityResult, owner, this, rayTrace.getLocation(), dmgMulti);
 
 			doEntityImpact(entityResult, rayTrace.getLocation());
 
@@ -234,7 +238,7 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 	public void doBlockImpact(Vec3 impactLocation, Direction face, BlockPos blockPos) {}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
 	@Override
 	public void tick() {
@@ -295,7 +299,7 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
+	protected double getDefaultGravity() {
 		return 0.0f;
 	}
 
@@ -325,5 +329,17 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 	@Nullable
 	public BaseGun getWeapon() {
 		return weapon;
+	}
+
+	public ItemStack getWeaponStack(Item fallback) {
+		if (getWeapon() == null || !(getOwner() instanceof LivingEntity owner))
+			return fallback.getDefaultInstance();
+
+		ItemStack heldStack = owner.getItemInHand(getHand());
+
+		if (heldStack.is(getWeapon()))
+			return heldStack;
+
+		return fallback.getDefaultInstance();
 	}
 }

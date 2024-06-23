@@ -1,7 +1,9 @@
 package net.tslat.aoa3.common.toast;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.custom.AoAToastTypes;
@@ -10,20 +12,17 @@ import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.ToastUtil;
 
-public record AbilityUnlockToastData(AoASkill skill, AoAAbility ability) implements CustomToastData<AoASkill, AoAAbility> {
-    public AbilityUnlockToastData(FriendlyByteBuf buffer) {
-        this(buffer.readById(AoARegistries.AOA_SKILLS), buffer.readById(AoARegistries.AOA_ABILITIES));
-    }
+public record AbilityUnlockToastData(AoASkill skill, AoAAbility ability) implements CustomToastData {
+    public static final StreamCodec<RegistryFriendlyByteBuf, AbilityUnlockToastData> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.registry(AoARegistries.SKILLS_REGISTRY_KEY),
+            AbilityUnlockToastData::skill,
+            ByteBufCodecs.registry(AoARegistries.ABILITIES_REGISTRY_KEY),
+            AbilityUnlockToastData::ability,
+            AbilityUnlockToastData::new);
 
     @Override
     public Type<AbilityUnlockToastData> type() {
         return AoAToastTypes.ABILITY_UNLOCK.get();
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeId(AoARegistries.AOA_SKILLS, this.skill);
-        buffer.writeId(AoARegistries.AOA_ABILITIES, this.ability);
     }
 
     public static void sendToastPopupTo(ServerPlayer pl, AoAAbility.Instance ability) {

@@ -1,7 +1,9 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -15,21 +17,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashSet;
 
 public abstract class AdventArmour extends ArmorItem {
-	public AdventArmour(ArmorMaterial material, ArmorItem.Type slot) {
-		this(material, slot, Rarity.COMMON);
+	public AdventArmour(Holder<ArmorMaterial> material, ArmorItem.Type slot, int baseDurability) {
+		this(material, slot, new Item.Properties().durability(slot.getDurability(baseDurability)));
 	}
 
-	public AdventArmour(ArmorMaterial material, ArmorItem.Type slot, Rarity rarity) {
-		this(material, slot, new Item.Properties().durability(material.getDurabilityForType(slot)).rarity(rarity));
-	}
-
-	public AdventArmour(ArmorMaterial material, ArmorItem.Type slot, Properties properties) {
+	public AdventArmour(Holder<ArmorMaterial> material, ArmorItem.Type slot, Properties properties) {
 		super(material, slot, properties);
 	}
 
 	@Nullable
 	@Override
-	public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
+	public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
 		return null;
 	}
 
@@ -152,6 +150,10 @@ public abstract class AdventArmour extends ArmorItem {
 
 	public boolean isHelmetAirTight(ServerPlayer player) {
 		return player.getItemBySlot(EquipmentSlot.HEAD).is(AoATags.Items.AIRTIGHT);
+	}
+
+	public boolean isInArmourSlot(int slot) {
+		return slot >= 36 && slot <= 39;
 	}
 
 	public enum Type {

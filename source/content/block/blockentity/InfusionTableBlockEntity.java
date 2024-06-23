@@ -1,7 +1,10 @@
 package net.tslat.aoa3.content.block.blockentity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
@@ -17,6 +20,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -62,48 +66,46 @@ public class InfusionTableBlockEntity extends BlockEntity implements Nameable, M
 			this.items.set(i, contents.get(i));
 		}
 
-		setChanged();
-
-		if (level != null)
-			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+		markUpdated();
 	}
 
 	public void setOutput(ItemStack itemStack) {
 		this.items.set(10, itemStack);
-		setChanged();
+		markUpdated();
+	}
 
-		if (level != null)
-			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+	private void markUpdated() {
+		this.setChanged();
+		this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
 	}
 
 	@Override
-	public CompoundTag getUpdateTag() {
-		CompoundTag tag = super.getUpdateTag();
+	public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
+		CompoundTag tag = super.getUpdateTag(registryLookup);
 
-		ContainerHelper.saveAllItems(tag, this.items, true);
+		ContainerHelper.saveAllItems(tag, this.items, registryLookup);
 
 		return tag;
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound) {
-		super.saveAdditional(compound);
+	public void saveAdditional(CompoundTag compound, HolderLookup.Provider registryLookup) {
+		super.saveAdditional(compound, registryLookup);
 
-		ContainerHelper.saveAllItems(compound, this.items, true);
+		ContainerHelper.saveAllItems(compound, this.items, registryLookup);
 
 		if (this.customName != null)
-			compound.putString("CustomName", Component.Serializer.toJson(this.customName));
+			compound.putString("CustomName", Component.Serializer.toJson(this.customName, registryLookup));
 	}
 
 	@Override
-	public void load(CompoundTag compound) {
-		super.load(compound);
+	public void loadAdditional(CompoundTag compound, HolderLookup.Provider registryLookup) {
+		super.loadAdditional(compound, registryLookup);
 
 		this.items.clear();
-		ContainerHelper.loadAllItems(compound, this.items);
+		ContainerHelper.loadAllItems(compound, this.items, registryLookup);
 
-		if (compound.contains("CustomName", Tag.TAG_STRING))
-			this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
+		this.customName = compound.contains("CustomName", Tag.TAG_STRING) ? parseCustomNameSafe(compound.getString("CustomName"), registryLookup) : null;
 	}
 
 	@Override
@@ -162,5 +164,27 @@ public class InfusionTableBlockEntity extends BlockEntity implements Nameable, M
 		}
 
 		return container;
+	}
+
+	@Override
+	protected void applyImplicitComponents(DataComponentInput components) {
+		super.applyImplicitComponents(components);
+
+		setCustomName(components.get(DataComponents.CUSTOM_NAME));
+		components.getOrDefault(DataComponents.CONTAINER, ItemContainerContents.EMPTY).copyInto(getContents());
+	}
+
+	@Override
+	protected void collectImplicitComponents(DataComponentMap.Builder builder) {
+		super.collectImplicitComponents(builder);
+
+		builder.set(DataComponents.CUSTOM_NAME, this.customName);
+		builder.set(DataComponents.CONTAINER, ItemContainerContents.fromItems(getContents()));
+	}
+
+	@Override
+	public void removeComponentsFromTag(CompoundTag tag) {
+		tag.remove("CustomName");
+		tag.remove("Items");
 	}
 }

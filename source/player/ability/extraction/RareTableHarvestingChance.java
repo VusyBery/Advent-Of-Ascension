@@ -3,7 +3,6 @@ package net.tslat.aoa3.player.ability.extraction;
 import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -63,7 +62,7 @@ public class RareTableHarvestingChance extends ScalableModAbility {
 		ServerPlayer player = (ServerPlayer)getPlayer();
 		ServerLevel world = context.getLevel();
 
-		loot.addAll(LootUtil.generateLoot(new ResourceLocation(AdventOfAscension.MOD_ID, "misc/lotto_totem"), LootUtil.getGiftParameters(world, origin, player.getLuck(), player)));
+		loot.addAll(LootUtil.generateLoot(AdventOfAscension.id("misc/lotto_totem"), LootUtil.getGiftParameters(world, origin, player.getLuck(), player)));
 		PlayerUtil.giveXpToPlayer(player, getSkill().type(), PlayerUtil.getTimeBasedXpForLevel(PlayerUtil.getLevel(player, AoASkills.FARMING.get()), 10), false);
 	}
 }

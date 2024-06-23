@@ -25,7 +25,7 @@ public class ShyreShotEntity extends BaseEnergyShot {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.085f;
 	}
 }

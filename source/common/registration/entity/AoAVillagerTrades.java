@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.saveddata.maps.MapDecoration;
+import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
@@ -49,7 +49,7 @@ public final class AoAVillagerTrades {
 						4,
 						AoATags.Structures.ON_RUINED_TELEPORTER_FRAME_MAPS,
 						"filled_map." + AdventOfAscension.MOD_ID + ".ruined_teleporter_frame",
-						MapDecoration.Type.TARGET_POINT,
+						MapDecorationTypes.TARGET_POINT,
 						3,
 						7));
 	}

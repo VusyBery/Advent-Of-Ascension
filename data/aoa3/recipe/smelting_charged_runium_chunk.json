@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 2.0,
+  "ingredient": {
+    "item": "aoa3:charged_runium_ore"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:charged_runium_chunk"
+  }
+}

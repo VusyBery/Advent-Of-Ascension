@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aoa3:charged_rune"
+    },
+    "B": {
+      "tag": "aoa3:life_rune_catalyst"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "result": {
+    "count": 16,
+    "id": "aoa3:life_rune"
+  }
+}

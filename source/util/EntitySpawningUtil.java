@@ -52,13 +52,17 @@ public final class EntitySpawningUtil {
 		if (entity == null)
 			return null;
 
+		return spawnEntity(level, entity, position, spawnReason, entityModifications);
+	}
+
+	public static <T extends Entity> T spawnEntity(ServerLevel level, T entity, Vec3 position, MobSpawnType spawnReason, Consumer<T> entityModifications) {
 		entity.moveTo(position.x(), position.y(), position.z(), Mth.wrapDegrees((float)RandomUtil.randomValueUpTo(360d)), 0);
 		entityModifications.accept(entity);
 
 		if (entity instanceof Mob mob) {
 			mob.yHeadRot = mob.getYRot();
 			mob.yBodyRot = mob.getYRot();
-			EventHooks.onFinalizeSpawn(mob, level, level.getCurrentDifficultyAt(entity.blockPosition()), spawnReason, null, null);
+			EventHooks.finalizeMobSpawn(mob, level, level.getCurrentDifficultyAt(entity.blockPosition()), spawnReason, null);
 			mob.playAmbientSound();
 		}
 

@@ -10,6 +10,7 @@ import net.minecraft.world.inventory.RecipeCraftingHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.event.EventHooks;
@@ -17,19 +18,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
-public class CraftableResultSlot<C extends Container, R extends Recipe<C>> extends OutputSlot {
+public class CraftableResultSlot<C extends Container, I extends RecipeInput, R extends Recipe<I>> extends OutputSlot {
     private final C inventoryContainer;
     private final RecipeCraftingHolder resultContainer;
     @Nullable
     private final RecipeType<R> recipeType;
+    private final Supplier<I> recipeInput;
 
-    public <T extends Container & RecipeCraftingHolder> CraftableResultSlot(Player player, C inventoryContainer, T resultContainer, @Nullable RecipeType<R> recipeType, int slotIndex, int x, int y) {
+    public <T extends Container & RecipeCraftingHolder> CraftableResultSlot(Player player, C inventoryContainer, T resultContainer, @Nullable RecipeType<R> recipeType, Supplier<I> recipeInput, int slotIndex, int x, int y) {
         super(resultContainer, player, slotIndex, x, y);
 
         this.recipeType = recipeType;
         this.inventoryContainer = inventoryContainer;
         this.resultContainer = resultContainer;
+        this.recipeInput = recipeInput;
     }
 
     public RecipeCraftingHolder getResultContainer() {
@@ -73,15 +77,15 @@ public class CraftableResultSlot<C extends Container, R extends Recipe<C>> exten
         EventHooks.firePlayerCraftingEvent(this.player, stack, this.inventoryContainer);
     }
 
-    protected NonNullList<ItemStack> getRemainingItems(@Nullable RecipeType<R> recipeType, C craftingContainer, Player player) {
-        return recipeType == null ? NonNullList.createWithCapacity(0) : player.level().getRecipeManager().getRemainingItemsFor(recipeType, craftingContainer, player.level());
+    protected NonNullList<ItemStack> getRemainingItems(@Nullable RecipeType<R> recipeType, I recipeInput, Player player) {
+        return recipeType == null ? NonNullList.createWithCapacity(0) : player.level().getRecipeManager().getRemainingItemsFor(recipeType, recipeInput, player.level());
     }
 
     @Override
     public void onItemRemoved(Player player, ItemStack stack) {
         CommonHooks.setCraftingPlayer(player);
 
-        NonNullList<ItemStack> remainderItems = getRemainingItems(this.recipeType, this.inventoryContainer, player);
+        NonNullList<ItemStack> remainderItems = getRemainingItems(this.recipeType, this.recipeInput.get(), player);
 
         CommonHooks.setCraftingPlayer(null);
 
@@ -100,7 +104,7 @@ public class CraftableResultSlot<C extends Container, R extends Recipe<C>> exten
             if (containerStack.isEmpty()) {
                 this.inventoryContainer.setItem(i, remainderStack);
             }
-            else if (ItemStack.isSameItemSameTags(containerStack, remainderStack)) {
+            else if (ItemStack.isSameItemSameComponents(containerStack, remainderStack)) {
                 remainderStack.grow(containerStack.getCount());
                 this.inventoryContainer.setItem(i, remainderStack);
             }

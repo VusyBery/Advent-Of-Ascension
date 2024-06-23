@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 3.0,
+  "ingredient": {
+    "item": "aoa3:footbone_fragment"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:skeletal_ingot"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:boots_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "minecraft:ink_sac"
+    },
+    {
+      "tag": "c:gems/quartz"
+    },
+    {
+      "tag": "c:gems/diamond"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:exoplate_boots"
+  }
+}

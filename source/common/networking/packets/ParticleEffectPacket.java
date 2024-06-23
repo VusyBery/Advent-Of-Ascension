@@ -1,95 +1,99 @@
 package net.tslat.aoa3.common.networking.packets;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
 import net.tslat.aoa3.content.entity.base.AoARangedAttacker;
 import net.tslat.aoa3.library.builder.EntityPredicate;
 import net.tslat.aoa3.util.DamageUtil;
+import org.apache.logging.log4j.util.TriConsumer;
+import org.jetbrains.annotations.Nullable;
 
-public record ParticleEffectPacket(Type type, int senderId, int entityId) implements AoAPacket<PlayPayloadContext> {
-	public static final ResourceLocation ID = AdventOfAscension.id("particle_effect");
-
-	@Override
-	public ResourceLocation id() {
-		return ID;
-	}
-
-	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeEnum(this.type);
-		buffer.writeVarInt(this.senderId);
-		buffer.writeVarInt(this.entityId);
-	}
-
-	public static ParticleEffectPacket decode(FriendlyByteBuf buffer) {
-		return new ParticleEffectPacket(buffer.readEnum(Type.class), buffer.readVarInt(), buffer.readVarInt());
-	}
+public record ParticleEffectPacket(Type effectType, int senderId, int entityId) implements AoAPacket {
+	public static final CustomPacketPayload.Type<ParticleEffectPacket> TYPE = new CustomPacketPayload.Type<>(AdventOfAscension.id("particle_effect"));
+	public static final StreamCodec<RegistryFriendlyByteBuf, ParticleEffectPacket> CODEC = StreamCodec.composite(
+			NeoForgeStreamCodecs.enumCodec(Type.class),
+			ParticleEffectPacket::effectType,
+			ByteBufCodecs.VAR_INT,
+			ParticleEffectPacket::senderId,
+			ByteBufCodecs.VAR_INT,
+			ParticleEffectPacket::entityId,
+			ParticleEffectPacket::new);
 
 	@Override
-	public void receiveMessage(PlayPayloadContext context) {
-		switch (this.type) {
-			case FREEZING_SNOWFLAKE -> context.workHandler().execute(() -> context.level().ifPresent(this::doSnowflakeEffect));
-			case SANDSTORM -> context.workHandler().execute(() -> context.level().ifPresent(this::doSandstormEffect));
-			case BURNING_FLAME -> context.workHandler().execute(() -> context.level().ifPresent(this::doBurningFlameEffect));
+	public CustomPacketPayload.Type<? extends ParticleEffectPacket> type() {
+		return TYPE;
+	}
+
+	@Override
+	public void receiveMessage(IPayloadContext context) {
+		context.enqueueWork(() -> {
+			Level level = context.player().level();
+			Entity entity = this.entityId >= 0 ? level.getEntity(this.entityId) : null;
+			Entity source = this.senderId >= 0 ? level.getEntity(this.senderId) : null;
+
+			this.effectType.effectHandler.accept(level, entity, source);
+		});
+	}
+
+	private static void doSnowflakeEffect(Level level, @Nullable Entity hitEntity, @Nullable Entity particleSource) {
+		if (hitEntity != null) {
+			if (particleSource instanceof AoARangedAttacker rangedAttacker) {
+				rangedAttacker.doRangedAttackEntity(null, hitEntity);
+			}
+			else if (hitEntity.getTicksFrozen() <= hitEntity.getTicksRequiredToFreeze() * 2.5f) {
+				hitEntity.setTicksFrozen(hitEntity.getTicksFrozen() + 14);
+			}
 		}
 	}
 
-	private void doSnowflakeEffect(Level level) {
-		final Entity entity = level.getEntity(this.entityId);
+	private static void doSandstormEffect(Level level, @Nullable Entity hitEntity, @Nullable Entity particleSource) {
+		switch (hitEntity) {
+			case LivingEntity livingTarget -> {
+				if (EntityPredicate.TARGETABLE_ENTITIES.test(livingTarget)) {
+					DamageSource source = particleSource == null ? DamageUtil.miscDamage(DamageTypes.STING, livingTarget.level()) :
+							DamageUtil.positionedEntityDamage(DamageTypes.MOB_ATTACK_NO_AGGRO, particleSource, livingTarget.position());
 
-		if (entity != null) {
-			if (this.senderId > 0 && level.getEntity(this.senderId) instanceof AoARangedAttacker rangedAttacker) {
-				rangedAttacker.doRangedAttackEntity(null, entity);
+					DamageUtil.safelyDealDamage(source, livingTarget, 4);
+				}
 			}
-			else if (entity.getTicksFrozen() <= entity.getTicksRequiredToFreeze() * 2.5f) {
-				entity.setTicksFrozen(entity.getTicksFrozen() + 14);
-			}
-		}
+			case Projectile projectile -> projectile.setDeltaMovement(projectile.getDeltaMovement().multiply(-0.5f, -0.5f, -0.5f));
+            case null, default -> {}
+        }
 	}
 
-	private void doSandstormEffect(Level level) {
-		final Entity entity = level.getEntity(this.entityId);
-		final Entity attacker = this.senderId >= 0 ? level.getEntity(this.senderId) : null;
-
-		if (entity instanceof LivingEntity) {
-			if (EntityPredicate.TARGETABLE_ENTITIES.test(entity)) {
-				DamageSource source = attacker == null ? DamageUtil.miscDamage(DamageTypes.STING, entity.level()) :
-						DamageUtil.positionedEntityDamage(DamageTypes.MOB_ATTACK_NO_AGGRO, attacker, entity.position());
-
-				DamageUtil.safelyDealDamage(source, entity, 4);
-			}
-		}
-		else if (entity instanceof Projectile) {
-			entity.setDeltaMovement(entity.getDeltaMovement().multiply(-0.5f, -0.5f, -0.5f));
-		}
-	}
-
-	private void doBurningFlameEffect(Level level) {
-		final Entity entity = level.getEntity(this.entityId);
-
-		if (entity instanceof LivingEntity) {
-			if (this.senderId > 0 && level.getEntity(this.senderId) instanceof AoARangedAttacker rangedAttacker) {
-				rangedAttacker.doRangedAttackEntity(null, entity);
+	private static void doBurningFlameEffect(Level level, @Nullable Entity hitEntity, @Nullable Entity particleSource) {
+		if (hitEntity instanceof LivingEntity) {
+			if (particleSource instanceof AoARangedAttacker rangedAttacker) {
+				rangedAttacker.doRangedAttackEntity(null, hitEntity);
 			}
 			else {
-				DamageUtil.safelyDealDamage(DamageUtil.miscPositionedDamage(AoADamageTypes.MOB_FIRE_RANGED_ATTACK, entity.level(), entity.position()), entity, 1);
-				entity.setSecondsOnFire((int)Math.ceil(entity.getRemainingFireTicks() / 20f) + 1);
+				DamageUtil.safelyDealDamage(DamageUtil.miscPositionedDamage(AoADamageTypes.MOB_FIRE_RANGED_ATTACK, hitEntity.level(), hitEntity.position()), hitEntity, 1);
+				hitEntity.igniteForSeconds((int)Math.ceil(hitEntity.getRemainingFireTicks() / 20f) + 1);
 			}
 		}
 	}
 
 	public enum Type {
-		FREEZING_SNOWFLAKE,
-		BURNING_FLAME,
-		SANDSTORM
+		FREEZING_SNOWFLAKE(ParticleEffectPacket::doSnowflakeEffect),
+		BURNING_FLAME(ParticleEffectPacket::doBurningFlameEffect),
+		SANDSTORM(ParticleEffectPacket::doSandstormEffect);
+
+		private final TriConsumer<Level, @Nullable Entity, @Nullable Entity> effectHandler;
+
+		Type(TriConsumer<Level, @Nullable Entity, @Nullable Entity> effectHandler) {
+			this.effectHandler = effectHandler;
+		}
 	}
 }

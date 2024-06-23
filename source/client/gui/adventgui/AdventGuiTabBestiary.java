@@ -9,8 +9,8 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.achievement.StatsUpdateListener;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
 import net.minecraft.stats.StatsCounter;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.*;
@@ -53,10 +54,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-import static net.minecraft.world.entity.MobType.*;
-
-public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener {
-	private static final ResourceLocation iconsTextures = new ResourceLocation("aoa3", "textures/gui/adventgui/icons.png");
+public class AdventGuiTabBestiary extends Screen {
+	private static final String[] LOADING_SYMBOLS = new String[]{"oooooo", "Oooooo", "oOoooo", "ooOooo", "oooOoo", "ooooOo", "oooooO"};
+	private static final ResourceLocation iconsTextures = AdventOfAscension.id("textures/gui/adventgui/icons.png");
 
 	private static final HashMap<String, Function<Entity, Tuple>> registeredEntryHandlers = new HashMap<>(1);
 
@@ -105,13 +105,15 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-		super.render(guiGraphics, mouseX, mouseY, partialTicks);
-
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		this.adjustedMouseX = (int)(mouseX * (1 / AdventMainGui.SCALE));
 		this.adjustedMouseY = (int)(mouseY * (1 / AdventMainGui.SCALE));
 
-		scrollMenu.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTicks);
+		for (Renderable renderable : this.renderables) {
+			renderable.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTick);
+		}
+
+		scrollMenu.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTick);
 	}
 
 	@Override
@@ -146,7 +148,6 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 			scrollMenu.onResize(this.minecraft, AdventMainGui.scaledTabRootX, AdventMainGui.scaledTabRootY, 764, 340);
 	}
 
-	@Override
 	public void onStatsUpdated() {
 		HashMap<String, EntityStats> statsMap = new HashMap<>();
 		statList = new ArrayList<>();
@@ -155,7 +156,7 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 			ResourceLocation registryName;
 
 			if (stat.getValue() instanceof EntityType<?> entityType && (registryName = AoARegistries.ENTITIES.getKey(entityType)) != null) {
-				if (AoAConfigs.CLIENT.thirdPartyBestiary.get() || registryName.getNamespace().equals(AdventOfAscension.MOD_ID)) {
+				if (AoAConfigs.CLIENT.thirdPartyBestiary.get() || AdventOfAscension.isAoA(registryName)) {
 					String registryNameString = registryName.toString();
 
 					if (!statsMap.containsKey(registryNameString)) {
@@ -311,7 +312,7 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 		String entityModId = registryName.getNamespace();
 		openEntryInstance = getEntityFromStat(stat);
 		openEntryStatsLines = new ArrayList<>();
-		openEntryInfoLines = new ArrayList<FormattedCharSequence>(0);
+		openEntryInfoLines = new ArrayList<>(0);
 		LivingEntity livingInstance = openEntryInstance instanceof LivingEntity ? (LivingEntity)openEntryInstance : null;
 
 		if (openEntryInstance != null) {
@@ -320,7 +321,7 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 					Tuple<List<String>, String> entityData = (Tuple<List<String>, String>)registeredEntryHandlers.get(entityModId).apply(openEntryInstance);
 					openEntryStatsLines = entityData.getA();
 
-					if (entityData.getB() != null && entityData.getB().length() > 0)
+					if (entityData.getB() != null && !entityData.getB().isEmpty())
 						openEntryInfoLines = font.split(Component.literal(entityData.getB()), (int)(734 / 1.5f));
 				}
 				catch (ClassCastException ex) {
@@ -336,9 +337,9 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 				String type = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.type.other");
 				String attribute = "";
 
-				if (openEntryInstance instanceof LivingEntity && openEntryInstance instanceof Enemy) {
+				if (openEntryInstance instanceof LivingEntity livingEntity && openEntryInstance instanceof Enemy) {
 					if (openEntryInstance instanceof FlyingMob) {
-						if (((LivingEntity)openEntryInstance).getAttribute(Attributes.ATTACK_DAMAGE) != null) {
+						if (livingEntity.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
 							type = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.type.flyingMelee");
 						}
 						else {
@@ -348,11 +349,11 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 					else if (openEntryInstance instanceof AoAWaterRangedMob) {
 						type = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.type.swimmingRanged");
 					}
-					else if (openEntryInstance instanceof AoAWaterMeleeMobOld || ((LivingEntity)openEntryInstance).getMobType() == WATER) {
+					else if (openEntryInstance instanceof AoAWaterMeleeMobOld || livingEntity.getType().is(EntityTypeTags.AQUATIC)) {
 						type = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.type.swimmingMelee");
 					}
 					else {
-						if (((LivingEntity)openEntryInstance).getAttribute(Attributes.ATTACK_DAMAGE) != null) {
+						if (livingEntity.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
 							if (openEntryInstance instanceof RangedAttackMob) {
 								type = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.type.hybrid");
 							}
@@ -376,18 +377,18 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 				}
 
 				if (livingInstance != null) {
-					MobType creatureAttribute = (livingInstance).getMobType();
+					EntityType<? extends LivingEntity> entityType = (EntityType)livingInstance.getType();
 
-					if (creatureAttribute == ARTHROPOD) {
+					if (entityType.is(EntityTypeTags.ARTHROPOD)) {
 						attribute = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.attribute.arthropod");
 					}
-					else if (creatureAttribute == ILLAGER) {
+					else if (entityType.is(EntityTypeTags.ILLAGER)) {
 						attribute = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.attribute.illager");
 					}
-					else if (creatureAttribute == UNDEAD) {
+					else if (entityType.is(EntityTypeTags.UNDEAD)) {
 						attribute = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.attribute.undead");
 					}
-					else if (creatureAttribute == UNDEFINED || creatureAttribute == WATER) {
+					else {
 						attribute = LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.attribute.none");
 					}
 				}
@@ -401,14 +402,14 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 				if (livingInstance != null) {
 					openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.health") + ChatFormatting.RESET + " " + livingInstance.getMaxHealth());
 
-					if (EntityUtil.safelyGetAttributeValue(livingInstance, Attributes.ARMOR) > 0)
-						openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.armour") + ChatFormatting.RESET + " " + livingInstance.getAttribute(Attributes.ARMOR).getValue());
+					if (AttributeUtil.getAttributeValue(livingInstance, Attributes.ARMOR) > 0)
+						openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.armour") + ChatFormatting.RESET + " " + AttributeUtil.getAttributeValue(livingInstance, Attributes.ARMOR));
 
-					if (EntityUtil.safelyGetAttributeValue(livingInstance, Attributes.ARMOR_TOUGHNESS) > 0)
-						openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.toughness") + ChatFormatting.RESET + " " + livingInstance.getAttribute(Attributes.ARMOR_TOUGHNESS).getValue());
+					if (AttributeUtil.getAttributeValue(livingInstance, Attributes.ARMOR_TOUGHNESS) > 0)
+						openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.toughness") + ChatFormatting.RESET + " " + AttributeUtil.getAttributeValue(livingInstance, Attributes.ARMOR_TOUGHNESS));
 
-					if (EntityUtil.safelyGetAttributeValue(livingInstance, Attributes.KNOCKBACK_RESISTANCE) > 0)
-						openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.knockback") + ChatFormatting.RESET + " " + NumberUtil.roundToNthDecimalPlace((float)livingInstance.getAttribute(Attributes.KNOCKBACK_RESISTANCE).getValue() * 100, 2) + "%");
+					if (AttributeUtil.getAttributeValue(livingInstance, Attributes.KNOCKBACK_RESISTANCE) > 0)
+						openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.knockback") + ChatFormatting.RESET + " " + NumberUtil.roundToNthDecimalPlace((float)AttributeUtil.getAttributeValue(livingInstance, Attributes.KNOCKBACK_RESISTANCE) * 100, 2) + "%");
 
 					AttributeInstance attackAttribute = livingInstance.getAttribute(Attributes.ATTACK_DAMAGE);
 
@@ -417,10 +418,10 @@ public class AdventGuiTabBestiary extends Screen implements StatsUpdateListener 
 
 					if (openEntryInstance instanceof AoARangedAttacker) {
 						if (openEntryInstance instanceof AoARangedMob) {
-							openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.projectileStrength") + ChatFormatting.RESET + " " + ((AoARangedMob)openEntryInstance).getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
+							openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.projectileStrength") + ChatFormatting.RESET + " " + ((AoARangedMob)openEntryInstance).getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
 						}
 						else if (openEntryInstance instanceof AoAFlyingRangedMob) {
-							openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.projectileStrength") + ChatFormatting.RESET + " " + ((AoAFlyingRangedMob)openEntryInstance).getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get()));
+							openEntryStatsLines.add(ChatFormatting.BOLD + LocaleUtil.getLocaleString("gui.aoa3.adventGui.bestiary.projectileStrength") + ChatFormatting.RESET + " " + ((AoAFlyingRangedMob)openEntryInstance).getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE));
 						}
 					}
 

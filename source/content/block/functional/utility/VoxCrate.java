@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.entity.AoANpcs;
 import net.tslat.aoa3.content.entity.npc.lottoman.LottomanEntity;
+import net.tslat.aoa3.util.EnchantmentUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 
@@ -20,15 +21,15 @@ public class VoxCrate extends Block {
 	}
 
 	@Override
-	public BlockState playerWillDestroy(Level world, BlockPos pos, BlockState state, Player player) {
-		super.playerWillDestroy(world, pos, state, player);
+	public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+		super.playerWillDestroy(level, pos, state, player);
 
-		if (!world.isClientSide && !ItemUtil.hasEnchantment(player.getMainHandItem(), Enchantments.SILK_TOUCH)) {
-			LottomanEntity lottoman = new LottomanEntity(AoANpcs.LOTTOMAN.get(), world);
+		if (!level.isClientSide && !EnchantmentUtil.hasEnchantment(level, player.getMainHandItem(), Enchantments.SILK_TOUCH)) {
+			LottomanEntity lottoman = new LottomanEntity(AoANpcs.LOTTOMAN.get(), level);
 
 			lottoman.moveTo(pos.getX(), pos.getY() + 0.5, pos.getZ(), 0, 0);
-			lottoman.finalizeSpawn((ServerLevel)world, world.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null, null);
-			world.addFreshEntity(lottoman);
+			lottoman.finalizeSpawn((ServerLevel)level, level.getCurrentDifficultyAt(pos), MobSpawnType.EVENT, null);
+			level.addFreshEntity(lottoman);
 			player.sendSystemMessage(LocaleUtil.getLocaleMessage(AoANpcs.LOTTOMAN.get().getDescriptionId() + ".spawn"));
 		}
 

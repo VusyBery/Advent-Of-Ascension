@@ -2,9 +2,9 @@ package net.tslat.aoa3.content.item.weapon.gun;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
@@ -13,14 +13,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class LunarAssaultRifle extends BaseGun {
-	private final double baseDmg;
-	private final double maxDmg;
+	private final double minDamage;
+	private final double maxDamage;
 
-	public LunarAssaultRifle(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public LunarAssaultRifle(Item.Properties properties) {
+		super(properties);
 
-		this.baseDmg = dmg - (dmg / 2d);
-		this.maxDmg = dmg + (dmg / 2d);
+		final float baseDamage = getGunDamage(getDefaultInstance());
+		this.minDamage = baseDamage - (baseDamage / 2d);
+		this.maxDamage = baseDamage + (baseDamage / 2d);
 	}
 
 	@Nullable
@@ -30,14 +31,14 @@ public class LunarAssaultRifle extends BaseGun {
 	}
 
 	@Override
-	public float getDamage() {
-		return (float)RandomUtil.randomValueBetween(baseDmg, maxDmg);
+	public float getGunDamage(ItemStack stack) {
+		return (float)RandomUtil.randomValueBetween(this.minDamage, this.maxDamage);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 
-		tooltip.set(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.RANDOM_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(baseDmg), LocaleUtil.numToComponent(maxDmg)));
+		tooltip.set(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.RANDOM_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(this.minDamage), LocaleUtil.numToComponent(this.maxDamage)));
 	}
 }

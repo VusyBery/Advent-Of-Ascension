@@ -1,0 +1,13 @@
+{
+  "type": "aoa3:upgrade_kit",
+  "input": {
+    "item": "aoa3:roulette"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:skullette"
+  },
+  "upgrade_kit": {
+    "item": "aoa3:haunted_upgrade_kit"
+  }
+}

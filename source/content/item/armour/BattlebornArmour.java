@@ -1,31 +1,30 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
+import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.DamageUtil;
-import net.tslat.aoa3.util.EntityUtil;
-import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.UUID;
 
 public class BattlebornArmour extends AdventArmour {
-	private static final UUID BATTLEBORN_ARMOUR_BUFF = UUID.fromString("5cf50cfa-4298-46d1-b7ec-c648f8e8d5c9");
+	private static final ResourceLocation ATTACK_SPEED_MODIFIER = AdventOfAscension.id("battleborn_armor");
 
 	public BattlebornArmour(ArmorItem.Type slot) {
-		super(ItemUtil.customArmourMaterial("aoa3:battleborn", 65, new int[] {4, 8, 9, 5}, 10, SoundEvents.ARMOR_EQUIP_GENERIC, 7), slot);
+		super(AoAArmourMaterials.BATTLEBORN, slot, 65);
 	}
 
 	@Override
@@ -33,8 +32,8 @@ public class BattlebornArmour extends AdventArmour {
 		return Type.BATTLEBORN;
 	}
 
-	private AttributeModifier buff(double currentValue) {
-		return new AttributeModifier(BATTLEBORN_ARMOUR_BUFF, "AoABattlebornArmour", currentValue, AttributeModifier.Operation.MULTIPLY_TOTAL);
+	private static AttributeModifier createModifier(double currentValue) {
+		return new AttributeModifier(ATTACK_SPEED_MODIFIER, currentValue, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 	}
 
 	@Override
@@ -44,8 +43,7 @@ public class BattlebornArmour extends AdventArmour {
 			int newAmount = Math.min(300, counter + slots.size() * 6);
 
 			plData.equipment().setCooldown("battleborn", newAmount);
-			EntityUtil.removeAttributeModifier(plData.player(), Attributes.ATTACK_SPEED, BATTLEBORN_ARMOUR_BUFF);
-			EntityUtil.applyAttributeModifierSafely(plData.player(), Attributes.ATTACK_SPEED, buff(Math.min(0.65, newAmount / 240d)), false);
+			AttributeUtil.applyTransientModifier(plData.player(), Attributes.ATTACK_SPEED, createModifier(Math.min(0.65, newAmount / 240d)));
 		}
 	}
 
@@ -54,11 +52,10 @@ public class BattlebornArmour extends AdventArmour {
 		int counter = plData.equipment().getCooldown("battleborn");
 
 		if (counter == 1) {
-			EntityUtil.removeAttributeModifier(plData.player(), Attributes.ATTACK_SPEED, BATTLEBORN_ARMOUR_BUFF);
+			AttributeUtil.removeModifier(plData.player(), Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER);
 		}
 		else if (counter > 0 && plData.player().level().getGameTime() % 10 == 0) {
-			EntityUtil.removeAttributeModifier(plData.player(), Attributes.ATTACK_SPEED, BATTLEBORN_ARMOUR_BUFF);
-			EntityUtil.applyAttributeModifierSafely(plData.player(), Attributes.ATTACK_SPEED, buff(Math.min(0.65, counter / 240d)), false);
+			AttributeUtil.applyTransientModifier(plData.player(), Attributes.ATTACK_SPEED, createModifier(Math.min(0.65, counter / 240d)));
 		}
 	}
 
@@ -68,14 +65,14 @@ public class BattlebornArmour extends AdventArmour {
 			int cooldown = plData.equipment().getCooldown("battleborn");
 
 			if (cooldown > 0) {
-				EntityUtil.removeAttributeModifier(plData.player(), Attributes.ATTACK_SPEED, BATTLEBORN_ARMOUR_BUFF);
+				AttributeUtil.removeModifier(plData.player(), Attributes.ATTACK_SPEED, ATTACK_SPEED_MODIFIER);
 				plData.equipment().setCooldown("battleborn", (int)(cooldown * 0.75f));
 			}
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.aoa3.battleborn_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
 		tooltip.add(pieceEffectHeader());
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.aoa3.battleborn_armour.desc.2", LocaleUtil.ItemDescriptionType.BENEFICIAL));

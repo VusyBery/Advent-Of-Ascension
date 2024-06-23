@@ -1,11 +1,13 @@
 package net.tslat.aoa3.integration.patchouli;
 
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
-import vazkii.patchouli.api.PatchouliAPI;
-import vazkii.patchouli.common.book.BookRegistry;
+
+import java.util.Optional;
+
 
 public class PatchouliIntegration {
 	public static void preInit() {
@@ -14,14 +16,21 @@ public class PatchouliIntegration {
 	}
 
 	public static boolean isBookLoaded(ResourceLocation id) {
-		return BookRegistry.INSTANCE.books.containsKey(id);
+		return false;
+		//return BookRegistry.INSTANCE.books.containsKey(id);
 	}
 
 	public static ItemStack getBook(ResourceLocation id) {
-		return BookRegistry.INSTANCE.books.get(id).getBookItem();
+		return ItemStack.EMPTY;
+		//return BookRegistry.INSTANCE.books.get(id).getBookItem();
 	}
 
 	public static void openBook(ResourceLocation id) {
-		PatchouliAPI.get().openBookGUI(id);
+		//PatchouliAPI.get().openBookGUI(id);
+	}
+
+	public static Optional<ResourceLocation> getBookIdFromScreen(Screen screen) {
+		return Optional.empty();
+		//return Optional.ofNullable(screen instanceof GuiBook bookGui ? bookGui.book.id : null);
 	}
 }

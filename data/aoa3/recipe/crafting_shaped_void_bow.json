@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "aoa3:void_scales"
+    },
+    "B": {
+      "tag": "c:strings"
+    }
+  },
+  "pattern": [
+    " AB",
+    "A B",
+    " AB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:void_bow"
+  }
+}

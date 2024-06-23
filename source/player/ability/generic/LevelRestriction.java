@@ -3,7 +3,8 @@ package net.tslat.aoa3.player.ability.generic;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -20,7 +21,6 @@ import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class LevelRestriction extends AoAAbility.Instance {
 	public LevelRestriction(AoASkill.Instance skill, CompoundTag data) {
 		super(AoAAbilities.LEVEL_RESTRICTION.get(), skill, data);
 
-		this.restrictedId = new ResourceLocation(data.getString("restriction_id"));
+		this.restrictedId = ResourceLocation.read(data.getString("restriction_id")).getOrThrow();
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class LevelRestriction extends AoAAbility.Instance {
 
 	@Override
 	protected void updateDescription(MutableComponent defaultDescription) {
-		Map<String, List<Pair<ResourceLocation, Integer>>> restrictions = AoASkillReqReloadListener.getParsedReqDataFor(this.restrictedId);
+		Map<String, List<ObjectIntPair<ResourceLocation>>> restrictions = AoASkillReqReloadListener.getParsedReqDataFor(this.restrictedId);
 
 		if (restrictions.isEmpty()) {
 			super.updateDescription(Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey(), "??"));
@@ -69,7 +69,7 @@ public class LevelRestriction extends AoAAbility.Instance {
 		MutableComponent description = Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey(), targetName);
 		boolean comma = false;
 
-		for (Map.Entry<String, List<Pair<ResourceLocation, Integer>>> restriction : restrictions.entrySet()) {
+		for (Map.Entry<String, List<ObjectIntPair<ResourceLocation>>> restriction : restrictions.entrySet()) {
 			if (comma)
 				description.append(", ");
 
@@ -92,16 +92,16 @@ public class LevelRestriction extends AoAAbility.Instance {
 	}
 
 	protected ResourceLocation generateRestrictionHandlers(JsonObject json) {
-		ResourceLocation restrictedId = new ResourceLocation(GsonHelper.getAsString(json, "restricted_id"));
+		ResourceLocation restrictedId = ResourceLocation.read(GsonHelper.getAsString(json, "restricted_id")).getOrThrow();
 		JsonArray reqs = GsonHelper.getAsJsonArray(json, "restrictions");
 
 		if (reqs.size() == 0)
 			throw new IllegalArgumentException("Invalid skill requirements for Level Restriction ability.");
 
-		Map<String, List<Pair<ResourceLocation, Integer>>> reqData = new HashMap<String, List<Pair<ResourceLocation, Integer>>>();
+		Map<String, List<ObjectIntPair<ResourceLocation>>> reqData = new Object2ObjectOpenHashMap<>();
 
 		for (JsonElement entry : reqs) {
-			reqData.put(entry.getAsJsonPrimitive().getAsString(), Collections.singletonList(Pair.of(AoARegistries.AOA_SKILLS.getKey(skill.type()), getLevelReq())));
+			reqData.put(entry.getAsJsonPrimitive().getAsString(), Collections.singletonList(ObjectIntPair.of(AoARegistries.AOA_SKILLS.getKey(skill.type()), getLevelReq())));
 		}
 
 		AoASkillReqReloadListener.addRequirements(restrictedId, reqData);
@@ -109,7 +109,7 @@ public class LevelRestriction extends AoAAbility.Instance {
 		return restrictedId;
 	}
 
-	private boolean isForBlock(Map<String, List<Pair<ResourceLocation, Integer>>> restrictions) {
+	private boolean isForBlock(Map<String, List<ObjectIntPair<ResourceLocation>>> restrictions) {
 		for (String type : restrictions.keySet()) {
 			switch (type) {
 				case "break_block":

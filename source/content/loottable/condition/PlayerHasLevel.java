@@ -1,9 +1,9 @@
 package net.tslat.aoa3.content.loottable.condition;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -15,8 +15,8 @@ import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.PlayerUtil;
 
 public record PlayerHasLevel(AoASkill skill, int level) implements LootItemCondition {
-	public static final Codec<PlayerHasLevel> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-					ExtraCodecs.lazyInitializedCodec(AoARegistries.AOA_SKILLS::lookupCodec).fieldOf("skill").forGetter(PlayerHasLevel::skill),
+	public static final MapCodec<PlayerHasLevel> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+					Codec.lazyInitialized(AoARegistries.AOA_SKILLS::lookupCodec).fieldOf("skill").forGetter(PlayerHasLevel::skill),
 					Codec.intRange(1, 1000).fieldOf("level").forGetter(PlayerHasLevel::level))
 			.apply(builder, PlayerHasLevel::new));
 
@@ -31,7 +31,10 @@ public record PlayerHasLevel(AoASkill skill, int level) implements LootItemCondi
 
 	@Override
 	public boolean test(LootContext lootContext) {
-		Entity entity = lootContext.getParamOrNull(LootContextParams.KILLER_ENTITY);
+		Entity entity = lootContext.getParamOrNull(LootContextParams.DIRECT_ATTACKING_ENTITY);
+
+		if (entity == null)
+			entity = lootContext.getParamOrNull(LootContextParams.ATTACKING_ENTITY);
 
 		if (entity == null)
 			entity = lootContext.getParamOrNull(LootContextParams.THIS_ENTITY);

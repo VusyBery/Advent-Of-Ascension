@@ -7,7 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
 import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.NumberUtil;
@@ -34,7 +34,7 @@ public class ResourceRequirementToast extends GenericToast {
 		poseStack.pushPose();
 		poseStack.scale(0.9f, 0.9f, 1f);
 		poseStack.translate(5.5f, 5, 0);
-		AoAGuiElementRenderers.getResourceRenderer(this.resource).renderInHud(poseStack, ClientPlayerDataManager.get().getResource(resource), Minecraft.getInstance().getDeltaFrameTime(), "-1");
+		AoAGuiElementRenderers.getResourceRenderer(this.resource).renderInHud(poseStack, ClientPlayerDataManager.get().getResource(resource), Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), "-1");
 		poseStack.popPose();
 	}
 }

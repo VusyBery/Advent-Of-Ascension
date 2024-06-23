@@ -1,0 +1,13 @@
+{
+  "type": "aoa3:upgrade_kit",
+  "input": {
+    "item": "aoa3:spirit_shower"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:apoco_shower"
+  },
+  "upgrade_kit": {
+    "item": "aoa3:apoco_upgrade_kit"
+  }
+}

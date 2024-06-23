@@ -1,32 +1,34 @@
 package net.tslat.aoa3.content.item.weapon.greatblade;
 
-import com.google.common.collect.Multimap;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
-import net.tslat.aoa3.common.registration.item.AoATiers;
-import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
 
 public class PlutonScythe extends BaseGreatblade {
-	private static final AttributeModifier LUCK_BUFF = new AttributeModifier(UUID.fromString("e446949b-1792-4a66-8f83-5037d6dcce9b"), "AoALuxonScytheLuckBuff", 2, AttributeModifier.Operation.ADDITION);
+	public static final UUID LUCK_BUFF = UUID.fromString("e446949b-1792-4a66-8f83-5037d6dcce9b");
 
-	public PlutonScythe() {
-		super(AoATiers.PLUTON_SCYTHE, AttackSpeed.forAttacksPerSecond(1));
+	public PlutonScythe(Tier tier, Item.Properties properties) {
+		super(tier, properties);
+	}
+
+	public static Item.Properties baseProperties(Tier tier, float attackSpeed) {
+		return new Item.Properties().attributes(BaseGreatblade.createAttributes(tier, 0f, attackSpeed).withModifierAdded(Attributes.LUCK, new AttributeModifier(AdventOfAscension.id("pluton_scythe"), 2, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND));
 	}
 
 	@Override
@@ -45,18 +47,13 @@ public class PlutonScythe extends BaseGreatblade {
 		}
 	}
 
-	@Override
-	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot equipmentSlot, ItemStack stack) {
-		Multimap<Attribute, AttributeModifier> multimap =  super.getAttributeModifiers(equipmentSlot, stack);
-
-		if (equipmentSlot == EquipmentSlot.MAINHAND)
-			multimap.put(Attributes.LUCK, LUCK_BUFF);
-
-		return multimap;
+	public static ItemAttributeModifiers createAttributes() {
+		return ItemAttributeModifiers.builder()
+				.build();
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.LEECHES_SPIRIT, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 	}
 }

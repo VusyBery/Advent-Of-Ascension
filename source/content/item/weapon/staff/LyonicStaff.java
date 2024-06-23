@@ -1,5 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,13 +26,12 @@ import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class LyonicStaff extends BaseStaff<List<LivingEntity>> {
-	public LyonicStaff(int durability) {
-		super(durability);
+	public LyonicStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -38,17 +40,18 @@ public class LyonicStaff extends BaseStaff<List<LivingEntity>> {
 		return AoASounds.ITEM_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.ENERGY_RUNE.get(), 1);
-		runes.put(AoAItems.WIND_RUNE.get(), 1);
-		runes.put(AoAItems.WITHER_RUNE.get(), 2);
-		runes.put(AoAItems.STRIKE_RUNE.get(), 1);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.ENERGY_RUNE.get(), 1);
+			runes.put(AoAItems.WIND_RUNE.get(), 1);
+			runes.put(AoAItems.WITHER_RUNE.get(), 2);
+			runes.put(AoAItems.STRIKE_RUNE.get(), 1);
+		});
 	}
 
 	@Override
 	public Optional<List<LivingEntity>> checkPreconditions(LivingEntity caster, ItemStack staff) {
-		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 10, 1, 10, entity -> entity instanceof LivingEntity livingEntity && livingEntity.isAlive() && EntityUtil.Predicates.HOSTILE_MOB.test(livingEntity));
+		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 10, 1, 10, entity -> entity instanceof LivingEntity livingEntity && livingEntity.isAlive() && EntityUtil.isHostileMob(livingEntity));
 
 		return Optional.ofNullable(targets.isEmpty() ? null : targets);
 	}
@@ -77,10 +80,10 @@ public class LyonicStaff extends BaseStaff<List<LivingEntity>> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.WITHERS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 2));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

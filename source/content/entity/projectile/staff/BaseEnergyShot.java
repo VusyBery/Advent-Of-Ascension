@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.projectile.staff;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -19,7 +20,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.content.item.EnergyProjectileWeapon;
 import org.jetbrains.annotations.Nullable;
-
 
 public abstract class BaseEnergyShot extends ThrowableProjectile {
 	protected int lifespan;
@@ -164,7 +164,7 @@ public abstract class BaseEnergyShot extends ThrowableProjectile {
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
 	@Override
 	public boolean ignoreExplosion(Explosion explosion) {
@@ -214,7 +214,7 @@ public abstract class BaseEnergyShot extends ThrowableProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
+	protected double getDefaultGravity() {
 		return 0.0f;
 	}
 

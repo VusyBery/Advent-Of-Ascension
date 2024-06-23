@@ -44,7 +44,7 @@ public class XxeusEntity extends AoAMeleeMob<XxeusEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.55f;
 	}
 
@@ -73,7 +73,7 @@ public class XxeusEntity extends AoAMeleeMob<XxeusEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

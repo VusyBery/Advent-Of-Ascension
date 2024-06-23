@@ -36,11 +36,11 @@ public class BlockConversion extends AoAAbility.Instance {
 		super(AoAAbilities.BLOCK_CONVERSION.get(), skill, data);
 
 		this.radius = GsonHelper.getAsInt(data, "radius", 1);
-		this.targetBlock = AoARegistries.BLOCKS.getEntry(new ResourceLocation(GsonHelper.getAsString(data, "target_block")));
-		this.replacementBlock = AoARegistries.BLOCKS.getEntry(new ResourceLocation(GsonHelper.getAsString(data, "replacement_block")));
+		this.targetBlock = AoARegistries.BLOCKS.getEntry(ResourceLocation.read(GsonHelper.getAsString(data, "target_block")).getOrThrow());
+		this.replacementBlock = AoARegistries.BLOCKS.getEntry(ResourceLocation.read(GsonHelper.getAsString(data, "replacement_block")).getOrThrow());
 
 		if (data.has("interaction_item")) {
-			this.interactionItem = AoARegistries.ITEMS.getEntry(new ResourceLocation(GsonHelper.getAsString(data, "interaction_item")));
+			this.interactionItem = AoARegistries.ITEMS.getEntry(ResourceLocation.read(GsonHelper.getAsString(data, "interaction_item")).getOrThrow());
 		}
 		else {
 			this.interactionItem = null;
@@ -54,11 +54,11 @@ public class BlockConversion extends AoAAbility.Instance {
 		super(AoAAbilities.BLOCK_CONVERSION.get(), skill, data);
 
 		this.radius = data.getInt("radius");
-		this.targetBlock = AoARegistries.BLOCKS.getEntry(new ResourceLocation(data.getString("target_block")));
-		this.replacementBlock = AoARegistries.BLOCKS.getEntry(new ResourceLocation(data.getString("replacement_block")));
+		this.targetBlock = AoARegistries.BLOCKS.getEntry(ResourceLocation.read(data.getString("target_block")).getOrThrow());
+		this.replacementBlock = AoARegistries.BLOCKS.getEntry(ResourceLocation.read(data.getString("replacement_block")).getOrThrow());
 
 		if (data.contains("interaction_item")) {
-			this.interactionItem = AoARegistries.ITEMS.getEntry(new ResourceLocation(data.getString("interaction_item")));
+			this.interactionItem = AoARegistries.ITEMS.getEntry(ResourceLocation.read(data.getString("interaction_item")).getOrThrow());
 		}
 		else {
 			this.interactionItem = null;

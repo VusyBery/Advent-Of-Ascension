@@ -46,7 +46,7 @@ public class GrenadeEntity extends BaseBullet implements HardProjectile {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.075f;
 	}
 
@@ -64,7 +64,7 @@ public class GrenadeEntity extends BaseBullet implements HardProjectile {
 			explode(position());
 
 			if (getOwner() instanceof ServerPlayer pl)
-				pl.getAdvancements().award(AdvancementUtil.getAdvancement(pl.serverLevel(), AdventOfAscension.id("completionist/darwin_award")), "fire_grenade");
+				AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("completionist/darwin_award"), "fire_grenade");
 
 			discard();
 

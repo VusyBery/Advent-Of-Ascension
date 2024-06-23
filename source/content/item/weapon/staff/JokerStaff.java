@@ -1,5 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffects;
@@ -16,13 +19,12 @@ import net.tslat.effectslib.api.util.EffectBuilder;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
 public class JokerStaff extends BaseStaff<List<LivingEntity>> {
-	public JokerStaff(int durability) {
-		super(durability);
+	public JokerStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -31,15 +33,16 @@ public class JokerStaff extends BaseStaff<List<LivingEntity>> {
 		return AoASounds.ITEM_JOKER_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.WIND_RUNE.get(), 4);
-		runes.put(AoAItems.KINETIC_RUNE.get(), 4);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.WIND_RUNE.get(), 4);
+			runes.put(AoAItems.KINETIC_RUNE.get(), 4);
+		});
 	}
 
 	@Override
 	public Optional<List<LivingEntity>> checkPreconditions(LivingEntity caster, ItemStack staff) {
-		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 10, entity -> entity instanceof LivingEntity livingEntity && EntityUtil.Predicates.HOSTILE_MOB.test(livingEntity) && !EntityUtil.isImmuneToSpecialAttacks(livingEntity, caster));
+		List<LivingEntity> targets = EntityRetrievalUtil.getEntities(caster, 10, entity -> entity instanceof LivingEntity livingEntity && EntityUtil.isHostileMob(livingEntity) && !EntityUtil.isImmuneToSpecialAttacks(livingEntity));
 
 		return Optional.ofNullable(targets.isEmpty() ? null : targets);
 	}
@@ -50,9 +53,9 @@ public class JokerStaff extends BaseStaff<List<LivingEntity>> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SPEC_IMMUNE, LocaleUtil.ItemDescriptionType.NEUTRAL));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

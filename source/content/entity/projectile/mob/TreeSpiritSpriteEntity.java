@@ -9,13 +9,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
-import net.tslat.aoa3.content.entity.mob.overworld.TreeSpiritEntity;
+import net.tslat.aoa3.content.entity.monster.overworld.TreeSpiritEntity;
 import net.tslat.aoa3.util.EntityUtil;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class TreeSpiritSpriteEntity extends BaseMobProjectile implements GeoEntity {

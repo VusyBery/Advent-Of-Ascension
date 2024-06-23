@@ -1,5 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -16,12 +19,11 @@ import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class FireStaff extends BaseStaff<Object> {
-	public FireStaff(int durability) {
-		super(durability);
+	public FireStaff(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -30,10 +32,11 @@ public class FireStaff extends BaseStaff<Object> {
 		return AoASounds.ITEM_STAFF_CAST.get();
 	}
 
-	@Override
-	protected void populateRunes(HashMap<Item, Integer> runes) {
-		runes.put(AoAItems.WIND_RUNE.get(), 2);
-		runes.put(AoAItems.FIRE_RUNE.get(), 2);
+	public static Object2IntMap<Item> getDefaultRunes() {
+		return Util.make(new Object2IntArrayMap<>(), runes -> {
+			runes.put(AoAItems.WIND_RUNE.get(), 2);
+			runes.put(AoAItems.FIRE_RUNE.get(), 2);
+		});
 	}
 
 	@Override
@@ -44,7 +47,7 @@ public class FireStaff extends BaseStaff<Object> {
 	@Override
 	public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
 		if (DamageUtil.doMagicProjectileAttack(shooter, shot, target, getDmg())) {
-			target.setSecondsOnFire(11);
+			target.igniteForSeconds(11);
 
 			return true;
 		}
@@ -58,8 +61,8 @@ public class FireStaff extends BaseStaff<Object> {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

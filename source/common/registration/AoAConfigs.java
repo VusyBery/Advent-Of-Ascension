@@ -1,6 +1,6 @@
 package net.tslat.aoa3.common.registration;
 
-import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -17,13 +17,13 @@ import java.io.File;
 import java.io.IOException;
 
 public final class AoAConfigs {
-	public static void init() {
+	public static void init(ModContainer modContainer) {
 		try {
 			ObjectUtil.getOrCreateDirectory(FMLPaths.CONFIGDIR.get().resolve(AdventOfAscension.MOD_ID), AdventOfAscension.MOD_ID);
-			ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, AoAConfigs.SERVER_CONFIG_SPEC, AdventOfAscension.MOD_ID + "_server_config.toml");
-			ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AoAConfigs.COMMON_CONFIG_SPEC, AdventOfAscension.MOD_ID + File.separator + "common_config.toml");
-			ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, AoAConfigs.CLIENT_CONFIG_SPEC, AdventOfAscension.MOD_ID + File.separator + "client_config.toml");
-			ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, AoAConfigs.INTEGRATIONS_CONFIG_SPEC, AdventOfAscension.MOD_ID + File.separator + "integrations_config.toml");
+			modContainer.registerConfig(ModConfig.Type.SERVER, AoAConfigs.SERVER_CONFIG_SPEC, AdventOfAscension.MOD_ID + "_server_config.toml");
+			modContainer.registerConfig(ModConfig.Type.COMMON, AoAConfigs.COMMON_CONFIG_SPEC, AdventOfAscension.MOD_ID + File.separator + "common_config.toml");
+			modContainer.registerConfig(ModConfig.Type.CLIENT, AoAConfigs.CLIENT_CONFIG_SPEC, AdventOfAscension.MOD_ID + File.separator + "client_config.toml");
+			modContainer.registerConfig(ModConfig.Type.COMMON, AoAConfigs.INTEGRATIONS_CONFIG_SPEC, AdventOfAscension.MOD_ID + File.separator + "integrations_config.toml");
 		}
 		catch (IOException ex) {
 			Logging.error("Failed to create config directories.. this is not good", ex);

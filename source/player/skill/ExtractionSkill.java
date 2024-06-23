@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -85,9 +83,8 @@ public class ExtractionSkill extends AoASkill.Instance {
 			return;
 
 		ItemStack smelting = ev.getSmelting();
-		Item item = smelting.getItem();
 
-		if (item.getFoodProperties() == null && canGainXp(true)) {
+		if (smelting.getFoodProperties(ev.getEntity()) == null && canGainXp(true)) {
 			float xp = PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 40);
 
 			if (smelting.is(Tags.Items.NUGGETS)) {
@@ -105,15 +102,6 @@ public class ExtractionSkill extends AoASkill.Instance {
 	}
 
 	public static boolean isApplicableBlock(BlockState block) {
-		return block.is(Tags.Blocks.STONE) ||
-				block.is(Tags.Blocks.COBBLESTONE) ||
-				block.is(Tags.Blocks.ORES) ||
-				block.is(BlockTags.LOGS) ||
-				block.is(Tags.Blocks.SAND) ||
-				block.is(AoATags.Blocks.GRASS) ||
-				block.is(BlockTags.DIRT) ||
-				block.is(Tags.Blocks.GRAVEL) ||
-				block.is(Tags.Blocks.NETHERRACK) ||
-				block.is(Tags.Blocks.OBSIDIAN);
+		return block.is(AoATags.Blocks.EXTRACTION_TRAINABLE);
 	}
 }

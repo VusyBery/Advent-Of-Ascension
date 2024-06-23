@@ -2,6 +2,7 @@ package net.tslat.aoa3.player.ability.generic;
 
 import com.google.gson.JsonObject;
 import net.minecraft.Util;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -18,15 +19,13 @@ import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.*;
 
-import java.util.UUID;
-
 import static net.tslat.aoa3.player.AoAPlayerEventListener.ListenerType.ATTRIBUTE_MODIFIERS;
 import static net.tslat.aoa3.player.AoAPlayerEventListener.ListenerType.LEVEL_CHANGE;
 
 public class AttributeModification extends ScalableModAbility {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ATTRIBUTE_MODIFIERS, LEVEL_CHANGE};
 
-	private final Attribute attribute;
+	private final Holder<Attribute> attribute;
 	private final AttributeModifier modifier;
 
 	private float loginHealth = -1;
@@ -35,25 +34,15 @@ public class AttributeModification extends ScalableModAbility {
 	public AttributeModification(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.ATTRIBUTE_MODIFICATION.get(), skill, data);
 
-		this.attribute = AoARegistries.ENTITY_ATTRIBUTES.getEntry(new ResourceLocation(GsonHelper.getAsString(data, "attribute")));
-		this.modifier = new AttributeModifier(UUID.randomUUID(), getUniqueIdentifier(), 0, AttributeModifier.Operation.fromValue(GsonHelper.getAsInt(data, "operation"))) {
-			@Override
-			public double getAmount() {
-				return getScaledValue();
-			}
-		};
+		this.attribute = AoARegistries.ENTITY_ATTRIBUTES.getHolder(ResourceLocation.read(GsonHelper.getAsString(data, "attribute")).getOrThrow());
+		this.modifier = new AttributeModifier(RegistryUtil.getId(this.type()).withSuffix(getUniqueIdentifier()), getScaledValue(), AttributeModifier.Operation.BY_ID.apply(GsonHelper.getAsInt(data, "operation")));
 	}
 
 	public AttributeModification(AoASkill.Instance skill, CompoundTag data) {
 		super(AoAAbilities.ATTRIBUTE_MODIFICATION.get(), skill, data);
 
-		this.attribute = AoARegistries.ENTITY_ATTRIBUTES.getEntry(new ResourceLocation(data.getString("attribute")));
-		this.modifier = new AttributeModifier(data.getUUID("uuid"), getUniqueIdentifier(), 0, AttributeModifier.Operation.fromValue(data.getInt("operation"))) {
-			@Override
-			public double getAmount() {
-				return getScaledValue();
-			}
-		};
+		this.attribute = AoARegistries.ENTITY_ATTRIBUTES.getHolder(ResourceLocation.read(data.getString("attribute")).getOrThrow());
+		this.modifier = new AttributeModifier(RegistryUtil.getId(this.type()).withSuffix(getUniqueIdentifier()), getScaledValue(), AttributeModifier.Operation.BY_ID.apply(data.getInt("operation")));
 	}
 
 	@Override
@@ -61,8 +50,8 @@ public class AttributeModification extends ScalableModAbility {
 		String amount = "";
 		String perLevel = "";
 
-		switch (this.modifier.getOperation()) {
-			case MULTIPLY_BASE, MULTIPLY_TOTAL -> {
+		switch (this.modifier.operation()) {
+			case ADD_MULTIPLIED_BASE, ADD_MULTIPLIED_TOTAL -> {
 				if (baseValue != 0)
 					amount = "+" + NumberUtil.roundToNthDecimalPlace(baseValue * 100, 3);
 				if (perLevelMod != 0)
@@ -77,8 +66,8 @@ public class AttributeModification extends ScalableModAbility {
 		}
 
 		super.updateDescription(Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey(),
-				StringUtil.toTitleCase(attribute.getDescriptionId().substring(attribute.getDescriptionId().lastIndexOf(".") + 1)),
-				LocaleUtil.getAbilityValueDesc(baseValue != 0, perLevelMod != 0, modifier.getOperation() != AttributeModifier.Operation.ADDITION, amount, perLevel, NumberUtil.roundToNthDecimalPlace((float)modifier.getAmount() * (modifier.getOperation() == AttributeModifier.Operation.ADDITION ? 1 : 100), 3))));
+				StringUtil.toTitleCase(attribute.value().getDescriptionId().substring(attribute.value().getDescriptionId().lastIndexOf(".") + 1)),
+				LocaleUtil.getAbilityValueDesc(baseValue != 0, perLevelMod != 0, modifier.operation() != AttributeModifier.Operation.ADD_VALUE, amount, perLevel, NumberUtil.roundToNthDecimalPlace((float)modifier.amount() * (modifier.operation() == AttributeModifier.Operation.ADD_VALUE ? 1 : 100), 3))));
 	}
 
 	@Override
@@ -99,7 +88,7 @@ public class AttributeModification extends ScalableModAbility {
 
 	@Override
 	public void applyAttributeModifiers(ServerPlayerDataManager plData) {
-		EntityUtil.reapplyAttributeModifier(plData.player(), attribute, modifier, false);
+		AttributeUtil.applyTransientModifier(plData.player(), this.attribute, this.modifier);
 
 		if (loginHealth > 0) {
 			plData.player().setHealth(loginHealth);
@@ -109,12 +98,12 @@ public class AttributeModification extends ScalableModAbility {
 
 	@Override
 	public void removeAttributeModifiers(ServerPlayerDataManager plData) {
-		EntityUtil.removeAttributeModifier(plData.player(), attribute, modifier.getId());
+		AttributeUtil.removeModifier(plData.player(), this.attribute, this.modifier.id());
 	}
 
 	@Override
 	public void handleLevelChange(PlayerLevelChangeEvent ev) {
-		EntityUtil.reapplyAttributeModifier(ev.getEntity(), attribute, modifier, false);
+		AttributeUtil.applyTransientModifier(ev.getEntity(), this.attribute, this.modifier);
 	}
 
 	@Override
@@ -122,9 +111,8 @@ public class AttributeModification extends ScalableModAbility {
 		CompoundTag data = super.getSyncData(forClientSetup);
 
 		if (forClientSetup) {
-			data.putString("attribute", RegistryUtil.getId(attribute).toString());
-			data.putInt("operation", this.modifier.getOperation().toValue());
-			data.putUUID("uuid", this.modifier.getId());
+			data.putString("attribute", RegistryUtil.getId(this.attribute.value()).toString());
+			data.putInt("operation", this.modifier.operation().id());
 		}
 
 		return data;

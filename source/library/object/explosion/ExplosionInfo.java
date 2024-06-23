@@ -2,6 +2,7 @@ package net.tslat.aoa3.library.object.explosion;
 
 import com.mojang.datafixers.util.Either;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -27,7 +28,7 @@ public class ExplosionInfo {
 	private float radius = 10;
 	private float penetrationPower = 100;
 	private float blockDropChance = 1;
-	private SoundEvent explosionSound = SoundEvents.GENERIC_EXPLODE;
+	private Holder<SoundEvent> explosionSound = SoundEvents.GENERIC_EXPLODE;
 
 	private boolean affectsOwner = false;
 	private boolean noEntityDamage = false;
@@ -80,7 +81,7 @@ public class ExplosionInfo {
 		return this.affectsOwner;
 	}
 
-	public SoundEvent getExplosionSound() {
+	public Holder<SoundEvent> getExplosionSound() {
 		return this.explosionSound;
 	}
 
@@ -259,7 +260,7 @@ public class ExplosionInfo {
 		return this;
 	}
 
-	public ExplosionInfo explosionSound(SoundEvent sound) {
+	public ExplosionInfo explosionSound(Holder<SoundEvent> sound) {
 		this.explosionSound = sound;
 
 		return this;

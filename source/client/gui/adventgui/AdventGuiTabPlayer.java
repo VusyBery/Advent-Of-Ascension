@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
@@ -26,11 +27,10 @@ import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AddSkillCyclePacket;
 import net.tslat.aoa3.common.networking.packets.adventplayer.ToggleAoAAbilityPacket;
 import net.tslat.aoa3.common.registration.AoAConfigs;
-import net.tslat.aoa3.common.registration.entity.AoAAnimals;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.library.object.RenderContext;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.ColourUtil;
@@ -45,7 +45,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class AdventGuiTabPlayer extends Screen {
-	private static final ResourceLocation TOTAL_LEVEL_ICON = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/aoaskill/total_level.png");
+	private static final ResourceLocation TOTAL_LEVEL_ICON = AdventOfAscension.id("textures/gui/aoaskill/total_level.png");
 
 	private LivingEntity entityToRender = null;
 	private float skillRenderScale = 1;
@@ -107,7 +107,7 @@ public class AdventGuiTabPlayer extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		final RenderContext renderContext = RenderContext.of(guiGraphics);
 		PoseStack poseStack = guiGraphics.pose();
 		adjustedMouseX = (mouseX * (1 / AdventMainGui.SCALE));
@@ -124,12 +124,15 @@ public class AdventGuiTabPlayer extends Screen {
 
 			poseStack.pushPose();
 			poseStack.scale(skillRenderScale, skillRenderScale, 1);
-			super.render(guiGraphics, (int)adjustedMouseX, (int)adjustedMouseY, partialTicks);
+
+			for (Renderable renderable : this.renderables) {
+				renderable.render(guiGraphics, (int)adjustedMouseX, (int)adjustedMouseY, partialTick);
+			}
 
 			poseStack.popPose();
 
-			drawPlayerBox(poseStack, adjustedMouseX, adjustedMouseY, 67, partialTicks);
-			drawTotalLevel(poseStack, adjustedMouseX, adjustedMouseY, partialTicks);
+			drawPlayerBox(poseStack, adjustedMouseX, adjustedMouseY, 67, partialTick);
+			drawTotalLevel(poseStack, adjustedMouseX, adjustedMouseY, partialTick);
 		}
 		else {
 			AoASkillRenderer skillRenderer = AoAGuiElementRenderers.getSkillRenderer(abilityPane.skill.type());
@@ -150,7 +153,7 @@ public class AdventGuiTabPlayer extends Screen {
 			poseStack.translate(-skillRenderWidth, 0, 0);
 			poseStack.scale(3f, 3f, 1);
 
-			skillRenderer.renderInGui(renderContext, abilityPane.skill, partialTicks, (int)adjustedMouseX, (int)adjustedMouseY, AoASkillRenderer.ProgressRenderType.None, false);
+			skillRenderer.renderInGui(renderContext, abilityPane.skill, partialTick, (int)adjustedMouseX, (int)adjustedMouseY, AoASkillRenderer.ProgressRenderType.None, false);
 
 			poseStack.popPose();
 
@@ -186,7 +189,7 @@ public class AdventGuiTabPlayer extends Screen {
 			poseStack.popPose();
 
 			if (abilityPane != null)
-				abilityPane.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTicks);
+				abilityPane.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTick);
 
 			return;
 		}
@@ -280,19 +283,19 @@ public class AdventGuiTabPlayer extends Screen {
 			
 			if (!ClientPlayerDataManager.get().isLegitimate()) {
 				entityToRender = RandomUtil.getRandomSelection(
-						AoAMobs.ARCWORM,
-						AoAMobs.CHARGER,
-						AoAMobs.OCCULENT,
-						AoAMobs.CYCLOPS,
-						AoAMobs.STICKY,
-						AoAMobs.KRANKY,
-						AoAMobs.GINGERBREAD_MAN,
-						AoAMobs.BOBO,
-						AoAMobs.CHOCKO,
-						AoAMobs.STITCHES,
-						AoAAnimals.SPEARMINT_SNAIL,
-						AoAMobs.ALARMO,
-						AoAMobs.ANCIENT_GOLEM
+						//AoAMonsters.ARCWORM,
+						AoAMonsters.CHARGER,
+						//AoAMonsters.OCCULENT,
+						AoAMonsters.CYCLOPS,
+						//AoAMonsters.STICKY,
+						//AoAMonsters.KRANKY,
+						//AoAMonsters.GINGERBREAD_MAN,
+						//AoAMonsters.BOBO,
+						//AoAMonsters.CHOCKO,
+						//AoAMonsters.STITCHES,
+						//AoAAnimals.SPEARMINT_SNAIL,
+						//AoAMonsters.ALARMO,
+						AoAMonsters.ANCIENT_GOLEM
 				).get().create(mc.level);
 			}
 			else {

@@ -51,8 +51,8 @@ public class FishingCageModel extends EntityModel<FishingCageEntity> {
 	}
 
 	@Override
-	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, float pRed, float pGreen, float pBlue, float pAlpha) {
-		this.root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, pRed, pGreen, pBlue, pAlpha);
+	public void renderToBuffer(PoseStack pPoseStack, VertexConsumer pBuffer, int pPackedLight, int pPackedOverlay, int colour) {
+		this.root.render(pPoseStack, pBuffer, pPackedLight, pPackedOverlay, colour);
 	}
 
 	@Override

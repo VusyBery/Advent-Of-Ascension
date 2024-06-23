@@ -20,7 +20,7 @@ public class PeppermintSnailEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 0.3125f;
 	}
 

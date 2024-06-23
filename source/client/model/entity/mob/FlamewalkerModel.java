@@ -1,17 +1,17 @@
 package net.tslat.aoa3.client.model.entity.mob;
 
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.content.entity.mob.nether.FlamewalkerEntity;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animation.AnimationState;
+import net.tslat.aoa3.content.entity.monster.nether.FlamewalkerEntity;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public class FlamewalkerModel extends DefaultedEntityGeoModel<FlamewalkerEntity> {
-	private CoreGeoBone rock1;
-	private CoreGeoBone rock2;
-	private CoreGeoBone rock3;
-	private CoreGeoBone rock4;
-	private CoreGeoBone rock5;
+	private GeoBone rock1;
+	private GeoBone rock2;
+	private GeoBone rock3;
+	private GeoBone rock4;
+	private GeoBone rock5;
 
 	public FlamewalkerModel() {
 		super(AdventOfAscension.id("mob/nether/flamewalker"));

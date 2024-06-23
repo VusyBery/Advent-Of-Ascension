@@ -8,7 +8,7 @@ import net.minecraftforge.api.distmarker.Dist;
 
 
 public class SkeletalCowmanRenderer extends HumanoidMobRenderer<Monster, HumanoidModel<Monster>> {
-	private final ResourceLocation texture = new ResourceLocation("aoa3", "textures/entity/mob/nether/skeletal_cowman.png");
+	private final ResourceLocation texture = AdventOfAscension.id("textures/entity/mob/nether/skeletal_cowman.png");
 
 	public SkeletalCowmanRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new HumanoidModel<Monster>(0), AoAMobs.SKELETAL_COWMAN.get().getWidth() / 3f);

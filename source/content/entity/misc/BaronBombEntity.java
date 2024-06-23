@@ -48,7 +48,7 @@ public class BaronBombEntity extends Entity {
 	}
 
 	@Override
-	protected float getEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 0.25f;
 	}
 
@@ -61,12 +61,12 @@ public class BaronBombEntity extends Entity {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
 	@Override
 	public void playerTouch(Player entity) {

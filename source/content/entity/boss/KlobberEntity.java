@@ -29,7 +29,7 @@ public class KlobberEntity extends AoAMeleeMob<KlobberEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.75f;
 	}
 
@@ -52,7 +52,7 @@ public class KlobberEntity extends AoAMeleeMob<KlobberEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

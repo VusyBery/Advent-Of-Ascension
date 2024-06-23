@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "aoa3:stripped_toxic_wood"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "aoa3:toxicwood_planks"
+  }
+}

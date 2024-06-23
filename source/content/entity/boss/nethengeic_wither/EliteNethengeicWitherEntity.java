@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -14,7 +15,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
@@ -26,7 +29,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
+import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAExplosions;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
@@ -71,11 +74,11 @@ import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
 import java.util.Map;
@@ -115,12 +118,12 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		registerDataParams(FLAME_AURA);
-		registerDataParams(SECOND_HEAD_TARGET);
-		registerDataParams(THIRD_HEAD_TARGET);
+		registerDataParams(builder, FLAME_AURA);
+		registerDataParams(builder, SECOND_HEAD_TARGET);
+		registerDataParams(builder, THIRD_HEAD_TARGET);
 	}
 
 	@Override
@@ -132,11 +135,6 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 		navigation.setCanPassDoors(true);
 
 		return navigation;
-	}
-
-	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
-		return 3;
 	}
 
 	@Nullable
@@ -357,22 +355,22 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 			DamageUtil.safelyDealDamage(DamageUtil.positionedEntityDamage(AoADamageTypes.MOB_FLAMETHROWER, this, position()), target, 1);
 
 			if (RandomUtil.oneInNChance(3) && target.getRemainingFireTicks() < 300)
-				target.setSecondsOnFire((int)Math.ceil(Math.max(0, target.getRemainingFireTicks()) / 20f) + 1);
+				target.igniteForSeconds((int)Math.ceil(Math.max(0, target.getRemainingFireTicks()) / 20f) + 1);
 
 			if (RandomUtil.oneInNChance(3) && target instanceof LivingEntity livingEntity)
 				livingEntity.addEffect(new MobEffectInstance(MobEffects.WITHER, 80, 1));
 		}
 		else {
-			float dmg = (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE.get());
+			float dmg = (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE);
 
 			if (ATTACK_STATE.is(this, FIRE_BOMB_STATE))
 				dmg *= 1.5f;
 
 			if (DamageUtil.doProjectileAttack(this, projectile, target, dmg)) {
-				target.setSecondsOnFire((int)Math.ceil(Math.max(0, target.getRemainingFireTicks()) / 20f) + 3);
+				target.igniteForSeconds((int)Math.ceil(Math.max(0, target.getRemainingFireTicks()) / 20f) + 3);
 
 				if (target instanceof LivingEntity livingEntity)
-					livingEntity.addEffect(new MobEffectInstance(AoAMobEffects.NETHENGEIC_CURSE.get(), 200, this.level().getDifficulty().getId()));
+					livingEntity.addEffect(new MobEffectInstance(AoAMobEffects.NETHENGEIC_CURSE, 200, this.level().getDifficulty().getId()));
 			}
 		}
 	}
@@ -392,8 +390,8 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 			if (DamageUtil.isMeleeDamage(source)) {
 				if (source.getDirectEntity() instanceof LivingEntity attacker) {
 					DamageUtil.safelyDealDamage(DamageUtil.entityDamage(AoADamageTypes.MOB_FIRE_RECOIL, this), attacker, 5);
-					attacker.setSecondsOnFire((int)Math.ceil(Math.max(0, attacker.getRemainingFireTicks()) / 20f) + 2);
-					attacker.addEffect(new MobEffectInstance(AoAMobEffects.NETHENGEIC_CURSE.get(), 200, 2));
+					attacker.igniteForSeconds((int)Math.ceil(Math.max(0, attacker.getRemainingFireTicks()) / 20f) + 2);
+					attacker.addEffect(new MobEffectInstance(AoAMobEffects.NETHENGEIC_CURSE, 200, 2));
 				}
 			}
 			else if (DamageUtil.isEnergyDamage(source)) {
@@ -456,8 +454,11 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 					double startZ = sin * getBbWidth() + getZ();
 					double startY = getRandomY();
 
-					ParticleBuilder.forPosition(new CustomisableParticleType.Data(AoAParticleTypes.FIRE_AURA.get(), 0.25f, 5, 1, 1, 1, 0.75f, getId()), startX, startY, startZ)
-							.velocity(RandomUtil.fiftyFifty() ? -1 : 1, RandomUtil.fiftyFifty() ? -1 : 1, RandomUtil.fiftyFifty() ? -1 : 1).spawnParticles(level());
+					ParticleBuilder.forPosition(EntityTrackingParticleOptions.fromEntity(AoAParticleTypes.FIRE_AURA, this), startX, startY, startZ)
+							.scaleMod(0.25f)
+							.colourOverride(1f, 1f, 1f, 0.75f)
+							.velocity(RandomUtil.fiftyFifty() ? -1 : 1, RandomUtil.fiftyFifty() ? -1 : 1, RandomUtil.fiftyFifty() ? -1 : 1)
+							.spawnParticles(level());
 				}
 			}
 
@@ -615,8 +616,12 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 				for (int i = 0; i < 5; i++) {
 					Vec3 velocity = this.target.getEyePosition().subtract(baseX + RandomUtil.randomScaledGaussianValue(0.5f), baseY + RandomUtil.randomScaledGaussianValue(0.5f), baseZ + RandomUtil.randomScaledGaussianValue(0.5f)).normalize().scale(0.9f);
 
-					packet.particle(ParticleBuilder.forPosition(new CustomisableParticleType.Data(AoAParticleTypes.BURNING_FLAME.get(), 0.35f, 5, 0, 0, 0, 0, entity.getId()), baseX, baseY, baseZ).velocity(velocity.x, velocity.y, velocity.z));
-					packet.particle(ParticleBuilder.forPosition(RandomUtil.fiftyFifty() ? ParticleTypes.SMALL_FLAME : ParticleTypes.SQUID_INK, baseX, baseY, baseZ).velocity(velocity.x, velocity.y, velocity.z));
+					packet.particle(ParticleBuilder.forPosition(EntityTrackingParticleOptions.fromEntity(AoAParticleTypes.BURNING_FLAME, entity), baseX, baseY, baseZ)
+							.colourOverride(0f, 0f, 0f, 0f)
+							.scaleMod(0.35f)
+							.velocity(velocity));
+					packet.particle(ParticleBuilder.forPosition(RandomUtil.fiftyFifty() ? ParticleTypes.SMALL_FLAME : ParticleTypes.SQUID_INK, baseX, baseY, baseZ)
+							.velocity(velocity));
 				}
 
 				packet.sendToAllNearbyPlayers((ServerLevel)entity.level(), EntityUtil.getEntityCenter(entity), 64);

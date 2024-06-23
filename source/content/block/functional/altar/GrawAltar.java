@@ -1,8 +1,9 @@
 package net.tslat.aoa3.content.block.functional.altar;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
-import net.tslat.aoa3.content.entity.mob.lelyetia.FlyeEntity;
 import net.tslat.aoa3.util.WorldUtil;
 
 public class GrawAltar extends BossAltarBlock {
@@ -21,21 +21,19 @@ public class GrawAltar extends BossAltarBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		ItemStack heldItem = player.getItemInHand(hand);
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (stack.getItem() == AoAItems.ORANGE_SPORES.get() || stack.getItem() == AoAItems.YELLOW_SPORES.get()) {
+			if (level instanceof ServerLevel serverLevel) {
+				//EntitySpawningUtil.spawnEntity(serverLevel, AoAMonsters.FLYE.get(), pos, MobSpawnType.TRIGGERED);
 
-		if (heldItem.getItem() == AoAItems.ORANGE_SPORES.get() || heldItem.getItem() == AoAItems.YELLOW_SPORES.get()) {
-			if (!world.isClientSide) {
-				world.addFreshEntity(new FlyeEntity(world, pos));
-
-				if (!player.isCreative())
-					heldItem.shrink(1);
+				if (!player.getAbilities().instabuild)
+					stack.shrink(1);
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 		else {
-			return super.use(state, world, pos, player, hand, hit);
+			return super.useItemOn(stack, state, level, pos, player, hand, hitResult);
 		}
 	}
 

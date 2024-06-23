@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 1,
-  "ingredient": {
-    "item": "aoa3:irostone"
-  },
-  "result": "aoa3:irostone_wall"
-}

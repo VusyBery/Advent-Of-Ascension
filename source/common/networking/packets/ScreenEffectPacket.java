@@ -1,39 +1,26 @@
 package net.tslat.aoa3.common.networking.packets;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.gui.overlay.ScreenEffectRenderer;
 import net.tslat.aoa3.library.constant.ScreenImageEffect;
 
-public record ScreenEffectPacket(ScreenImageEffect effect) implements AoAPacket<PlayPayloadContext> {
-	public static final ResourceLocation ID = AdventOfAscension.id("screen_effect");
+public record ScreenEffectPacket(ScreenImageEffect effect) implements AoAPacket {
+	public static final Type<ScreenEffectPacket> TYPE = new Type<>(AdventOfAscension.id("screen_effect"));
+	public static final StreamCodec<FriendlyByteBuf, ScreenEffectPacket> CODEC = StreamCodec.composite(
+			ScreenImageEffect.STREAM_CODEC,
+			ScreenEffectPacket::effect,
+			ScreenEffectPacket::new);
 
 	@Override
-	public ResourceLocation id() {
-		return ID;
+	public Type<? extends ScreenEffectPacket> type() {
+		return TYPE;
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeVarInt(this.effect.getType().ordinal());
-		buffer.writeFloat(this.effect.getScale());
-		buffer.writeVarInt(this.effect.getColour());
-		buffer.writeVarInt(this.effect.getDuration());
-		buffer.writeBoolean(this.effect.isFullscreen());
-	}
-
-	public static ScreenEffectPacket decode(FriendlyByteBuf buffer) {
-		return new ScreenEffectPacket(new ScreenImageEffect(ScreenImageEffect.Type.values()[buffer.readVarInt()])
-				.scaled(buffer.readFloat())
-				.coloured(buffer.readVarInt())
-				.duration(buffer.readVarInt())
-				.fullscreen(buffer.readBoolean()));
-	}
-
-	@Override
-	public void receiveMessage(PlayPayloadContext context) {
+	public void receiveMessage(IPayloadContext context) {
 		ScreenEffectRenderer.addScreenEffect(this.effect);
 	}
 }

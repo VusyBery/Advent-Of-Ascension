@@ -2,11 +2,14 @@ package net.tslat.aoa3.common.registration.entity.variant;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoARegistries;
@@ -15,9 +18,9 @@ import net.tslat.aoa3.content.entity.misc.PixonEntity;
 import java.util.Comparator;
 import java.util.function.Supplier;
 
-public record PixonVariant(String name, boolean isPriorityVariant, int primaryColour, int secondaryColour, ResourceLocation lootTable, VariantSpawnPredicate spawnPredicate) {
+public record PixonVariant(String name, boolean isPriorityVariant, int primaryColour, int secondaryColour, ResourceKey<LootTable> lootTable, VariantSpawnPredicate spawnPredicate) {
     public PixonVariant(String name, int primaryColour, int secondaryColour, ResourceLocation lootTable, VariantSpawnPredicate spawnPredicate) {
-        this(name, false, primaryColour, secondaryColour, lootTable, spawnPredicate);
+        this(name, false, primaryColour, secondaryColour, ResourceKey.create(Registries.LOOT_TABLE, lootTable), spawnPredicate);
     }
 
     public static final DeferredHolder<PixonVariant, PixonVariant> AMBIENT = register("ambient", () -> new PixonVariant("ambient", 0x5A5A5A, 0x313131, AdventOfAscension.id("entities/ambient_pixon"), VariantSpawnPredicate.randomChance(random -> random.nextFloat() < 0.41)));
@@ -41,7 +44,7 @@ public record PixonVariant(String name, boolean isPriorityVariant, int primaryCo
         PixonVariant variant = PixonVariant.AMBIENT.get();
 
         for (PixonVariant testVariant : SORTED_VARIANTS.get()) {
-            if (testVariant.spawnPredicate().canSpawnVariant(level, difficulty, MobSpawnType.NATURAL, pixon, biome, null, null)) {
+            if (testVariant.spawnPredicate().canSpawnVariant(level, difficulty, MobSpawnType.NATURAL, pixon, biome, null)) {
                 variant = testVariant;
 
                 break;
@@ -50,13 +53,4 @@ public record PixonVariant(String name, boolean isPriorityVariant, int primaryCo
 
         return variant;
     }
-
-    // Gray - 0x5A5A5A - 0x313131 - AMBIENT
-    // Green - 0x06D02B - 0x007506 - GLISTENING
-    // Purple - 0x7800DF - 0x21003E - BLOOMING
-    // Pink - 0xD51073 - 0x3A0E29 - SHINING
-    // Blue - 0x00C7D6 - 0x006F78 - GLEAMING
-    // Orange - 0xB26D22 - 0x623C13 - GLOWING
-    // Red - 0xD03206 - 0x2D0400 - GLARING
-    // White - 0xCBCBCB - 0x727272 - RADIANT
 }

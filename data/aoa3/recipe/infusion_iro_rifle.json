@@ -1,0 +1,27 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:gun_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:power_core"
+    },
+    {
+      "tag": "neoforge:ingots/varsium"
+    },
+    {
+      "tag": "neoforge:ingots/varsium"
+    },
+    {
+      "tag": "neoforge:ingots/lyon"
+    },
+    {
+      "tag": "c:gunpowders"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:iro_rifle"
+  }
+}

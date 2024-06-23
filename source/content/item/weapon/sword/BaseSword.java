@@ -1,74 +1,41 @@
 package net.tslat.aoa3.content.item.weapon.sword;
 
-import com.google.common.base.Suppliers;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableSetMultimap;
-import com.google.common.collect.Multimap;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
-import net.tslat.aoa3.common.registration.AoADataAttachments;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 
-import java.util.Map;
-import java.util.function.Supplier;
-
 public class BaseSword extends SwordItem {
-	private final Supplier<ImmutableSetMultimap<Attribute, AttributeModifier>> attributeModifiers;
-
-	protected final float dmg;
-	protected final double speed;
-
-	public BaseSword(Tier tier) {
-		this(tier, 0, AttackSpeed.SWORD);
+	public BaseSword(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
-	public BaseSword(Tier itemStats, Item.Properties properties) {
-		this(itemStats, 0, AttackSpeed.SWORD, properties);
+	public float getBaseDamage(ItemStack stack) {
+		return (float)stack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY).compute(0, EquipmentSlot.MAINHAND);
 	}
 
-	public BaseSword(Tier tier, int damageMod, float attackSpeed) {
-		this(tier, damageMod, attackSpeed, new Item.Properties().durability(tier.getUses()));
-	}
-
-	public BaseSword(Tier tier, int damageMod, float attackSpeed, Item.Properties properties) {
-		super(tier, damageMod, attackSpeed, properties);
-		this.dmg = damageMod + tier.getAttackDamageBonus();
-		this.speed = attackSpeed;
-
-		attributeModifiers = buildDefaultAttributes();
-	}
-
-	@Override
-	public float getDamage() {
-		return dmg;
-	}
-
-	public double getAttackSpeed() {
-		return speed;
-	}
-
-	protected Supplier<ImmutableSetMultimap<Attribute, AttributeModifier>> buildDefaultAttributes() {
-		return Suppliers.memoize(() -> ImmutableSetMultimap.of(
-				Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Weapon modifier", getDamage(), AttributeModifier.Operation.ADDITION),
-				Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", getAttackSpeed(), AttributeModifier.Operation.ADDITION)));
-	}
-
-	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack swordStack, float baseDamage) {
+	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack swordStack, DamageSource source, float baseDamage) {
 		return baseDamage;
 	}
 
 	@Override
+	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
+		return super.onEntitySwing(stack, entity);
+	}
+
+	@Override
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
-		stack.setData(AoADataAttachments.MELEE_SWING_STRENGTH, player.getAttackStrengthScale(0));
+		stack.set(AoADataComponents.MELEE_SWING_STRENGTH, player.getAttackStrengthScale(0));
 
 		return false;
 	}
@@ -83,23 +50,36 @@ public class BaseSword extends SwordItem {
 	protected void doMeleeEffect(ItemStack stack, LivingEntity target, LivingEntity attacker, float attackCooldown) {}
 
 	protected static float getSwingEffectiveness(ItemStack stack) {
-		return stack.getData(AoADataAttachments.MELEE_SWING_STRENGTH);
+		return stack.getOrDefault(AoADataComponents.MELEE_SWING_STRENGTH, 1f);
 	}
 
-	@Override
-	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-		if (slot == EquipmentSlot.MAINHAND) {
-			Multimap<Attribute, AttributeModifier> newMap = HashMultimap.create();
-			ImmutableSetMultimap<Attribute, AttributeModifier> attributes = attributeModifiers.get();
+	protected static boolean isCriticalHit(LivingEntity attacker, Entity target, float attackStrengthScale) {
+		return attacker instanceof Player pl
+				&& attackStrengthScale > 0.848f
+				&& pl.fallDistance > 0
+				&& !pl.onGround()
+				&& !pl.onClimbable()
+				&& !pl.isInWater()
+				&& !pl.hasEffect(MobEffects.BLINDNESS)
+				&& !pl.isPassenger()
+				&& target instanceof LivingEntity
+				&& !pl.isSprinting();
+	}
 
-			for (Map.Entry<Attribute, AttributeModifier> entry : attributes.entries()) {
-				newMap.put(entry.getKey(), entry.getValue());
-			}
+	public static Item.Properties baseProperties(Tier tier) {
+		return baseProperties(tier, AttackSpeed.SWORD);
+	}
 
-			return newMap;
-		}
+	public static Item.Properties baseProperties(Tier tier, float attackSpeed) {
+		return baseProperties(tier, 0, attackSpeed);
+	}
 
-		return super.getDefaultAttributeModifiers(slot);
+	public static Item.Properties baseProperties(Tier tier, float attackDamageMod, float attackSpeed) {
+		return new Item.Properties().attributes(createAttributes(tier, attackDamageMod, attackSpeed));
+	}
+
+	public static ItemAttributeModifiers createAttributes(Tier tier, float attackSpeed) {
+		return createAttributes(tier, 0, attackSpeed);
 	}
 }
 

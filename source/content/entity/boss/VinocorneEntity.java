@@ -30,7 +30,7 @@ public class VinocorneEntity extends AoAMeleeMob<VinocorneEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.28125f;
 	}
 
@@ -53,7 +53,7 @@ public class VinocorneEntity extends AoAMeleeMob<VinocorneEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

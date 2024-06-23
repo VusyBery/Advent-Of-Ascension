@@ -20,7 +20,7 @@ public class CherryShotEntity extends BaseMobProjectile {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.015f;
 	}
 }

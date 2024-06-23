@@ -1,8 +1,12 @@
 package net.tslat.aoa3.library.constant;
 
 import com.mojang.blaze3d.platform.Window;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.ScreenEffectPacket;
@@ -13,20 +17,41 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class ScreenImageEffect {
+	public static final StreamCodec<FriendlyByteBuf, ScreenImageEffect> STREAM_CODEC = StreamCodec.composite(
+			NeoForgeStreamCodecs.enumCodec(Type.class),
+			ScreenImageEffect::getType,
+			ByteBufCodecs.FLOAT,
+			ScreenImageEffect::getScale,
+			ByteBufCodecs.VAR_INT,
+			ScreenImageEffect::getColour,
+			ByteBufCodecs.VAR_INT,
+			ScreenImageEffect::getDuration,
+			ByteBufCodecs.BOOL,
+			ScreenImageEffect::isFullscreen,
+            ScreenImageEffect::new);
+
 	private final Type type;
 
-	private boolean fullscreen = false;
-	private float scale = 1;
-	private ColourUtil.Colour colour = new ColourUtil.Colour(1, 1, 1, 1);
-	private int duration = 60;
+	private boolean fullscreen;
+	private float scale;
+	private ColourUtil.Colour colour;
+	private int duration;
 
 	private long expiredAt = 0;
 	private float posX;
 	private float posY;
 	private ResourceLocation cachedTexture = null;
 
-	public ScreenImageEffect(Type type) {
+	public ScreenImageEffect(Type type, float scale, int colour, int duration, boolean fullScreen) {
 		this.type = type;
+		this.scale = scale;
+		this.colour = new ColourUtil.Colour(colour);
+		this.duration = duration;
+		this.fullscreen = fullScreen;
+	}
+
+	public ScreenImageEffect(Type type) {
+		this(type, 1, 0xFFFFFFFF, 60, false);
 	}
 
 	public ScreenImageEffect scaled(float scale) {
@@ -68,7 +93,7 @@ public class ScreenImageEffect {
 	}
 
 	public int getColour() {
-		return this.colour.packed();
+		return this.colour.argbInt();
 	}
 
 	public float getRed() {
@@ -120,7 +145,7 @@ public class ScreenImageEffect {
 		}
 		else {
 			ResourceLocation baseTexture = this.type.texture;
-			this.cachedTexture = new ResourceLocation(baseTexture.getNamespace(), baseTexture.getPath().replace(".png", 1 + random.nextInt(this.type.variants) + ".png"));
+			this.cachedTexture = ResourceLocation.fromNamespaceAndPath(baseTexture.getNamespace(), baseTexture.getPath().replace(".png", 1 + random.nextInt(this.type.variants) + ".png"));
 		}
 
 		if (!this.fullscreen) {

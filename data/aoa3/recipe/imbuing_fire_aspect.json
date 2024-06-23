@@ -1,0 +1,14 @@
+{
+  "type": "aoa3:imbuing",
+  "aspect_foci": [
+    "aoa3:damage",
+    "aoa3:elemental",
+    "aoa3:magic"
+  ],
+  "enchantment": "minecraft:fire_aspect",
+  "enchantment_level": 1,
+  "imbuing_level": 17,
+  "power_source": {
+    "item": "aoa3:glistening_power_stone"
+  }
+}

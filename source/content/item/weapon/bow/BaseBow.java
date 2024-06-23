@@ -6,35 +6,42 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.event.EventHooks;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
+import net.tslat.aoa3.content.item.ArrowFiringWeapon;
+import net.tslat.aoa3.content.item.datacomponent.BowStats;
+import net.tslat.aoa3.util.EnchantmentUtil;
+import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BaseBow extends BowItem {
+public class BaseBow extends BowItem implements ArrowFiringWeapon {
 	protected float drawSpeedMultiplier;
 	protected double dmg;
 
-	public BaseBow(double damage, float drawSpeedMultiplier, int durability) {
-		super(new Item.Properties().durability(durability));
-
-		this.dmg = damage;
-		this.drawSpeedMultiplier = drawSpeedMultiplier;
+	public BaseBow(Item.Properties properties) {
+		super(properties);
 	}
 
-	public double getDamage() {
-		return dmg;
+	public BowStats bowStats() {
+		return components().get(AoADataComponents.BOW_STATS.get());
+	}
+
+	public float getBowDamage() {
+		return bowStats().damage();
+	}
+
+	public float getDrawSpeedMultiplier() {
+		return bowStats().drawSpeedModifier();
 	}
 
 	@Override
@@ -55,15 +62,15 @@ public class BaseBow extends BowItem {
 		}
 	}
 
-	public void releaseUsing(ItemStack stack, Level world, LivingEntity shooter, int timeLeft) {
+	public void releaseUsing(ItemStack stack, Level level, LivingEntity shooter, int timeLeft) {
 		if (!(shooter instanceof Player))
 			return;
 
 		Player pl = (Player)shooter;
-		boolean infiniteAmmo = pl.isCreative() || stack.getEnchantmentLevel(Enchantments.INFINITY_ARROWS) > 0;
+		boolean infiniteAmmo = pl.isCreative() || EnchantmentUtil.hasEnchantment(level, stack, Enchantments.INFINITY);
 		ItemStack ammoStack = findAmmo(pl, stack, infiniteAmmo);
-		int charge = (int)((getUseDuration(stack) - timeLeft) * getDrawSpeedMultiplier());
-		charge = EventHooks.onArrowLoose(stack, world, pl, charge, !ammoStack.isEmpty() || infiniteAmmo);
+		int charge = (int)((getUseDuration(stack, shooter) - timeLeft) * getDrawSpeedMultiplier());
+		charge = EventHooks.onArrowLoose(stack, level, pl, charge, !ammoStack.isEmpty() || infiniteAmmo);
 
 		if (charge < 0)
 			return;
@@ -74,15 +81,15 @@ public class BaseBow extends BowItem {
 
 			float velocity = getPowerForTime(charge);
 
-			if ((double)velocity >= 0.1D) {
-				if (!world.isClientSide) {
+			if (velocity >= 0.1f) {
+				if (!level.isClientSide) {
 					CustomArrowEntity arrow = makeArrow(pl, stack, ammoStack, velocity, !infiniteAmmo);
 
-					arrow = doArrowMods(arrow, shooter, ammoStack, timeLeft);
-					world.addFreshEntity(arrow);
+					arrow = applyArrowMods(arrow, shooter, ammoStack, arrow.isCritArrow());
+					level.addFreshEntity(arrow);
 				}
 
-				world.playSound(null, pl.getX(), pl.getY(), pl.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (float)RandomUtil.randomValueBetween(1.2f, 1.6f) + velocity * 0.5F);
+				level.playSound(null, pl.getX(), pl.getY(), pl.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 1.0F, 1.0F / (float)RandomUtil.randomValueBetween(1.2f, 1.6f) + velocity * 0.5F);
 
 				if (!infiniteAmmo && !pl.getAbilities().instabuild) {
 					ammoStack.shrink(1);
@@ -102,54 +109,19 @@ public class BaseBow extends BowItem {
 
 	protected CustomArrowEntity makeArrow(LivingEntity shooter, ItemStack bowStack, ItemStack ammoStack, float velocity, boolean consumeAmmo) {
 		ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
-		CustomArrowEntity arrow = CustomArrowEntity.fromArrow(arrowItem.createArrow(shooter.level(), ammoStack, shooter), this, shooter, getDamage());
+		CustomArrowEntity arrow = CustomArrowEntity.fromArrow(arrowItem.createArrow(shooter.level(), ammoStack, shooter, bowStack), bowStack, shooter, getBowDamage());
 
 		arrow.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), 0.0F, velocity * 3.0F, 1.0F);
 
-		if (velocity == 1.0F)
+		if (velocity == 1)
 			arrow.setCritArrow(true);
 
-		int powerEnchant = bowStack.getEnchantmentLevel(Enchantments.POWER_ARROWS);
-		int punchEnchant = bowStack.getEnchantmentLevel(Enchantments.PUNCH_ARROWS);
+		bowStack.hurtAndBreak(getDurabilityUse(bowStack), shooter, EntityUtil.handToEquipmentSlotType(shooter.getUsedItemHand()));
 
-		if (powerEnchant > 0)
-			arrow.setBaseDamage(arrow.getBaseDamage() + powerEnchant * 1.5D + 1D);
-
-		if (punchEnchant > 0)
-			arrow.setKnockback(punchEnchant);
-
-		if (bowStack.getEnchantmentLevel(Enchantments.FLAMING_ARROWS) > 0)
-			arrow.setSecondsOnFire(100);
-
-		bowStack.hurtAndBreak(1, shooter, (firingEntity) -> firingEntity.broadcastBreakEvent(shooter.getUsedItemHand()));
-
-		if (!consumeAmmo || (shooter instanceof Player && ((Player)shooter).isCreative()) && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW))
+		if (!consumeAmmo || (shooter instanceof Player pl && pl.isCreative()) && (ammoStack.getItem() == Items.SPECTRAL_ARROW || ammoStack.getItem() == Items.TIPPED_ARROW))
 			arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 
 		return arrow;
-	}
-
-	public float getDrawSpeedMultiplier() {
-		return drawSpeedMultiplier;
-	}
-
-	public CustomArrowEntity doArrowMods(CustomArrowEntity arrow, LivingEntity shooter, ItemStack ammoStack, int useTicksRemaining) {
-		return arrow;
-	}
-
-	public void onEntityHit(CustomArrowEntity arrow, Entity target, Entity shooter, double damage, float drawStrength) {}
-
-	public void onBlockHit(CustomArrowEntity arrow, BlockHitResult rayTrace, Entity shooter) {}
-
-	public void onArrowTick(CustomArrowEntity arrow, Entity shooter) {}
-
-	public double getArrowDamage(CustomArrowEntity arrow, Entity target, double currentDamage, float drawStrength, boolean isCritical) {
-		double damage = currentDamage * 0.5d * (drawStrength / 3f);
-
-		if (isCritical)
-			damage += damage + (damage * RandomUtil.randomScaledGaussianValue(0.35f));
-
-		return damage;
 	}
 
 	@Override
@@ -158,9 +130,9 @@ public class BaseBow extends BowItem {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ARROW_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(Double.toString(getDamage()))));
-		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BOW_DRAW_TIME, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(Double.toString(((int)(72000 / getDrawSpeedMultiplier()) / 720) / (double)100))));
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ARROW_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(Float.toString(getBowDamage()))));
+		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BOW_DRAW_TIME, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(Double.toString(((int)(72000 / getDrawSpeedMultiplier()) / 720) / 100d))));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, LocaleUtil.getLocaleMessage(Items.ARROW.getDescriptionId())));
 	}
 }

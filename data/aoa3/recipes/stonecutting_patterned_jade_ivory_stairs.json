@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 1,
-  "ingredient": {
-    "item": "aoa3:patterned_jade_ivory"
-  },
-  "result": "aoa3:patterned_jade_ivory_stairs"
-}

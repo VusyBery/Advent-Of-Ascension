@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.random.SimpleWeightedRandomList;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentTable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.SpawnData;
@@ -101,22 +102,30 @@ public final class BlockUtil {
 			return withSpawn(weight, entity, null);
 		}
 
-		public SpawnerBuilder withSpawn(int weight, EntityType<?> entity, SpawnData.CustomSpawnRules spawnRules) {
+		public SpawnerBuilder withSpawn(int weight, EntityType<?> entity, @Nullable SpawnData.CustomSpawnRules spawnRules) {
 			CompoundTag tag = new CompoundTag();
 
 			tag.putString("id", RegistryUtil.getId(entity).toString());
 
-			return withSpawn(weight, tag, spawnRules);
+			return withSpawn(weight, tag, Optional.ofNullable(spawnRules), Optional.empty());
 		}
 
-		public SpawnerBuilder withSpawn(int weight, CompoundTag nbt, @Nullable SpawnData.CustomSpawnRules spawnRules) {
+		public SpawnerBuilder withSpawn(int weight, EntityType<?> entity, @Nullable SpawnData.CustomSpawnRules spawnRules, @Nullable EquipmentTable equipmentInfo) {
+			CompoundTag tag = new CompoundTag();
+
+			tag.putString("id", RegistryUtil.getId(entity).toString());
+
+			return withSpawn(weight, tag, Optional.ofNullable(spawnRules), Optional.ofNullable(equipmentInfo));
+		}
+
+		public SpawnerBuilder withSpawn(int weight, CompoundTag nbt, Optional<SpawnData.CustomSpawnRules> spawnRules, Optional<EquipmentTable> equipmentInfo) {
 			if (this.nextSpawn == null) {
-				this.nextSpawn = new SpawnData(nbt, (spawnRules == null ? Optional.empty() : Optional.of(spawnRules)));
+				this.nextSpawn = new SpawnData(nbt, spawnRules, equipmentInfo);
 
 				return this;
 			}
 
-			this.mobs.add(new SpawnData(nbt, (spawnRules == null ? Optional.empty() : Optional.of(spawnRules))), weight);
+			this.mobs.add(new SpawnData(nbt, spawnRules, equipmentInfo), weight);
 
 			return this;
 		}

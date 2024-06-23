@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.world.gen.feature.tree.foliageplacer;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.LevelSimulatedReader;
@@ -10,7 +11,7 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerTy
 import net.tslat.aoa3.common.registration.worldgen.AoATrees;
 
 public class NoFoliagePlacer extends FoliagePlacer {
-	public static final Codec<NoFoliagePlacer> CODEC = Codec.unit(new NoFoliagePlacer());
+	public static final MapCodec<NoFoliagePlacer> CODEC = MapCodec.unit(new NoFoliagePlacer());
 
 	public NoFoliagePlacer() {
 		super(ConstantInt.of(0), ConstantInt.of(0));

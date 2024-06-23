@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.projectile.misc;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,7 +39,7 @@ public class LuxonSticklerStuckEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
+	public double getDefaultGravity() {
 		return 0.0f;
 	}
 
@@ -76,9 +77,9 @@ public class LuxonSticklerStuckEntity extends ThrowableProjectile {
 		}
 
 		if (level().getGameTime() % 40 == 0)
-			EntityUtil.applyPotions(level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(7), EntityUtil.Predicates.HOSTILE_MOB), new EffectBuilder(MobEffects.GLOWING, 45));
+			EntityUtil.applyPotions(level().getEntitiesOfClass(LivingEntity.class, target.getBoundingBox().inflate(7), EntityUtil::isHostileMob), new EffectBuilder(MobEffects.GLOWING, 45));
 	}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 }

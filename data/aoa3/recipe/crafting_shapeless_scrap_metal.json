@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:nuggets/gold"
+    },
+    {
+      "item": "aoa3:limonite_nugget"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:scrap_metal"
+  }
+}

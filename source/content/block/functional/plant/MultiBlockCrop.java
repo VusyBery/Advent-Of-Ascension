@@ -25,14 +25,14 @@ import net.neoforged.neoforge.common.IPlantable;
 import java.util.function.Supplier;
 
 public abstract class MultiBlockCrop extends AoACropBlock {
-	public IntegerProperty HEIGHT = null;
-	public IntegerProperty AGE = null;
+	public static final IntegerProperty HEIGHT_3 = IntegerProperty.create("height", 0, 3 - 1);
+	public static IntegerProperty AGE_15 = IntegerProperty.create("age", 0, 5 * 3 - 1);;
 	private final VoxelShape[][] SHAPES;
 
 	public MultiBlockCrop(BlockBehaviour.Properties properties, Supplier<Item> seedItem) {
 		super(properties, seedItem);
 
-		registerDefaultState(defaultBlockState().setValue(getHeightProperty(), 0));
+		registerDefaultState(getStateDefinition().any().setValue(getHeightProperty(), 0));
 		populateShapes(SHAPES = new VoxelShape[getGrowthHeight()][stagesPerBlock()]);
 	}
 
@@ -47,22 +47,12 @@ public abstract class MultiBlockCrop extends AoACropBlock {
 	}
 
 	public IntegerProperty getHeightProperty() {
-		if (HEIGHT != null)
-			return HEIGHT;
-
-		HEIGHT = IntegerProperty.create("height", 0, getGrowthHeight() - 1);
-
-		return HEIGHT;
+		return HEIGHT_3;
 	}
 
 	@Override
 	public IntegerProperty getAgeProperty() {
-		if (AGE != null)
-			return AGE;
-
-		AGE = IntegerProperty.create("age", 0, stagesPerBlock() * getGrowthHeight() - 1);
-
-		return AGE;
+		return AGE_15;
 	}
 
 	@Override
@@ -200,9 +190,9 @@ public abstract class MultiBlockCrop extends AoACropBlock {
 			if (age <= stagesPerBlock() * (1 + height) - 1) {
 				float growthSpeed = getGrowthSpeed(this, world, pos);
 
-				if (CommonHooks.onCropsGrowPre(world, pos, state, rand.nextInt((int)(25f / growthSpeed) + 1) == 0)) {
+				if (CommonHooks.canCropGrow(world, pos, state, rand.nextInt((int)(25f / growthSpeed) + 1) == 0)) {
 					growDown(world, pos, state);
-					CommonHooks.onCropsGrowPost(world, pos, state);
+					CommonHooks.fireCropGrowPost(world, pos, state);
 				}
 			}
 		}
@@ -210,6 +200,6 @@ public abstract class MultiBlockCrop extends AoACropBlock {
 
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(getAgeProperty()).add(getHeightProperty());
+		builder.add(getAgeProperty(), getHeightProperty());
 	}
 }

@@ -47,7 +47,7 @@ public class SkillCrystal extends Item {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SKILL_CRYSTAL_DESCRIPTION, LocaleUtil.ItemDescriptionType.NEUTRAL));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SKILL_CRYSTAL_SKILL_THRESHOLD, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(Integer.toString(lowerLimit))));
 	}

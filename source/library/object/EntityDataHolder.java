@@ -4,7 +4,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.attachment.AttachmentHolder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
@@ -27,8 +26,8 @@ public class EntityDataHolder<T> {
 		return new EntityDataHolder<T>(register(clazz, serializer), defaultValue, (Function<Entity, T>)getter, (BiConsumer<Entity, T>)setter);
 	}
 
-	public void defineDefault(Entity entity) {
-		entity.getEntityData().define(this.key, this.defaultValue);
+	public void defineDefault(SynchedEntityData.Builder builder) {
+		builder.define(this.key, this.defaultValue);
 	}
 
 	public boolean checkSync(Entity entity, EntityDataAccessor<?> updatedKey) {
@@ -74,25 +73,10 @@ public class EntityDataHolder<T> {
 	}
 
 	private static <T> EntityDataAccessor<T> register(Class<? extends Entity> clazz, EntityDataSerializer<T> serializer) {
-		int id = 0;
+		int id = SynchedEntityData.ID_REGISTRY.define(clazz);
 
-		if (SynchedEntityData.ENTITY_ID_POOL.containsKey(clazz)) {
-			id = SynchedEntityData.ENTITY_ID_POOL.getInt(clazz) + 1;
-		}
-		else {
-			for (Class<?> parentClass = clazz.getSuperclass(); parentClass != AttachmentHolder.class; parentClass = parentClass.getSuperclass()) {
-				if (SynchedEntityData.ENTITY_ID_POOL.containsKey(parentClass)) {
-					id = SynchedEntityData.ENTITY_ID_POOL.getInt(parentClass) + 1;
-
-					break;
-				}
-			}
-		}
-
-		if (id >= 255)
-			throw new IllegalArgumentException("Too many data parameters registered for " + clazz + "!. Max is 254");
-
-		SynchedEntityData.ENTITY_ID_POOL.put(clazz, id);
+		if (id > 254)
+			throw new IllegalArgumentException("Data value id is too big with " + id + "! (Max is 254)");
 
 		return serializer.createAccessor(id);
 	}

@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.world.gen.structure.special;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.registries.Registries;
@@ -10,6 +10,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -24,9 +25,9 @@ import java.util.Optional;
 import static net.tslat.aoa3.content.world.gen.structure.AoAStructure.Settings.aoaSettings;
 
 public class NethengeicPit extends TopAlignedStructure {
-	public static final Codec<NethengeicPit> CODEC = RecordCodecBuilder.<NethengeicPit>mapCodec(codec ->
+	public static final MapCodec<NethengeicPit> CODEC = RecordCodecBuilder.mapCodec(codec ->
 			codec.group(aoaSettings())
-					.apply(codec, NethengeicPit::new)).codec();
+					.apply(codec, NethengeicPit::new));
 
 	public NethengeicPit(Settings settings) {
 		super(settings);
@@ -41,7 +42,7 @@ public class NethengeicPit extends TopAlignedStructure {
 	protected AoAJigsawAssembler getJigsawAssembler() {
 		return new AoAJigsawAssembler() {
 			@Override
-			protected Optional<GenerationStub> buildGenerationStub(PoolElementStructurePiece startPiece, BoundingBox startPieceBounds, GenerationContext genContext, int startX, int startY, int startZ, int maxPieces, int maxRadius) {
+			protected Optional<GenerationStub> buildGenerationStub(PoolElementStructurePiece startPiece, BoundingBox startPieceBounds, GenerationContext genContext, int startX, int startY, int startZ, int maxPieces, int maxRadius, LiquidSettings liquidSettings) {
 				WorldgenRandom rand = genContext.random();
 
 				for (int i = 0; i < 5; i++) {
@@ -70,7 +71,8 @@ public class NethengeicPit extends TopAlignedStructure {
 								pieces,
 								Shapes.join(
 										Shapes.create(new AABB(startX - maxRadius, -4000, startZ - maxRadius, startX + maxRadius + 1, 4000, startZ + maxRadius + 1)),
-										Shapes.create(AABB.of(startPieceBounds)), BooleanOp.ONLY_FIRST));
+										Shapes.create(AABB.of(startPieceBounds)), BooleanOp.ONLY_FIRST),
+								liquidSettings);
 						pieces.forEach(pieceBuilder::addPiece);
 					}
 

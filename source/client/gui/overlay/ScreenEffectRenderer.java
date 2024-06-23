@@ -4,12 +4,12 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.CameraType;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
-import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.library.constant.ScreenImageEffect;
 import net.tslat.aoa3.util.RenderUtil;
@@ -21,7 +21,7 @@ public final class ScreenEffectRenderer {
 	private static final CopyOnWriteArrayList<ScreenImageEffect> effects = new CopyOnWriteArrayList<>();
 
 	public static void init() {
-		AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterGuiOverlaysEvent.class, ev -> ev.registerAboveAll(AdventOfAscension.id("screen_effects"), ScreenEffectRenderer::onEffectRender));
+		AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterGuiLayersEvent.class, ev -> ev.registerAboveAll(AdventOfAscension.id("screen_effects"), ScreenEffectRenderer::onEffectRender));
 	}
 
 	public static void addScreenEffect(ScreenImageEffect effect) {
@@ -38,14 +38,13 @@ public final class ScreenEffectRenderer {
 		effects.clear();
 	}
 
-	private static void onEffectRender(ExtendedGui gui, GuiGraphics guiGraphics, float partialTick, int width, int height) {
+	private static void onEffectRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 		if (Minecraft.getInstance().options.getCameraType() != CameraType.FIRST_PERSON || effects.isEmpty() || Minecraft.getInstance().level == null)
 			return;
 
 		Minecraft mc = Minecraft.getInstance();
 		Window window = mc.getWindow();
-		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder buffer = tesselator.getBuilder();
+		BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
 		long gameTime = mc.level.getGameTime();
 		boolean hasExpiredEffects = false;
@@ -70,13 +69,12 @@ public final class ScreenEffectRenderer {
 			poseStack.pushPose();
 			RenderSystem.setShaderColor(effect.getRed(), effect.getGreen(), effect.getBlue(), effect.getAlpha() * fadeTime);
 			RenderUtil.setRenderingTexture(effect.getTexture());
-			buffer.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
 			if (effect.isFullscreen()) {
-				buffer.vertex(0, window.getGuiScaledHeight(), -90).uv(0, 1).endVertex();
-				buffer.vertex(window.getGuiScaledWidth(), window.getGuiScaledHeight(), -90).uv(1, 1).endVertex();
-				buffer.vertex(window.getGuiScaledWidth(), 0, -90).uv(1, 0).endVertex();
-				buffer.vertex(0, 0, -90).uv(0, 0).endVertex();
+				buffer.addVertex(0, window.getGuiScaledHeight(), -90).setUv(0, 1);
+				buffer.addVertex(window.getGuiScaledWidth(), window.getGuiScaledHeight(), -90).setUv(1, 1);
+				buffer.addVertex(window.getGuiScaledWidth(), 0, -90).setUv(1, 0);
+				buffer.addVertex(0, 0, -90).setUv(0, 0);
 			}
 			else {
 				poseStack.translate(-256, -256, 0);
@@ -85,17 +83,15 @@ public final class ScreenEffectRenderer {
 
 				Matrix4f pose = poseStack.last().pose();
 
-				buffer.vertex(pose, 0, 256, -90).uv(0, 1).endVertex();
-				buffer.vertex(pose, 256, 256, -90).uv(1, 1).endVertex();
-				buffer.vertex(pose, 256, 0, -90).uv(1, 0).endVertex();
-				buffer.vertex(pose, 0, 0, -90).uv(0, 0).endVertex();
+				buffer.addVertex(pose, 0, 256, -90).setUv(0, 1);
+				buffer.addVertex(pose, 256, 256, -90).setUv(1, 1);
+				buffer.addVertex(pose, 256, 0, -90).setUv(1, 0);
+				buffer.addVertex(pose, 0, 0, -90).setUv(0, 0);
 			}
 
-			tesselator.end();
-
+			BufferUploader.drawWithShader(buffer.buildOrThrow());
 			poseStack.popPose();
-
-			RenderSystem.setShaderColor(1, 1, 1, 1);
+			RenderUtil.resetShaderColour();
 		}
 
 		RenderSystem.depthMask(true);

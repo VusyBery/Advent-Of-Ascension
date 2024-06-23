@@ -1,6 +1,6 @@
 package net.tslat.aoa3.client.event;
 
-import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectIntPair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -9,15 +9,20 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.tslat.aoa3.advent.AoAResourceCaching;
 import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.client.gui.overlay.ScreenEffectRenderer;
@@ -25,16 +30,19 @@ import net.tslat.aoa3.client.render.dimension.AoADimensionEffectsRenderer;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.HaloSelectPacket;
 import net.tslat.aoa3.common.registration.AoAConfigs;
+import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
-import net.tslat.aoa3.content.entity.mob.greckon.SilencerEntity;
+import net.tslat.aoa3.content.entity.monster.greckon.SilencerEntity;
 import net.tslat.aoa3.data.server.AoASkillReqReloadListener;
 import net.tslat.aoa3.event.GlobalEvents;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.RegistryUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
+import net.tslat.smartbrainlib.util.RandomUtil;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
@@ -44,21 +52,20 @@ public final class ClientEventHandler {
 	public static void init() {
 		final IEventBus forgeBus = NeoForge.EVENT_BUS;
 
-		forgeBus.addListener(EventPriority.NORMAL, false, TickEvent.ClientTickEvent.class, ClientEventHandler::onClientTick);
+		forgeBus.addListener(EventPriority.NORMAL, false, ClientTickEvent.Post.class, ClientEventHandler::onClientTick);
 		forgeBus.addListener(EventPriority.NORMAL, false, ClientPlayerNetworkEvent.LoggingIn.class, ClientEventHandler::onPlayerJoin);
 		forgeBus.addListener(EventPriority.NORMAL, false, ClientPlayerNetworkEvent.LoggingOut.class, ClientEventHandler::onPlayerLogout);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingDeathEvent.class, ClientEventHandler::onPlayerDeath);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlaySoundEvent.class, ClientEventHandler::onSoundPlay);
 		forgeBus.addListener(EventPriority.NORMAL, false, ItemTooltipEvent.class, ClientEventHandler::onTooltip);
 		forgeBus.addListener(EventPriority.NORMAL, false, ViewportEvent.RenderFog.class, ClientEventHandler::onFogRender);
+		forgeBus.addListener(EventPriority.NORMAL, false, EntityTickEvent.Post.class, ClientEventHandler::onEntityTick);
 	}
 
-	private static void onClientTick(final TickEvent.ClientTickEvent ev) {
-		if (ev.phase == TickEvent.Phase.END) {
-			if (!Minecraft.getInstance().hasSingleplayerServer()) {
-				GlobalEvents.tick++;
-				AoAScheduler.handleSyncScheduledTasks(GlobalEvents.tick);
-			}
+	private static void onClientTick(final ClientTickEvent.Post ev) {
+		if (!Minecraft.getInstance().hasSingleplayerServer()) {
+			GlobalEvents.tick++;
+			AoAScheduler.handleSyncScheduledTasks(GlobalEvents.tick);
 		}
 	}
 
@@ -77,7 +84,8 @@ public final class ClientEventHandler {
 	}
 
 	private static void onPlayerLogout(ClientPlayerNetworkEvent.LoggingOut ev) {
-		ClientPlayerDataManager.get().reset();
+		if (ev.getConnection() != null)
+			AoAResourceCaching.clientLogout();
 	}
 
 	private static void onPlayerDeath(LivingDeathEvent ev) {
@@ -103,7 +111,7 @@ public final class ClientEventHandler {
 	}
 
 	private static void onTooltip(final ItemTooltipEvent ev) {
-		Map<String, List<Pair<ResourceLocation, Integer>>> restrictions = AoASkillReqReloadListener.getParsedReqDataFor(RegistryUtil.getId(ev.getItemStack().getItem()));
+		Map<String, List<ObjectIntPair<ResourceLocation>>> restrictions = AoASkillReqReloadListener.getParsedReqDataFor(RegistryUtil.getId(ev.getItemStack().getItem()));
 
 		if (!restrictions.isEmpty()) {
 			List<Component> lines = ev.getToolTip();
@@ -113,13 +121,13 @@ public final class ClientEventHandler {
 
 				int index = 2;
 
-				for (Map.Entry<String, List<Pair<ResourceLocation, Integer>>> reqEntry : restrictions.entrySet()) {
+				for (Map.Entry<String, List<ObjectIntPair<ResourceLocation>>> reqEntry : restrictions.entrySet()) {
 					lines.add(index++, Component.literal("  ").withStyle(ChatFormatting.RED).append(LocaleUtil.getLocaleMessage(Util.makeDescriptionId("ability", AoAAbilities.LEVEL_RESTRICTION.getId()) + ".description." + reqEntry.getKey())).append(":"));
 
-					for (Pair<ResourceLocation, Integer> pair : reqEntry.getValue()) {
-						AoASkill skill = AoASkills.getSkill(pair.getFirst());
+					for (ObjectIntPair<ResourceLocation> pair : reqEntry.getValue()) {
+						AoASkill skill = AoASkills.getSkill(pair.first());
 
-						lines.add(index++, Component.literal("    ").withStyle(ChatFormatting.GOLD).append(pair.getSecond() + " ").append(skill.getName()));
+						lines.add(index++, Component.literal("    ").withStyle(ChatFormatting.GOLD).append(pair.valueInt() + " ").append(skill.getName()));
 					}
 				}
 
@@ -142,6 +150,23 @@ public final class ClientEventHandler {
 				ev.setNearPlaneDistance(nearPlaneValue);
 				ev.setCanceled(true);
 			});
+		}
+	}
+
+	private static void onEntityTick(EntityTickEvent.Post ev) {
+		if (AoAConfigs.CLIENT.partyDeaths.get() && ev.getEntity() instanceof LivingEntity entity && entity.deathTime >= 10) {
+			AABB boundingBox = entity.getBoundingBox();
+			double width = boundingBox.maxX - boundingBox.minX;
+			double depth = boundingBox.maxZ - boundingBox.minZ;
+			double height = boundingBox.maxY - boundingBox.minY;
+
+			for (int i = 0; i < 3 + (10 * width * depth * height); i++) {
+				ParticleBuilder.forRandomPosInBounds(AoAParticleTypes.GENERIC_DUST.get(), entity.getBoundingBox())
+						.scaleMod(0.1f)
+						.power(new Vec3(RandomUtil.randomScaledGaussianValue(0.05d), 0, RandomUtil.randomScaledGaussianValue(0.05d)))
+						.colourOverride((float)RandomUtil.randomGaussianValue(), (float)RandomUtil.randomGaussianValue(), (float)RandomUtil.randomGaussianValue(), 1f)
+						.spawnParticles(entity.level());
+			}
 		}
 	}
 }

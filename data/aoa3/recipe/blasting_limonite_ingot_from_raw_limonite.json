@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.7,
+  "ingredient": {
+    "tag": "neoforge:raw_materials/limonite"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:limonite_ingot"
+  }
+}

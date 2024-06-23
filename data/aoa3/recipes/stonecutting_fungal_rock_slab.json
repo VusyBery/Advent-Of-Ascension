@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "aoa3:fungal_rock"
-  },
-  "result": "aoa3:fungal_rock_slab"
-}

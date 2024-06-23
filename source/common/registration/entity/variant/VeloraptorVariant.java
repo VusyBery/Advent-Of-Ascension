@@ -2,23 +2,23 @@ package net.tslat.aoa3.common.registration.entity.variant;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.core.Holder;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.common.registration.AoARegistries;
-import net.tslat.aoa3.content.entity.mob.precasia.VeloraptorEntity;
+import net.tslat.aoa3.content.entity.monster.precasia.VeloraptorEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public record VeloraptorVariant(String name, boolean isPriorityVariant, Optional<ResourceLocation> lootTable, VariantSpawnPredicate spawnPredicate) {
+public record VeloraptorVariant(String name, boolean isPriorityVariant, Optional<ResourceKey<LootTable>> lootTable, VariantSpawnPredicate spawnPredicate) {
     public VeloraptorVariant(String name, VariantSpawnPredicate spawnPredicate) {
         this(name, false, Optional.empty(), spawnPredicate);
     }
@@ -34,11 +34,11 @@ public record VeloraptorVariant(String name, boolean isPriorityVariant, Optional
 
     private static final Supplier<VeloraptorVariant[]> SORTED_VARIANTS = Suppliers.memoize(() -> AoARegistries.VELORAPTOR_VARIANTS.getAllRegisteredObjects().filter(variant -> variant != GREEN.get()).sorted(Comparator.comparing(VeloraptorVariant::isPriorityVariant).reversed()).toArray(VeloraptorVariant[]::new));
 
-    public static VeloraptorVariant getVariantForSpawn(ServerLevel level, DifficultyInstance difficulty, MobSpawnType spawnReason, VeloraptorEntity veloraptor, Supplier<Holder<Biome>> biome, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+    public static VeloraptorVariant getVariantForSpawn(ServerLevel level, DifficultyInstance difficulty, MobSpawnType spawnReason, VeloraptorEntity veloraptor, Supplier<Holder<Biome>> biome, @Nullable SpawnGroupData spawnData) {
         VeloraptorVariant variant = VeloraptorVariant.GREEN.get();
 
         for (VeloraptorVariant testVariant : SORTED_VARIANTS.get()) {
-            if (testVariant.spawnPredicate().canSpawnVariant(level, difficulty, spawnReason, veloraptor, biome, spawnData, dataTag)) {
+            if (testVariant.spawnPredicate().canSpawnVariant(level, difficulty, spawnReason, veloraptor, biome, spawnData)) {
                 variant = testVariant;
 
                 break;

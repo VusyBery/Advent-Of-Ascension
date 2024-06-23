@@ -12,15 +12,13 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.TierSortingRegistry;
+import net.tslat.aoa3.content.item.tool.pickaxe.OccultPickaxe;
 import net.tslat.aoa3.event.GlobalEvents;
 import net.tslat.aoa3.util.ColourUtil;
 import org.lwjgl.opengl.GL11;
@@ -40,13 +38,13 @@ public final class OccultBlockRenderer {
 					.setWriteMaskState(RenderStateShard.COLOR_WRITE)
 					.setCullState(RenderStateShard.NO_CULL)
 					.createCompositeState(false));
-	private static final CopyOnWriteArrayList<IntObjectPair<List<OccultBlock>>> OCCULT_BLOCKS = new CopyOnWriteArrayList<>();
+	private static final CopyOnWriteArrayList<IntObjectPair<List<OccultPickaxe.LocatedBlock>>> OCCULT_BLOCKS = new CopyOnWriteArrayList<>();
 
 	public static void init() {
 		NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, RenderLevelStageEvent.class, OccultBlockRenderer::onWorldRender);
 	}
 
-	public static void addOccultBlocks(int renderUntil, List<OccultBlock> blocks) {
+	public static void addOccultBlocks(int renderUntil, List<OccultPickaxe.LocatedBlock> blocks) {
 		OCCULT_BLOCKS.add(IntObjectPair.of(renderUntil, blocks));
 	}
 
@@ -56,14 +54,14 @@ public final class OccultBlockRenderer {
 
 		Minecraft mc = Minecraft.getInstance();
 		boolean rendered = false;
-		PoseStack matrix = ev.getPoseStack();
+		PoseStack poseStack = ev.getPoseStack();
 		Vec3 cameraPos = mc.gameRenderer.getMainCamera().getPosition();
 		VertexConsumer buffer = mc.renderBuffers().bufferSource().getBuffer(CUSTOM_LINES_RENDER_TYPE);
 
-		matrix.pushPose();
-		matrix.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
+		poseStack.pushPose();
+		poseStack.translate(-cameraPos.x, -cameraPos.y, -cameraPos.z);
 
-		PoseStack.Pose pose = matrix.last();
+		PoseStack.Pose pose = poseStack.last();
 
 		RenderSystem.disableDepthTest();
 		RenderSystem.depthMask(false);
@@ -72,19 +70,19 @@ public final class OccultBlockRenderer {
 
 		OCCULT_BLOCKS.removeIf(entry -> GlobalEvents.tick >= entry.leftInt());
 
-		for (IntObjectPair<List<OccultBlock>> entry : OCCULT_BLOCKS) {
-			for (Iterator<OccultBlock> iterator = entry.right().iterator(); iterator.hasNext();) {
-				OccultBlock block = iterator.next();
+		for (IntObjectPair<List<OccultPickaxe.LocatedBlock>> entry : OCCULT_BLOCKS) {
+			for (Iterator<OccultPickaxe.LocatedBlock> iterator = entry.right().iterator(); iterator.hasNext();) {
+				OccultPickaxe.LocatedBlock block = iterator.next();
 
-				if (GlobalEvents.tick % 2 == 1 && mc.player.level().getBlockState(block.pos) != block.state) {
+				if (GlobalEvents.tick % 2 == 1 && mc.player.level().getBlockState(block.pos()) != block.state()) {
 					iterator.remove();
 
 					continue;
 				}
 
-				BlockPos pos = block.pos;
-				VoxelShape shape = block.state.getShape(mc.level, pos, CollisionContext.of(mc.player));
-				ColourUtil.Colour colour = block.colour;
+				BlockPos pos = block.pos();
+				VoxelShape shape = block.state().getShape(mc.level, pos, CollisionContext.of(mc.player));
+				ColourUtil.Colour colour = block.colour();
 				rendered = true;
 
 				shape.forAllEdges((minX, minY, minZ, maxX, maxY, maxZ) -> {
@@ -96,13 +94,13 @@ public final class OccultBlockRenderer {
 					lengthY /= length;
 					lengthZ /= length;
 
-					buffer.vertex(pose.pose(), (float)minX + pos.getX(), (float)minY + pos.getY(), (float)minZ + pos.getZ()).color(colour.red(), colour.green(), colour.blue(), colour.alpha()).normal(pose.normal(), lengthX, lengthY, lengthZ).endVertex();
-					buffer.vertex(pose.pose(), (float)maxX + pos.getX(), (float)maxY + pos.getY(), (float)maxZ + pos.getZ()).color(colour.red(), colour.green(), colour.blue(), colour.alpha()).normal(pose.normal(), lengthX, lengthY, lengthZ).endVertex();
+					buffer.addVertex(pose.pose(), (float)minX + pos.getX(), (float)minY + pos.getY(), (float)minZ + pos.getZ()).setColor(colour.red(), colour.green(), colour.blue(), colour.alpha()).setNormal(pose, lengthX, lengthY, lengthZ);
+					buffer.addVertex(pose.pose(), (float)maxX + pos.getX(), (float)maxY + pos.getY(), (float)maxZ + pos.getZ()).setColor(colour.red(), colour.green(), colour.blue(), colour.alpha()).setNormal(pose, lengthX, lengthY, lengthZ);
 				});
 			}
 		}
 
-		matrix.popPose();
+		poseStack.popPose();
 		RenderSystem.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
 		RenderSystem.disableBlend();
 		RenderSystem.enableDepthTest();
@@ -110,25 +108,5 @@ public final class OccultBlockRenderer {
 
 		if (rendered)
 			mc.renderBuffers().bufferSource().endBatch();
-	}
-
-	private static ColourUtil.Colour getColourForBlock(BlockState block) {
-		List<Tier> tiers = TierSortingRegistry.getSortedTiers();
-		float tierCount = tiers.size();
-
-		for (int i = 0; i < tierCount; i++) {
-			Tier tier = tiers.get(i);
-
-			if (TierSortingRegistry.isCorrectTierForDrops(tier, block))
-				return new ColourUtil.Colour(1 - (i / tierCount), i / tierCount, 0, 0.85f);
-		}
-
-		return new ColourUtil.Colour(0, 1, 0, 1);
-	}
-
-	public record OccultBlock(ColourUtil.Colour colour, BlockPos pos, BlockState state) {
-		public OccultBlock(BlockPos pos, BlockState state) {
-			this(getColourForBlock(state), pos, state);
-		}
 	}
 }

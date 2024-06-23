@@ -1,0 +1,34 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "enchantment.aoa3.form"
+  },
+  "effects": {
+    "aoa3:pellet_spread": [
+      {
+        "effect": {
+          "type": "minecraft:multiply",
+          "factor": {
+            "type": "minecraft:linear",
+            "base": 0.85,
+            "per_level_above_first": -0.15
+          }
+        }
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 29,
+    "per_level_above_first": 9
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 9,
+    "per_level_above_first": 9
+  },
+  "slots": [
+    "hand"
+  ],
+  "supported_items": "#aoa3:shotguns_enchantable",
+  "weight": 5
+}

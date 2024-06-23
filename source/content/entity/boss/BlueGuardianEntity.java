@@ -40,7 +40,7 @@ public class BlueGuardianEntity extends AoARangedMob<BlueGuardianEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 1.875f;
 	}
 
@@ -83,7 +83,7 @@ public class BlueGuardianEntity extends AoARangedMob<BlueGuardianEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 	
@@ -124,7 +124,7 @@ public class BlueGuardianEntity extends AoARangedMob<BlueGuardianEntity> {
 
 			if (checkGuardian(yellowGuardian) && checkGuardian(greenGuardian) && checkGuardian(redGuardian)) {
 				for (ServerPlayer pl : level.getEntitiesOfClass(ServerPlayer.class, getBoundingBox().inflate(20))) {
-					AdvancementUtil.completeAdvancement(pl, new ResourceLocation(AdventOfAscension.MOD_ID, "haven/guard_that"), "kill_four_guardians");
+					AdvancementUtil.completeAdvancement(pl, AdventOfAscension.id("haven/guard_that"), "kill_four_guardians");
 				}
 			}
 		}

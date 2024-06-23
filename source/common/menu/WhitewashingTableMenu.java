@@ -11,7 +11,8 @@ import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.tslat.aoa3.common.menu.generic.ExtensibleContainerMenu;
+import net.tslat.aoa3.common.menu.generic.ExtensibleRecipeMenu;
+import net.tslat.aoa3.common.menu.generic.GenericRecipeInput;
 import net.tslat.aoa3.common.menu.provider.GenericMenuProvider;
 import net.tslat.aoa3.common.menu.slot.OutputSlot;
 import net.tslat.aoa3.common.menu.slot.PredicatedSlot;
@@ -19,11 +20,16 @@ import net.tslat.aoa3.common.registration.AoAMenus;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 
-public class WhitewashingTableMenu extends ExtensibleContainerMenu<TransientCraftingContainer> {
+public class WhitewashingTableMenu extends ExtensibleRecipeMenu<TransientCraftingContainer, GenericRecipeInput> {
 	public WhitewashingTableMenu(int screenId, Inventory playerInventory, ContainerLevelAccess accessValidator) {
 		super(AoAMenus.WHITEWASHING_TABLE.get(), screenId, playerInventory, accessValidator);
 
 		createPlayerInventory(playerInventory, 8, 60);
+	}
+
+	@Override
+	protected GenericRecipeInput createRecipeInput() {
+		return new GenericRecipeInput(getInventory().getItems());
 	}
 
 	@Override

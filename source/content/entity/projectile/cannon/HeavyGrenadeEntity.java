@@ -28,7 +28,7 @@ public class HeavyGrenadeEntity extends BaseBullet implements HardProjectile {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.1f;
 	}
 }

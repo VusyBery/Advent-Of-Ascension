@@ -2,7 +2,7 @@ package net.tslat.aoa3.client.model.entity.mob;
 
 import it.unimi.dsi.fastutil.floats.FloatFloatPair;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.content.entity.mob.precasia.SpinoledonEntity;
+import net.tslat.aoa3.content.entity.monster.precasia.SpinoledonEntity;
 
 public class SpinoledonModel extends MultiStageHeadModel<SpinoledonEntity> {
 	public SpinoledonModel() {

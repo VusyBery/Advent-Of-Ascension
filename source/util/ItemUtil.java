@@ -1,24 +1,22 @@
 package net.tslat.aoa3.util;
 
-import com.google.common.collect.Multimap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -27,115 +25,20 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Supplier;
 
 public final class ItemUtil {
-	public static final EquipmentSlot[] HAND_SLOTS = new EquipmentSlot[] {EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND};
-	public static final EquipmentSlot[] MAINHAND_SLOTS = new EquipmentSlot[] {EquipmentSlot.MAINHAND};
-
-	public static Tier customItemTier(int durability, float efficiency, float attackDamage, int harvestLevel, int enchantability, final @Nullable Supplier<Item> repairMaterial, @Nullable TagKey<Block> toolTypeTag) {
-		return new Tier() {
-			@Override
-			public int getUses() {
-				return durability;
-			}
-
-			@Override
-			public float getSpeed() {
-				return efficiency;
-			}
-
-			@Override
-			public float getAttackDamageBonus() {
-				return attackDamage;
-			}
-
-			@Override
-			public int getLevel() {
-				return harvestLevel;
-			}
-
-			@Override
-			public int getEnchantmentValue() {
-				return enchantability;
-			}
-
-			@Override
-			public Ingredient getRepairIngredient() {
-				return repairMaterial == null ? Ingredient.EMPTY : Ingredient.of(repairMaterial.get());
-			}
-
-			@Nullable
-			@Override
-			public TagKey<Block> getTag() {
-				return toolTypeTag;
-			}
-		};
-	}
-
-	public static ArmorMaterial customArmourMaterial(String name, int durabilityBase, int[] protectionValues, int enchantability, SoundEvent equipSound, float toughness) {
-		return new ArmorMaterial() {
-			@Override
-			public int getDurabilityForType(ArmorItem.Type slot) {
-				return switch (slot) {
-					case HELMET -> 11 * durabilityBase;
-					case CHESTPLATE -> 16 * durabilityBase;
-					case LEGGINGS -> 15 * durabilityBase;
-					case BOOTS -> 13 * durabilityBase;
-				};
-			}
-
-			@Override
-			public int getDefenseForType(ArmorItem.Type slot) {
-				return protectionValues[slot.getSlot().getIndex()];
-			}
-
-			@Override
-			public int getEnchantmentValue() {
-				return enchantability;
-			}
-
-			@Override
-			public SoundEvent getEquipSound() {
-				return equipSound;
-			}
-
-			@Override
-			public Ingredient getRepairIngredient() {
-				return Ingredient.EMPTY;
-			}
-
-			@Override
-			public String getName() {
-				return name;
-			}
-
-			@Override
-			public float getToughness() {
-				return toughness;
-			}
-
-			@Override
-			public float getKnockbackResistance() {
-				return 0;
-			}
-		};
-	}
-
-	public static boolean hasEnchantment(ItemStack stack, Enchantment enchant) {
-		return stack.getEnchantmentLevel(enchant) > 0;
-	}
+	public static final EquipmentSlot[] BOTH_HANDS = new EquipmentSlot[] {EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND};
 
 	public static void damageItem(ItemStack stack, LivingEntity entity, InteractionHand hand) {
 		damageItem(stack, entity, hand, 1);
 	}
 
 	public static void damageItem(ItemStack stack, LivingEntity entity, InteractionHand hand, int amount) {
-		damageItem(stack, entity, amount, PlayerUtil.handToEquipmentSlotType(hand));
+		damageItem(stack, entity, amount, EntityUtil.handToEquipmentSlotType(hand));
 	}
 
 	public static void damageItem(ItemStack stack, LivingEntity entity, int amount, EquipmentSlot slot) {
-		stack.hurtAndBreak(amount, entity, user -> user.broadcastBreakEvent(slot));
+		stack.hurtAndBreak(amount, entity, slot);
 	}
 
 	public static void givePlayerMultipleItems(Player pl, ItemStack... stacks) {
@@ -166,29 +69,6 @@ public final class ItemUtil {
 		return entity.getMainHandItem().getItem() == item || entity.getOffhandItem().getItem() == item;
 	}
 
-	public static ItemStack removeEnchantment(ItemStack stack, Enchantment ench) {
-		ItemStack newStack = stack.copy();
-		Map<Enchantment, Integer> enchants =  EnchantmentHelper.getEnchantments(newStack);
-
-		if (enchants.containsKey(ench)) {
-			enchants.remove(ench);
-			EnchantmentHelper.setEnchantments(enchants, newStack);
-		}
-
-		return newStack;
-	}
-
-	public static void setAttribute(Multimap<Attribute, AttributeModifier> map, Attribute att, UUID id, double value) {
-		final Collection<AttributeModifier> modifiers = map.get(att);
-		final Optional<AttributeModifier> mod = modifiers.stream().filter(attributeModifier -> attributeModifier.getId().equals(id)).findFirst();
-
-		if (mod.isPresent()) {
-			final AttributeModifier existingMod = mod.get();
-			modifiers.remove(existingMod);
-			modifiers.add(new AttributeModifier(existingMod.getId(), existingMod.name, value, existingMod.getOperation()));
-		}
-	}
-
 	public static void clearInventoryOfItems(Player player, ItemStack... stacks) {
 		if (player.isCreative())
 			return;
@@ -197,7 +77,7 @@ public final class ItemUtil {
 
 		if (!(checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)).isEmpty()) {
 			for (ItemStack stack : stacks) {
-				if (areStacksFunctionallyEqual(checkStack, stack)) {
+				if (areStacksEqualIgnoringData(checkStack, stack)) {
 					checkStack.setCount(0);
 
 					break;
@@ -207,7 +87,7 @@ public final class ItemUtil {
 
 		if (!(checkStack = player.getItemInHand(InteractionHand.OFF_HAND)).isEmpty()) {
 			for (ItemStack stack : stacks) {
-				if (areStacksFunctionallyEqual(checkStack, stack)) {
+				if (areStacksEqualIgnoringData(checkStack, stack)) {
 					checkStack.setCount(0);
 
 					break;
@@ -218,7 +98,7 @@ public final class ItemUtil {
 		for (ItemStack checkStack2 : player.getInventory().items) {
 			if (!checkStack2.isEmpty()) {
 				for (ItemStack stack : stacks) {
-					if (areStacksFunctionallyEqual(checkStack2, stack)) {
+					if (areStacksEqualIgnoringData(checkStack2, stack)) {
 						checkStack2.setCount(0);
 
 						break;
@@ -230,7 +110,7 @@ public final class ItemUtil {
 		for (ItemStack checkStack2 : player.getInventory().armor) {
 			if (!checkStack2.isEmpty()) {
 				for (ItemStack stack : stacks) {
-					if (areStacksFunctionallyEqual(checkStack2, stack)) {
+					if (areStacksEqualIgnoringData(checkStack2, stack)) {
 						checkStack2.setCount(0);
 
 						break;
@@ -347,13 +227,13 @@ public final class ItemUtil {
 		if (amount == 1) {
 			ItemStack checkStack;
 
-			if (areStacksFunctionallyEqual((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
+			if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
 				if (consumeItem)
 					checkStack.shrink(1);
 
 				return true;
 			}
-			else if (areStacksFunctionallyEqual((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
+			else if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
 				if (consumeItem)
 					checkStack.shrink(1);
 
@@ -361,7 +241,7 @@ public final class ItemUtil {
 			}
 			else {
 				for (ItemStack checkStack2 : player.getInventory().items) {
-					if (!checkStack2.isEmpty() && areStacksFunctionallyEqual(stack, checkStack2)) {
+					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
 						if (consumeItem)
 							checkStack2.shrink(1);
 
@@ -370,7 +250,7 @@ public final class ItemUtil {
 				}
 
 				for (ItemStack checkStack2 : player.getInventory().armor) {
-					if (!checkStack2.isEmpty() && areStacksFunctionallyEqual(stack, checkStack2)) {
+					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
 						if (consumeItem)
 							checkStack2.shrink(1);
 
@@ -386,19 +266,19 @@ public final class ItemUtil {
 			int foundCount = 0;
 			ItemStack checkStack;
 
-			if (areStacksFunctionallyEqual((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
+			if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
 				matchedStacks.add(checkStack);
 				foundCount += checkStack.getCount();
 			}
 
-			if (foundCount < amount && areStacksFunctionallyEqual((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
+			if (foundCount < amount && areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
 				matchedStacks.add(checkStack);
 				foundCount += checkStack.getCount();
 			}
 
 			if (foundCount < amount) {
 				for (ItemStack checkStack2 : player.getInventory().items) {
-					if (!checkStack2.isEmpty() && areStacksFunctionallyEqual(stack, checkStack2)) {
+					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
 						matchedStacks.add(checkStack2);
 						foundCount += checkStack2.getCount();
 
@@ -410,7 +290,7 @@ public final class ItemUtil {
 
 			if (foundCount < amount) {
 				for (ItemStack checkStack2 : player.getInventory().armor) {
-					if (!checkStack2.isEmpty() && areStacksFunctionallyEqual(stack, checkStack2)) {
+					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
 						matchedStacks.add(checkStack2);
 						foundCount += checkStack2.getCount();
 
@@ -437,41 +317,24 @@ public final class ItemUtil {
 		}
 	}
 
-	public static boolean findAndConsumeRunes(Map<Item, Integer> runeMap, ServerPlayer player, boolean allowBuffs, @NotNull ItemStack heldItem) {
+	public static boolean findAndConsumeRunes(Object2IntMap<Item> runeMap, ServerPlayer player, boolean allowBuffs, @NotNull ItemStack heldItem) {
 		if (player.isCreative())
 			return true;
 
-		AdventArmour.Type armour = PlayerUtil.getAdventPlayer(player).equipment().getCurrentFullArmourSet();
-		int archmage = allowBuffs ? heldItem.getEnchantmentLevel(AoAEnchantments.ARCHMAGE.get()) : 0;
-		boolean nightmareArmour = allowBuffs && armour == AdventArmour.Type.NIGHTMARE;
-		boolean greed = ItemUtil.hasEnchantment(heldItem, AoAEnchantments.GREED.get());
-		Reference2IntOpenHashMap<Item> requiredRunes = new Reference2IntOpenHashMap<>();
+		Reference2IntOpenHashMap<Item> requiredRunes = new Reference2IntOpenHashMap<>(runeMap);
+		boolean nightmareArmour = allowBuffs && PlayerUtil.getAdventPlayer(player).equipment().getCurrentFullArmourSet() == AdventArmour.Type.NIGHTMARE;
 
-		for (Map.Entry<Item, Integer> runeEntry : runeMap.entrySet()) {
-			if (!allowBuffs || (archmage == 0  && !nightmareArmour && !greed)) {
-				requiredRunes.putAll(runeMap);
-				break;
-			}
+		for (Item item : requiredRunes.keySet()) {
+			requiredRunes.computeIntIfPresent(item, (rune, cost) -> {
+				if (allowBuffs) {
+					cost = Mth.ceil(AoAEnchantments.modifyRuneCost(player.serverLevel(), heldItem, cost));
 
-			int amount = runeEntry.getValue();
+					if (nightmareArmour)
+						cost = rune == AoAItems.DISTORTION_RUNE.get() ? 0 : Math.max(cost - 1, 1);
+				}
 
-			if (greed)
-				amount += 2;
-
-			if (archmage > 0)
-				amount -= archmage;
-
-			if (nightmareArmour) {
-				--amount;
-
-				if (runeEntry.getKey() == AoAItems.DISTORTION_RUNE.get())
-					continue;
-			}
-
-			if (amount <= 0)
-				amount = 1;
-
-			requiredRunes.put(runeEntry.getKey(), amount);
+				return Mth.ceil(AoAEnchantments.modifyAmmoCost(player.serverLevel(), heldItem, cost));
+			});
 		}
 
 		if (requiredRunes.isEmpty())
@@ -633,20 +496,20 @@ public final class ItemUtil {
 		ItemStack stack = new ItemStack(item);
 		ItemStack checkStack;
 
-		if (areStacksFunctionallyEqual((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
+		if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
 			return checkStack;
 		}
-		else if (areStacksFunctionallyEqual((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
+		else if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
 			return checkStack;
 		}
 		else {
 			for (ItemStack checkStack2 : player.getInventory().items) {
-				if (!checkStack2.isEmpty() && areStacksFunctionallyEqual(stack, checkStack2))
+				if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2))
 					return checkStack2;
 			}
 
 			for (ItemStack checkStack2 : player.getInventory().armor) {
-				if (!checkStack2.isEmpty() && areStacksFunctionallyEqual(stack, checkStack2))
+				if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2))
 					return checkStack2;
 			}
 		}
@@ -655,6 +518,16 @@ public final class ItemUtil {
 	}
 
 	public static boolean areStacksFunctionallyEqual(ItemStack a, ItemStack b) {
+		if (!areStacksEqualIgnoringData(a, b))
+			return false;
+
+		return Objects.equals(a.getComponents(), b.getComponents());
+	}
+
+	public static boolean areStacksEqualIgnoringData(ItemStack a, ItemStack b) {
+		if (a == b)
+			return true;
+
 		if (a.getItem() != b.getItem())
 			return false;
 
@@ -685,5 +558,9 @@ public final class ItemUtil {
 		}
 
 		return newStacks;
+	}
+
+	public static ItemStack loadStackFromNbt(Level level, CompoundTag nbt) {
+		return ItemStack.CODEC.decode(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), nbt).getOrThrow().getFirst();
 	}
 }

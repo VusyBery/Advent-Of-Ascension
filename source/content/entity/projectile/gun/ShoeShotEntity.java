@@ -28,7 +28,7 @@ public class ShoeShotEntity extends BaseBullet implements HardProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
+	public double getDefaultGravity() {
 		return 0.13f;
 	}
 

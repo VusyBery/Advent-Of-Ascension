@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.item.weapon.gun;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -12,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class Megagun extends BaseGun {
-	public Megagun(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public Megagun(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

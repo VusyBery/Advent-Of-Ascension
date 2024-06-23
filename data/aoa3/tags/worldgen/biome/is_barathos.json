@@ -7,6 +7,14 @@
     {
       "id": "aoa3:the_burning_pits",
       "required": false
+    },
+    {
+      "id": "aoa3:barren_oasis",
+      "required": false
+    },
+    {
+      "id": "aoa3:the_spears",
+      "required": false
     }
   ]
 }

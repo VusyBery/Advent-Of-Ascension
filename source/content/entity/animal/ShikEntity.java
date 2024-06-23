@@ -7,7 +7,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.Pose;
@@ -44,11 +43,11 @@ public class ShikEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		entityData.define(SCARED, false);
-		entityData.define(DANCING, false);
+		builder.define(SCARED, false);
+		builder.define(DANCING, false);
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class ShikEntity extends AoAAnimalOld {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 0.34375f;
 	}
 
@@ -104,7 +103,7 @@ public class ShikEntity extends AoAAnimalOld {
 
 	@Override
 	public float getWalkTargetValue(BlockPos pos, LevelReader world) {
-		return world.getBlockState(pos.below()).is(Tags.Blocks.STONE) ? 1f : 1 - world.getMaxLocalRawBrightness(pos) / 15f;
+		return world.getBlockState(pos.below()).is(Tags.Blocks.STONES) ? 1f : 1 - world.getMaxLocalRawBrightness(pos) / 15f;
 	}
 
 	@Override

@@ -2,14 +2,10 @@ package net.tslat.aoa3.common.registration.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.tslat.aoa3.advent.AoAStartupCache;
-import net.tslat.aoa3.common.registration.AoABannerPatterns;
 import net.tslat.aoa3.common.registration.AoARegistries;
-import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.custom.AoAAspectFocus;
 import net.tslat.aoa3.common.registration.entity.variant.PixonVariant;
@@ -17,7 +13,6 @@ import net.tslat.aoa3.content.item.food.*;
 import net.tslat.aoa3.content.item.lootbox.*;
 import net.tslat.aoa3.content.item.misc.*;
 import net.tslat.aoa3.content.item.misc.summoning.*;
-import net.tslat.effectslib.api.util.EffectBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -118,7 +113,7 @@ public final class AoAItems {
 	public static final DeferredItem<Item> WHITE_DRUSE = registerItem("white_druse", miscItem());
 	public static final DeferredItem<Item> YELLOW_DRUSE = registerItem("yellow_druse", miscItem());
 	public static final DeferredItem<Item> ENCHANTED_GUNPOWDER = registerItem("enchanted_gunpowder", miscItem());
-	public static final DeferredItem<Item> EYE_BULB = registerItem("eye_bulb", () -> new ItemNameBlockItem(AoABlocks.EYE_BULB_CROP.get(), new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.4f).build())));
+	public static final DeferredItem<Item> EYE_BULB = registerItem("eye_bulb", () -> new ItemNameBlockItem(AoABlocks.EYE_BULB_CROP.get(), new Item.Properties().food(AoAFood.EYE_BULB)));
 	public static final DeferredItem<Item> FLAMMABLE_DUST = registerItem("flammable_dust", miscItem());
 	public static final DeferredItem<Item> FLESHY_BONES = registerItem("fleshy_bones", () -> new ReservedItem("alien_orb"), (ResourceKey<CreativeModeTab>[])null);
 	public static final DeferredItem<Item> FLOATING_STONE = registerItem("floating_stone", FloatingStone::new);
@@ -346,34 +341,34 @@ public final class AoAItems {
 	public static final DeferredItem<Item> TREASURE_BOX = registerItem("treasure_box", TreasureBox::new);
 	public static final DeferredItem<Item> WEAPONS_CASE = registerItem("weapons_case", WeaponsCase::new);
 
-	public static final DeferredItem<Item> BLUE_GEMTRAP = registerItem("blue_gemtrap", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> CANDLEFISH = registerItem("candlefish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> BLUE_GEMTRAP = registerItem("blue_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.BLUE_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> CANDLEFISH = registerItem("candlefish", () -> new Item(new Item.Properties().food(AoAFood.CANDLEFISH)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> CHARRED_CHAR = registerItem("charred_char", CharredChar::new);
-	public static final DeferredItem<Item> CHOCAW = registerItem("chocaw", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationMod(0.65f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> CRIMSON_SKIPPER = registerItem("crimson_skipper", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> CRIMSON_STRIPEFISH = registerItem("crimson_stripefish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> DARK_HATCHETFISH = registerItem("dark_hatchetfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> GREEN_GEMTRAP = registerItem("green_gemtrap", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> CHOCAW = registerItem("chocaw", () -> new Item(new Item.Properties().food(AoAFood.CHOCAW)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> CRIMSON_SKIPPER = registerItem("crimson_skipper", () -> new Item(new Item.Properties().food(AoAFood.CRIMSON_SKIPPER)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> CRIMSON_STRIPEFISH = registerItem("crimson_stripefish", () -> new Item(new Item.Properties().food(AoAFood.CRIMSON_STRIPEFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> DARK_HATCHETFISH = registerItem("dark_hatchetfish", () -> new Item(new Item.Properties().food(AoAFood.DARK_HATCHETFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> GREEN_GEMTRAP = registerItem("green_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.GREEN_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> HYDRONE = registerItem("hydrone", miscItem());
-	public static final DeferredItem<Item> IRONBACK = registerItem("ironback", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> JAMFISH = registerItem("jamfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(5).saturationMod(0.5f).effect(() -> new EffectBuilder(MobEffects.MOVEMENT_SPEED, 600).build(), 1f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> PARAPIRANHA = registerItem("parapiranha", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> PEARL_STRIPEFISH = registerItem("pearl_stripefish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> PURPLE_GEMTRAP = registerItem("purple_gemtrap", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> RAZORFISH = registerItem("razorfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> RED_GEMTRAP = registerItem("red_gemtrap", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> REEFTOOTH = registerItem("reeftooth", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> ROCKETFISH = registerItem("rocketfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> SAILBACK = registerItem("sailback", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> SAPPHIRE_STRIDER = registerItem("sapphire_strider", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> SKELECANTH = registerItem("skelecanth", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(1).saturationMod(0.1f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> WHITE_GEMTRAP = registerItem("white_gemtrap", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> YELLOW_GEMTRAP = registerItem("yellow_gemtrap", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> TURQUOISE_STRIPEFISH = registerItem("turquoise_stripefish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> VIOLET_SKIPPER = registerItem("violet_skipper", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(2).saturationMod(0.2f).build())), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> IRONBACK = registerItem("ironback", () -> new Item(new Item.Properties().food(AoAFood.IRONBACK)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> JAMFISH = registerItem("jamfish", () -> new Item(new Item.Properties().food(AoAFood.JAMFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> PARAPIRANHA = registerItem("parapiranha", () -> new Item(new Item.Properties().food(AoAFood.PARAPIRANHA)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> PEARL_STRIPEFISH = registerItem("pearl_stripefish", () -> new Item(new Item.Properties().food(AoAFood.PEARL_STRIPEFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> PURPLE_GEMTRAP = registerItem("purple_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.PURPLE_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> RAZORFISH = registerItem("razorfish", () -> new Item(new Item.Properties().food(AoAFood.RAZORFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> RED_GEMTRAP = registerItem("red_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.RED_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> REEFTOOTH = registerItem("reeftooth", () -> new Item(new Item.Properties().food(AoAFood.REEFTOOTH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> ROCKETFISH = registerItem("rocketfish", () -> new Item(new Item.Properties().food(AoAFood.ROCKETFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> SAILBACK = registerItem("sailback", () -> new Item(new Item.Properties().food(AoAFood.SAILBACK)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> SAPPHIRE_STRIDER = registerItem("sapphire_strider", () -> new Item(new Item.Properties().food(AoAFood.SAPPHIRE_STRIDER)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> SKELECANTH = registerItem("skelecanth", () -> new Item(new Item.Properties().food(AoAFood.SKELECANTH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> WHITE_GEMTRAP = registerItem("white_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.WHITE_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> YELLOW_GEMTRAP = registerItem("yellow_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.YELLOW_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> TURQUOISE_STRIPEFISH = registerItem("turquoise_stripefish", () -> new Item(new Item.Properties().food(AoAFood.TURQUOISE_STRIPEFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> VIOLET_SKIPPER = registerItem("violet_skipper", () -> new Item(new Item.Properties().food(AoAFood.VIOLET_SKIPPER)), AoACreativeModeTabs.FOOD.getKey());
 
-	public static final DeferredItem<Item> RAW_RAINBOWFISH = registerItem("raw_rainbowfish", () -> new Item(new Item.Properties().food(new FoodProperties.Builder().nutrition(3).saturationMod(0.85f).build())), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> COOKED_RAINBOWFISH = registerItem("cooked_rainbowfish", () -> new HealingFood(5.0f, new Item.Properties().food(new FoodProperties.Builder().nutrition(6).saturationMod(0.85f).effect(() -> new EffectBuilder(MobEffects.LUCK, 600).build(), 1f).build())), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> RAW_RAINBOWFISH = registerItem("raw_rainbowfish", () -> new Item(new Item.Properties().food(AoAFood.RAW_RAINBOWFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> COOKED_RAINBOWFISH = registerItem("cooked_rainbowfish", () -> new HealingFood(5.0f, new Item.Properties().food(AoAFood.COOKED_RAINBOWFISH)), AoACreativeModeTabs.FOOD.getKey());
 
 	public static final DeferredItem<Item> BUBBLE_BERRIES = registerItem("bubble_berries", BubbleBerries::new, AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> CANDY_CANE = registerItem("candy_cane", () -> new Item(new Item.Properties().food(AoAFood.CANDY_CANE)), AoACreativeModeTabs.FOOD.getKey());
@@ -432,23 +427,23 @@ public final class AoAItems {
 	public static final DeferredItem<Item> TRILLIAD_SEEDS = registerItem("trilliad_seeds", () -> new ItemNameBlockItem(AoABlocks.TRILLIAD_CROP.get(), new Item.Properties()));
 	public static final DeferredItem<Item> GREEN_MANURE_SEEDS = registerItem("green_manure_seeds", () -> new ItemNameBlockItem(AoABlocks.GREEN_MANURE.get(), new Item.Properties()));
 
-	public static final DeferredItem<Item> MUSIC_DISC_OUTLAW = registerItem("music_disc_outlaw", () -> new RecordItem(15, AoASounds.OUTLAW_MUSIC_DISC, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 3080));
-	public static final DeferredItem<Item> MUSIC_DISC_CAVERNS = registerItem("music_disc_caverns", () -> new RecordItem(15, AoASounds.CAVERNS_MUSIC_DISC, new Item.Properties().stacksTo(1).rarity(Rarity.RARE), 3300));
+	public static final DeferredItem<Item> MUSIC_DISC_OUTLAW = registerItem("music_disc_outlaw", () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(AoAJukeboxSongs.OUTLAW)));
+	public static final DeferredItem<Item> MUSIC_DISC_CAVERNS = registerItem("music_disc_caverns", () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.RARE).jukeboxPlayable(AoAJukeboxSongs.CAVERNS)));
 
-	public static final DeferredItem<Item> COMPASS_RUNE_BANNER_PATTERN = registerItem("compass_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.COMPASS_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> DISTORTION_RUNE_BANNER_PATTERN = registerItem("distortion_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.DISTORTION_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> ENERGY_RUNE_BANNER_PATTERN = registerItem("energy_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.ENERGY_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> FIRE_RUNE_BANNER_PATTERN = registerItem("fire_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.FIRE_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> KINETIC_RUNE_BANNER_PATTERN = registerItem("kinetic_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.KINETIC_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> LIFE_RUNE_BANNER_PATTERN = registerItem("life_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.LIFE_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> LUNAR_RUNE_BANNER_PATTERN = registerItem("lunar_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.LUNAR_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> POISON_RUNE_BANNER_PATTERN = registerItem("poison_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.POISON_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> POWER_RUNE_BANNER_PATTERN = registerItem("power_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.POWER_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> STORM_RUNE_BANNER_PATTERN = registerItem("storm_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.STORM_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> STRIKE_RUNE_BANNER_PATTERN = registerItem("strike_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.STRIKE_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> WATER_RUNE_BANNER_PATTERN = registerItem("water_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.WATER_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> WIND_RUNE_BANNER_PATTERN = registerItem("wind_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.WIND_RUNE.tag(), new Item.Properties().stacksTo(1)));
-	public static final DeferredItem<Item> WITHER_RUNE_BANNER_PATTERN = registerItem("wither_rune_banner_pattern", () -> new BannerPatternItem(AoABannerPatterns.WITHER_RUNE.tag(), new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> COMPASS_RUNE_BANNER_PATTERN = registerItem("compass_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.COMPASS_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> DISTORTION_RUNE_BANNER_PATTERN = registerItem("distortion_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.DISTORTION_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> ENERGY_RUNE_BANNER_PATTERN = registerItem("energy_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.ENERGY_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> FIRE_RUNE_BANNER_PATTERN = registerItem("fire_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.FIRE_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> KINETIC_RUNE_BANNER_PATTERN = registerItem("kinetic_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.KINETIC_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> LIFE_RUNE_BANNER_PATTERN = registerItem("life_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.LIFE_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> LUNAR_RUNE_BANNER_PATTERN = registerItem("lunar_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.LUNAR_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> POISON_RUNE_BANNER_PATTERN = registerItem("poison_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.POISON_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> POWER_RUNE_BANNER_PATTERN = registerItem("power_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.POWER_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> STORM_RUNE_BANNER_PATTERN = registerItem("storm_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.STORM_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> STRIKE_RUNE_BANNER_PATTERN = registerItem("strike_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.STRIKE_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> WATER_RUNE_BANNER_PATTERN = registerItem("water_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.WATER_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> WIND_RUNE_BANNER_PATTERN = registerItem("wind_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.WIND_RUNE, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<Item> WITHER_RUNE_BANNER_PATTERN = registerItem("wither_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.WITHER_RUNE, new Item.Properties().stacksTo(1)));
 
 	// TODO - add boat extensibility into NeoForge then come back to this
 	//public static final DeferredItem<Item> BAOBAB_BOAT = registerItem("baobab_boat", () -> new BoatItem(true, null, new Item.Properties().stacksTo(1)));
@@ -460,7 +455,7 @@ public final class AoAItems {
 		DeferredItem<T> registeredObject = AoARegistries.ITEMS.register(registryId, item);
 
 		if (tabs != null)
-			AoAStartupCache.setItemCreativeTabs(registeredObject, tabs.length == 0 ? ObjectArrayList.of(AoACreativeModeTabs.MISC_ITEMS.getKey()) : ObjectArrayList.of(tabs));
+			AoACreativeModeTabs.setItemCreativeTabs(registeredObject, tabs.length == 0 ? ObjectArrayList.of(AoACreativeModeTabs.MISC_ITEMS.getKey()) : ObjectArrayList.of(tabs));
 
 		return registeredObject;
 	}

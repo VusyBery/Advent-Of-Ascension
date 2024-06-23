@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.item.weapon.blaster;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,9 +10,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -21,6 +19,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -33,66 +32,46 @@ import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
-import net.tslat.aoa3.content.enchantment.RechargeEnchantment;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 import net.tslat.aoa3.content.item.EnergyProjectileWeapon;
 import net.tslat.aoa3.content.item.armour.AdventArmour;
+import net.tslat.aoa3.content.item.datacomponent.BlasterStats;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.util.*;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon {
-	private final Multimap<Attribute, AttributeModifier> attributeModifiers = HashMultimap.create();
-
-	protected final double baseDmg;
-	protected final int firingDelay;
-	protected final float baseEnergyCost;
-	protected final int chargeTime;
-
-	@Deprecated(forRemoval = true)
-	public BaseBlaster(final double baseDmg, final int durability, final int fireDelayTicks, final float baseEnergyCost) {
-		this(new Item.Properties().durability(durability), baseDmg, fireDelayTicks, baseEnergyCost);
-	}
-
-	@Deprecated(forRemoval = true)
-	public BaseBlaster(Item.Properties properties, final double baseDmg, final int fireDelayTicks, final float baseEnergyCost) {
-		this(properties, baseDmg, fireDelayTicks, fireDelayTicks, baseEnergyCost);
-	}
-
-	public BaseBlaster(final double baseDmg, final int durability, final int fireDelayTicks, final int chargeTime, final float baseEnergyCost) {
-		this(new Item.Properties().durability(durability), baseDmg, fireDelayTicks, chargeTime, baseEnergyCost);
-	}
-
-	public BaseBlaster(Item.Properties properties, final double baseDmg, final int fireDelayTicks, final int chargeTime, final float baseEnergyCost) {
+	public BaseBlaster(Item.Properties properties) {
 		super(properties);
-
-		this.baseDmg = baseDmg;
-		this.firingDelay = fireDelayTicks;
-		this.chargeTime = chargeTime;
-		this.baseEnergyCost = baseEnergyCost;
-
-		this.attributeModifiers.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Weapon modifier", AttackSpeed.forAttacksPerSecond(1.2f), AttributeModifier.Operation.ADDITION));
 	}
 
-	public double getDamage() {
-		return this.baseDmg;
+	public BlasterStats blasterStats() {
+		return blasterStats(getDefaultInstance());
 	}
 
-	public int getFiringDelay() {
-		return this.firingDelay;
+	public BlasterStats blasterStats(ItemStack stack) {
+		return stack.get(AoADataComponents.BLASTER_STATS.get());
+	}
+
+	public float getBlasterDamage(ItemStack stack) {
+		return blasterStats(stack).damage();
+	}
+
+	public int getTicksBetweenShots(ItemStack stack) {
+		return blasterStats(stack).ticksBetweenShots();
 	}
 
 	public int getChargeTime(ItemStack stack) {
-		return this.chargeTime;
+		return blasterStats(stack).chargeUpTicks();
 	}
 
-	public float getBaseEnergyCost() {
-		return this.baseEnergyCost;
+	public float getBaseSpiritCost(ItemStack stack) {
+		return blasterStats(stack).energyCost();
 	}
 
 	@Nullable
@@ -116,7 +95,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 72000;
 	}
 
@@ -130,7 +109,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 		if (player.getAttackStrengthScale(0.0f) < 1)
 			return InteractionResults.ItemUse.denyUsage(stack);
 
-		final float energyCost = getEnergyCost(stack, player, false);
+		final float energyCost = getSpiritCost(stack, player, false);
 
 		if (player.getAbilities().instabuild || PlayerUtil.getResourceValue(player, AoAResources.SPIRIT.get()) >= energyCost) {
 			player.startUsingItem(hand);
@@ -146,7 +125,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 
 	@Override
 	public void onUseTick(Level level, LivingEntity shooter, ItemStack stack, int count) {
-		if (getUseDuration(stack) - count < getChargeTime(stack) - 2)
+		if (getUseDuration(stack, shooter) - count < getChargeTime(stack) - 2)
 			return;
 
 		if (level instanceof ServerLevel serverLevel) {
@@ -159,8 +138,8 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 					if (player != null) {
 						player.awardStat(Stats.ITEM_USED.get(this));
 
-						if (getFiringDelay() > 1)
-							player.getCooldowns().addCooldown(this, getFiringDelay());
+						if (getTicksBetweenShots(stack) > 1)
+							player.getCooldowns().addCooldown(this, getTicksBetweenShots(stack));
 					}
 				}
 				else {
@@ -171,7 +150,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 	}
 
 	protected boolean tryFireBlaster(ServerLevel level, LivingEntity shooter, ItemStack stack, @Nullable ServerPlayer playerShooter) {
-		final float energyCost = getEnergyCost(stack, shooter, false);
+		final float energyCost = getSpiritCost(stack, shooter, false);
 
 		if (energyCost == 0 || consumeEnergy(playerShooter, stack, energyCost)) {
 			ShotInfo shotInfo = fireBlaster(level, shooter, stack, true);
@@ -205,11 +184,10 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 		shotInfo.setHitPos(rayTrace.getLocation());
 
 		if (rayTrace.getType() != HitResult.Type.MISS) {
-			if (rayTrace instanceof EntityHitResult entityHit) {
-				shotInfo.setEffectiveHit(doEntityImpact(level, shooter, blaster, shotInfo, entityHit));
-			}
-			else if (rayTrace instanceof BlockHitResult blockHit) {
-				shotInfo.setEffectiveHit(doBlockImpact(level, shooter, blaster, shotInfo, blockHit));
+			switch (rayTrace) {
+				case EntityHitResult entityHit -> shotInfo.setEffectiveHit(doEntityImpact(level, shooter, blaster, shotInfo, entityHit));
+				case BlockHitResult blockHit -> shotInfo.setEffectiveHit(doBlockImpact(level, shooter, blaster, shotInfo, blockHit));
+				default -> {}
 			}
 		}
 
@@ -250,7 +228,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 			Player player = ClientOperations.getPlayer();
 
 			if (player.getUseItem() == stack) {
-				final int useTime = stack.getUseDuration() - player.getUseItemRemainingTicks();
+				final int useTime = stack.getUseDuration(player) - player.getUseItemRemainingTicks();
 				final int chargeTime = getChargeTime(stack);
 
 				if (useTime < chargeTime - 1)
@@ -261,17 +239,21 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 		return 0;
 	}
 
-	public float getEnergyCost(ItemStack stack, @Nullable LivingEntity shooter, boolean forDisplay) {
+	public float getSpiritCost(ItemStack stack, @Nullable LivingEntity shooter, boolean forDisplay) {
 		if (!(shooter instanceof Player pl) || (pl.getAbilities().instabuild && !forDisplay))
 			return 0;
 
-		final int greed = stack.getEnchantmentLevel(AoAEnchantments.GREED.get());
-		float energyCost = (1 + (0.3f * greed)) * RechargeEnchantment.modifyCost(stack, this.baseEnergyCost);
+		float spiritCost = getBaseSpiritCost(stack);
+
+		if (pl.level() instanceof ServerLevel level) {
+			spiritCost = AoAEnchantments.modifySpiritConsumption(level, stack, spiritCost);
+			spiritCost *= (1 + AoAEnchantments.modifyAmmoCost(level, stack, 0) * 0.3f);
+		}
 
 		if (PlayerUtil.isWearingFullSet(pl, AdventArmour.Type.GHOULISH))
-			energyCost *= 0.7f;
+			spiritCost *= 0.7f;
 
-		return energyCost;
+		return spiritCost;
 	}
 
 	public float getBeamDistance(ItemStack stack, @Nullable LivingEntity shooter) {
@@ -283,23 +265,23 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 	}
 
 	@Override
-	public int getDefaultTooltipHideFlags(@NotNull ItemStack stack) {
-		return ItemStack.TooltipPart.MODIFIERS.getMask();
-	}
-
-	@Override
 	public InteractionHand getWeaponHand(LivingEntity holder) {
 		return InteractionHand.MAIN_HAND;
 	}
 
 	@Override
-	@Deprecated(forRemoval = true)
+	//@Deprecated(forRemoval = true)
 	public void doBlockImpact(BaseEnergyShot shot, Vec3 hitPos, LivingEntity shooter) {}
 
 	@Override
-	@Deprecated(forRemoval = true)
+	//@Deprecated(forRemoval = true)
 	public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-		if (DamageUtil.doEnergyProjectileAttack(shooter, shooter, target, (float)this.baseDmg)) {
+		ItemStack stack = shooter.getItemInHand(InteractionHand.MAIN_HAND);
+
+		if (!stack.is(this))
+			stack = getDefaultInstance();
+
+		if (DamageUtil.doEnergyProjectileAttack(shooter, shooter, target, getBlasterDamage(stack))) {
 			doImpactEffect(shot, target, shooter);
 
 			return true;
@@ -310,7 +292,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 
 	@Override
 	public boolean doEntityImpact(ServerLevel level, LivingEntity shooter, ItemStack stack, ShotInfo shotInfo, EntityHitResult rayTrace) {
-		if (DamageUtil.doEnergyProjectileAttack(shooter, shooter, rayTrace.getEntity(), (float)this.baseDmg)) {
+		if (DamageUtil.doEnergyProjectileAttack(shooter, shooter, rayTrace.getEntity(), getBlasterDamage(stack))) {
 			doImpactEffect(level, shooter, stack, shotInfo, rayTrace, true);
 
 			return true;
@@ -330,7 +312,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 
 	protected void doImpactEffect(ServerLevel level, LivingEntity shooter, ItemStack stack, ShotInfo shotInfo, HitResult rayTrace, boolean affectedTarget) {}
 
-	@Deprecated(forRemoval = true)
+	//@Deprecated(forRemoval = true)
 	protected void doImpactEffect(BaseEnergyShot shot, Entity target, LivingEntity shooter) {}
 
 	@Override
@@ -338,22 +320,25 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 		return 8;
 	}
 
-	@Override
-	public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack stack) {
-		if (slot == EquipmentSlot.MAINHAND)
-			return attributeModifiers;
+	public static ItemAttributeModifiers createBlasterAttributeModifiers(float attacksPerSecond) {
+		final ImmutableList.Builder<ItemAttributeModifiers.Entry> entries = ImmutableList.builder();
 
-		return super.getAttributeModifiers(slot, stack);
+		entries.add(new ItemAttributeModifiers.Entry(
+				Attributes.ATTACK_SPEED,
+				new AttributeModifier(BASE_ATTACK_SPEED_ID, AttackSpeed.forAttacksPerSecond(attacksPerSecond), AttributeModifier.Operation.ADD_VALUE),
+				EquipmentSlotGroup.MAINHAND));
+
+		return new ItemAttributeModifiers(entries.build(), false);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		if (getDamage() > 0)
-			tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ENERGY_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(NumberUtil.roundToNthDecimalPlace((float)getDamage(), 1))));
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		if (getBlasterDamage(stack) > 0)
+			tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ENERGY_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(NumberUtil.roundToNthDecimalPlace(getBlasterDamage(stack), 1))));
 
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BLASTER_CHARGE, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO, Component.literal(NumberUtil.roundToNthDecimalPlace((float)getChargeTime(stack) / 20f, 2))));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BLASTER_PENETRATION, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
-		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(NumberUtil.roundToNthDecimalPlace(20 / (float)getFiringDelay(), 2))));
-		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.AMMO_RESOURCE, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, Component.literal(NumberUtil.roundToNthDecimalPlace(getEnergyCost(stack, FMLEnvironment.dist == Dist.CLIENT ? ClientOperations.getPlayer() : null, true), 2)), AoAResources.SPIRIT.get().getName()));
+		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.FIRING_SPEED, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(NumberUtil.roundToNthDecimalPlace(20 / (float) getTicksBetweenShots(stack), 2))));
+		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.AMMO_RESOURCE, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, Component.literal(NumberUtil.roundToNthDecimalPlace(getSpiritCost(stack, FMLEnvironment.dist == Dist.CLIENT ? ClientOperations.getPlayer() : null, true), 2)), AoAResources.SPIRIT.get().getName()));
 	}
 }

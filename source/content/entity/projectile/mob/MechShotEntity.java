@@ -21,7 +21,7 @@ public class MechShotEntity extends BaseMobProjectile {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.075f;
 	}
 }

@@ -8,20 +8,17 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.tslat.aoa3.common.registration.item.AoATiers;
-import net.tslat.aoa3.library.constant.AttackSpeed;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class HolySword extends BaseSword {
-	public HolySword() {
-		super(AoATiers.HOLY, 0, AttackSpeed.TRIPLE, new Item.Properties().durability(AoATiers.HOLY.getUses()).rarity(Rarity.RARE));
+	public HolySword(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 
@@ -36,7 +33,7 @@ public class HolySword extends BaseSword {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 	}
 }

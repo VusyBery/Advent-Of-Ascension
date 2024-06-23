@@ -5,6 +5,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.neoforged.neoforge.common.world.BiomeModifier;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.tslat.aoa3.advent.AdventOfAscension;
 
 public final class AoAWorldgenKeys {
@@ -25,6 +27,19 @@ public final class AoAWorldgenKeys {
 			public static final ResourceKey<ConfiguredFeature<?, ?>> TUFF_ORE = key("tuff_ore");
 			public static final ResourceKey<ConfiguredFeature<?, ?>> BASALT_MAGMA_BLOBS = key("basalt_magma_blobs");
 			public static final ResourceKey<ConfiguredFeature<?, ?>> HOT_SPRINGS = key("hot_springs");
+
+			// Overworld
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_JADE_LARGE = key("ore_jade_large");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_JADE_SMALL = key("ore_jade_small");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_LIMONITE_LARGE = key("ore_limonite_large");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_LIMONITE_SMALL = key("ore_limonite_small");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_RUNIUM_SMALL = key("ore_runium_small");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_RUNIUM_LARGE = key("ore_runium_large");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_BRUSHABLE_JUNGLE_GRAVEL = key("ore_brushable_jungle_gravel");
+
+			// Nether
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_EMBERSTONE = key("ore_emberstone");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> ORE_NETHER_RUNIUM = key("ore_nether_runium");
 
 			// Precasia
 			public static final ResourceKey<ConfiguredFeature<?, ?>> SINGLE_CALAB_OR_VANILLA_GRASS = key("single_calab_or_vanilla_grass");
@@ -71,6 +86,10 @@ public final class AoAWorldgenKeys {
 			public static final ResourceKey<ConfiguredFeature<?, ?>> PRECASIAN_SUSPICIOUS_CAVE_GRAVEL = key("precasian_suspicious_cave_gravel");
 			public static final ResourceKey<ConfiguredFeature<?, ?>> OPTERYX_NEST = key("opteryx_nest");
 
+			// Barathos
+			public static final ResourceKey<ConfiguredFeature<?, ?>> FIRE_PATCH = key("fire_patch");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> HELLSTONE_LAVA_LAKE = key("hellstone_lava_lake");
+
 			private static ResourceKey<ConfiguredFeature<?, ?>> key(String id) {
 				return ResourceKey.create(Registries.CONFIGURED_FEATURE, AdventOfAscension.id(id));
 			}
@@ -95,6 +114,19 @@ public final class AoAWorldgenKeys {
 			public static final ResourceKey<PlacedFeature> LOW_ALTITUDE_ANDESITE_ORE = key("low_altitude_andesite_ore");
 			public static final ResourceKey<PlacedFeature> BASALT_MAGMA_BLOBS = key("basalt_magma_blobs");
 			public static final ResourceKey<PlacedFeature> HOT_SPRINGS = key("hot_springs");
+
+			// Overworld
+			public static final ResourceKey<PlacedFeature> ORE_JADE_LARGE = key("ore_jade_large");
+			public static final ResourceKey<PlacedFeature> ORE_JADE_SMALL = key("ore_jade_small");
+			public static final ResourceKey<PlacedFeature> ORE_LIMONITE_LARGE = key("ore_limonite_large");
+			public static final ResourceKey<PlacedFeature> ORE_LIMONITE_SMALL = key("ore_limonite_small");
+			public static final ResourceKey<PlacedFeature> ORE_RUNIUM_SMALL = key("ore_runium_small");
+			public static final ResourceKey<PlacedFeature> ORE_RUNIUM_LARGE = key("ore_runium_large");
+			public static final ResourceKey<PlacedFeature> ORE_BRUSHABLE_JUNGLE_GRAVEL = key("ore_brushable_jungle_gravel");
+
+			// Nether
+			public static final ResourceKey<PlacedFeature> ORE_EMBERSTONE = key("ore_emberstone");
+			public static final ResourceKey<PlacedFeature> ORE_NETHER_RUNIUM = key("ore_nether_runium");
 
 			// Precasia
 			public static final ResourceKey<PlacedFeature> PRECASIAN_GRASS_BONEMEAL = key("precasian_grass_bonemeal");
@@ -145,6 +177,10 @@ public final class AoAWorldgenKeys {
 			public static final ResourceKey<PlacedFeature> PRECASIAN_CAVE_CEILING_VEGETATION = key("precasian_cave_ceiling_vegetation");
 			public static final ResourceKey<PlacedFeature> PRECASIAN_SUSPICIOUS_CAVE_GRAVEL = key("precasian_suspicious_cave_gravel");
 
+			// Barathos
+			public static final ResourceKey<PlacedFeature> FIRE_PATCH = key("fire_patch");
+			public static final ResourceKey<PlacedFeature> HELLSTONE_LAVA_LAKE = key("hellstone_lava_lake");
+
 			private static ResourceKey<PlacedFeature> key(String id) {
 				return ResourceKey.create(Registries.PLACED_FEATURE, AdventOfAscension.id(id));
 			}
@@ -159,6 +195,48 @@ public final class AoAWorldgenKeys {
 
 		private static ResourceKey<Structure> key(String id) {
 			return ResourceKey.create(Registries.STRUCTURE, AdventOfAscension.id(id));
+		}
+	}
+
+	public static final class BiomeModifiers {
+		// Overworld
+		public static final ResourceKey<BiomeModifier> ORE_JADE_LARGE = key("ore_jade_large");
+		public static final ResourceKey<BiomeModifier> ORE_JADE_SMALL = key("ore_jade_small");
+		public static final ResourceKey<BiomeModifier> ORE_LIMONITE_LARGE = key("ore_limonite_large");
+		public static final ResourceKey<BiomeModifier> ORE_LIMONITE_SMALL = key("ore_limonite_small");
+		public static final ResourceKey<BiomeModifier> ORE_RUNIUM_SMALL = key("ore_runium_small");
+		public static final ResourceKey<BiomeModifier> ORE_RUNIUM_LARGE = key("ore_runium_large");
+		public static final ResourceKey<BiomeModifier> ORE_BRUSHABLE_JUNGLE_GRAVEL = key("ore_brushable_jungle_gravel");
+		public static final ResourceKey<BiomeModifier> SHINY_SQUID_SPAWNS = key("shiny_squid_spawns");
+		public static final ResourceKey<BiomeModifier> ICE_GIANT_SPAWNS = key("ice_giant_spawns");
+		public static final ResourceKey<BiomeModifier> LEAFY_GIANT_SPAWNS = key("leafy_giant_spawns");
+		public static final ResourceKey<BiomeModifier> STONE_GIANT_SPAWNS = key("stone_giant_spawns");
+		public static final ResourceKey<BiomeModifier> WOOD_GIANT_SPAWNS = key("wood_giant_spawns");
+		public static final ResourceKey<BiomeModifier> SAND_GIANT_SPAWNS = key("sand_giant_spawns");
+		public static final ResourceKey<BiomeModifier> CHARGER_SPAWNS = key("charger_spawns");
+		public static final ResourceKey<BiomeModifier> KING_CHARGER_SPAWNS = key("king_charger_spawns");
+		public static final ResourceKey<BiomeModifier> CYCLOPS_SPAWNS = key("cyclops_spawns");
+		public static final ResourceKey<BiomeModifier> CHOMPER_SPAWNS = key("chomper_spawns");
+		public static final ResourceKey<BiomeModifier> SASQUATCH_SPAWNS = key("sasquatch_spawns");
+		public static final ResourceKey<BiomeModifier> BUSH_BABY_SPAWNS = key("bush_baby_spawns");
+		public static final ResourceKey<BiomeModifier> VOID_WALKER_SPAWNS = key("void_walker_spawns");
+		public static final ResourceKey<BiomeModifier> ANCIENT_GOLEM_SPAWNS = key("ancient_golem_spawns");
+		public static final ResourceKey<BiomeModifier> GHOST_SPAWNS = key("ghost_spawns");
+		public static final ResourceKey<BiomeModifier> BOMB_CARRIER_SPAWNS = key("bomb_carrier_spawns");
+		public static final ResourceKey<BiomeModifier> TREE_SPIRIT_SPAWNS = key("tree_spirit_spawns");
+		public static final ResourceKey<BiomeModifier> YETI_SPAWNS = key("yeti_spawns");
+		public static final ResourceKey<BiomeModifier> GOBLIN_SPAWNS = key("goblin_spawns");
+
+		// Nether
+		public static final ResourceKey<BiomeModifier> ORE_NETHER_RUNIUM = key("ore_nether_runium");
+		public static final ResourceKey<BiomeModifier> ORE_EMBERSTONE = key("ore_emberstone");
+		public static final ResourceKey<BiomeModifier> LITTLE_BAM_SPAWNS = key("little_bam_spawns");
+		public static final ResourceKey<BiomeModifier> FLAMEWALKER_SPAWNS = key("flamewalker_spawns");
+		public static final ResourceKey<BiomeModifier> EMBRAKE_SPAWNS = key("embrake_spawns");
+		public static final ResourceKey<BiomeModifier> INFERNAL_SPAWNS = key("infernal_spawns");
+
+		private static ResourceKey<BiomeModifier> key(String id) {
+			return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, AdventOfAscension.id(id));
 		}
 	}
 }

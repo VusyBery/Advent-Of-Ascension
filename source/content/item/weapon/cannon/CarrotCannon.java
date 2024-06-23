@@ -11,10 +11,9 @@ import net.tslat.aoa3.content.entity.projectile.cannon.CarrotBallEntity;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import org.jetbrains.annotations.Nullable;
 
-
 public class CarrotCannon extends BaseCannon {
-	public CarrotCannon(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public CarrotCannon(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

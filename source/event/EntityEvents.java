@@ -11,25 +11,20 @@ import net.minecraft.world.entity.monster.piglin.Piglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.AABB;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
+import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.living.MobSplitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
-import net.tslat.aoa3.common.particletype.CustomisableParticleType;
 import net.tslat.aoa3.common.registration.AoAConfigs;
-import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.WorldUtil;
-import net.tslat.smartbrainlib.util.RandomUtil;
 
 public final class EntityEvents {
 	public static final String SPAWNED_BY_SPAWNER_TAG = "spawned_by_spawner";
@@ -37,9 +32,8 @@ public final class EntityEvents {
 	public static void preInit() {
 		final IEventBus forgeBus = NeoForge.EVENT_BUS;
 
-		forgeBus.addListener(EventPriority.NORMAL, false, LivingEvent.LivingTickEvent.class, EntityEvents::onEntityUpdate);
 		forgeBus.addListener(EventPriority.NORMAL, false, EntityJoinLevelEvent.class, EntityEvents::onEntityJoinWorld);
-		forgeBus.addListener(EventPriority.LOWEST, false, MobSpawnEvent.FinalizeSpawn.class, EntityEvents::onEntitySpawn);
+		forgeBus.addListener(EventPriority.LOWEST, false, FinalizeSpawnEvent.class, EntityEvents::onEntitySpawn);
 		forgeBus.addListener(EventPriority.LOWEST, false, MobSplitEvent.class, EntityEvents::onEntitySplit);
 		forgeBus.addListener(EventPriority.NORMAL, false, ExplosionEvent.Detonate.class, EntityEvents::onEntityExploded);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.EntityInteractSpecific.class, EntityEvents::onEntityInteract);
@@ -73,19 +67,6 @@ public final class EntityEvents {
 		}
 	}
 
-	private static void onEntityUpdate(LivingEvent.LivingTickEvent ev) {
-		if (ev.getEntity().level().isClientSide && AoAConfigs.CLIENT.partyDeaths.get() && ev.getEntity().deathTime >= 10) {
-			AABB boundingBox = ev.getEntity().getBoundingBox();
-			double width = boundingBox.maxX - boundingBox.minX;
-			double depth = boundingBox.maxZ - boundingBox.minZ;
-			double height = boundingBox.maxY - boundingBox.minY;
-
-			for (int i = 0; i < 3 + (10 * width * depth * height); i++) {
-				ev.getEntity().level().addParticle(new CustomisableParticleType.Data(AoAParticleTypes.RAINBOW_SPARKLER.get(), 0.1f, 3, 0, 0, 0, 1, -1), boundingBox.minX + RandomUtil.randomValueUpTo(width), boundingBox.minY + RandomUtil.randomValueUpTo(height), boundingBox.minZ + RandomUtil.randomValueUpTo(depth), RandomUtil.randomScaledGaussianValue(0.05d), 0, RandomUtil.randomScaledGaussianValue(0.05d));
-			}
-		}
-	}
-
 	private static void onEntityJoinWorld(EntityJoinLevelEvent ev) {
 		if (!ev.getLevel().isClientSide && WorldUtil.isWorld(ev.getLevel(), AoADimensions.NETHER)) {
 			if (ev.getEntity() instanceof WitherBoss && ((WitherBoss)ev.getEntity()).getInvulnerableTicks() == 220) {
@@ -97,7 +78,7 @@ public final class EntityEvents {
 		}
 	}
 
-	private static void onEntitySpawn(final MobSpawnEvent.FinalizeSpawn ev) {
+	private static void onEntitySpawn(final FinalizeSpawnEvent ev) {
 		if (ev.getSpawnType() == MobSpawnType.SPAWNER)
 			ev.getEntity().getPersistentData().putBoolean(SPAWNED_BY_SPAWNER_TAG, true);
 	}

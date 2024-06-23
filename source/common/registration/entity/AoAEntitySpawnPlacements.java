@@ -7,7 +7,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -16,14 +15,14 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.worldgen.AoABiomes;
-import net.tslat.aoa3.content.entity.mob.nether.NethengeicBeastEntity;
+import net.tslat.aoa3.content.entity.monster.nether.NethengeicBeastEntity;
 import net.tslat.aoa3.util.WorldUtil;
 
-import static net.minecraft.world.entity.SpawnPlacements.Type.*;
+import static net.minecraft.world.entity.SpawnPlacementTypes.*;
 import static net.minecraft.world.level.levelgen.Heightmap.Types.*;
 
 public final class AoAEntitySpawnPlacements {
-    private static final SpawnPlacements.Type AMPHIBIOUS = SpawnPlacements.Type.create("AMPHIBIOUS", ((level, pos, entityType) -> NaturalSpawner.canSpawnAtBody((level.getFluidState(pos).isEmpty() ? ON_GROUND : IN_WATER), level, pos, entityType)));
+    private static final SpawnPlacementType AMPHIBIOUS = (level, pos, entityType) -> (level.getFluidState(pos).isEmpty() ? ON_GROUND : IN_WATER).isSpawnPositionOk(level, pos, entityType);
 
     public static void init() {
         AdventOfAscension.getModEventBus().addListener(AoAEntitySpawnPlacements::registerSpawnPlacements);
@@ -38,43 +37,43 @@ public final class AoAEntitySpawnPlacements {
     }
 
     private static void setOverworldSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
-        register(ev, AoAMobs.ANCIENT_GOLEM.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
-        register(ev, AoAMobs.BOMB_CARRIER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 5f));
-        register(ev, AoAMobs.BUSH_BABY.get(), ON_GROUND, MOTION_BLOCKING, SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
-        register(ev, AoAMobs.CHARGER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER);
-        register(ev, AoAMobs.CHOMPER.get(), AMPHIBIOUS, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.difficultyBasedSpawnChance(0.1f));
-        register(ev, AoAMobs.CYCLOPS.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55));
-        register(ev, AoAMobs.GHOST.get(), SpawnBuilder.DEFAULT_MONSTER.noHigherThanY(0).spawnChance(1 / 2f));
-        register(ev, AoAMobs.GOBLIN.get(), SpawnBuilder.DEFAULT_DAY_MONSTER);
-        register(ev, AoAMobs.ICE_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMobs.KING_CHARGER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 16f));
-        register(ev, AoAMobs.LEAFY_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMobs.SAND_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMobs.SASQUATCH.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55));
-        register(ev, AoAMobs.STONE_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMobs.TREE_SPIRIT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 10f));
-        register(ev, AoAMobs.VOID_WALKER.get(), SpawnBuilder.DEFAULT_MONSTER.noHigherThanY(0));
-        register(ev, AoAMobs.WOOD_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMobs.YETI.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(45).spawnChance(1 / 2f));
+        register(ev, AoAMonsters.ANCIENT_GOLEM.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
+        register(ev, AoAMonsters.BOMB_CARRIER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 5f));
+        register(ev, AoAMonsters.BUSH_BABY.get(), ON_GROUND, MOTION_BLOCKING, SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
+        register(ev, AoAMonsters.CHARGER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER);
+        register(ev, AoAMonsters.CHOMPER.get(), AMPHIBIOUS, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.difficultyBasedSpawnChance(0.1f));
+        register(ev, AoAMonsters.CYCLOPS.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55));
+        register(ev, AoAMonsters.GHOST.get(), SpawnBuilder.DEFAULT_MONSTER.noHigherThanY(0).spawnChance(1 / 2f));
+        register(ev, AoAMonsters.GOBLIN.get(), SpawnBuilder.DEFAULT_DAY_MONSTER);
+        register(ev, AoAMonsters.ICE_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
+        register(ev, AoAMonsters.KING_CHARGER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 16f));
+        register(ev, AoAMonsters.LEAFY_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
+        register(ev, AoAMonsters.SAND_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
+        register(ev, AoAMonsters.SASQUATCH.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55));
+        register(ev, AoAMonsters.STONE_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
+        register(ev, AoAMonsters.TREE_SPIRIT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 10f));
+        register(ev, AoAMonsters.VOID_WALKER.get(), SpawnBuilder.DEFAULT_MONSTER.noHigherThanY(0));
+        register(ev, AoAMonsters.WOOD_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
+        register(ev, AoAMonsters.YETI.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(45).spawnChance(1 / 2f));
     }
 
     private static void setNetherSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
-        register(ev, AoAMobs.EMBRAKE.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMobs.FLAMEWALKER.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMobs.INFERNAL.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 10f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMobs.LITTLE_BAM.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMobs.NETHENGEIC_BEAST.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock().and(NethengeicBeastEntity::checkSpawnConditions));
+        register(ev, AoAMonsters.EMBRAKE.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
+        register(ev, AoAMonsters.FLAMEWALKER.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
+        register(ev, AoAMonsters.INFERNAL.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 10f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
+        register(ev, AoAMonsters.LITTLE_BAM.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
+        register(ev, AoAMonsters.NETHENGEIC_BEAST.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock().and(NethengeicBeastEntity::checkSpawnConditions));
     }
 
     private static void setPrecasiaSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
-        register(ev, AoAMobs.SPINOLEDON.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, random) -> pos.getY() >= 60 || pos.getY() <= -13).difficultyBasedSpawnChance(0.05f));
+        register(ev, AoAMonsters.SPINOLEDON.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, random) -> pos.getY() >= 60 || pos.getY() <= -13).difficultyBasedSpawnChance(0.05f));
         register(ev, AoAAnimals.HORNDRON.get(), SpawnBuilder.DEFAULT_ANIMAL);
         register(ev, AoAAnimals.DEINOTHERIUM.get(), SpawnBuilder.DEFAULT_ANIMAL);
-        register(ev, AoAMobs.MEGANEUROPSIS.get(), NO_RESTRICTIONS, MOTION_BLOCKING, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(65).difficultyBasedSpawnChance(0.05f));
-        register(ev, AoAMobs.SMILODON.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f));
-        register(ev, AoAMobs.ATTERCOPUS.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, rand) -> (level.getBiome(pos).is(AoABiomes.PRECASIAN_DESERT) && level.getSkyDarken() >= 4 && rand.nextFloat() < 0.05f * level.getCurrentDifficultyAt(pos).getEffectiveDifficulty()) || pos.getY() <= 50));
-        register(ev, AoAMobs.VELORAPTOR.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f));
-        register(ev, AoAMobs.DUNKLEOSTEUS.get(), IN_WATER, OCEAN_FLOOR, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noHigherThanY(55).difficultyBasedSpawnChance(0.05f));
+        register(ev, AoAMonsters.MEGANEUROPSIS.get(), NO_RESTRICTIONS, MOTION_BLOCKING, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(65).difficultyBasedSpawnChance(0.05f));
+        register(ev, AoAMonsters.SMILODON.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f));
+        register(ev, AoAMonsters.ATTERCOPUS.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, rand) -> (level.getBiome(pos).is(AoABiomes.PRECASIAN_DESERT) && level.getSkyDarken() >= 4 && rand.nextFloat() < 0.05f * level.getCurrentDifficultyAt(pos).getEffectiveDifficulty()) || pos.getY() <= 50));
+        register(ev, AoAMonsters.VELORAPTOR.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f));
+        register(ev, AoAMonsters.DUNKLEOSTEUS.get(), IN_WATER, OCEAN_FLOOR, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noHigherThanY(55).difficultyBasedSpawnChance(0.05f));
     }
 
     private static void setMiscSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
@@ -116,7 +115,7 @@ public final class AoAEntitySpawnPlacements {
         register(ev, entityType, ON_GROUND, MOTION_BLOCKING_NO_LEAVES, predicate);
     }
 
-    private static <T extends Entity> void register(SpawnPlacementRegisterEvent ev, EntityType<T> entityType, SpawnPlacements.Type type, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<?> predicate) {
+    private static <T extends Entity> void register(SpawnPlacementRegisterEvent ev, EntityType<T> entityType, SpawnPlacementType type, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<?> predicate) {
         ev.register(entityType, type, heightmap, (SpawnPlacements.SpawnPredicate<T>)predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
     }
 

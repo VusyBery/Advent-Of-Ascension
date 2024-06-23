@@ -5,8 +5,8 @@ import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 
 public class ShyregemBow extends BaseBow {
-	public ShyregemBow(double damage, float drawSpeedMultiplier, int durability) {
-		super(damage, drawSpeedMultiplier, durability);
+	public ShyregemBow(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Override

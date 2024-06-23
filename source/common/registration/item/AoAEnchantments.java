@@ -1,49 +1,108 @@
 package net.tslat.aoa3.common.registration.item;
 
-import net.minecraft.world.item.SwordItem;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoARegistries;
-import net.tslat.aoa3.content.enchantment.*;
-import net.tslat.aoa3.content.item.weapon.blaster.BaseBlaster;
-import net.tslat.aoa3.content.item.weapon.cannon.BaseCannon;
-import net.tslat.aoa3.content.item.weapon.greatblade.BaseGreatblade;
-import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
-import net.tslat.aoa3.content.item.weapon.maul.BaseMaul;
-import net.tslat.aoa3.content.item.weapon.shotgun.BaseShotgun;
-import net.tslat.aoa3.content.item.weapon.sniper.BaseSniper;
-import net.tslat.aoa3.content.item.weapon.staff.BaseStaff;
+import net.tslat.aoa3.content.enchantment.valueeffect.Clamp;
+import org.apache.commons.lang3.mutable.MutableFloat;
 
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 public final class AoAEnchantments {
 	public static void init() {}
 
-	public static final EnchantmentCategory GUN = EnchantmentCategory.create("AOA_GUN", item -> item instanceof BaseGun);
-	public static final EnchantmentCategory GREATBLADE = EnchantmentCategory.create("AOA_GREATBLADE", item -> item instanceof BaseGreatblade);
-	public static final EnchantmentCategory SHOTGUN = EnchantmentCategory.create("AOA_SHOTGUN", item -> item instanceof BaseShotgun);
-	public static final EnchantmentCategory MAUL = EnchantmentCategory.create("AOA_MAUL", item -> item instanceof BaseMaul);
-	public static final EnchantmentCategory MELEE_WEAPON = EnchantmentCategory.create("AOA_MELEE_WEAPON", item -> item instanceof SwordItem || item instanceof BaseMaul);
-	public static final EnchantmentCategory STAFF = EnchantmentCategory.create("AOA_STAFF", item -> item instanceof BaseStaff);
-	public static final EnchantmentCategory AMMO_CONSUMING = EnchantmentCategory.create("AOA_AMMO_CONSUMING", item -> item instanceof BaseGun || item instanceof BaseBlaster || item instanceof BaseStaff);
-	public static final EnchantmentCategory BULLET_FIRING = EnchantmentCategory.create("AOA_BULLET_FIRING", item -> item instanceof BaseGun && !(item instanceof BaseCannon));
-	public static final EnchantmentCategory BLASTER = EnchantmentCategory.create("AOA_BLASTER", item -> item instanceof BaseBlaster);
-	public static final EnchantmentCategory UNSTACKABLE = EnchantmentCategory.create("AOA_UNSTACKABLE", item -> item != null && item.getMaxStackSize() <= 1);
-	public static final EnchantmentCategory LIGHT_GUN = EnchantmentCategory.create("AOA_DUAL_WIELDABLE_GUN", item -> item instanceof BaseGun && !(item instanceof BaseSniper) && !(item instanceof BaseCannon));
+	public static final ResourceKey<Enchantment> ARCHMAGE = key("archmage");
+	public static final ResourceKey<Enchantment> BRACE = key("brace");
+	public static final ResourceKey<Enchantment> CONTROL = key("control");
+	public static final ResourceKey<Enchantment> FORM = key("form");
+	public static final ResourceKey<Enchantment> GREED = key("greed");
+	public static final ResourceKey<Enchantment> INTERVENTION = key("intervention");
+	public static final ResourceKey<Enchantment> RECHARGE = key("recharge");
+	public static final ResourceKey<Enchantment> SEVER = key("sever");
+	public static final ResourceKey<Enchantment> SHELL = key("shell");
 
-	public static final DeferredHolder<Enchantment, Enchantment> GREED = registerEnchantment("greed", GreedEnchantment::new);
+	public static final DeferredHolder<MapCodec<? extends EnchantmentValueEffect>, MapCodec<Clamp>> CLAMP = registerValueProvider("clamp", () -> Clamp.CODEC);
 
-	public static final DeferredHolder<Enchantment, ArchmageEnchantment> ARCHMAGE = registerEnchantment("archmage", ArchmageEnchantment::new);
-	public static final DeferredHolder<Enchantment, BraceEnchantment> BRACE = registerEnchantment("brace", BraceEnchantment::new);
-	public static final DeferredHolder<Enchantment, ControlEnchantment> CONTROL = registerEnchantment("control", ControlEnchantment::new);
-	public static final DeferredHolder<Enchantment, FormEnchantment> FORM = registerEnchantment("form", FormEnchantment::new);
-	public static final DeferredHolder<Enchantment, InterventionEnchantment> INTERVENTION = registerEnchantment("intervention", InterventionEnchantment::new);
-	public static final DeferredHolder<Enchantment, RechargeEnchantment> RECHARGE = registerEnchantment("recharge", RechargeEnchantment::new);
-	public static final DeferredHolder<Enchantment, SeverEnchantment> SEVER = registerEnchantment("sever", SeverEnchantment::new);
-	public static final DeferredHolder<Enchantment, ShellEnchantment> SHELL = registerEnchantment("shell", ShellEnchantment::new);
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> CRIT_DAMAGE = registerEffectType("crit_damage", builder -> builder.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_DAMAGE).listOf()));
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> SPIRIT_CONSUMPTION = registerEffectType("spirit_consumption", builder -> builder.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> RUNE_COST = registerEffectType("rune_cost", builder -> builder.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> RECOIL = registerEffectType("recoil", builder -> builder.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> PELLET_SPREAD = registerEffectType("pellet_spread", builder -> builder.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<List<ConditionalEffect<EnchantmentValueEffect>>>> AMMO_COST = registerEffectType("ammo_cost", builder -> builder.persistent(ConditionalEffect.codec(EnchantmentValueEffect.CODEC, LootContextParamSets.ENCHANTED_ITEM).listOf()));
 
-	private static <T extends Enchantment> DeferredHolder<Enchantment, T> registerEnchantment(String id, Supplier<T> enchantment) {
-		return AoARegistries.ENCHANTMENTS.register(id, enchantment);
+	public static float modifyCritDamage(ServerLevel level, ItemStack stack, Entity target, DamageSource source, float damage) {
+		final MutableFloat mutableFloat = new MutableFloat(damage);
+
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyDamageFilteredValue(CRIT_DAMAGE.get(), level, enchantLevel, stack, target, source, mutableFloat));
+
+		return mutableFloat.floatValue();
+	}
+
+	public static float modifySpiritConsumption(ServerLevel level, ItemStack stack, float spiritCost) {
+		final MutableFloat mutableFloat = new MutableFloat(spiritCost);
+
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(SPIRIT_CONSUMPTION.get(), level, enchantLevel, stack, mutableFloat));
+
+		return mutableFloat.floatValue();
+	}
+
+	public static int modifyRuneCost(ServerLevel level, ItemStack stack, int runeCost) {
+		final MutableFloat mutableFloat = new MutableFloat(runeCost);
+
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(RUNE_COST.get(), level, enchantLevel, stack, mutableFloat));
+
+		return Mth.ceil(mutableFloat.floatValue());
+	}
+
+	public static float modifyRecoil(ServerLevel level, ItemStack stack, float recoil) {
+		final MutableFloat mutableFloat = new MutableFloat(recoil);
+
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(RECOIL.get(), level, enchantLevel, stack, mutableFloat));
+
+		return mutableFloat.floatValue();
+	}
+
+	public static float modifyPelletSpread(ServerLevel level, ItemStack stack, float spread) {
+		final MutableFloat mutableFloat = new MutableFloat(spread);
+
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(PELLET_SPREAD.get(), level, enchantLevel, stack, mutableFloat));
+
+		return mutableFloat.floatValue();
+	}
+
+	public static int modifyAmmoCost(ServerLevel level, ItemStack stack, int cost) {
+		final MutableFloat mutableFloat = new MutableFloat(cost);
+
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(AMMO_COST.get(), level, enchantLevel, stack, mutableFloat));
+
+		return Mth.ceil(mutableFloat.floatValue());
+	}
+
+	private static ResourceKey<Enchantment> key(String id) {
+		return ResourceKey.create(Registries.ENCHANTMENT, AdventOfAscension.id(id));
+	}
+
+	private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> registerEffectType(String id, UnaryOperator<DataComponentType.Builder<T>> builder) {
+		return AoARegistries.ENCHANTMENT_EFFECT_COMPONENTS.register(id, () -> builder.apply(DataComponentType.builder()).build());
+	}
+
+	private static <T extends EnchantmentValueEffect> DeferredHolder<MapCodec<? extends EnchantmentValueEffect>, MapCodec<T>> registerValueProvider(String id, Supplier<MapCodec<T>> codec) {
+		return AoARegistries.ENCHANTMENT_VALUE_EFFECTS.register(id, codec);
 	}
 }

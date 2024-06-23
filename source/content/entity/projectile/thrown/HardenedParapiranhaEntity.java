@@ -20,9 +20,9 @@ import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
 import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class HardenedParapiranhaEntity extends BaseBullet implements HardProjectile, GeoEntity {
@@ -49,7 +49,7 @@ public class HardenedParapiranhaEntity extends BaseBullet implements HardProject
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.1f;
 	}
 
@@ -75,7 +75,7 @@ public class HardenedParapiranhaEntity extends BaseBullet implements HardProject
 
 	@Override
 	public void doEntityImpact(Entity target, Vec3 impactLocation) {
-		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.HARDENED_PARAPIRANHA.get().getDamage()))
+		if (DamageUtil.doProjectileAttack(getOwner(), this, target, AoAWeapons.HARDENED_PARAPIRANHA.get().getGunDamage(getWeaponStack(AoAWeapons.HARDENED_PARAPIRANHA.asItem()))))
 			EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.WITHER, 60).level(2));
 	}
 

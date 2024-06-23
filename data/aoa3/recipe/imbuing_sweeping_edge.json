@@ -1,0 +1,15 @@
+{
+  "type": "aoa3:imbuing",
+  "aspect_foci": [
+    "aoa3:damage",
+    "aoa3:power",
+    "aoa3:precision",
+    "aoa3:control"
+  ],
+  "enchantment": "minecraft:sweeping_edge",
+  "enchantment_level": 1,
+  "imbuing_level": 10,
+  "power_source": {
+    "item": "aoa3:glistening_power_stone"
+  }
+}

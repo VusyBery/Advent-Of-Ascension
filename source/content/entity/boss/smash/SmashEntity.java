@@ -11,9 +11,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -21,12 +19,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidType;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.content.entity.brain.task.custom.ChargeAttack;
 import net.tslat.aoa3.content.entity.brain.task.custom.GroundSlamAttack;
 import net.tslat.aoa3.library.builder.SoundBuilder;
+import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -50,20 +50,19 @@ import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.registry.SBLMemoryTypes;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.constant.DefaultAnimations;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
-import java.util.UUID;
 
 public class SmashEntity extends AoABoss {
 	protected static final EntityDataAccessor<Boolean> ENRAGED = SynchedEntityData.defineId(SmashEntity.class, EntityDataSerializers.BOOLEAN);
-	private static final AttributeModifier ENRAGED_DAMAGE_MOD = new AttributeModifier(UUID.fromString("104c09f0-28cc-43dd-81c0-10de6b3083bd"), "EnragedDamageModifier", 0.95f, AttributeModifier.Operation.MULTIPLY_TOTAL);
-	private static final AttributeModifier ENRAGED_ARMOUR_MOD = new AttributeModifier(UUID.fromString("bbbdf964-689b-4bcf-9a23-122a7bba682e"), "EnragedArmourModifier", 1.1f, AttributeModifier.Operation.MULTIPLY_TOTAL);
-	private static final AttributeModifier ENRAGED_TOUGHNESS_MOD = new AttributeModifier(UUID.fromString("ac843c67-4731-4e77-85e9-6992bd92ae4b"), "EnragedToughnessModifier", 1.25f, AttributeModifier.Operation.MULTIPLY_TOTAL);
+	private static final AttributeModifier ENRAGED_DAMAGE_MOD = new AttributeModifier(AdventOfAscension.id("enraged"), 0.95f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+	private static final AttributeModifier ENRAGED_ARMOUR_MOD = new AttributeModifier(AdventOfAscension.id("enraged"), 1.1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+	private static final AttributeModifier ENRAGED_TOUGHNESS_MOD = new AttributeModifier(AdventOfAscension.id("enraged"), 1.25f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 
 	private static final int AXE_SWING_STATE = 0;
 	private static final int AXE_SLAM_STATE = 1;
@@ -105,30 +104,25 @@ public class SmashEntity extends AoABoss {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
-		return 3.0625f;
-	}
-
-	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		getEntityData().define(ENRAGED, false);
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
+		builder.define(ENRAGED, false);
 	}
 
 	@Override
 	protected void customServerAiStep() {
 		super.customServerAiStep();
 
-		if (EntityUtil.getCurrentHealthPercent(this) < 0.25 && !isEnraged())
+		if (EntityUtil.getHealthPercent(this) < 0.25 && !isEnraged())
 			enrage();
 	}
 
 	protected void enrage() {
 		if (!isEnraged()) {
 			getEntityData().set(ENRAGED, true);
-			EntityUtil.applyAttributeModifierSafely(this, Attributes.ATTACK_DAMAGE, ENRAGED_DAMAGE_MOD, true);
-			EntityUtil.applyAttributeModifierSafely(this, Attributes.ARMOR, ENRAGED_ARMOUR_MOD, true);
-			EntityUtil.applyAttributeModifierSafely(this, Attributes.ARMOR_TOUGHNESS, ENRAGED_TOUGHNESS_MOD, true);
+			AttributeUtil.applyPermanentModifier(this, Attributes.ATTACK_DAMAGE, ENRAGED_DAMAGE_MOD);
+			AttributeUtil.applyPermanentModifier(this, Attributes.ARMOR, ENRAGED_ARMOUR_MOD);
+			AttributeUtil.applyPermanentModifier(this, Attributes.ARMOR_TOUGHNESS, ENRAGED_TOUGHNESS_MOD);
 			triggerAnim("arms_controller", "enrage");
 			new SoundBuilder(AoASounds.ENTITY_SMASH_ENRAGE).followEntity(this).category(SoundSource.HOSTILE).execute();
 			BrainUtils.setForgettableMemory(this, MemoryModuleType.ATTACK_COOLING_DOWN, true, 100);

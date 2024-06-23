@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class LightIron extends BaseGun {
-	public LightIron(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public LightIron(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

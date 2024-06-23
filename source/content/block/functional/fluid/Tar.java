@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,17 +19,17 @@ import java.util.function.Supplier;
 
 public class Tar extends LiquidBlock {
 	public Tar(Supplier<? extends FlowingFluid> supplier, Properties properties) {
-		super(supplier, properties);
+		super(supplier.get(), properties);
 	}
 
 	@Override
-	public @Nullable BlockPathTypes getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob) {
-		return BlockPathTypes.DAMAGE_FIRE;
+	public @Nullable PathType getBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob) {
+		return PathType.DAMAGE_FIRE;
 	}
 
 	@Override
-	public @Nullable BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, BlockPathTypes originalType) {
-		return BlockPathTypes.DAMAGE_FIRE;
+	public @Nullable PathType getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob mob, PathType originalType) {
+		return PathType.DAMAGE_FIRE;
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class Tar extends LiquidBlock {
 		float sizeSpeedMod = Mth.clamp(1 / (2 / (entity.getBbWidth() * entity.getBbHeight())), 0.35f, 1f);
 
 		entity.makeStuckInBlock(state, new Vec3(sizeSpeedMod, sizeSpeedMod, sizeSpeedMod));
-		entity.setSecondsOnFire(2);
+		entity.igniteForSeconds(2);
 	}
 
 	@Override

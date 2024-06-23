@@ -19,16 +19,14 @@ public final class AoACommands {
 		NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, RegisterCommandsEvent.class, AoACommands::registerCommands);
 	}
 
-	public static final DeferredHolder<ArgumentTypeInfo<?, ?>, SingletonArgumentInfo<AoASkillArgument>> AOA_SKILL = register("aoa_skill", AoASkillArgument.class, () -> SingletonArgumentInfo.contextAware(AoASkillArgument::skill));
-	public static final DeferredHolder<ArgumentTypeInfo<?, ?>, SingletonArgumentInfo<AoAResourceArgument>> AOA_RESOURCE = register("aoa_resource", AoAResourceArgument.class, () -> SingletonArgumentInfo.contextAware(AoAResourceArgument::resource));
+	public static final DeferredHolder<ArgumentTypeInfo<?, ?>, SingletonArgumentInfo<AoASkillArgument>> AOA_SKILL = register("aoa_skill", AoASkillArgument.class, () -> SingletonArgumentInfo.contextFree(AoASkillArgument::skill));
+	public static final DeferredHolder<ArgumentTypeInfo<?, ?>, SingletonArgumentInfo<AoAResourceArgument>> AOA_RESOURCE = register("aoa_resource", AoAResourceArgument.class, () -> SingletonArgumentInfo.contextFree(AoAResourceArgument::resource));
 
 	private static void registerCommands(final RegisterCommandsEvent ev) {
 		AoACommand.registerSubCommands(ev.getDispatcher(), ev.getBuildContext());
 	}
 
 	private static <A extends ArgumentType<?>, T extends ArgumentTypeInfo.Template<A>, I extends ArgumentTypeInfo<A, T>> DeferredHolder<ArgumentTypeInfo<?, ?>, I> register(String id, Class<A> argumentClass, Supplier<I> argumentType) {
-		ArgumentTypeInfos.registerByClass(argumentClass, argumentType.get());
-
-		return AoARegistries.ARGUMENT_TYPES.register(id, argumentType);
+		return AoARegistries.ARGUMENT_TYPES.register(id, () -> ArgumentTypeInfos.registerByClass(argumentClass, argumentType.get()));
 	}
 }

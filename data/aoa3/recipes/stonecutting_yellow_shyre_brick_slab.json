@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 2,
-  "ingredient": {
-    "item": "aoa3:yellow_shyre_bricks"
-  },
-  "result": "aoa3:yellow_shyre_brick_slab"
-}

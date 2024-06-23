@@ -4,11 +4,11 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.fml.common.asm.enumextension.EnumProxy;
+import net.neoforged.neoforge.client.IArmPoseTransformer;
 
 public final class AoAArmPoses {
-    public static final HumanoidModel.ArmPose ATTUNING_BOWL = HumanoidModel.ArmPose.create("AOA_ATTUNING_BOWL", true, AoAArmPoses::attuningBowlTransformer);
-
-    public static void init() {}
+    public static final EnumProxy<HumanoidModel.ArmPose> ATTUNING_BOWL = new EnumProxy<>(HumanoidModel.ArmPose.class, true, (IArmPoseTransformer)AoAArmPoses::attuningBowlTransformer);
 
     private static void attuningBowlTransformer(HumanoidModel<?> model, LivingEntity entity, HumanoidArm arm) {
         if (entity.isUsingItem()) {

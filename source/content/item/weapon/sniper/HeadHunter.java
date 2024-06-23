@@ -10,9 +10,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
@@ -23,8 +23,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class HeadHunter extends BaseSniper {
-	public HeadHunter(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public HeadHunter(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -42,6 +42,11 @@ public class HeadHunter extends BaseSniper {
 				double headMaxRange = headMinRange + target.getBbHeight() * 0.225f;
 
 				if (impactPos.y > headMinRange && impactPos.y < headMaxRange) {
+					ItemStack stack = shooter.getItemInHand(bullet.getHand());
+
+					if (!stack.is(this))
+						stack = getDefaultInstance();
+
 					for (int i = 0; i < 5; i++) {
 						serverLevel.sendParticles(ParticleTypes.DAMAGE_INDICATOR, impactPos.x + RandomUtil.randomValueBetween(-0.5d, 0.5d), impactPos.y + RandomUtil.randomValueBetween(-0.5d, 0.5d), impactPos.z + RandomUtil.randomValueBetween(-0.5d, 0.5d), 3, 0, 0, 0, 0);
 					}
@@ -52,15 +57,15 @@ public class HeadHunter extends BaseSniper {
 						return;
 
 					if (shooter instanceof Player player)
-						player.getCooldowns().addCooldown(this, (int)(getFiringDelay() / 2f));
+						player.getCooldowns().addCooldown(this, (int)(getTicksBetweenShots(stack) / 2f));
 				}
 			}
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

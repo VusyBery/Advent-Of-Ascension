@@ -1,7 +1,7 @@
 package net.tslat.aoa3.content.entity.npc.trader;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -9,6 +9,7 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.tslat.aoa3.common.registration.item.AoAArmour;
@@ -18,6 +19,8 @@ import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.entity.base.AoATrader;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 
 public class ExplosivesExpertEntity extends AoATrader {
@@ -62,15 +65,10 @@ public class ExplosivesExpertEntity extends AoATrader {
 	}
 
 	public static ItemStack getExplosiveExpertFireworks() {
-		ItemStack stack = new ItemStack(Items.FIREWORK_ROCKET);
-		CompoundTag tag = new CompoundTag();
-		CompoundTag fireworksTag = new CompoundTag();
+		ItemStack fireworks = Items.FIREWORK_ROCKET.getDefaultInstance();
 
-		fireworksTag.putByte("Flight", (byte)42);
-		tag.put("Fireworks", fireworksTag);
-		tag.putBoolean("AoA", true);
-		stack.setTag(tag);
+		fireworks.set(DataComponents.FIREWORKS, new Fireworks(42, List.of()));
 
-		return stack;
+		return fireworks;
 	}
 }

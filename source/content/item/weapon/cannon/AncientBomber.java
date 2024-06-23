@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class AncientBomber extends BaseCannon {
-	public AncientBomber(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public AncientBomber(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

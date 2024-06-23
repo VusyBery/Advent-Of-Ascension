@@ -2,7 +2,6 @@ package net.tslat.aoa3.content.entity.base;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingLookControl;
 import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
@@ -13,7 +12,7 @@ import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.content.entity.brain.task.temp.SetRandomSwimTarget;
@@ -32,7 +31,7 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
     protected AoAWaterMonster(EntityType<? extends AoAMonster> entityType, Level level) {
         super(entityType, level);
 
-        setPathfindingMalus(BlockPathTypes.WATER, 0);
+        setPathfindingMalus(PathType.WATER, 0);
 
         this.moveControl = new SmoothSwimmingMoveControl(this, 85, 30, 1, 0.1f, true);
         this.lookControl = new SmoothSwimmingLookControl(this, 10);
@@ -67,11 +66,6 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
                 new OneRandomBehaviour<>(
                         new SetRandomSwimTarget<>().speedModifier(0.9f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));
-    }
-
-    @Override
-    public MobType getMobType() {
-        return MobType.WATER;
     }
 
     @Override
@@ -120,7 +114,7 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
     }
 
     @Override
-    public boolean canBeLeashed(Player player) {
+    public boolean canBeLeashed() {
         return false;
     }
 }

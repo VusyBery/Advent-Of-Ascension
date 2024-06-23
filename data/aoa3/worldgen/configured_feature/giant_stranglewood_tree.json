@@ -20,10 +20,8 @@
       "offset": 0,
       "radius": {
         "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 3,
-          "min_inclusive": 2
-        }
+        "max_inclusive": 3,
+        "min_inclusive": 2
       }
     },
     "foliage_provider": {
@@ -49,10 +47,8 @@
       "type": "aoa3:aoa_giant_jungle",
       "additional_height": {
         "type": "minecraft:uniform",
-        "value": {
-          "max_inclusive": 150,
-          "min_inclusive": 0
-        }
+        "max_inclusive": 150,
+        "min_inclusive": 0
       },
       "base_height": 10
     },

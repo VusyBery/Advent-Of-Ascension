@@ -31,7 +31,7 @@ public class KajarosEntity extends AoAMeleeMob<KajarosEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.009375f;
 	}
 
@@ -48,7 +48,7 @@ public class KajarosEntity extends AoAMeleeMob<KajarosEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

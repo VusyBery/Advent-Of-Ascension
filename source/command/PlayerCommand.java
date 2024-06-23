@@ -33,7 +33,7 @@ public class PlayerCommand implements Command<CommandSourceStack> {
 
 		builder.then(Commands.argument("player", EntityArgument.player())
 			.then(Commands.literal("skills")
-				.then(Commands.argument("skill", AoASkillArgument.skill(buildContext))
+				.then(Commands.argument("skill", AoASkillArgument.skill())
 					.then(Commands.literal("level")
 						.then(Commands.literal("add").requires(command -> command.hasPermission(4))
 							.then(Commands.argument("value", IntegerArgumentType.integer(1, 999))
@@ -68,7 +68,7 @@ public class PlayerCommand implements Command<CommandSourceStack> {
 								.executes((context) -> adjustCycle(context, "set"))))
 						.then(Commands.literal("check").executes(PlayerCommand::checkCycle)))))
 			.then(Commands.literal("resources")
-				.then(Commands.argument("resource", AoAResourceArgument.resource(buildContext))
+				.then(Commands.argument("resource", AoAResourceArgument.resource())
 					.then(Commands.literal("add").requires(command -> command.hasPermission(4))
 						.then(Commands.argument("value", FloatArgumentType.floatArg(1, Float.MAX_VALUE))
 							.executes((context) -> adjustResources(context, "add"))))

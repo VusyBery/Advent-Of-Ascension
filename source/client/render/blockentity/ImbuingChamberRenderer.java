@@ -74,7 +74,7 @@ public class ImbuingChamberRenderer implements BlockEntityRenderer<ImbuingChambe
 					poseStack.pushPose();
 					poseStack.translate(0, (lastIndex) * 0.137f, 0);
 					poseStack.scale(1, 0.137f * delta, 1);
-					BeaconRenderer.renderBeaconBeam(poseStack, buffer, BeaconRenderer.BEAM_LOCATION, partialTick, 0.125f, Minecraft.getInstance().level.getGameTime() * 12, 0, 1, new float[] {ColourUtil.getRed(colour) / 255f, ColourUtil.getGreen(colour) / 255f, ColourUtil.getBlue(colour) / 255f}, 0.1f, 0.12f);
+					BeaconRenderer.renderBeaconBeam(poseStack, buffer, BeaconRenderer.BEAM_LOCATION, partialTick, 0.125f, Minecraft.getInstance().level.getGameTime() * 12, 0, 1, colour, 0.1f, 0.12f);
 					poseStack.popPose();
 
 					if (slotStack.getItem() instanceof AspectFocusItem focus)

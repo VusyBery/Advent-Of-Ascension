@@ -11,30 +11,28 @@ import net.minecraft.world.entity.monster.Phantom;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.GunRecoilPacket;
+import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.enchantment.ControlEnchantment;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.entity.projectile.gun.SniperSlugEntity;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import net.tslat.aoa3.util.AdvancementUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public abstract class BaseSniper extends BaseGun {
-	protected static final ResourceLocation SCOPE_1 = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/overlay/scope/scope1.png");
-	protected static final ResourceLocation SCOPE_2 = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/overlay/scope/scope2.png");
-	protected static final ResourceLocation SCOPE_3 = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/overlay/scope/scope3.png");
-	protected static final ResourceLocation SCOPE_4 = new ResourceLocation(AdventOfAscension.MOD_ID, "textures/gui/overlay/scope/scope4.png");
+	protected static final ResourceLocation SCOPE_1 = AdventOfAscension.id("textures/gui/overlay/scope/scope1.png");
+	protected static final ResourceLocation SCOPE_2 = AdventOfAscension.id("textures/gui/overlay/scope/scope2.png");
+	protected static final ResourceLocation SCOPE_3 = AdventOfAscension.id("textures/gui/overlay/scope/scope3.png");
+	protected static final ResourceLocation SCOPE_4 = AdventOfAscension.id("textures/gui/overlay/scope/scope4.png");
 
-	public BaseSniper(float dmg, int durability, int fireDelayTicks, float recoil) {
-		super(dmg, durability, fireDelayTicks, recoil);
+	public BaseSniper(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Override
@@ -65,12 +63,12 @@ public abstract class BaseSniper extends BaseGun {
 
 	@Override
 	public void doRecoil(ServerPlayer player, ItemStack stack, InteractionHand hand) {
-		float recoilAmount = ControlEnchantment.modifyRecoil(stack, getRecoilForShot(stack, player) * 0.25f);
+		float recoilAmount = AoAEnchantments.modifyRecoil(player.serverLevel(), stack, getRecoilForShot(stack, player) * 0.25f);
 
 		if (!player.isShiftKeyDown() || !player.onGround())
 			recoilAmount *= 3.5f;
 
-		AoANetworking.sendToPlayer(player, new GunRecoilPacket(recoilAmount, getFiringDelay()));
+		AoANetworking.sendToPlayer(player, new GunRecoilPacket(recoilAmount, getTicksBetweenShots(stack)));
 	}
 
 	@Override
@@ -78,7 +76,7 @@ public abstract class BaseSniper extends BaseGun {
 		super.doImpactDamage(target, shooter, bullet, impactPosition, bullet.getAge() <= 0 ? bulletDmgMultiplier * 0.5f : bulletDmgMultiplier);
 
 		if (!target.isAlive() && target instanceof Phantom && shooter instanceof ServerPlayer pl)
-			AdvancementUtil.completeAdvancement(pl, AdventOfAscension.id("completionist/skeet"), "phantom_sniper_kill");
+			AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("completionist/skeet"), "phantom_sniper_kill");
 	}
 
 	@Override
@@ -91,8 +89,8 @@ public abstract class BaseSniper extends BaseGun {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 
 		tooltip.add(2, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SNIPER_CROUCH, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 	}

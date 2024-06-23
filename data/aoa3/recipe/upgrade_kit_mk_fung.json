@@ -1,0 +1,13 @@
+{
+  "type": "aoa3:upgrade_kit",
+  "input": {
+    "item": "aoa3:mk"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:mk_fung"
+  },
+  "upgrade_kit": {
+    "item": "aoa3:fungal_upgrade_kit"
+  }
+}

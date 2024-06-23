@@ -24,7 +24,7 @@ public class EnergyResourceRenderer implements AoAResourceRenderer {
 		matrix.scale(0.5f, 0.5f, 0);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, new ResourceLocation(resourceId.getNamespace(), "textures/gui/aoaresource/" + resourceId.getPath() + ".png"));
+		RenderSystem.setShaderTexture(0, ResourceLocation.fromNamespaceAndPath(resourceId.getNamespace(), "textures/gui/aoaresource/" + resourceId.getPath() + ".png"));
 
 		int renderWidth = hudRenderWidth(resource) * 2;
 		int renderHeight = hudRenderHeight(resource) * 2;

@@ -5,6 +5,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.library.object.explosion.ExplosionInfo;
@@ -13,12 +14,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public final class LocaleUtil {
-	public static Component getFormattedItemDescriptionText(Item item, ItemDescriptionType type, int descNumber, Component... args) {
-		return getFormattedItemDescriptionText("item." + RegistryUtil.getId(item).getNamespace() + "." + RegistryUtil.getId(item).getPath() + ".desc." + descNumber, type, args);
+	public static String itemDescKey(ResourceLocation id, int descIndex) {
+		return "item." + id.getNamespace() + "." + id.getPath() + ".desc." + descIndex;
 	}
 
-	public static MutableComponent getFormattedItemDescriptionText(String langKey, ItemDescriptionType type, Component... args) {
-		return Component.translatable(langKey, (Object[])args).withStyle(type.format);
+	public static String itemDescKey(Item item, int descIndex) {
+		return itemDescKey(RegistryUtil.getId(item), descIndex);
+	}
+
+	public static String itemNameKey(String name) {
+		return namespacedKey("item", name);
+	}
+
+	public static String namespacedKey(String prefix, String suffix) {
+		return prefix + "." + AdventOfAscension.MOD_ID + "." + suffix;
 	}
 
 	public static MutableComponent getLocaleMessage(String langKey) {
@@ -36,6 +45,14 @@ public final class LocaleUtil {
 			localeMessage.withStyle(format);
 
 		return localeMessage;
+	}
+
+	public static Component getFormattedItemDescriptionText(Item item, ItemDescriptionType type, int descNumber, Component... args) {
+		return getFormattedItemDescriptionText("item." + RegistryUtil.getId(item).getNamespace() + "." + RegistryUtil.getId(item).getPath() + ".desc." + descNumber, type, args);
+	}
+
+	public static MutableComponent getFormattedItemDescriptionText(String langKey, ItemDescriptionType type, Component... args) {
+		return Component.translatable(langKey, (Object[])args).withStyle(type.format);
 	}
 
 	public static MutableComponent numToComponent(Number number) {

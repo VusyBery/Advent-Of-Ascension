@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:gun_frame"
+  },
+  "ingredients": [
+    {
+      "tag": "c:ingots/iron"
+    },
+    {
+      "item": "aoa3:sour_gummy"
+    },
+    {
+      "item": "aoa3:sour_gummy"
+    },
+    {
+      "tag": "neoforge:mints"
+    },
+    {
+      "tag": "neoforge:mints"
+    },
+    {
+      "tag": "neoforge:mints"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:mint_magnum"
+  }
+}

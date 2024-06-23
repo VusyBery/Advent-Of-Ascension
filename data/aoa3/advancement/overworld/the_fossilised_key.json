@@ -1,0 +1,36 @@
+{
+  "parent": "aoa3:overworld/the_journey_begins",
+  "criteria": {
+    "obtain_precasia_realmstone": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:precasia_realmstone"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.overworld.the_fossilised_key.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "aoa3:precasia_realmstone"
+    },
+    "title": {
+      "color": "dark_green",
+      "translate": "advancements.aoa3.overworld.the_fossilised_key.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_precasia_realmstone"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

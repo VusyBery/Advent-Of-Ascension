@@ -8,16 +8,14 @@
   "has_raids": false,
   "has_skylight": true,
   "height": 384,
-  "infiniburn": "#minecraft:infiniburn_overworld",
+  "infiniburn": "#aoa3:infiniburn_barathos",
   "logical_height": 319,
   "min_y": -64,
   "monster_spawn_block_light_limit": 0,
   "monster_spawn_light_level": {
     "type": "minecraft:uniform",
-    "value": {
-      "max_inclusive": 7,
-      "min_inclusive": 0
-    }
+    "max_inclusive": 7,
+    "min_inclusive": 0
   },
   "natural": true,
   "piglin_safe": false,

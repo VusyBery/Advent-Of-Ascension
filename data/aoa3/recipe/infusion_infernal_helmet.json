@@ -1,0 +1,24 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:helmet_frame"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:magma_cream"
+    },
+    {
+      "item": "aoa3:ice_crystal"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "tag": "neoforge:ingots/emberstone"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:infernal_helmet"
+  }
+}

@@ -6,6 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.ColorRGBA;
+import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.BlockItem;
@@ -23,7 +25,6 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
-import net.tslat.aoa3.advent.AoAStartupCache;
 import net.tslat.aoa3.common.registration.item.AoACreativeModeTabs;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.block.decoration.banner.BannerBlock;
@@ -75,6 +76,14 @@ public final class BlockRegistrar<T extends Block> {
 
 	public BlockRegistrar<T> baseDirt() {
 		basedOn(Blocks.DIRT);
+		generationBlocksTab();
+
+		return this;
+	}
+
+	public BlockRegistrar<T> baseSand(int colour) {
+		basedOn(Blocks.SAND);
+		factory(properties -> new ColoredFallingBlock(new ColorRGBA(colour), properties));
 		generationBlocksTab();
 
 		return this;
@@ -189,22 +198,23 @@ public final class BlockRegistrar<T extends Block> {
 		return this;
 	}
 
-	public BlockRegistrar<T> baseFlower(@Nullable Supplier<? extends MobEffect> potionEffect, int duration) {
+	public BlockRegistrar<T> baseFlower(@Nullable Holder<? extends MobEffect> potionEffect, int duration) {
 		mapColour(MapColor.PLANT);
 		sounds(SoundType.GRASS);
 		noClip();
 		instabreak();
 		modelOffset(BlockBehaviour.OffsetType.XZ);
 		pistonBreaks();
-		factory(properties -> new FlowerBlock((Supplier)potionEffect, duration, properties));
+		factory(properties -> new FlowerBlock((Holder<MobEffect>)potionEffect, duration, properties));
 		generationBlocksTab();
 
 		return this;
 	}
 
-	public BlockRegistrar<T> baseOre() {
+	public BlockRegistrar<T> baseOre(IntProvider xpProvider) {
 		basedOn(Blocks.IRON_ORE);
 		generationBlocksTab();
+		factory(properties -> new DropExperienceBlock(xpProvider, properties));
 
 		return this;
 	}
@@ -348,7 +358,7 @@ public final class BlockRegistrar<T extends Block> {
 
 		instrument(base.defaultBlockState().instrument());
 		stats(base.defaultDestroyTime(), base.getExplosionResistance());
-		sounds(base.getSoundType(base.defaultBlockState()));
+		sounds(base.defaultBlockState().getSoundType());
 		mapColour(base.defaultMapColor());
 		light(base.defaultBlockState().getLightEmission());
 		alwaysSolid();
@@ -372,7 +382,7 @@ public final class BlockRegistrar<T extends Block> {
 
 	public BlockRegistrar<T> baseStairs(DeferredBlock<? extends Block> block) {
 		basedOn(block);
-		factory(properties -> new StairBlock(() -> block.get().defaultBlockState(), properties));
+		factory(properties -> new StairBlock(block.get().defaultBlockState(), properties));
 		decorationBlocksTab();
 
 		return this;
@@ -720,7 +730,7 @@ public final class BlockRegistrar<T extends Block> {
 	}
 
 	public BlockRegistrar<T> addToBlockEntity(Supplier<BlockEntityType<?>> blockEntity) {
-		this.callbacks.add(block -> AoAStartupCache.addBlockToExistingBlockEntityType(blockEntity, () -> block));
+		this.callbacks.add(block -> AoABlockEntities.addBlockToExistingBlockEntityType(blockEntity, () -> block));
 
 		return this;
 	}

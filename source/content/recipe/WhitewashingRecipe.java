@@ -1,28 +1,21 @@
 package net.tslat.aoa3.content.recipe;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
+import net.tslat.aoa3.common.menu.generic.GenericRecipeInput;
 import net.tslat.aoa3.common.registration.AoARecipes;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.util.RecipeUtil;
 import org.jetbrains.annotations.Nullable;
 
-
-public class WhitewashingRecipe implements Recipe<Inventory> {
-	public static final Codec<WhitewashingRecipe> CODEC = RecordCodecBuilder.create(builder ->
-					RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails).and(builder.group(
-					Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(instance -> instance.input),
-					Ingredient.CODEC_NONEMPTY.fieldOf("washing_material").forGetter(instance -> instance.washingMaterial),
-					ItemStack.ITEM_WITH_COUNT_CODEC.fieldOf("result").forGetter(instance -> instance.output)))
-			.apply(builder, WhitewashingRecipe::new));
-
+public class WhitewashingRecipe implements Recipe<GenericRecipeInput> {
 	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
 
 	private final Ingredient input;
@@ -76,37 +69,42 @@ public class WhitewashingRecipe implements Recipe<Inventory> {
 	}
 
 	@Override
-	public boolean matches(Inventory inv, Level world) {
+	public boolean matches(GenericRecipeInput inv, Level world) {
 		return this.input.test(inv.getItem(0)) && this.washingMaterial.test(inv.getItem(1));
 	}
 
 	@Override
-	public ItemStack assemble(Inventory inventory, RegistryAccess registryAccess) {
-		return getResultItem(registryAccess);
+	public ItemStack assemble(GenericRecipeInput recipeInput, HolderLookup.Provider holderLookup) {
+		return getResultItem(holderLookup);
 	}
 
 	@Override
-	public ItemStack getResultItem(RegistryAccess registryAccess) {
+	public ItemStack getResultItem(HolderLookup.Provider holderLookup) {
 		return this.output.copy();
 	}
 
 	public static class Factory implements RecipeSerializer<WhitewashingRecipe> {
+		public static final MapCodec<WhitewashingRecipe> CODEC = RecordCodecBuilder.mapCodec(builder ->
+				RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails).and(builder.group(
+								Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(instance -> instance.input),
+								Ingredient.CODEC_NONEMPTY.fieldOf("washing_material").forGetter(instance -> instance.washingMaterial),
+								ItemStack.STRICT_CODEC.fieldOf("result").forGetter(instance -> instance.output)))
+						.apply(builder, WhitewashingRecipe::new));
+		public static final StreamCodec<RegistryFriendlyByteBuf, WhitewashingRecipe> STREAM_CODEC = StreamCodec.composite(
+				RecipeUtil.RecipeBookDetails.STREAM_CODEC, recipe -> recipe.recipeBookDetails,
+				Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.input,
+				Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.washingMaterial,
+				ItemStack.STREAM_CODEC, recipe -> recipe.output,
+				WhitewashingRecipe::new);
+
 		@Override
-		public Codec<WhitewashingRecipe> codec() {
-			return WhitewashingRecipe.CODEC;
+		public MapCodec<WhitewashingRecipe> codec() {
+			return CODEC;
 		}
 
 		@Override
-		public WhitewashingRecipe fromNetwork(FriendlyByteBuf buffer) {
-			return new WhitewashingRecipe(RecipeUtil.RecipeBookDetails.fromNetwork(buffer), Ingredient.fromNetwork(buffer), Ingredient.fromNetwork(buffer), buffer.readItem());
-		}
-
-		@Override
-		public void toNetwork(FriendlyByteBuf buffer, WhitewashingRecipe recipe) {
-			recipe.recipeBookDetails.toNetwork(buffer);
-			recipe.input.toNetwork(buffer);
-			recipe.washingMaterial.toNetwork(buffer);
-			buffer.writeItem(recipe.output);
+		public StreamCodec<RegistryFriendlyByteBuf, WhitewashingRecipe> streamCodec() {
+			return STREAM_CODEC;
 		}
 	}
 }

@@ -3,20 +3,19 @@ package net.tslat.aoa3.content.item.weapon.sword;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.tslat.aoa3.common.registration.item.AoATiers;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 public class ShroomusSword extends BaseSword {
-	public ShroomusSword() {
-		super(AoATiers.SHROOMUS);
+	public ShroomusSword(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 	@Override
@@ -28,7 +27,7 @@ public class ShroomusSword extends BaseSword {
 				ArrayList<MobEffectInstance> removableEffects = new ArrayList<MobEffectInstance>(effects.size());
 
 				for (MobEffectInstance effect : effects) {
-					if (!effect.getEffect().isBeneficial())
+					if (!effect.getEffect().value().isBeneficial())
 						removableEffects.add(effect);
 				}
 
@@ -41,7 +40,7 @@ public class ShroomusSword extends BaseSword {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 	}
 }

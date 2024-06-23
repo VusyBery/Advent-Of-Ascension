@@ -3,9 +3,8 @@ package net.tslat.aoa3.content.block.functional.altar;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,10 +14,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
 public class GuardianAltar extends Block {
 	public GuardianAltar(BlockBehaviour.Properties properties) {
@@ -26,30 +28,28 @@ public class GuardianAltar extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		ItemStack heldStack = player.getItemInHand(hand);
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (!WorldUtil.isWorld(level, AoADimensions.HAVEN))
+			return ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION;
 
-		if (!WorldUtil.isWorld(world, AoADimensions.HAVEN))
-			return InteractionResult.FAIL;
+		if (stack.getItem() == AoAItems.VOLIANT_HEART.get()) {
+			for (Direction direction : Direction.Plane.HORIZONTAL) {
+				if (level.getSignal(pos.relative(direction), direction) == 0)
+					return ItemInteractionResult.FAIL;
+			}
 
-		if (heldStack.getItem() == AoAItems.VOLIANT_HEART.get()) {
-			if (!world.isClientSide) {
-				for (Direction direction : Direction.Plane.HORIZONTAL) {
-					if (world.getSignal(pos.relative(direction), direction) == 0)
-						return InteractionResult.FAIL;
-				}
+			if (!EntityRetrievalUtil.getEntities(level, AABB.ofSize(Vec3.atCenterOf(pos), 30, 30, 30), entity -> entity.getType().is(Tags.EntityTypes.BOSSES)).isEmpty())
+				return ItemInteractionResult.FAIL;
 
-				if (!world.getEntitiesOfClass(Monster.class, new AABB(pos.getX() - 15, pos.getY() - 15, pos.getZ() - 15, pos.getX() + 15, pos.getY() + 15, pos.getZ() + 15), entity -> !entity.canChangeDimensions()).isEmpty())
-					return InteractionResult.FAIL;
-
-				if (!player.isCreative())
-					heldStack.shrink(1);
+			if (!level.isClientSide) {
+				if (!player.getAbilities().instabuild)
+					stack.shrink(1);
 
 				for (Direction direction : Direction.Plane.HORIZONTAL) {
 					BlockPos checkPos = pos.relative(direction);
 
-					if (world.getBlockState(checkPos).getBlock() == Blocks.REDSTONE_WIRE)
-						breakWire(world, checkPos, 0);
+					if (level.getBlockState(checkPos).getBlock() == Blocks.REDSTONE_WIRE)
+						breakWire(level, checkPos, 0);
 				}
 
 				/*BlueGuardianEntity blueGuardian = new BlueGuardianEntity(AoAMobs.BLUE_GUARDIAN.get(), world);
@@ -78,15 +78,15 @@ public class GuardianAltar extends Block {
 				yellowGuardian.setGreenGuardian(greenGuardian);
 				yellowGuardian.setRedGuardian(redGuardian);*/
 
-				for (Player pl : world.getEntitiesOfClass(Player.class, new AABB(pos.getX() - 25, pos.getY() - 25, pos.getZ() - 25, pos.getX() + 26, pos.getY() + 26, pos.getZ() + 26))) {
+				for (Player pl : EntityRetrievalUtil.getPlayers(level, AABB.ofSize(Vec3.atCenterOf(pos), 50, 50, 50))) {
 					pl.sendSystemMessage(LocaleUtil.getLocaleMessage("message.mob.four_guardians.spawn"));
 				}
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	private int breakWire(Level world, BlockPos curPos, int currentCount) {

@@ -1,30 +1,27 @@
 package net.tslat.aoa3.common.networking.packets;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.command.WikiCommand;
 
-public record WikiSearchPacket(String searchString) implements AoAPacket<PlayPayloadContext> {
-	public static final ResourceLocation ID = AdventOfAscension.id("wiki_search");
+public record WikiSearchPacket(String searchString) implements AoAPacket {
+	public static final Type<WikiSearchPacket> TYPE = new Type<>(AdventOfAscension.id("wiki_search"));
+	public static final StreamCodec<FriendlyByteBuf, WikiSearchPacket> CODEC = StreamCodec.composite(
+			ByteBufCodecs.STRING_UTF8,
+			WikiSearchPacket::searchString,
+			WikiSearchPacket::new);
 
 	@Override
-	public ResourceLocation id() {
-		return ID;
+	public Type<? extends WikiSearchPacket> type() {
+		return TYPE;
 	}
 
 	@Override
-	public void write(FriendlyByteBuf buffer) {
-		buffer.writeUtf(this.searchString);
-	}
-
-	public static WikiSearchPacket decode(FriendlyByteBuf buffer) {
-		return new WikiSearchPacket(buffer.readUtf());
-	}
-
-	@Override
-	public void receiveMessage(PlayPayloadContext context) {
-		context.workHandler().submitAsync(() -> WikiCommand.handleSearchRequest(this.searchString));
+	public void receiveMessage(IPayloadContext context) {
+		context.enqueueWork(() -> WikiCommand.handleSearchRequest(this.searchString, ClientOperations.getPlayer()));
 	}
 }

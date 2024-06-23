@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class BloodIron extends BaseGun {
-	public BloodIron(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public BloodIron(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

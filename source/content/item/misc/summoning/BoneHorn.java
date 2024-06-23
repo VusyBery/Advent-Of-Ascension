@@ -16,7 +16,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.TyrosaurEntity;
 import net.tslat.aoa3.library.builder.SoundBuilder;
@@ -24,7 +24,6 @@ import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.smartbrainlib.util.BrainUtils;
 import net.tslat.smartbrainlib.util.RandomUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -35,11 +34,11 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 
 	@Override
 	public TyrosaurEntity spawnBoss(ServerLevel level, Vec3 position, ItemStack stack) {
-		return EntitySpawningUtil.spawnEntity(level, AoAMobs.TYROSAUR.get(), position, MobSpawnType.TRIGGERED);
+		return EntitySpawningUtil.spawnEntity(level, AoAMonsters.TYROSAUR.get(), position, MobSpawnType.TRIGGERED);
 	}
 
 	@Override
-	public int getUseDuration(ItemStack stack) {
+	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 63;
 	}
 
@@ -71,10 +70,10 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 		if (stack.isDamaged()) {
 			if (level.dimension() == AoADimensions.PRECASIA && level instanceof ServerLevel serverLevel) {
 				BlockPos spawnPos = RandomUtil.getRandomPositionWithinRange(entity.blockPosition(), 30, 10, 30, 10, 0, 10, true, level, 10, (state, pos) ->
-						level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), AoAMobs.TYROSAUR.get()) && level.noCollision(AoAMobs.TYROSAUR.get().getAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d)));
+						level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), AoAMonsters.TYROSAUR.get()) && level.noCollision(AoAMonsters.TYROSAUR.get().getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d)));
 
 				if (spawnPos != entity.blockPosition()) {
-					TyrosaurEntity tyrosaur = EntitySpawningUtil.spawnEntity(serverLevel, AoAMobs.TYROSAUR.get(), spawnPos, MobSpawnType.TRIGGERED, summon -> summon.setHealth(50));
+					TyrosaurEntity tyrosaur = EntitySpawningUtil.spawnEntity(serverLevel, AoAMonsters.TYROSAUR.get(), spawnPos, MobSpawnType.TRIGGERED, summon -> summon.setHealth(50));
 
 					if (tyrosaur != null) {
 						BrainUtils.setTargetOfEntity(tyrosaur, entity);
@@ -99,11 +98,11 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 
 	@Override
 	public EntityType<TyrosaurEntity> getEntityType(ItemStack stack) {
-		return stack.isDamaged() ? null : AoAMobs.TYROSAUR.get();
+		return stack.isDamaged() ? null : AoAMonsters.TYROSAUR.get();
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag tooltipFlag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		if (!stack.isDamaged()) {
 			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 2));

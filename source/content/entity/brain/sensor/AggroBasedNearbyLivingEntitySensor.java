@@ -19,7 +19,7 @@ public class AggroBasedNearbyLivingEntitySensor<E extends LivingEntity> extends 
 		SquareRadius radius = this.radius;
 
 		if (radius == null) {
-			double dist = entity.getAttributeValue(AoAAttributes.AGGRO_RANGE.get());
+			double dist = entity.getAttributeValue(AoAAttributes.AGGRO_RANGE);
 
 			radius = new SquareRadius(dist, dist);
 		}

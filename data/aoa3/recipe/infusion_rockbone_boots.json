@@ -1,0 +1,21 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:boots_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:dense_rock"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "tag": "c:bones"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:rockbone_boots"
+  }
+}

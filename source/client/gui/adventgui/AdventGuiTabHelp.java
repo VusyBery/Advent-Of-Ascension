@@ -6,6 +6,7 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -39,7 +40,11 @@ public class AdventGuiTabHelp extends Screen {
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+	public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		for (Renderable renderable : this.renderables) {
+			renderable.render(guiGraphics, mouseX, mouseY, partialTick);
+		}
+
 		PoseStack poseStack = guiGraphics.pose();
 
 		RenderUtil.renderVerticalGradient(poseStack, AdventMainGui.scaledTabRootX + 35, AdventMainGui.scaledTabRootY + 55, 570, 225, -1072689136, -804253680);
@@ -54,8 +59,6 @@ public class AdventGuiTabHelp extends Screen {
 		poseStack.popPose();
 
 		RenderUtil.renderScaledText(poseStack, LocaleUtil.getLocaleMessage("gui.aoa3.adventGui.help.tip", LocaleUtil.getLocaleMessage("gui.aoa3.adventGui.help.tip." + tipNumber)), AdventMainGui.scaledTabRootX + 30, AdventMainGui.scaledTabRootY + 310, 1.8f, ColourUtil.WHITE, RenderUtil.TextRenderType.DROP_SHADOW);
-
-		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 	}
 
 	@Override

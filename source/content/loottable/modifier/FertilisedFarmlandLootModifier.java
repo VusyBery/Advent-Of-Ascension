@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.loottable.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -27,14 +27,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ListIterator;
 
 public class FertilisedFarmlandLootModifier extends LootModifier {
-	public static final Codec<FertilisedFarmlandLootModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).apply(builder, FertilisedFarmlandLootModifier::new));
+	public static final MapCodec<FertilisedFarmlandLootModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).apply(builder, FertilisedFarmlandLootModifier::new));
 
 	public FertilisedFarmlandLootModifier(LootItemCondition[] conditions) {
 		super(conditions);
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 

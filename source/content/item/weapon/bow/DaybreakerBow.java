@@ -3,18 +3,17 @@ package net.tslat.aoa3.content.item.weapon.bow;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class DaybreakerBow extends BaseBow {
-	public DaybreakerBow(double damage, float drawSpeedMultiplier, int durability) {
-		super(damage, drawSpeedMultiplier, durability);
+	public DaybreakerBow(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Override
@@ -27,7 +26,7 @@ public class DaybreakerBow extends BaseBow {
 					if (x == 0 && z == 0)
 						continue;
 
-					CustomArrowEntity arrow = CustomArrowEntity.fromArrow(centralArrow, this, shooter, dmg);
+					CustomArrowEntity arrow = CustomArrowEntity.fromArrow(centralArrow, bowStack, shooter, dmg);
 
 					arrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 					arrow.teleportTo(arrow.getX() + x, arrow.getY(), arrow.getZ() + z);
@@ -40,8 +39,8 @@ public class DaybreakerBow extends BaseBow {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

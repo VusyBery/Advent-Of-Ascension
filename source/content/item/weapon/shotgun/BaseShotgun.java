@@ -8,14 +8,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
+import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.enchantment.FormEnchantment;
-import net.tslat.aoa3.content.enchantment.ShellEnchantment;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.entity.projectile.gun.LimoniteBulletEntity;
 import net.tslat.aoa3.content.entity.projectile.gun.MetalSlugEntity;
+import net.tslat.aoa3.content.item.datacomponent.ShotgunStats;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.NumberUtil;
@@ -25,14 +25,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class BaseShotgun extends BaseGun {
-	protected final int pelletCount;
-	protected final float knockbackFactor;
+	public BaseShotgun(Item.Properties properties) {
+		super(properties);
+	}
 
-	public BaseShotgun(final float dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
-		super(dmg, durability, fireDelayTicks, recoil);
+	public ShotgunStats shotgunStats() {
+		return shotgunStats(getDefaultInstance());
+	}
 
-		this.pelletCount = pellets;
-		this.knockbackFactor = knockbackFactor;
+	public ShotgunStats shotgunStats(ItemStack stack) {
+		return stack.get(AoADataComponents.SHOTGUN_STATS.get());
 	}
 
 	@Nullable
@@ -51,8 +53,8 @@ public class BaseShotgun extends BaseGun {
 		return false;
 	}
 
-	public int getPelletCount() {
-		return this.pelletCount;
+	public int getPelletCount(ItemStack stack) {
+		return shotgunStats(stack).pellets();
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public class BaseShotgun extends BaseGun {
 		if (bullet == null)
 			return false;
 
-		int pellets = getPelletCount();
+		int pellets = getPelletCount(stack);
 		float spreadFactor = getSpreadFactor(shooter, stack, pellets);
 
 		for (int i = 0; i < pellets; i++) {
@@ -77,7 +79,7 @@ public class BaseShotgun extends BaseGun {
 	}
 
 	protected float getSpreadFactor(LivingEntity shooter, ItemStack stack, int pellets) {
-		return FormEnchantment.modifySpread(stack, 0.1f * pellets);
+		return shooter.level() instanceof ServerLevel level ? AoAEnchantments.modifyPelletSpread(level, stack, 0.1f * pellets) : 0.1f * pellets;
 	}
 
 	@Override
@@ -86,9 +88,9 @@ public class BaseShotgun extends BaseGun {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, world, tooltip, flag);
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
 
-		tooltip.set(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SHOTGUN_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(NumberUtil.roundToNthDecimalPlace(ShellEnchantment.applyDamageBonus(stack, getDamage()), 2)), LocaleUtil.numToComponent(pelletCount)));
+		tooltip.set(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.SHOTGUN_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(NumberUtil.roundToNthDecimalPlace(getGunDamage(stack), 2)), LocaleUtil.numToComponent(getPelletCount(stack))));
 	}
 }

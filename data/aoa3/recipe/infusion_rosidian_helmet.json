@@ -1,0 +1,33 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:helmet_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "item": "aoa3:padded_cloth"
+    },
+    {
+      "item": "aoa3:armour_plating"
+    },
+    {
+      "item": "aoa3:rosid_root"
+    },
+    {
+      "item": "aoa3:rosid_root"
+    },
+    {
+      "tag": "c:gems/amethyst"
+    },
+    {
+      "tag": "neoforge:gems/jade"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:rosidian_helmet"
+  }
+}

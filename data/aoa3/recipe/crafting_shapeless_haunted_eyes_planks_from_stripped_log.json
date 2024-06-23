@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "aoa3:stripped_haunted_eyes_log"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "aoa3:hauntedwood_planks"
+  }
+}

@@ -17,10 +17,9 @@ import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.item.FishingRodItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.client.event.RenderNameTagEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import org.joml.Matrix3f;
+import net.neoforged.neoforge.common.util.TriState;
 import org.joml.Matrix4f;
 
 public class HaulingBobberRenderer extends FishingHookRenderer {
@@ -28,7 +27,7 @@ public class HaulingBobberRenderer extends FishingHookRenderer {
 	private final RenderType renderType;
 
 	public HaulingBobberRenderer(EntityRendererProvider.Context rendererManager) {
-		this(rendererManager, new ResourceLocation("textures/entity/fishing_hook.png"));
+		this(rendererManager, ResourceLocation.withDefaultNamespace("textures/entity/fishing_hook.png"));
 	}
 
 	public HaulingBobberRenderer(EntityRendererProvider.Context renderManager, ResourceLocation texture) {
@@ -39,28 +38,27 @@ public class HaulingBobberRenderer extends FishingHookRenderer {
 	}
 
 	@Override
-	public void render(FishingHook bobber, float entityYaw, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int packedLight) {
+	public void render(FishingHook bobber, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 		Player player = bobber.getPlayerOwner();
 
 		if (player == null)
 			return;
 
-		matrix.pushPose();
-		matrix.pushPose();
-		matrix.scale(0.5f, 0.5f, 0.5f);
-		matrix.mulPose(this.entityRenderDispatcher.cameraOrientation());
-		matrix.mulPose(Axis.YP.rotationDegrees(180f));
+		poseStack.pushPose();
+		poseStack.pushPose();
+		poseStack.scale(0.5f, 0.5f, 0.5f);
+		poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+		poseStack.mulPose(Axis.YP.rotationDegrees(180f));
 
-		PoseStack.Pose lastPose = matrix.last();
+		PoseStack.Pose lastPose = poseStack.last();
 		Matrix4f lastPose4f = lastPose.pose();
-		Matrix3f lastPoseNormal = lastPose.normal();
 		VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
 
-		vertex(vertexConsumer, lastPose4f, lastPoseNormal, packedLight, 0, 0, 0, 1);
-		vertex(vertexConsumer, lastPose4f, lastPoseNormal, packedLight, 1, 0, 1, 1);
-		vertex(vertexConsumer, lastPose4f, lastPoseNormal, packedLight, 1, 1, 1, 0);
-		vertex(vertexConsumer, lastPose4f, lastPoseNormal, packedLight, 0, 1, 0, 0);
-		matrix.popPose();
+		vertex(vertexConsumer, lastPose4f, lastPose, packedLight, 0, 0, 0, 1);
+		vertex(vertexConsumer, lastPose4f, lastPose, packedLight, 1, 0, 1, 1);
+		vertex(vertexConsumer, lastPose4f, lastPose, packedLight, 1, 1, 1, 0);
+		vertex(vertexConsumer, lastPose4f, lastPose, packedLight, 0, 1, 0, 0);
+		poseStack.popPose();
 
 		int sideMod = player.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
 		ItemStack stack = player.getMainHandItem();
@@ -68,9 +66,9 @@ public class HaulingBobberRenderer extends FishingHookRenderer {
 		if (!(stack.getItem() instanceof FishingRodItem))
 			sideMod = -sideMod;
 
-		float swingTime = player.getAttackAnim(partialTicks);
+		float swingTime = player.getAttackAnim(partialTick);
 		float swingAngle = Mth.sin(Mth.sqrt(swingTime) * (float)Math.PI);
-		float bodyRot = Mth.lerp(partialTicks, player.yBodyRotO, player.yBodyRot) * ((float)Math.PI / 180F);
+		float bodyRot = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot) * ((float)Math.PI / 180F);
 		double sinRot = Mth.sin(bodyRot);
 		double cosRot = Mth.cos(bodyRot);
 		double sideMod2 = (double)sideMod * 0.35d;
@@ -85,43 +83,43 @@ public class HaulingBobberRenderer extends FishingHookRenderer {
 			firstPersonStartPos = firstPersonStartPos.scale(fovScale);
 			firstPersonStartPos = firstPersonStartPos.yRot(swingAngle * 0.5f);
 			firstPersonStartPos = firstPersonStartPos.xRot(-swingAngle * 0.7f);
-			startX = Mth.lerp(partialTicks, player.xo, player.getX()) + firstPersonStartPos.x;
-			startY = Mth.lerp(partialTicks, player.yo, player.getY()) + firstPersonStartPos.y;
-			startZ = Mth.lerp(partialTicks, player.zo, player.getZ()) + firstPersonStartPos.z;
+			startX = Mth.lerp(partialTick, player.xo, player.getX()) + firstPersonStartPos.x;
+			startY = Mth.lerp(partialTick, player.yo, player.getY()) + firstPersonStartPos.y;
+			startZ = Mth.lerp(partialTick, player.zo, player.getZ()) + firstPersonStartPos.z;
 			eyeHeight = player.getEyeHeight();
 		}
 		else {
-			startX = Mth.lerp(partialTicks, player.xo, player.getX()) - cosRot * sideMod2 - sinRot * 0.8d;
-			startY = player.yo + (double)player.getEyeHeight() + (player.getY() - player.yo) * (double)partialTicks - 0.45d;
-			startZ = Mth.lerp(partialTicks, player.zo, player.getZ()) - sinRot * sideMod2 + cosRot * 0.8d;
+			startX = Mth.lerp(partialTick, player.xo, player.getX()) - cosRot * sideMod2 - sinRot * 0.8d;
+			startY = player.yo + (double)player.getEyeHeight() + (player.getY() - player.yo) * (double)partialTick - 0.45d;
+			startZ = Mth.lerp(partialTick, player.zo, player.getZ()) - sinRot * sideMod2 + cosRot * 0.8d;
 			eyeHeight = player.isCrouching() ? -0.1875f : 0;
 		}
 
-		double bobberX = Mth.lerp(partialTicks, bobber.xo, bobber.getX());
-		double bobberY = Mth.lerp(partialTicks, bobber.yo, bobber.getY()) + 0.25D;
-		double bobberZ = Mth.lerp(partialTicks, bobber.zo, bobber.getZ());
+		double bobberX = Mth.lerp(partialTick, bobber.xo, bobber.getX());
+		double bobberY = Mth.lerp(partialTick, bobber.yo, bobber.getY()) + 0.25D;
+		double bobberZ = Mth.lerp(partialTick, bobber.zo, bobber.getZ());
 		float distX = (float)(startX - bobberX);
 		float distY = (float)(startY - bobberY) + eyeHeight;
 		float distZ = (float)(startZ - bobberZ);
 		vertexConsumer = buffer.getBuffer(RenderType.lineStrip());
-		lastPose = matrix.last();
+		lastPose = poseStack.last();
 
 		for(int section = 0; section <= 16; ++section) {
 			stringVertex(distX, distY, distZ, vertexConsumer, lastPose, section / 16f, (section + 1) / 16f);
 		}
 
-		matrix.popPose();
+		poseStack.popPose();
 
-		RenderNameTagEvent renderNameplateEvent = new RenderNameTagEvent(bobber, bobber.getDisplayName(), this, matrix, buffer, packedLight, partialTicks);
+		RenderNameTagEvent renderNameTagEvent = new RenderNameTagEvent(bobber, bobber.getDisplayName(), this, poseStack, buffer, packedLight, partialTick);
 
-		NeoForge.EVENT_BUS.post(renderNameplateEvent);
+		NeoForge.EVENT_BUS.post(renderNameTagEvent);
 
-		if (renderNameplateEvent.getResult() != Event.Result.DENY && (renderNameplateEvent.getResult() == Event.Result.ALLOW || this.shouldShowName(bobber)))
-			this.renderNameTag(bobber, renderNameplateEvent.getContent(), matrix, buffer, packedLight);
+		if (renderNameTagEvent.canRender() != TriState.FALSE && (renderNameTagEvent.canRender() == TriState.TRUE || shouldShowName(bobber)))
+			renderNameTag(bobber, renderNameTagEvent.getContent(), poseStack, buffer, packedLight, partialTick);
 	}
 
-	private static void vertex(VertexConsumer vertexConsumer, Matrix4f matrixPos, Matrix3f matrixNormal, int packedLight, float x, int y, int u, int v) {
-		vertexConsumer.vertex(matrixPos, x - 0.5F, (float)y - 0.5f, 0).color(255, 255, 255, 255).uv((float)u, (float)v).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(packedLight).normal(matrixNormal, 0, 1, 0).endVertex();
+	private static void vertex(VertexConsumer vertexConsumer, Matrix4f matrixPos, PoseStack.Pose pose, int packedLight, float x, int y, int u, int v) {
+		vertexConsumer.addVertex(matrixPos, x - 0.5F, (float)y - 0.5f, 0).setColor(255, 255, 255, 255).setUv((float)u, (float)v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0, 1, 0);
 	}
 
 	private static void stringVertex(float lengthX, float lengthY, float lengthZ, VertexConsumer vertexConsumer, PoseStack.Pose pose, float sectionStart, float sectionEnd) {
@@ -136,7 +134,7 @@ public class HaulingBobberRenderer extends FishingHookRenderer {
 		yNormalised /= hypot;
 		zNormalised /= hypot;
 
-		vertexConsumer.vertex(pose.pose(), x, y, z).color(0, 0, 0, 255).normal(pose.normal(), xNormalised, yNormalised, zNormalised).endVertex();
+		vertexConsumer.addVertex(pose.pose(), x, y, z).setColor(0, 0, 0, 255).setNormal(pose, xNormalised, yNormalised, zNormalised);
 	}
 
 	@Override

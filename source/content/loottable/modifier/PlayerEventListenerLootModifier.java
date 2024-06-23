@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.loottable.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,15 +20,15 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class PlayerEventListenerLootModifier extends LootModifier {
-	public static final Codec<PlayerEventListenerLootModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).apply(builder, PlayerEventListenerLootModifier::new));
-	private static final LootContextParam<?>[] ENTITY_SOURCE_PARAMS = new LootContextParam<?>[] {LootContextParams.THIS_ENTITY, LootContextParams.DIRECT_KILLER_ENTITY, LootContextParams.KILLER_ENTITY, LootContextParams.LAST_DAMAGE_PLAYER};
+	public static final MapCodec<PlayerEventListenerLootModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).apply(builder, PlayerEventListenerLootModifier::new));
+	private static final LootContextParam<?>[] ENTITY_SOURCE_PARAMS = new LootContextParam<?>[] {LootContextParams.THIS_ENTITY, LootContextParams.DIRECT_ATTACKING_ENTITY, LootContextParams.ATTACKING_ENTITY, LootContextParams.LAST_DAMAGE_PLAYER};
 
 	public PlayerEventListenerLootModifier(LootItemCondition[] conditions) {
 		super(conditions);
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 

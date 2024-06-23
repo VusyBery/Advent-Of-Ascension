@@ -14,9 +14,9 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.registration.entity.AoAMobs;
+import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.boss.nethengeic_wither.NethengeicWitherEntity;
-import net.tslat.aoa3.content.entity.mob.nether.NethengeicBeastEntity;
+import net.tslat.aoa3.content.entity.monster.nether.NethengeicBeastEntity;
 import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
@@ -30,13 +30,13 @@ public class NethengeicCallstone extends BossSpawningItem<NethengeicWitherEntity
 
 	@Override
 	public NethengeicWitherEntity spawnBoss(ServerLevel level, Vec3 position, ItemStack stack) {
-		return EntitySpawningUtil.spawnEntity(level, AoAMobs.NETHENGEIC_WITHER.get(), position, MobSpawnType.TRIGGERED);
+		return EntitySpawningUtil.spawnEntity(level, AoAMonsters.NETHENGEIC_WITHER.get(), position, MobSpawnType.TRIGGERED);
 	}
 
 	@Override
 	@Nullable
 	public EntityType<NethengeicWitherEntity> getEntityType(ItemStack stack) {
-		return AoAMobs.NETHENGEIC_WITHER.get();
+		return AoAMonsters.NETHENGEIC_WITHER.get();
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class NethengeicCallstone extends BossSpawningItem<NethengeicWitherEntity
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		if (!stack.isDamaged()) {
 			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 1));
 			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 2));

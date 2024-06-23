@@ -3,13 +3,13 @@ package net.tslat.aoa3.client.render;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.MutableComponent;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.neoforge.client.event.RegisterGuiOverlaysEvent;
-import net.neoforged.neoforge.client.gui.overlay.ExtendedGui;
-import net.neoforged.neoforge.client.gui.overlay.VanillaGuiOverlay;
+import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.render.custom.AoAResourceRenderer;
@@ -18,7 +18,7 @@ import net.tslat.aoa3.client.render.custom.EnergyResourceRenderer;
 import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.library.object.RenderContext;
-import net.tslat.aoa3.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.ColourUtil;
@@ -34,9 +34,9 @@ public final class AoAGuiElementRenderers {
 	public static int resourcesRenderHeightOffset = 0;
 
 	public static void init() {
-		AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterGuiOverlaysEvent.class, ev -> {
-			ev.registerAbove(VanillaGuiOverlay.POTION_ICONS.id(), AdventOfAscension.id("aoa_resources"), AoAGuiElementRenderers::renderResources);
-			ev.registerAbove(VanillaGuiOverlay.POTION_ICONS.id(), AdventOfAscension.id("aoa_skills"), AoAGuiElementRenderers::renderSkills);
+		AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterGuiLayersEvent.class, ev -> {
+			ev.registerAbove(VanillaGuiLayers.EFFECTS, AdventOfAscension.id("aoa_resources"), AoAGuiElementRenderers::renderResources);
+			ev.registerAbove(VanillaGuiLayers.EFFECTS, AdventOfAscension.id("aoa_skills"), AoAGuiElementRenderers::renderSkills);
 		});
 	}
 
@@ -60,7 +60,8 @@ public final class AoAGuiElementRenderers {
 		SKILL_RENDERERS.put(skill, renderer);
 	}
 
-	private static void renderResources(ExtendedGui gui, GuiGraphics guiGraphics, float partialTick, int width, int height) {
+	private static void renderResources(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		Minecraft mc = Minecraft.getInstance();
 		Window window = mc.getWindow();
 		int horizontalAdjuster = AoAConfigs.CLIENT.hudResourcesHorizontal.get() ? 1 : 0;
@@ -120,7 +121,8 @@ public final class AoAGuiElementRenderers {
 		resourcesRenderHeightOffset = (AoAConfigs.CLIENT.hudResourcesPosition.get() == AoAResourceRenderer.HudResourcesPosition.Top_Right ? y : 0) + potionRenderOffset;
 	}
 
-	private static void renderSkills(ExtendedGui gui, GuiGraphics guiGraphics, float partialTick, int width, int height) {
+	private static void renderSkills(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		Minecraft mc = Minecraft.getInstance();
 		Window window = mc.getWindow();
 		int x = 0;

@@ -9,14 +9,16 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.AoAEntityRendering;
 import net.tslat.aoa3.client.model.misc.LottoTotemModel;
 import net.tslat.aoa3.content.entity.misc.LottoTotemEntity;
+import net.tslat.aoa3.util.ColourUtil;
 import org.jetbrains.annotations.Nullable;
 
 
 public class LottoTotemRenderer extends EntityRenderer<LottoTotemEntity> {
-	private final ResourceLocation texture = new ResourceLocation("aoa3", "textures/entity/misc/lotto_totem.png");
+	private final ResourceLocation texture = AdventOfAscension.id("textures/entity/misc/lotto_totem.png");
 	private final LottoTotemModel model;
 
 	public LottoTotemRenderer(EntityRendererProvider.Context renderManager) {
@@ -35,7 +37,7 @@ public class LottoTotemRenderer extends EntityRenderer<LottoTotemEntity> {
 		VertexConsumer vertexBuilder = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
 
 		model.setupAnim(entity, 0, 0, entity.tickCount, entityYaw, 0);
-		model.renderToBuffer(matrix, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+		model.renderToBuffer(matrix, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, ColourUtil.WHITE);
 
 		matrix.popPose();
 

@@ -5,7 +5,7 @@
       "#minecraft:is_nether"
     ],
     "if_any": [
-      "#forge:is_magical",
+      "#c:is_magical",
       "minecraft:warped_forest"
     ]
   },

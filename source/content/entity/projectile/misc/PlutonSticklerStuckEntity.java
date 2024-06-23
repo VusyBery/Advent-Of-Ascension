@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.projectile.misc;
 
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -38,7 +39,7 @@ public class PlutonSticklerStuckEntity extends ThrowableProjectile {
 	}
 
 	@Override
-	protected float getGravity() {
+	public double getDefaultGravity() {
 		return 0.0f;
 	}
 
@@ -46,7 +47,7 @@ public class PlutonSticklerStuckEntity extends ThrowableProjectile {
 	protected void onHit(HitResult result) {}
 
 	@Override
-	protected void defineSynchedData() {}
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
 	@Override
 	public void tick() {

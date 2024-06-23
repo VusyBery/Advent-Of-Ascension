@@ -1,8 +1,10 @@
 package net.tslat.aoa3.content.item.weapon.shotgun;
 
+import net.minecraft.world.item.Item;
+
 public class Vivo extends BaseShotgun {
-	public Vivo(final float dmg, final int pellets, final int durability, final int fireDelayTicks, final float knockbackFactor, final float recoil) {
-		super(dmg, pellets, durability, fireDelayTicks, knockbackFactor, recoil);
+	public Vivo(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Override

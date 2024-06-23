@@ -3,13 +3,11 @@ package net.tslat.aoa3.player;
 import com.google.common.collect.ArrayListMultimap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.PlayerAdvancements;
@@ -22,9 +20,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.advent.Logging;
@@ -51,11 +49,13 @@ import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.AdvancementUtil;
+import net.tslat.aoa3.util.EnchantmentUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -185,7 +185,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 						if (index >= this.itemStorage.length)
 							this.itemStorage = Arrays.copyOf(this.itemStorage, index + 1);
 
-						this.itemStorage[index] = ItemStack.of(itemStorage.getCompound(key));
+						this.itemStorage[index] = ItemUtil.loadStackFromNbt(this.player.level(), itemStorage.getCompound(key));
 					}
 					catch (Exception ex) {
 						Logging.logMessage(org.apache.logging.log4j.Level.WARN, "Invalid key in ItemStorage NBT data for player. Stop messing with player NBT!", ex);
@@ -200,15 +200,13 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 			for (String s : portalMapTag.getAllKeys()) {
 				try {
 					CompoundTag portalReturnTag = portalMapTag.getCompound(s);
-					ResourceLocation fromDim = new ResourceLocation(portalReturnTag.getString("FromDim"));
-					double x = portalReturnTag.getDouble("PosX");
-					double y = portalReturnTag.getDouble("PosY");
-					double z = portalReturnTag.getDouble("PosZ");
-					ResourceKey<Level> toDimKey = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(s));
+					ResourceLocation fromDim = ResourceLocation.read(portalReturnTag.getString("FromDim")).getOrThrow();
+					BlockPos portalPos = NbtUtils.readBlockPos(portalReturnTag, "PortalPos").get();
+					ResourceKey<Level> toDimKey = ResourceKey.create(Registries.DIMENSION, ResourceLocation.read(s).getOrThrow());
 					ResourceKey<Level> fromDimKey = ResourceKey.create(Registries.DIMENSION, fromDim);
 
-					portalCoordinatesMap.put(toDimKey, new PortalCoordinatesContainer(fromDimKey, x, y, z));
-				} catch (NumberFormatException e) {
+					portalCoordinatesMap.put(toDimKey, new PortalCoordinatesContainer(fromDimKey, portalPos));
+				} catch (Exception e) {
 					Logging.logMessage(org.apache.logging.log4j.Level.WARN, "Found invalid portal map data, has someone been tampering with files? Data: " + s);
 				}
 			}
@@ -240,7 +238,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 			}
 
 			for (Tag book : booksNbt) {
-				patchouliBooks.add(new ResourceLocation(book.getAsString()));
+				ResourceLocation.read(book.getAsString()).resultOrPartial(err -> Logging.logMessage(org.apache.logging.log4j.Level.WARN, err)).ifPresent(patchouliBooks::add);
 			}
 		}
 
@@ -344,13 +342,13 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		if (plData.patchouliBooks == null && IntegrationManager.isPatchouliActive()) {
 			plData.patchouliBooks = new CopyOnWriteArraySet<>();
 
-			plData.patchouliBooks.add(new ResourceLocation(AdventOfAscension.MOD_ID, "aoa_essentia"));
+			plData.patchouliBooks.add(AdventOfAscension.id("aoa_essentia"));
 		}
 
 		if (SkillsLeaderboard.isEnabled())
 			LeaderboardActions.addNewPlayer(plData);
 
-		AoANetworking.sendToPlayer(pl, new PlayerDataSyncPacket(plData.savetoNbt(true)));
+		AoANetworking.sendToPlayer(pl, new PlayerDataSyncPacket(plData.savetoNbt(pl.level().registryAccess(), true)));
 	}
 
 	public void doPlayerTick() {
@@ -434,63 +432,64 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	}
 
 	private void storeInterventionItems() {
-		if (itemStorage == null)
-			itemStorage = new ItemStack[player.getInventory().getContainerSize()];
+		if (this.itemStorage == null)
+			this.itemStorage = new ItemStack[this.player.getInventory().getContainerSize()];
 
-		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-			ItemStack stack = player.getInventory().getItem(i);
+		for (int i = 0; i < this.player.getInventory().getContainerSize(); i++) {
+			ItemStack stack = this.player.getInventory().getItem(i);
 
-			if (ItemUtil.hasEnchantment(stack, AoAEnchantments.INTERVENTION.get())) {
+			if (EnchantmentUtil.hasEnchantment(this.player.level(), stack, AoAEnchantments.INTERVENTION)) {
 				if (RandomUtil.oneInNChance(5))
-					stack = ItemUtil.removeEnchantment(stack, AoAEnchantments.INTERVENTION.get());
+					EnchantmentUtil.removeEnchantment(this.player.level(), stack, AoAEnchantments.INTERVENTION);
 
-				itemStorage[i] = stack;
-				player.getInventory().setItem(i, ItemStack.EMPTY);
+				this.itemStorage[i] = stack.copy();
+				this.player.getInventory().setItem(i, ItemStack.EMPTY);
 			}
 		}
 	}
 
 	public void returnItemStorage() {
-		if (this.itemStorage != null) {
-			Inventory inventory = this.player.getInventory();
+		if (this.itemStorage == null)
+			return;
 
-			for (int i = 0; i < this.itemStorage.length; i++) {
-				ItemStack slotItem = inventory.getItem(i);
-				ItemStack storageItem = this.itemStorage[i];
+        Inventory inventory = this.player.getInventory();
 
-				if (storageItem == null) {
-					this.itemStorage[i] = ItemStack.EMPTY;
+        for (int i = 0; i < this.itemStorage.length; i++) {
+            ItemStack slotItem = inventory.getItem(i);
+            ItemStack storageItem = this.itemStorage[i];
 
-					continue;
-				}
+            if (storageItem == null) {
+                this.itemStorage[i] = ItemStack.EMPTY;
 
-				if (slotItem.isEmpty()) {
-					inventory.setItem(i, storageItem);
+                continue;
+            }
 
-					this.itemStorage[i] = ItemStack.EMPTY;
-				}
-				else if (ItemUtil.areStacksFunctionallyEqual(slotItem, storageItem) && Objects.equals(slotItem.getTag(), storageItem.getTag())) {
-					int growSize = Math.min(slotItem.getMaxStackSize(), slotItem.getCount() + storageItem.getCount()) - slotItem.getCount();
+            if (slotItem.isEmpty()) {
+                inventory.setItem(i, storageItem);
 
-					if (growSize > 0) {
-						slotItem.grow(growSize);
-						slotItem.setPopTime(5);
-					}
+                this.itemStorage[i] = ItemStack.EMPTY;
+            }
+            else if (ItemUtil.areStacksFunctionallyEqual(slotItem, storageItem)) {
+                int growSize = Math.min(slotItem.getMaxStackSize(), slotItem.getCount() + storageItem.getCount()) - slotItem.getCount();
 
-					if (growSize < storageItem.getCount()) {
-						storageItem.setCount(storageItem.getCount() - growSize);
-					}
-					else {
-						this.itemStorage[i] = ItemStack.EMPTY;
-					}
-				}
-			}
+                if (growSize > 0) {
+                    slotItem.grow(growSize);
+                    slotItem.setPopTime(5);
+                }
 
-			ItemUtil.givePlayerMultipleItems(this.player, this.itemStorage);
+                if (growSize < storageItem.getCount()) {
+                    storageItem.setCount(storageItem.getCount() - growSize);
+                }
+                else {
+                    this.itemStorage[i] = ItemStack.EMPTY;
+                }
+            }
+        }
 
-			this.itemStorage = null;
-		}
-	}
+        ItemUtil.givePlayerMultipleItems(this.player, this.itemStorage);
+
+        this.itemStorage = null;
+    }
 
 	public void storeInventoryContents() {
 		if (itemStorage == null)
@@ -631,17 +630,14 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	}
 
 	public void checkAndUpdateLegitimacy() {
-		if (player != null) {
-			AdvancementHolder adv = AdvancementUtil.getAdvancement(player.serverLevel(), new ResourceLocation(AdventOfAscension.MOD_ID, "completionist/by_the_books"));
+		if (this.player != null) {
+			AdvancementUtil.getAdvancement(this.player.serverLevel(), AdventOfAscension.id("completionist/by_the_books")).ifPresent(adv -> {
+				PlayerAdvancements plAdv = this.player.getAdvancements();
+				boolean hasAdvancement = plAdv.getOrStartProgress(adv).isDone();
 
-			if (adv == null)
-				return;
-
-			PlayerAdvancements plAdv = player.getAdvancements();
-			boolean hasAdvancement = plAdv.getOrStartProgress(adv).isDone();
-
-			if (hasAdvancement && !this.isLegitimate)
-				plAdv.revoke(adv, "legitimate");
+				if (hasAdvancement && !this.isLegitimate)
+					plAdv.revoke(adv, "legitimate");
+			});
 		}
 	}
 
@@ -708,7 +704,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		AoAScheduler.scheduleSyncronisedTask(sourceData::selfDestruct, 1);
 	}
 
-	public CompoundTag savetoNbt(boolean forClientSync) {
+	public CompoundTag savetoNbt(HolderLookup.Provider registryLookup, boolean forClientSync) {
 		CompoundTag baseTag = new CompoundTag();
 
 		if (!skills.isEmpty()) {
@@ -749,7 +745,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 
 				for (int i = 0; i < this.itemStorage.length; i++) {
 					if (this.itemStorage[i] != null)
-						itemStorage.put(String.valueOf(i), this.itemStorage[i].save(new CompoundTag()));
+						itemStorage.put(String.valueOf(i), this.itemStorage[i].save(registryLookup));
 				}
 
 				baseTag.put("ItemStorage", itemStorage);
@@ -763,9 +759,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 					PortalCoordinatesContainer container = entry.getValue();
 
 					portalReturnTag.putString("FromDim", container.fromDim().location().toString());
-					portalReturnTag.putDouble("PosX", container.x());
-					portalReturnTag.putDouble("PosY", container.y());
-					portalReturnTag.putDouble("PosZ", container.z());
+					portalReturnTag.put("PortalPos", NbtUtils.writeBlockPos(container.portalPos()));
 
 					portalCoordinatesNBT.put(entry.getKey().location().toString(), portalReturnTag);
 				}
@@ -792,13 +786,14 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		return baseTag;
 	}
 
+	@UnknownNullability
 	@Override
-	public CompoundTag serializeNBT() {
-		return savetoNbt(false);
+	public CompoundTag serializeNBT(HolderLookup.Provider registryLookup) {
+		return savetoNbt(registryLookup, false);
 	}
 
 	@Override
-	public void deserializeNBT(CompoundTag nbt) {
+	public void deserializeNBT(HolderLookup.Provider registryLookup, CompoundTag nbt) {
 		loadFromNbt(nbt);
 	}
 
@@ -986,7 +981,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		}
 
 		@Override
-		public void handlePlayerTick(final TickEvent.PlayerTickEvent ev) {
+		public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 			if (!player.isAlive() || player.isSpectator())
 				return;
 

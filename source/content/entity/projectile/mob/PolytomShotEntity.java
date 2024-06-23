@@ -20,7 +20,7 @@ public class PolytomShotEntity extends BaseMobProjectile {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0;
 	}
 }

@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 1,
-  "ingredient": {
-    "item": "aoa3:intricate_lapis_ivory"
-  },
-  "result": "aoa3:intricate_lapis_ivory_wall"
-}

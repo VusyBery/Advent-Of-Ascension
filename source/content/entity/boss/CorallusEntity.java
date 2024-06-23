@@ -45,15 +45,15 @@ public class CorallusEntity extends AoAMeleeMob<CorallusEntity> {
 	}
 
 	@Override
-	protected float getStandingEyeHeight(Pose pose, EntityDimensions size) {
+	public float getEyeHeightAccess(Pose pose) {
 		return 2.72f;
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
-		this.entityData.define(ENRAGED, false);
+		builder.define(ENRAGED, false);
 	}
 
 	@Nullable
@@ -81,7 +81,7 @@ public class CorallusEntity extends AoAMeleeMob<CorallusEntity> {
 	}
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 

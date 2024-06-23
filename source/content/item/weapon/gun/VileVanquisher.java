@@ -7,9 +7,10 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
@@ -18,10 +19,11 @@ import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class VileVanquisher extends BaseGun {
-	public VileVanquisher(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public VileVanquisher(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -39,16 +41,15 @@ public class VileVanquisher extends BaseGun {
 			cloud.setDuration(10);
 			cloud.setRadiusPerTick(0.45f);
 			cloud.setWaitTime(0);
-			cloud.setFixedColor(ColourUtil.RGB(51, 102, 0));
-			cloud.addEffect(new MobEffectInstance(MobEffects.POISON, 150, 0, false, true));
+			cloud.setPotionContents(new PotionContents(Optional.empty(), Optional.of(ColourUtil.RGB(51, 102, 0)), List.of(new MobEffectInstance(MobEffects.POISON, 150, 0, false, true))));
 
 			bullet.level().addFreshEntity(cloud);
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

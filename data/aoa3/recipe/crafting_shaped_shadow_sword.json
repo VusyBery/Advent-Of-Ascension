@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:obsidians"
+    },
+    "B": {
+      "tag": "c:rods/wooden"
+    },
+    "C": {
+      "item": "aoa3:darkly_powder"
+    },
+    "D": {
+      "item": "aoa3:urka_hide"
+    }
+  },
+  "pattern": [
+    " A ",
+    " A ",
+    "CBD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:shadow_sword"
+  }
+}

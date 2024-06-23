@@ -1,6 +1,9 @@
 package net.tslat.aoa3.player.halo;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.HaloChangePacket;
 
@@ -9,11 +12,17 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class PlayerHaloContainer {
-    private final EnumSet<HaloTypes> unlocked = EnumSet.noneOf(HaloTypes.class);
-    private final AtomicReference<HaloTypes> current = new AtomicReference<>();
+public record PlayerHaloContainer(EnumSet<HaloTypes> unlocked, AtomicReference<HaloTypes> current) {
+    public static final StreamCodec<FriendlyByteBuf, PlayerHaloContainer> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.collection(size -> EnumSet.noneOf(HaloTypes.class), NeoForgeStreamCodecs.enumCodec(HaloTypes.class)),
+            PlayerHaloContainer::unlocked,
+            NeoForgeStreamCodecs.enumCodec(HaloTypes.class).map(AtomicReference::new, AtomicReference::get),
+            PlayerHaloContainer::current,
+            PlayerHaloContainer::new);
 
     private PlayerHaloContainer(Set<HaloTypes> unlocked) {
+        this(EnumSet.noneOf(HaloTypes.class), new AtomicReference<>());
+
         this.unlocked.addAll(unlocked);
 
         if (!this.unlocked.isEmpty()) {
@@ -25,6 +34,8 @@ public final class PlayerHaloContainer {
     }
 
     private PlayerHaloContainer(HaloTypes selected) {
+        this(EnumSet.noneOf(HaloTypes.class), new AtomicReference<>());
+
         this.current.set(selected);
     }
 
@@ -63,18 +74,5 @@ public final class PlayerHaloContainer {
 
     public boolean hasHalo(HaloTypes halo) {
         return this.unlocked.contains(halo);
-    }
-
-    public void toNetwork(FriendlyByteBuf buffer) {
-        buffer.writeEnumSet(this.unlocked, HaloTypes.class);
-        buffer.writeEnum(this.current.get());
-    }
-
-    public static PlayerHaloContainer fromNetwork(FriendlyByteBuf buffer) {
-        final PlayerHaloContainer container = new PlayerHaloContainer(buffer.readEnumSet(HaloTypes.class));
-
-        container.current.set(buffer.readEnum(HaloTypes.class));
-
-        return container;
     }
 }

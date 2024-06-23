@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:ingots/lyon"
+    },
+    "B": {
+      "tag": "neoforge:rods/metal"
+    },
+    "C": {
+      "tag": "c:gunpowders"
+    },
+    "D": {
+      "tag": "neoforge:ingots/blazium"
+    }
+  },
+  "pattern": [
+    "CDC",
+    " A ",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:destruction_staff"
+  }
+}

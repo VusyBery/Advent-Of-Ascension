@@ -1,14 +1,16 @@
 package net.tslat.aoa3.util;
 
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.CombatEntry;
 import net.minecraft.world.damagesource.CombatTracker;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.control.FlyingMoveControl;
+import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -28,24 +30,8 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public final class EntityUtil {
-	public static boolean isVulnerableEntity(Entity entity, @Nullable DamageSource source) {
-		if (!(entity instanceof LivingEntity) || !entity.isAlive())
-			return false;
-
-		if (source == null ? entity.isInvulnerable() : entity.isInvulnerableTo(source))
-			return false;
-
-		return !(entity instanceof Player player) || PlayerUtil.shouldPlayerBeAffected(player);
-	}
-
 	public static boolean isHostileMob(Entity entity) {
-		return entity instanceof Enemy;
-	}
-
-	public static class Predicates {
-		public static final Predicate<LivingEntity> HOSTILE_MOB = entity -> entity instanceof Enemy || (entity instanceof NeutralMob neutralMob && neutralMob.isAngry());
-		public static final Predicate<Entity> SURVIVAL_PLAYER = entity -> entity instanceof Player && !((Player)entity).isCreative() && !entity.isSpectator();
-		public static final Predicate<Entity> ATTACKABLE_ENTITY = entity -> entity.isAlive() && SURVIVAL_PLAYER.test(entity);
+		return entity instanceof Enemy || (entity instanceof NeutralMob neutralMob && neutralMob.isAngry());
 	}
 
 	public static void healEntity(LivingEntity entity, float amount) {
@@ -53,107 +39,36 @@ public final class EntityUtil {
 			entity.heal(amount);
 	}
 
-	public static float getCurrentHealthPercent(LivingEntity entity) {
+	public static float getHealthPercent(LivingEntity entity) {
 		return entity.getHealth() / entity.getMaxHealth();
 	}
 
-	public static boolean checkAboveHealthPercentThreshold(LivingEntity entity, float thresholdPercent) {
-		if (entity.getHealth() <= 0)
-			return false;
-
-		return getCurrentHealthPercent(entity) >= thresholdPercent;
-	}
-
-	public static boolean checkBelowHealthPercentThreshold(LivingEntity entity, float thresholdPercent) {
-		if (entity.getHealth() <= 0)
-			return false;
-
-		return getCurrentHealthPercent(entity) < thresholdPercent;
-	}
-
-	public static boolean isImmuneToSpecialAttacks(Entity target, LivingEntity attacker) {
-		return target instanceof Player || !target.canChangeDimensions() || target.isInvulnerable() || target.getType().is(Tags.EntityTypes.BOSSES) || (target instanceof LivingEntity && ((LivingEntity)target).getMaxHealth() > 500);
+	public static boolean isImmuneToSpecialAttacks(Entity target) {
+		return target instanceof Player || target.isInvulnerable() || target.getType().is(Tags.EntityTypes.BOSSES) || (target instanceof LivingEntity livingTarget && livingTarget.getMaxHealth() > 500);
 	}
 
 	public static float getAttackCooldown(LivingEntity entity) {
-		if (entity instanceof Player)
-			return ((Player)entity).getAttackStrengthScale(0);
+		if (entity instanceof Player pl)
+			return pl.getAttackStrengthScale(0);
 
-		return 1f;
+		return entity.swinging ? entity.swingTime / (float)entity.getCurrentSwingDuration() : 1;
 	}
 
 	public static boolean isFlyingCreature(Entity entity) {
-		return entity instanceof LivingEntity && (entity instanceof FlyingMob || entity instanceof FlyingAnimal);
-	}
+		if (!(entity instanceof LivingEntity))
+			return false;
 
-	public static boolean hasAttributeModifier(final LivingEntity entity, final Attribute attribute, final AttributeModifier modifier) {
-		final AttributeInstance instance = entity.getAttribute(attribute);
+		if (entity instanceof FlyingMob || entity instanceof FlyingAnimal)
+			return true;
 
-		if (instance != null)
-			return instance.hasModifier(modifier);
+		if (!(entity instanceof Mob mob))
+			return false;
 
-		return false;
-	}
-
-	public static void reapplyAttributeModifier(LivingEntity entity, Attribute attribute, AttributeModifier modifier, boolean permanentModifier) {
-		AttributeInstance instance = entity.getAttribute(attribute);
-
-		if (instance != null) {
-			if (instance.getModifier(modifier.getId()) != null)
-				instance.removeModifier(modifier.getId());
-
-			if (permanentModifier) {
-				instance.addPermanentModifier(modifier);
-			}
-			else {
-				instance.addTransientModifier(modifier);
-			}
-
-			if (attribute == Attributes.MAX_HEALTH && entity.getHealth() > entity.getMaxHealth())
-				entity.setHealth(entity.getMaxHealth());
-		}
-	}
-
-	public static void applyAttributeModifierSafely(LivingEntity entity, Attribute attribute, AttributeModifier modifier, boolean permanentModifier) {
-		AttributeInstance instance = entity.getAttribute(attribute);
-
-		if (instance != null && !instance.hasModifier(modifier)) {
-			if (permanentModifier) {
-				instance.addPermanentModifier(modifier);
-			}
-			else {
-				instance.addTransientModifier(modifier);
-			}
-		}
-	}
-
-	public static void removeAttributeModifier(LivingEntity entity, Attribute attribute, AttributeModifier modifier) {
-		removeAttributeModifier(entity, attribute, modifier.getId());
-	}
-
-	public static void removeAttributeModifier(LivingEntity entity, Attribute attribute, UUID modifierId) {
-		AttributeInstance instance = entity.getAttribute(attribute);
-
-		if (instance != null) {
-			AttributeModifier modifier = instance.getModifier(modifierId);
-
-			if (modifier != null) {
-				instance.removeModifier(modifier.getId());
-
-				if (attribute == Attributes.MAX_HEALTH && entity.getHealth() > entity.getMaxHealth())
-					entity.setHealth(entity.getMaxHealth());
-			}
-		}
-	}
-
-	public static double safelyGetAttributeValue(LivingEntity entity, Attribute attribute) {
-		AttributeMap attributes = entity.getAttributes();
-
-		return attributes.hasAttribute(attribute) ? attributes.getValue(attribute) : 0;
+		return mob.getNavigation() instanceof FlyingPathNavigation || mob.getMoveControl() instanceof FlyingMoveControl;
 	}
 
 	public static void pushEntityAway(@NotNull Entity centralEntity, @NotNull Entity targetEntity, float strength) {
-		double knockbackResist = targetEntity instanceof LivingEntity target ? Math.min(safelyGetAttributeValue(target, Attributes.KNOCKBACK_RESISTANCE), 1) : 0;
+		double knockbackResist = targetEntity instanceof LivingEntity target ? Math.min(AttributeUtil.getAttributeValue(target, Attributes.KNOCKBACK_RESISTANCE), 1) : 0;
 
 		if (knockbackResist >= 1)
 			return;
@@ -192,13 +107,13 @@ public final class EntityUtil {
 		boolean onlyBeneficial = entity instanceof Player && ((Player)entity).getAbilities().invulnerable;
 
 		for (EffectBuilder builder : effects) {
-			if (!onlyBeneficial || builder.getEffect().isBeneficial())
+			if (!onlyBeneficial || builder.getEffect().value().isBeneficial())
 				target.addEffect(builder.build());
 		}
 	}
 
-	public static void removePotions(LivingEntity entity, MobEffect... effects) {
-		for (MobEffect effect : effects) {
+	public static void removePotions(LivingEntity entity, Holder<MobEffect>... effects) {
+		for (Holder<MobEffect> effect : effects) {
 			if (entity.hasEffect(effect))
 				entity.removeEffect(effect);
 		}
@@ -374,11 +289,15 @@ public final class EntityUtil {
 		return impactEntity == null ? null : new EntityHitResult(impactEntity, position);
 	}
 
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	public static LivingEntity getLivingEntityFromSelfOrPart(Entity entity) {
 		if (entity instanceof LivingEntity livingEntity)
 			return livingEntity;
 
 		return entity instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity livingEntity ? livingEntity : null;
+	}
+
+	public static EquipmentSlot handToEquipmentSlotType(InteractionHand hand) {
+		return hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
 	}
 }

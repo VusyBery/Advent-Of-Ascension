@@ -1,0 +1,30 @@
+{
+  "type": "aoa3:infusion",
+  "base": {
+    "item": "aoa3:sniper_frame"
+  },
+  "ingredients": [
+    {
+      "item": "aoa3:ghoulasm"
+    },
+    {
+      "item": "aoa3:primordial_skull"
+    },
+    {
+      "item": "aoa3:darkly_powder"
+    },
+    {
+      "tag": "neoforge:ingots/ghoulish"
+    },
+    {
+      "tag": "neoforge:ingots/ghastly"
+    },
+    {
+      "tag": "c:gunpowders"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:sabbath"
+  }
+}

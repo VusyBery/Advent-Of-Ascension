@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,11 +22,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.entity.base.AoAMonster;
-import net.tslat.aoa3.data.server.AoANowhereBossArenaListener;
+import net.tslat.aoa3.content.world.nowhere.NowhereBossArena;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animation.RawAnimation;
 
 
 public abstract class AoABoss extends AoAMonster<AoABoss>{
@@ -41,8 +42,8 @@ public abstract class AoABoss extends AoAMonster<AoABoss>{
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
+	protected void defineSynchedData(SynchedEntityData.Builder builder) {
+		super.defineSynchedData(builder);
 
 		addSwingData(this.swingData = new SwingData());
 	}
@@ -58,7 +59,7 @@ public abstract class AoABoss extends AoAMonster<AoABoss>{
 	public abstract SoundEvent getMusic();
 
 	@Override
-	public boolean canChangeDimensions() {
+	public boolean canChangeDimensions(Level from, Level to) {
 		return false;
 	}
 
@@ -100,7 +101,7 @@ public abstract class AoABoss extends AoAMonster<AoABoss>{
 				if (this.lastArenaBoundTick != -1 && this.tickCount - this.lastArenaBoundTick >= 180) {
 					this.lastArenaBoundTick = -1;
 
-					AoANowhereBossArenaListener.NowhereBossArena arena = AoANowhereBossArenaListener.getClosestArena((ServerLevel)this.level(), this.position());
+					NowhereBossArena arena = NowhereBossArena.getClosestArena((ServerLevel)this.level(), this.position());
 
 					if (arena != null) {
 						resetFallDistance();
@@ -184,7 +185,7 @@ public abstract class AoABoss extends AoAMonster<AoABoss>{
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
 		if (source.is(DamageTypes.FELL_OUT_OF_WORLD) && WorldUtil.isWorld(this.level(), AoADimensions.NOWHERE) && !this.level().isClientSide() && getY() < this.level().getMinBuildHeight()) {
-			AoANowhereBossArenaListener.NowhereBossArena arena = AoANowhereBossArenaListener.getClosestArena((ServerLevel)this.level(), this.position());
+			NowhereBossArena arena = NowhereBossArena.getClosestArena((ServerLevel)this.level(), this.position());
 
 			if (arena != null) {
 				resetFallDistance();

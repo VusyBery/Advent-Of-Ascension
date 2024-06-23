@@ -7,11 +7,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.menu.generic.ExtensibleContainerMenu;
 import net.tslat.aoa3.util.RenderUtil;
 
 public class Generic2SlotContainerScreen<C extends ExtensibleContainerMenu<? extends Container>> extends AbstractContainerScreen<C> {
-	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("aoa3", "textures/gui/containers/basic_block.png");
+	private static final ResourceLocation BACKGROUND_TEXTURE = AdventOfAscension.id("textures/gui/containers/basic_block.png");
 
 	public Generic2SlotContainerScreen(C container, Inventory inv, Component guiTitle) {
 		super(container, inv, guiTitle);

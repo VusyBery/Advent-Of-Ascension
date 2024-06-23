@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.item.weapon.cannon;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.cannon.HeavyRedCannonballEntity;
@@ -11,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 
 public class HiveHowitzer extends BaseCannon {
-	public HiveHowitzer(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public HiveHowitzer(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable

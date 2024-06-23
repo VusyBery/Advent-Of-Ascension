@@ -1,0 +1,24 @@
+{
+  "type": "aoa3:new_mob_spawn",
+  "biomes": {
+    "excluding": [
+      "#neoforge:no_mob_spawns",
+      "#c:is_plains"
+    ],
+    "if_all": [
+      "#minecraft:is_overworld"
+    ],
+    "if_any": [
+      "#minecraft:is_forest",
+      "#c:is_tree/coniferous"
+    ]
+  },
+  "spawn": [
+    {
+      "type": "aoa3:sasquatch",
+      "maxCount": 1,
+      "minCount": 1,
+      "weight": 50
+    }
+  ]
+}

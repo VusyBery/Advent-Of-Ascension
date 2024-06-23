@@ -2,32 +2,39 @@ package net.tslat.aoa3.content.item.weapon.bow;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.content.entity.projectile.arrow.CustomArrowEntity;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class SkydriverBow extends BaseBow {
-	public SkydriverBow(double damage, float drawSpeedMultiplier, int durability) {
-		super(damage, drawSpeedMultiplier, durability);
+	public SkydriverBow(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Override
-	public void onArrowTick(CustomArrowEntity arrow, Entity shooter) {
-		if (!arrow.inGround && arrow.tickCount > 1) {
-			BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
+	public void tickArrow(CustomArrowEntity arrow, @Nullable Entity shooter, ItemStack stack) {
+		if (!arrow.level().isClientSide && !arrow.inGround && arrow.tickCount > 1) {
+			ParticleBuilder.forRandomPosInEntity(ParticleTypes.SPIT, arrow)
+					.colourOverride(0xA53A00)
+					.velocity(0, -0.1f, 0)
+					.lifespan(20)
+					.sendToAllPlayersTrackingEntity((ServerLevel)arrow.level(), arrow);
 
-			testPos.set(arrow.blockPosition());
+			BlockPos.MutableBlockPos testPos = arrow.blockPosition().mutable();
 
-			while (testPos.getY() >= 0 && arrow.level().isEmptyBlock(testPos.move(Direction.DOWN))) {
+			while (testPos.move(Direction.DOWN).getY() >= arrow.level().getMinBuildHeight() && arrow.level().isEmptyBlock(testPos)) {
 				;
 			}
 
@@ -37,8 +44,8 @@ public class SkydriverBow extends BaseBow {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

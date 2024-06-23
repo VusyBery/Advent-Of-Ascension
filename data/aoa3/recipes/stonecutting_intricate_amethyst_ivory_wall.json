@@ -1,8 +1,0 @@
-{
-  "type": "minecraft:stonecutting",
-  "count": 1,
-  "ingredient": {
-    "item": "aoa3:intricate_amethyst_ivory"
-  },
-  "result": "aoa3:intricate_amethyst_ivory_wall"
-}

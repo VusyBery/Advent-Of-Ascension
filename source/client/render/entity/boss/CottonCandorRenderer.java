@@ -7,11 +7,11 @@ import net.minecraft.resources.ResourceLocation;
 
 
 public class CottonCandorRenderer extends MobRenderer<CottonCandorEntity, EntityModel<CottonCandorEntity>> {
-	private static final ResourceLocation WIND_PHASE_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/cottoncandor/cotton_candor_wind.png");
-	private static final ResourceLocation WATER_PHASE_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/cottoncandor/cotton_candor_water.png");
-	private static final ResourceLocation FIRE_PHASE_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/cottoncandor/cotton_candor_fire.png");
-	private static final ResourceLocation WITHER_PHASE_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/cottoncandor/cotton_candor_wither.png");
-	private static final ResourceLocation POISON_PHASE_TEXTURE = new ResourceLocation("aoa3", "textures/entity/boss/cottoncandor/cotton_candor_poison.png");
+	private static final ResourceLocation WIND_PHASE_TEXTURE = AdventOfAscension.id("textures/entity/boss/cottoncandor/cotton_candor_wind.png");
+	private static final ResourceLocation WATER_PHASE_TEXTURE = AdventOfAscension.id("textures/entity/boss/cottoncandor/cotton_candor_water.png");
+	private static final ResourceLocation FIRE_PHASE_TEXTURE = AdventOfAscension.id("textures/entity/boss/cottoncandor/cotton_candor_fire.png");
+	private static final ResourceLocation WITHER_PHASE_TEXTURE = AdventOfAscension.id("textures/entity/boss/cottoncandor/cotton_candor_wither.png");
+	private static final ResourceLocation POISON_PHASE_TEXTURE = AdventOfAscension.id("textures/entity/boss/cottoncandor/cotton_candor_poison.png");
 
 	public CottonCandorRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new CottonCandorModel(), AoAMobs.COTTON_CANDOR.get().getWidth() / 3);

@@ -1,6 +1,6 @@
 package net.tslat.aoa3.common.registration.worldgen;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -19,7 +19,7 @@ public final class AoAStructureTypes {
 
 	public static void init() {}
 
-	private static <T extends Structure> DeferredHolder<StructureType<?>, StructureType<T>> register(String id, Codec<T> codec) {
+	private static <T extends Structure> DeferredHolder<StructureType<?>, StructureType<T>> register(String id, MapCodec<T> codec) {
 		return AoARegistries.STRUCTURE_TYPES.register(id, () -> () -> codec);
 	}
 }

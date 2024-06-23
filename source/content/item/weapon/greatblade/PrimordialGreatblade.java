@@ -1,23 +1,23 @@
 package net.tslat.aoa3.content.item.weapon.greatblade;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.tslat.aoa3.common.registration.item.AoATiers;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class PrimordialGreatblade extends BaseGreatblade {
-	public PrimordialGreatblade() {
-		super(AoATiers.PRIMORDIAL_GREATBLADE);
+	public PrimordialGreatblade(Tier tier, Item.Properties properties) {
+		super(tier, properties);
 	}
 
 	@Override
-	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack swordStack, float baseDamage) {
+	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack greatblade, DamageSource source, float baseDamage) {
 		float extraDmg;
 		float maxHealth = target.getMaxHealth();
 
@@ -34,11 +34,11 @@ public class PrimordialGreatblade extends BaseGreatblade {
 			extraDmg = Math.min(maxHealth / 300f, 5);
 		}
 
-		return super.getDamageForAttack(target, attacker, swordStack, (float)baseDamage + extraDmg);
+		return super.getDamageForAttack(target, attacker, greatblade, source, (float)baseDamage + extraDmg);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 	}
 }

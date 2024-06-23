@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.loottable.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
@@ -20,22 +20,22 @@ import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.NotNull;
 
 public class HavenLootModifier extends LootModifier {
-	public static final Codec<HavenLootModifier> CODEC = RecordCodecBuilder.create(builder -> codecStart(builder).apply(builder, HavenLootModifier::new));
-	public static final ResourceLocation HAVEN_LOOT_TABLE = new ResourceLocation(AdventOfAscension.MOD_ID, "worlds/haven_passive");
+	public static final MapCodec<HavenLootModifier> CODEC = RecordCodecBuilder.mapCodec(builder -> codecStart(builder).apply(builder, HavenLootModifier::new));
+	public static final ResourceLocation HAVEN_LOOT_TABLE = AdventOfAscension.id("worlds/haven_passive");
 
 	public HavenLootModifier(LootItemCondition[] conditions) {
 		super(conditions);
 	}
 
 	@Override
-	public Codec<? extends IGlobalLootModifier> codec() {
+	public MapCodec<? extends IGlobalLootModifier> codec() {
 		return CODEC;
 	}
 
 	@NotNull
 	@Override
 	protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-		if (WorldUtil.isWorld((ServerLevelAccessor)context.getLevel(), AoADimensions.HAVEN) && context.hasParam(LootContextParams.THIS_ENTITY) && context.hasParam(LootContextParams.ORIGIN) && !context.hasParam(LootContextParams.KILLER_ENTITY) && !context.hasParam(LootContextParams.DIRECT_KILLER_ENTITY)) {
+		if (WorldUtil.isWorld((ServerLevelAccessor)context.getLevel(), AoADimensions.HAVEN) && context.hasParam(LootContextParams.THIS_ENTITY) && context.hasParam(LootContextParams.ORIGIN) && !context.hasParam(LootContextParams.ATTACKING_ENTITY) && !context.hasParam(LootContextParams.DIRECT_ATTACKING_ENTITY)) {
 			if (!context.hasParam(LootContextParams.BLOCK_STATE) || context.getRandom().nextInt(10) == 0) {
 				generatedLoot.addAll(LootUtil.generateLoot(HAVEN_LOOT_TABLE, new LootParams.Builder(context.getLevel())
 						.withParameter(LootContextParams.THIS_ENTITY, context.getParamOrNull(LootContextParams.THIS_ENTITY))

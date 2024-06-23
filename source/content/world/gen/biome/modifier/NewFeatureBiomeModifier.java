@@ -1,6 +1,6 @@
 package net.tslat.aoa3.content.world.gen.biome.modifier;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.world.ModifiableBiomeInfo;
 import net.tslat.aoa3.content.world.gen.BiomeMatcher;
 
 public record NewFeatureBiomeModifier(BiomeMatcher biomeMatcher, GenerationStep.Decoration step, HolderSet<PlacedFeature> features) implements BiomeModifier {
-	public static final Codec<NewFeatureBiomeModifier> CODEC = RecordCodecBuilder.create(codec -> codec.group(
+	public static final MapCodec<NewFeatureBiomeModifier> CODEC = RecordCodecBuilder.mapCodec(codec -> codec.group(
 			BiomeMatcher.CODEC.fieldOf("biomes").forGetter(NewFeatureBiomeModifier::biomeMatcher),
 			GenerationStep.Decoration.CODEC.optionalFieldOf("gen_step", GenerationStep.Decoration.SURFACE_STRUCTURES).forGetter(NewFeatureBiomeModifier::step),
 			PlacedFeature.LIST_CODEC.fieldOf("features").forGetter(NewFeatureBiomeModifier::features)
@@ -28,7 +28,7 @@ public record NewFeatureBiomeModifier(BiomeMatcher biomeMatcher, GenerationStep.
 	}
 
 	@Override
-	public Codec<? extends BiomeModifier> codec() {
+	public MapCodec<? extends BiomeModifier> codec() {
 		return CODEC;
 	}
 }

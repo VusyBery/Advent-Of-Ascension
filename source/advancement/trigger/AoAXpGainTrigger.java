@@ -7,7 +7,6 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.ExtraCodecs;
 import net.tslat.aoa3.common.registration.AoAAdvancementTriggers;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -43,9 +42,9 @@ public class AoAXpGainTrigger extends SimpleCriterionTrigger<AoAXpGainTrigger.In
 
 	public record Instance(Optional<ContextAwarePredicate> player, Optional<AoASkill> skill, Optional<Float> xpThreshold) implements SimpleCriterionTrigger.SimpleInstance {
 		private static final Codec<AoAXpGainTrigger.Instance> CODEC = RecordCodecBuilder.create(codec -> codec.group(
-				ExtraCodecs.strictOptionalField(EntityPredicate.ADVANCEMENT_CODEC, "player").forGetter(AoAXpGainTrigger.Instance::player),
-				ExtraCodecs.strictOptionalField(AoARegistries.AOA_SKILLS.lookupCodec(), "skill").forGetter(AoAXpGainTrigger.Instance::skill),
-				ExtraCodecs.strictOptionalField(Codec.FLOAT, "xp").forGetter(AoAXpGainTrigger.Instance::xpThreshold)
+				EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(AoAXpGainTrigger.Instance::player),
+				AoARegistries.AOA_SKILLS.lookupCodec().optionalFieldOf("skill").forGetter(AoAXpGainTrigger.Instance::skill),
+				Codec.FLOAT.optionalFieldOf("xp").forGetter(AoAXpGainTrigger.Instance::xpThreshold)
 		).apply(codec, AoAXpGainTrigger.Instance::new));
 
 		public boolean test(AoASkill skill, float xp) {

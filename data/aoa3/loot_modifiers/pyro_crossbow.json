@@ -16,11 +16,8 @@
     {
       "item": "minecraft:crossbow",
       "replace_with": {
-        "Count": 1,
-        "id": "aoa3:pyro_crossbow",
-        "tag": {
-          "Damage": 0
-        }
+        "count": 1,
+        "id": "aoa3:pyro_crossbow"
       }
     }
   ]

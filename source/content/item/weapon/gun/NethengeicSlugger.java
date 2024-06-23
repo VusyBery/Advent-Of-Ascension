@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class NethengeicSlugger extends BaseGun {
-	public NethengeicSlugger(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public NethengeicSlugger(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -54,15 +54,15 @@ public class NethengeicSlugger extends BaseGun {
 	@Override
 	public void doImpactDamage(Entity target, LivingEntity shooter, BaseBullet bullet, Vec3 impactPosition, float bulletDmgMultiplier) {
 		if (target instanceof LivingEntity || target instanceof PartEntity<?>)
-			target.setSecondsOnFire(5);
+			target.igniteForSeconds(5);
 
 		super.doImpactDamage(target, shooter, bullet, impactPosition, bulletDmgMultiplier);
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BURNS_TARGETS, LocaleUtil.ItemDescriptionType.BENEFICIAL));
 
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

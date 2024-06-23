@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -25,7 +25,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.block.blockentity.BossAltarBlockEntity;
 import net.tslat.aoa3.content.item.misc.summoning.BossTokenItem;
-import net.tslat.aoa3.data.server.AoANowhereBossArenaListener;
+import net.tslat.aoa3.content.world.nowhere.NowhereBossArena;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.BlockUtil;
 import net.tslat.aoa3.util.InteractionResults;
@@ -55,15 +55,15 @@ public class BossAltar extends Block implements EntityBlock {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (!WorldUtil.isWorld(level, AoADimensions.NOWHERE))
-			return InteractionResults.BlockUse.noActionTaken();
+			return InteractionResults.BlockUseItemOn.noActionTaken();
 
 		if (level.getDifficulty() == Difficulty.PEACEFUL) {
 			if (!level.isClientSide && hand == InteractionHand.MAIN_HAND)
 				player.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("nowhere.boss.difficulty"), ChatFormatting.RED));
 
-			return InteractionResults.BlockUse.noActionTaken();
+			return InteractionResults.BlockUseItemOn.noActionTaken();
 		}
 
 		ItemStack heldItem = player.getItemInHand(hand);
@@ -74,7 +74,7 @@ public class BossAltar extends Block implements EntityBlock {
 			if (hand == InteractionHand.OFF_HAND && !level.isClientSide())
 				player.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("nowhere.boss.badItem"), ChatFormatting.RED));
 
-			return InteractionResults.BlockUse.noActionTaken();
+			return InteractionResults.BlockUseItemOn.noActionTaken();
 		}
 
 		if (level instanceof ServerLevel serverLevel) {
@@ -84,10 +84,10 @@ public class BossAltar extends Block implements EntityBlock {
 			if (players.isEmpty()) {
 				player.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("nowhere.boss.tooFar"), ChatFormatting.RED));
 
-				return InteractionResults.BlockUse.noActionTaken();
+				return InteractionResults.BlockUseItemOn.noActionTaken();
 			}
 
-			AoANowhereBossArenaListener.NowhereBossArena arena = AoANowhereBossArenaListener.getFreeArena(serverLevel);
+			NowhereBossArena arena = NowhereBossArena.getFreeArena(serverLevel);
 
 			if (arena == null) {
 				player.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("nowhere.boss.full"), ChatFormatting.RED));
@@ -99,7 +99,7 @@ public class BossAltar extends Block implements EntityBlock {
 					if (bossAltar.getCurrentEntity() != null) {
 						player.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("nowhere.boss.inUse"), ChatFormatting.RED));
 
-						return InteractionResults.BlockUse.noActionTaken();
+						return InteractionResults.BlockUseItemOn.noActionTaken();
 					}
 
 					bossAltar.updateEntity(entityType);
@@ -110,20 +110,15 @@ public class BossAltar extends Block implements EntityBlock {
 			}
 		}
 
-		return InteractionResults.BlockUse.succeedAndSwingArmBothSides(level.isClientSide);
+		return InteractionResults.BlockUseItemOn.succeedAndSwingArmBothSides(level.isClientSide);
 	}
 
 	@Nullable
 	private BossTokenItem getEntityTypeFromStack(ItemStack stack) {
-		BossTokenItem token = null;
-
-		if (stack.getItem() instanceof BossTokenItem tokenItem) {
-			token = tokenItem;
-		}
-		else if (stack.getItem() instanceof BlockItem block && block.getBlock() instanceof BossTokenItem tokenItem) {
-			token = tokenItem;
-		}
-
-		return token;
+		return switch (stack.getItem()) {
+			case BossTokenItem bossToken -> bossToken;
+			case BlockItem blockItem when blockItem.getBlock() instanceof BossTokenItem token -> token;
+			default -> null;
+		};
 	}
 }

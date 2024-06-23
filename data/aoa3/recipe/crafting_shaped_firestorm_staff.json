@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "neoforge:gems/bloodstone"
+    },
+    "B": {
+      "tag": "neoforge:rods/metal"
+    },
+    "C": {
+      "item": "aoa3:flammable_dust"
+    },
+    "D": {
+      "item": "aoa3:nightmare_flakes"
+    }
+  },
+  "pattern": [
+    "DCD",
+    " A ",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "aoa3:firestorm_staff"
+  }
+}

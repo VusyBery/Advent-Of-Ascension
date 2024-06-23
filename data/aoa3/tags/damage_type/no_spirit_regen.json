@@ -23,6 +23,6 @@
     "minecraft:explosion",
     "minecraft:player_explosion",
     "minecraft:fireworks",
-    "#forge:is_magic"
+    "#neoforge:is_magic"
   ]
 }

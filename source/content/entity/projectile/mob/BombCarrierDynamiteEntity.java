@@ -10,12 +10,12 @@ import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoAExplosions;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
-import net.tslat.aoa3.content.entity.mob.overworld.BombCarrierEntity;
+import net.tslat.aoa3.content.entity.monster.overworld.BombCarrierEntity;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.library.object.explosion.StandardExplosion;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class BombCarrierDynamiteEntity extends BaseMobProjectile implements GeoEntity {
@@ -37,7 +37,7 @@ public class BombCarrierDynamiteEntity extends BaseMobProjectile implements GeoE
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.05f;
 	}
 

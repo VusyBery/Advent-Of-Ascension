@@ -26,7 +26,7 @@ public class BeamerShotEntity extends BaseEnergyShot {
 	}
 
 	@Override
-	public float getGravity() {
+	public double getDefaultGravity() {
 		return 0.4f;
 	}
 }

@@ -2,7 +2,7 @@ package net.tslat.aoa3.content.block.functional.utility;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,9 +23,8 @@ public class MineralizationStation extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (!world.isClientSide && !player.getItemInHand(hand).isEmpty()) {
-			ItemStack stack = player.getItemInHand(hand);
+	public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (!level.isClientSide && !player.getItemInHand(hand).isEmpty()) {
 			Item tokensItem = null;
 			int baseAmount = 5;
 
@@ -61,7 +60,7 @@ public class MineralizationStation extends Block {
 				case "blank_realmstone" -> {
 					player.setItemInHand(hand, new ItemStack(AoAItems.IROMINE_REALMSTONE.get()));
 					player.inventoryMenu.broadcastChanges();
-					return InteractionResult.SUCCESS;
+					return ItemInteractionResult.CONSUME;
 				}
 				default -> {
 					if (stack.is(Tags.Items.INGOTS) || stack.is(Tags.Items.GEMS)) {
@@ -76,9 +75,10 @@ public class MineralizationStation extends Block {
 					stack.shrink(1);
 
 				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(tokensItem, baseAmount + player.getRandom().nextInt(baseAmount)));
+				return ItemInteractionResult.CONSUME;
 			}
 		}
 
-		return InteractionResult.SUCCESS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 }

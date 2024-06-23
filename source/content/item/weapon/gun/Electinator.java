@@ -6,9 +6,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class Electinator extends BaseGun {
-	public Electinator(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public Electinator(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -38,14 +38,19 @@ public class Electinator extends BaseGun {
 
 	@Override
 	protected void doImpactEffect(Entity target, LivingEntity shooter, BaseBullet bullet, Vec3 impactPos, float bulletDmgMultiplier) {
+		ItemStack stack = shooter.getItemInHand(bullet.getHand());
+
+		if (!stack.is(this))
+			stack = getDefaultInstance();
+
 		for (Entity entity : EntityRetrievalUtil.<Entity>getEntities(target, 3, entity -> entity instanceof Enemy)) {
-			DamageUtil.doMiscEnergyAttack(shooter, entity, getDamage() * 0.15f * bulletDmgMultiplier, target.position());
+			DamageUtil.doMiscEnergyAttack(shooter, entity, getGunDamage(stack) * 0.15f * bulletDmgMultiplier, target.position());
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }

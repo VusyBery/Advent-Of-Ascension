@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 1.0,
+  "ingredient": {
+    "item": "aoa3:toxic_waste_bucket"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:vile_stone"
+  }
+}

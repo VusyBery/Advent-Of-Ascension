@@ -2,7 +2,6 @@ package net.tslat.aoa3.content.block.functional.portal;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
@@ -12,11 +11,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.common.particletype.PortalFloaterParticleType;
+import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
-import net.tslat.aoa3.data.server.AoANowhereParkourCourseListener;
+import net.tslat.aoa3.content.world.nowhere.NowhereParkourCourse;
 import net.tslat.aoa3.event.dimension.NowhereEvents;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
@@ -39,16 +37,20 @@ public class NowhereActivityPortal extends PortalBlock {
 	}
 
 	@Override
+	public Block getPortalFrame() {
+		return AoABlocks.ANCIENT_TILE_SHRINE.get();
+	}
+
+	@Override
 	public void entityInside(BlockState state, Level world, BlockPos pos, Entity entity) {
 		if (entity.getVehicle() == null && !entity.isVehicle() && entity instanceof ServerPlayer pl && WorldUtil.isWorld(pl.level(), AoADimensions.NOWHERE)) {
-			if (pl.portalTime > 0) {
-				pl.portalTime = 30;
+			if (pl.isOnPortalCooldown()) {
+				pl.setPortalCooldown();
 
 				return;
 			}
 
-			pl.portalTime = 100;
-
+			pl.setPortalCooldown();
 			state.getValue(ACTIVITY).activate(pl);
 		}
 	}
@@ -61,40 +63,20 @@ public class NowhereActivityPortal extends PortalBlock {
 	}
 
 	@Override
-	public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
-		for (int i = 0; i < 4; ++i) {
-			double posXStart = (float)pos.getX() + random.nextFloat();
-			double posYStart = (float)pos.getY() + random.nextFloat();
-			double posZStart = (float)pos.getZ() + random.nextFloat();
-			double motionX = ((double)random.nextFloat() - 0.5D) * 0.5D;
-			double motionY = ((double)random.nextFloat() - 0.5D) * 0.5D;
-			double motionZ = ((double)random.nextFloat() - 0.5D) * 0.5D;
-			int randomMod = random.nextInt(2) * 2 - 1;
-			int colour = switch (state.getValue(ACTIVITY)) {
-				case PARKOUR -> 39103;
-				case PARKOUR_1 -> 9175295;
-				case PARKOUR_2 -> 262388;
-				case PARKOUR_3 -> 12449536;
-				case PARKOUR_4 -> 16763904;
-				case PARKOUR_5 -> 14711552;
-				case PARKOUR_6 -> 13828096;
-				case BOSSES -> 12189696;
-				case DUNGEON -> 9502944;
-				case UTILITY -> 29210;
-				case RETURN -> 16777215;
-			};
-
-			if (level.getBlockState(pos.west()).getBlock() != this && level.getBlockState(pos.east()).getBlock() != this) {
-				posXStart = (double)pos.getX() + 0.5D + 0.25D * (double)randomMod;
-				motionX = random.nextFloat() * 2.0F * (float)randomMod;
-			}
-			else {
-				posZStart = (double)pos.getZ() + 0.5D + 0.25D * (double)randomMod;
-				motionZ = random.nextFloat() * 2.0F * (float)randomMod;
-			}
-
-			level.addParticle(new PortalFloaterParticleType.Data(new Vec3(pos.getX(), pos.getY(), pos.getZ()), colour), posXStart, posYStart, posZStart, motionX, motionY, motionZ);
-		}
+	public int getParticleColour(BlockState state) {
+		return switch (state.getValue(ACTIVITY)) {
+			case PARKOUR -> 0x0098BF;
+			case PARKOUR_1 -> 0x8C00FF;
+			case PARKOUR_2 -> 0x0400F4;
+			case PARKOUR_3 -> 0xBDF700;
+			case PARKOUR_4 -> 0xFFCC00;
+			case PARKOUR_5 -> 0xE07B00;
+			case PARKOUR_6 -> 0xD30000;
+			case BOSSES -> 0xBA0000;
+			case DUNGEON -> 0x9100E0;
+			case UTILITY -> 0x00721A;
+			case RETURN -> 0xFFFFFF;
+		};
 	}
 
 	public enum Activity implements StringRepresentable {
@@ -163,12 +145,12 @@ public class NowhereActivityPortal extends PortalBlock {
 
 		private static boolean doReturnPortalTeleport(ServerPlayer pl, double x, double y, double z, float rot) {
 			if (pl.getY() >= pl.level().getMinBuildHeight() && NowhereEvents.isInParkourRegion(pl.blockPosition())) {
-				AoANowhereParkourCourseListener.NowhereParkourCourse course = AoANowhereParkourCourseListener.getCourseForPosition(pl.serverLevel(), pl.position());
+				NowhereParkourCourse course = NowhereParkourCourse.getCourseForPosition(pl.serverLevel(), pl.position());
 
 				if (course != null) {
 					course.grantRewards(pl);
 
-					AoANowhereParkourCourseListener.NowhereParkourCourse nextCourse = AoANowhereParkourCourseListener.getNextCourse(course);
+					NowhereParkourCourse nextCourse = NowhereParkourCourse.getNextCourse(course);
 
 					if (nextCourse != null) {
 						nextCourse.teleportPlayerToCourse(pl);
@@ -184,7 +166,7 @@ public class NowhereActivityPortal extends PortalBlock {
 		}
 
 		private static boolean findParkourCourse(ServerPlayer pl, int tier) {
-			AoANowhereParkourCourseListener.NowhereParkourCourse course = AoANowhereParkourCourseListener.getFirstCourseForTier(tier);
+			NowhereParkourCourse course = NowhereParkourCourse.getFirstCourseForTier(tier);
 
 			if (course == null)
 				return false;

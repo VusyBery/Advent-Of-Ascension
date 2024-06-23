@@ -1,6 +1,5 @@
 package net.tslat.aoa3.content.item.weapon.blaster;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -9,15 +8,19 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.content.item.misc.SequenceVerifiedItem;
 import org.jetbrains.annotations.Nullable;
 
+public class ExperimentW801 extends BaseBlaster implements SequenceVerifiedItem {
+	public ExperimentW801(Item.Properties properties) {
+		super(properties);
+	}
 
-public class ExperimentW801 extends BaseBlaster {
-	public ExperimentW801(double dmg, int durability, int fireDelayTicks, float energyCost) {
-		super(new Item.Properties().durability(durability).rarity(Rarity.EPIC), dmg, fireDelayTicks, energyCost);
+	@Override
+	public String getSequenceName() {
+		return "alien_orb";
 	}
 
 	@Nullable
@@ -47,29 +50,5 @@ public class ExperimentW801 extends BaseBlaster {
 		}
 
 		return false;
-	}
-
-	private boolean verifyStack(ItemStack stack) {
-		if (stack.isEmpty())
-			return false;
-
-		if (!stack.hasTag())
-			return false;
-
-		CompoundTag tag = stack.getTag();
-
-		if (!tag.contains("alien_orb"))
-			return false;
-
-		return tag.getBoolean("alien_orb");
-	}
-
-	public ItemStack newValidStack() {
-		ItemStack stack = new ItemStack(this);
-		CompoundTag tag = stack.getOrCreateTag();
-
-		tag.putBoolean("alien_orb", true);
-
-		return stack;
 	}
 }

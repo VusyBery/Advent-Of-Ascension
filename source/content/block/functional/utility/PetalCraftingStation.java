@@ -3,7 +3,7 @@ package net.tslat.aoa3.content.block.functional.utility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,6 +15,7 @@ import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAArmour;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class PetalCraftingStation extends Block {
 	public PetalCraftingStation(BlockBehaviour.Properties properties) {
@@ -22,25 +23,24 @@ public class PetalCraftingStation extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-		if (player.getItemInHand(hand).getItem() == AoAItems.PETALS.get()) {
-			if (!world.isClientSide()) {
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+		if (stack.getItem() == AoAItems.PETALS.get()) {
+			if (!level.isClientSide()) {
 				if (!player.isCreative())
-					player.getItemInHand(hand).shrink(1);
+					stack.shrink(1);
 
-				switch (player.getRandom().nextInt(4)) {
-					case 0 -> ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAArmour.HYDRANGIC_ARMOUR.boots.get()));
-					case 1 -> ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAArmour.HYDRANGIC_ARMOUR.leggings.get()));
-					case 2 -> ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAArmour.HYDRANGIC_ARMOUR.chestplate.get()));
-					case 3 -> ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAArmour.HYDRANGIC_ARMOUR.helmet.get()));
-				}
+				ItemUtil.givePlayerItemOrDrop(player, RandomUtil.getRandomSelection(
+						AoAArmour.HYDRANGIC_ARMOUR.boots,
+						AoAArmour.HYDRANGIC_ARMOUR.leggings,
+						AoAArmour.HYDRANGIC_ARMOUR.chestplate,
+						AoAArmour.HYDRANGIC_ARMOUR.helmet).get().getDefaultInstance());
 
-				world.playSound(null, pos, AoASounds.BLOCK_PETAL_CRAFTING_STATION_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+				level.playSound(null, pos, AoASounds.BLOCK_PETAL_CRAFTING_STATION_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 			}
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.sidedSuccess(level.isClientSide);
 		}
 
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 }

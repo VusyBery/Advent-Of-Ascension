@@ -14,7 +14,14 @@ import net.tslat.aoa3.client.gui.hud.XpParticlesRenderer;
 import net.tslat.aoa3.client.gui.overlay.ScopeOverlayRenderer;
 import net.tslat.aoa3.client.gui.overlay.ScreenEffectRenderer;
 import net.tslat.aoa3.client.model.ModelProperties;
-import net.tslat.aoa3.client.particle.*;
+import net.tslat.aoa3.client.particle.EntityOrbitingParticle;
+import net.tslat.aoa3.client.particle.FloatingItemFragmentParticle;
+import net.tslat.aoa3.client.particle.GenericSpriteParticle;
+import net.tslat.aoa3.client.particle.OrbParticle;
+import net.tslat.aoa3.client.particle.entityaffecting.BurningFlameParticle;
+import net.tslat.aoa3.client.particle.entityaffecting.EntityAffectingParticle;
+import net.tslat.aoa3.client.particle.entityaffecting.FreezingSnowflakeParticle;
+import net.tslat.aoa3.client.particle.entityaffecting.SandstormParticle;
 import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
 import net.tslat.aoa3.client.render.dimension.AoADimensionRenderEffects;
 import net.tslat.aoa3.client.render.entity.misc.OccultBlockRenderer;
@@ -37,7 +44,6 @@ public final class AoAClientSetup {
         AoAGuiElementRenderers.init();
         AoAKeybinds.init();
         AoAResourceReloadListeners.init();
-        AoAArmPoses.init();
         ScopeOverlayRenderer.init();
         XpParticlesRenderer.init();
         ScreenEffectRenderer.init();
@@ -74,18 +80,12 @@ public final class AoAClientSetup {
     }
 
     private static void registerParticleFactories(RegisterParticleProvidersEvent ev) {
-        ev.registerSpriteSet(AoAParticleTypes.PORTAL_FLOATER.get(), PortalFloaterParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.SPARKLER.get(), SparklerParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.FLICKERING_SPARKLER.get(), FlickeringSparklerParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.LINGERING_SPARKLER.get(), LingeringSparklerParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.RAINBOW_SPARKLER.get(), RainbowSparklerParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.SWIRLY.get(), SwirlyParticle.Factory::new);
+        ev.registerSpriteSet(AoAParticleTypes.GENERIC_DUST.get(), GenericSpriteParticle.Provider::new);
         ev.registerSpecial(AoAParticleTypes.FLOATING_ITEM_FRAGMENT.get(), new FloatingItemFragmentParticle.Factory());
-        ev.registerSpriteSet(AoAParticleTypes.FREEZING_SNOWFLAKE.get(), FreezingSnowflakeParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.BURNING_FLAME.get(), BurningFlameParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.SANDSTORM.get(), SandstormParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.ORB.get(), OrbParticle.Factory::new);
-        ev.registerSpriteSet(AoAParticleTypes.FIRE_AURA.get(), FireAuraParticle.Factory::new);
-        //ev.registerSpecial(AoAParticleTypes.BEAM.get(), new BeamParticle.Factory());
+        ev.registerSprite(AoAParticleTypes.FREEZING_SNOWFLAKE.get(), new EntityAffectingParticle.SingleSpriteProvider<>(FreezingSnowflakeParticle::new));
+        ev.registerSpriteSet(AoAParticleTypes.BURNING_FLAME.get(), sprites -> new EntityAffectingParticle.Provider<>(sprites, BurningFlameParticle::new));
+        ev.registerSpriteSet(AoAParticleTypes.SANDSTORM.get(), sprites -> new EntityAffectingParticle.Provider<>(sprites, SandstormParticle::new));
+        ev.registerSprite(AoAParticleTypes.ORB.get(), new OrbParticle.Provider());
+        ev.registerSpriteSet(AoAParticleTypes.FIRE_AURA.get(), EntityOrbitingParticle.Provider::new);
     }
 }

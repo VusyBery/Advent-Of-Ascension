@@ -24,6 +24,7 @@ import net.minecraft.world.level.levelgen.structure.StructureSpawnOverride;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.TerrainAdjustment;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.tslat.aoa3.common.registration.worldgen.AoAStructureTypes;
 
 import java.util.Map;
@@ -32,7 +33,7 @@ import java.util.Optional;
 import static net.tslat.aoa3.content.world.gen.structure.AoAStructure.Settings.aoaSettings;
 
 public class AoAStructure extends Structure {
-	public static final Codec<AoAStructure> DEFAULT_CODEC = RecordCodecBuilder.<AoAStructure>mapCodec(codec -> codec.group(aoaSettings()).apply(codec, AoAStructure::new)).codec();
+	public static final MapCodec<AoAStructure> DEFAULT_CODEC = RecordCodecBuilder.mapCodec(codec -> codec.group(aoaSettings()).apply(codec, AoAStructure::new));
 
 	protected final Settings settings;
 	protected final AoAJigsawAssembler assembler;
@@ -54,7 +55,7 @@ public class AoAStructure extends Structure {
 		int startHeight = this.settings.startHeight.sample(genContext.random(), new WorldGenerationContext(genContext.chunkGenerator(), genContext.heightAccessor()));
 		BlockPos blockpos = new BlockPos(chunkpos.getMinBlockX(), startHeight, chunkpos.getMinBlockZ());
 
-		return assembler.addPieces(genContext, this.settings.startPool, this.settings.startJigsawName, this.settings.maxPieces, blockpos, this.settings.startHeightmap, 128);
+		return this.assembler.addPieces(genContext, this.settings.startPool, this.settings.startJigsawName, this.settings.maxPieces, blockpos, this.settings.startHeightmap, 128, this.settings.liquidSettings);
 	}
 
 	@Override
@@ -62,7 +63,7 @@ public class AoAStructure extends Structure {
 		return AoAStructureTypes.AOA_DEFAULT.get();
 	}
 
-	public record Settings(HolderSet<Biome> biomes, Map<MobCategory, StructureSpawnOverride> spawnOverrides, GenerationStep.Decoration step, TerrainAdjustment terrainAdaptation, Holder<StructureTemplatePool> startPool, Optional<ResourceLocation> startJigsawName, int maxPieces, HeightProvider startHeight, Optional<Heightmap.Types> startHeightmap) {
+	public record Settings(HolderSet<Biome> biomes, Map<MobCategory, StructureSpawnOverride> spawnOverrides, GenerationStep.Decoration step, TerrainAdjustment terrainAdaptation, Holder<StructureTemplatePool> startPool, Optional<ResourceLocation> startJigsawName, int maxPieces, HeightProvider startHeight, Optional<Heightmap.Types> startHeightmap, LiquidSettings liquidSettings) {
 		private static final MapCodec<Settings> CODEC = RecordCodecBuilder.mapCodec(codec -> codec.group(
 				RegistryCodecs.homogeneousList(Registries.BIOME).fieldOf("biomes").forGetter(Settings::biomes),
 				Codec.simpleMap(MobCategory.CODEC, StructureSpawnOverride.CODEC, StringRepresentable.keys(MobCategory.values())).fieldOf("spawn_overrides").forGetter(Settings::spawnOverrides),
@@ -72,7 +73,8 @@ public class AoAStructure extends Structure {
 				ResourceLocation.CODEC.optionalFieldOf("start_jigsaw_name").forGetter(Settings::startJigsawName),
 				Codec.intRange(0, 15).optionalFieldOf("size", 15).forGetter(Settings::maxPieces),
 				HeightProvider.CODEC.optionalFieldOf("start_height", ConstantHeight.of(VerticalAnchor.absolute(0))).forGetter(Settings::startHeight),
-				Heightmap.Types.CODEC.optionalFieldOf("heightmap_for_start").forGetter(Settings::startHeightmap)
+				Heightmap.Types.CODEC.optionalFieldOf("heightmap_for_start").forGetter(Settings::startHeightmap),
+				LiquidSettings.CODEC.optionalFieldOf("liquid_settings", LiquidSettings.APPLY_WATERLOGGING).forGetter(Settings::liquidSettings)
 		).apply(codec, Settings::new));
 
 		private StructureSettings toVanillaSettings() {

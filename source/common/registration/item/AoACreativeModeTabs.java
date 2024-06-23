@@ -1,21 +1,29 @@
 package net.tslat.aoa3.common.registration.item;
 
+import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.advent.AoAStartupCache;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.util.LocaleUtil;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.function.Supplier;
 
 public final class AoACreativeModeTabs {
+	private static final Multimap<ResourceKey<CreativeModeTab>, Supplier<ItemStack>> ITEM_CREATIVE_TABS = MultimapBuilder.hashKeys().arrayListValues().build();
 
 	public static void init() {
 		AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, BuildCreativeModeTabContentsEvent.class, AoACreativeModeTabs::fillVanillaTabs);
@@ -53,11 +61,26 @@ public final class AoACreativeModeTabs {
 				.title(LocaleUtil.getLocaleMessage("itemGroup." + AdventOfAscension.MOD_ID + "." + id))
 				.withTabsBefore(afterTabs)
 				.icon(icon)
-				.displayItems((displayParams, output) -> output.acceptAll(AoAStartupCache.getItemsForTab(AoARegistries.CREATIVE_MODE_TABS.getEntry(AdventOfAscension.id(id)))))
+				.displayItems((displayParams, output) -> output.acceptAll(getItemsForTab(AoARegistries.CREATIVE_MODE_TABS.getEntry(AdventOfAscension.id(id)))))
 				.build());
 	}
 
 	private static void fillVanillaTabs(final BuildCreativeModeTabContentsEvent ev) {
-		ev.acceptAll(AoAStartupCache.getItemsForTab(ev.getTab()));
+		if (!AdventOfAscension.isAoA(ev.getTabKey().location()))
+			ev.acceptAll(getItemsForTab(ev.getTab()));
+	}
+
+	public static void setItemCreativeTabs(Supplier<? extends Item> item, Collection<ResourceKey<CreativeModeTab>> creativeTabs) {
+		if (FMLEnvironment.dist == Dist.CLIENT)
+			creativeTabs.forEach(key -> ITEM_CREATIVE_TABS.put(key, () -> item.get().getDefaultInstance()));
+	}
+
+	public static void setItemStackCreativeTabs(Supplier<ItemStack> stack, Collection<ResourceKey<CreativeModeTab>> creativeTabs) {
+		if (FMLEnvironment.dist == Dist.CLIENT)
+			creativeTabs.forEach(key -> ITEM_CREATIVE_TABS.put(key, stack));
+	}
+
+	public static List<ItemStack> getItemsForTab(final CreativeModeTab tab) {
+		return BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).map(key -> ITEM_CREATIVE_TABS.get(key).stream().map(Supplier::get).toList()).orElse(List.of());
 	}
 }

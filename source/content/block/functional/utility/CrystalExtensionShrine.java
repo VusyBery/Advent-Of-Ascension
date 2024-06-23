@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -28,13 +28,11 @@ public class CrystalExtensionShrine extends Block {
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (!player.getItemInHand(hand).isEmpty()) {
-			ItemStack heldStack = player.getItemInHand(hand);
-
-			if (heldStack.getItem() == AoAItems.RAINBOW_DRUSE.get()) {
+			if (stack.getItem() == AoAItems.RAINBOW_DRUSE.get()) {
 				if (player instanceof ServerPlayer) {
-					List<ItemEntity> crystalList = world.getEntitiesOfClass(ItemEntity.class, new AABB(pos.getX() - 5, pos.getY() - 1, pos.getZ() - 5, pos.getX() + 5, pos.getY() + 1, pos.getZ() + 5), entity -> isCrystal(entity.getItem().getItem()));
+					List<ItemEntity> crystalList = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos.getX() - 5, pos.getY() - 1, pos.getZ() - 5, pos.getX() + 5, pos.getY() + 1, pos.getZ() + 5), entity -> isCrystal(entity.getItem().getItem()));
 					int count = 0;
 
 					for (ItemEntity item : crystalList) {
@@ -47,33 +45,33 @@ public class CrystalExtensionShrine extends Block {
 					if (count < 10) {
 						PlayerUtil.notifyPlayer(player, Component.translatable(LocaleUtil.createFeedbackLocaleKey("crystalExtensionShrine.crystals")));
 
-						return InteractionResult.PASS;
+						return ItemInteractionResult.FAIL;
 					}
 
 					for (int i = 10; i > 0; i--) {
-						ItemEntity entity = crystalList.get(0);
-						ItemStack stack = entity.getItem();
-						int size = stack.getCount();
+						ItemEntity entity = crystalList.getFirst();
+						ItemStack entityStack = entity.getItem();
+						int size = entityStack.getCount();
 
-						stack.shrink(i);
+						entityStack.shrink(i);
 
-						if (stack.getCount() <= 0)
-							crystalList.remove(0);
+						if (entityStack.getCount() <= 0)
+							crystalList.removeFirst();
 
 						i -= size - 1;
 					}
 
 					if (!player.isCreative())
-						heldStack.shrink(1);
-					
+						stack.shrink(1);
+
 					ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.GIANT_CRYSTAL.get()));
 				}
 
-				return InteractionResult.SUCCESS;
+				return ItemInteractionResult.sidedSuccess(level.isClientSide);
 			}
 		}
 
-		return InteractionResult.FAIL;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	private static boolean isCrystal(Item item) {

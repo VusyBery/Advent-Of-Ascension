@@ -13,14 +13,16 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.AoAEntityRendering;
 import net.tslat.aoa3.client.model.misc.FishingCageModel;
 import net.tslat.aoa3.content.entity.misc.FishingCageEntity;
+import net.tslat.aoa3.util.ColourUtil;
 import org.jetbrains.annotations.Nullable;
 
 
 public class FishingCageRenderer extends EntityRenderer<FishingCageEntity> {
-	private final ResourceLocation texture = new ResourceLocation("aoa3", "textures/entity/misc/fishing_cage.png");
+	private final ResourceLocation texture = AdventOfAscension.id("textures/entity/misc/fishing_cage.png");
 	private final FishingCageModel model;
 
 	public FishingCageRenderer(EntityRendererProvider.Context renderManager) {
@@ -39,7 +41,7 @@ public class FishingCageRenderer extends EntityRenderer<FishingCageEntity> {
 
 		VertexConsumer vertexBuilder = buffer.getBuffer(RenderType.entityCutoutNoCull(texture));
 
-		model.renderToBuffer(matrix, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+		model.renderToBuffer(matrix, vertexBuilder, packedLight, OverlayTexture.NO_OVERLAY, ColourUtil.WHITE);
 
 		matrix.translate(0, 1.4d, 0.1d);
 		matrix.mulPose(Axis.XP.rotationDegrees(90));

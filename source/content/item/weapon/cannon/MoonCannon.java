@@ -7,9 +7,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.projectile.cannon.MoonShotEntity;
@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class MoonCannon extends BaseCannon {
-	public MoonCannon(float dmg, int durability, int firingDelayTicks, float recoil) {
-		super(dmg, durability, firingDelayTicks, recoil);
+	public MoonCannon(Item.Properties properties) {
+		super(properties);
 	}
 
 	@Nullable
@@ -42,21 +42,28 @@ public class MoonCannon extends BaseCannon {
 			if (target instanceof LivingEntity)
 				bulletDmgMultiplier *= 1 + (((LivingEntity)target).getAttribute(Attributes.ARMOR).getValue() * 1.50) / 100;
 
-			if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, (float)getDamage() * bulletDmgMultiplier * 0.75f)) {
-				if (target instanceof Player && ((Player)target).isBlocking())
-					((Player)target).disableShield(true);
+			ItemStack stack = shooter.getItemInHand(bullet.getHand());
+
+			if (!stack.is(this))
+				stack = getDefaultInstance();
+
+			float damage = getGunDamage(stack) * bulletDmgMultiplier * 0.75f;
+
+			if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, source -> damage)) {
+				if (target instanceof Player pl && pl.isBlocking())
+					pl.disableShield();
 
 				if (target instanceof LivingEntity livingTarget)
-					DamageUtil.doScaledKnockback(livingTarget, shooter, ((float)getDamage() * 0.75f * bulletDmgMultiplier) / 20f, 1, 1, 1);
+					DamageUtil.doScaledKnockback(livingTarget, shooter, damage / 20f, 1, 1, 1);
 			}
 
-			DamageUtil.doEnergyProjectileAttack(shooter, bullet, target, (float)getDamage() * bulletDmgMultiplier * 0.25f);
+			DamageUtil.doEnergyProjectileAttack(shooter, bullet, target, damage / 3f);
 		}
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flag) {
+	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
-		super.appendHoverText(stack, world, tooltip, flag);
+		super.appendHoverText(stack, context, tooltip, flag);
 	}
 }
