@@ -1,7 +1,7 @@
 Ce porc surdimensionné est une variante particulièrement favorisée par l'évolution des Piglins qui habitent le Nether.
-Comme tous les Piglins, il semble avoir un intérêt tout particulier pour les objets en or, ce qui à tendance à lui causer des soucis.
+Comme tous les Piglins, il semble avoir un intérêt tout particulier pour les objets en or, ce qui a tendance à lui causer des soucis.
 
-Sa taille particulière lui confère une force et résistance impressionnantes, et il semble capable de manger des objets en or, ce qui semble étrangement régénérer sa force vitale.
+Sa taille particulière lui confère une force et une résistance impressionnantes, et il semble capable de manger des objets en or, ce qui semble étrangement régénérer sa force vitale.
 On ne sait pas vraiment comment cela est possible.
 
 Malgré le fait qu'il fasse partie d'une espèce connue pour son fort tempérament, ce spécimen ne semble pas très intéressé par le combat direct.
