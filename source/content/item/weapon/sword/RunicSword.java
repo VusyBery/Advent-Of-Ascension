@@ -68,7 +68,7 @@ public class RunicSword extends BaseSword {
 
 				if (attacker instanceof Player pl && !pl.getAbilities().instabuild) {
 					offhandStack.shrink(5);
-					ItemUtil.damageItem(stack, attacker, 1, EquipmentSlot.MAINHAND);
+					ItemUtil.damageItemForUser(pl, stack, EquipmentSlot.MAINHAND);
 				}
 			}
 		}

@@ -741,20 +741,20 @@
     {
       "id": "aoa3:imbuing_level_restriction",
       "level_req": 10,
-      "recipe_id": "aoa3:imbuing_sweeping",
-      "unique_id": "-12518476"
+      "recipe_id": "aoa3:imbuing_sweeping_edge",
+      "unique_id": "-1267191384"
     },
     {
       "id": "aoa3:imbuing_level_restriction",
       "level_req": 22,
-      "recipe_id": "aoa3:imbuing_sweeping_ii",
-      "unique_id": "369714585"
+      "recipe_id": "aoa3:imbuing_sweeping_edge_ii",
+      "unique_id": "1229830181"
     },
     {
       "id": "aoa3:imbuing_level_restriction",
       "level_req": 32,
-      "recipe_id": "aoa3:imbuing_sweeping_iii",
-      "unique_id": "-71662624"
+      "recipe_id": "aoa3:imbuing_sweeping_edge_iii",
+      "unique_id": "1739431412"
     },
     {
       "id": "aoa3:imbuing_level_restriction",

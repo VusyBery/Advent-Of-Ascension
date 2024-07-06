@@ -6,7 +6,7 @@
     {
       "type": "patchouli:text",
       "anchor": "snipers",
-      "text": "Just like $(l:aoa3:shotguns#shotguns)shotguns$(/l), $(thing)snipers$() are a sub-class of $(l:aoa3:guns#guns)guns$(/l), and work in a similar mannager.$(br2)Where $(thing)shotguns$() focus on short-range fire, $(thing)snipers$() excel at long-range. No $(thing)gun$() or $(l:aoa3:bows#bows)bow$(/l) can compete with a $(thing)sniper$() at range.",
+      "text": "Just like $(l:aoa3:shotguns#shotguns)shotguns$(/l), $(thing)snipers$() are a sub-class of $(l:aoa3:guns#guns)guns$(/l), and work in a similar manner.$(br2)Where $(thing)shotguns$() focus on short-range fire, $(thing)snipers$() excel at long-range. No $(thing)gun$() or $(l:aoa3:bows#bows)bow$(/l) can compete with a $(thing)sniper$() at range.",
       "title": "Snipers"
     },
     {

@@ -2,7 +2,6 @@ package net.tslat.aoa3.client.render.entity.misc;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -48,11 +47,10 @@ public class HaulingBobberRenderer extends FishingHookRenderer {
 		poseStack.pushPose();
 		poseStack.scale(0.5f, 0.5f, 0.5f);
 		poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-		poseStack.mulPose(Axis.YP.rotationDegrees(180f));
 
 		PoseStack.Pose lastPose = poseStack.last();
 		Matrix4f lastPose4f = lastPose.pose();
-		VertexConsumer vertexConsumer = buffer.getBuffer(renderType);
+		VertexConsumer vertexConsumer = buffer.getBuffer(this.renderType);
 
 		vertex(vertexConsumer, lastPose4f, lastPose, packedLight, 0, 0, 0, 1);
 		vertex(vertexConsumer, lastPose4f, lastPose, packedLight, 1, 0, 1, 1);
@@ -119,7 +117,12 @@ public class HaulingBobberRenderer extends FishingHookRenderer {
 	}
 
 	private static void vertex(VertexConsumer vertexConsumer, Matrix4f matrixPos, PoseStack.Pose pose, int packedLight, float x, int y, int u, int v) {
-		vertexConsumer.addVertex(matrixPos, x - 0.5F, (float)y - 0.5f, 0).setColor(255, 255, 255, 255).setUv((float)u, (float)v).setOverlay(OverlayTexture.NO_OVERLAY).setLight(packedLight).setNormal(pose, 0, 1, 0);
+		vertexConsumer.addVertex(matrixPos, x - 0.5F, (float)y - 0.5f, 0)
+				.setColor(-1)
+				.setUv((float)u, (float)v)
+				.setOverlay(OverlayTexture.NO_OVERLAY)
+				.setLight(packedLight)
+				.setNormal(pose, 0, 1, 0);
 	}
 
 	private static void stringVertex(float lengthX, float lengthY, float lengthZ, VertexConsumer vertexConsumer, PoseStack.Pose pose, float sectionStart, float sectionEnd) {

@@ -15,8 +15,8 @@ public class FaceMask extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.ALL;
+	public boolean isCompatibleWithAnySet() {
+		return true;
 	}
 
 	@Override

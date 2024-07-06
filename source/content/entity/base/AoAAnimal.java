@@ -5,9 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.stats.Stats;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
@@ -227,39 +225,7 @@ public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implement
 		return true;
 	}
 
-	@Override
-	protected void actuallyHurt(DamageSource source, float amount) {
-		if (!isInvulnerableTo(source)) {
-			amount = CommonHooks.onLivingHurt(this, source, amount);
-
-			if (amount <= 0)
-				return;
-
-			amount = getDamageAfterArmorAbsorb(source, amount);
-			amount = getDamageAfterMagicAbsorb(source, amount);
-			float adjustedDamage = Math.max(amount - getAbsorptionAmount(), 0);
-			float absorbedAmount = amount - adjustedDamage;
-
-			setAbsorptionAmount(getAbsorptionAmount() - absorbedAmount);
-
-			if (absorbedAmount > 0 && absorbedAmount < 3.4028235E37F && source.getEntity() instanceof ServerPlayer pl)
-				pl.awardStat(Stats.DAMAGE_DEALT_ABSORBED, Math.round(absorbedAmount * 10f));
-
-			adjustedDamage = CommonHooks.onLivingDamage(this, source, adjustedDamage);
-
-			if (adjustedDamage != 0) {
-				getCombatTracker().recordDamage(source, adjustedDamage);
-				setHealth(getHealth() - adjustedDamage);
-				setAbsorptionAmount(getAbsorptionAmount() - adjustedDamage);
-				gameEvent(GameEvent.ENTITY_DAMAGE);
-				onHurt(source, adjustedDamage);
-			}
-		}
-	}
-
 	protected void onAttack(Entity target) {}
-
-	protected void onHurt(DamageSource source, float amount) {}
 
 	@Override
 	public void die(DamageSource source) {

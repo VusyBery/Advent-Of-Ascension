@@ -4,8 +4,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -20,9 +20,10 @@ import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EnchantmentUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
+import net.tslat.aoa3.util.PlayerUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class NecroArmour extends AdventArmour {
@@ -31,50 +32,48 @@ public class NecroArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.NECRO;
-	}
+	public void beforeTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Pre ev) {
+		if (equippedPieces.contains(Piece.FULL_SET) && !DamageUtil.isEnvironmentalDamage(ev.getContainer().getSource()) && ev.getContainer().getNewDamage() > entity.getHealth() && (!(entity instanceof Player pl) || !isOnCooldown(pl))) {
+			ev.getContainer().setNewDamage(0);
+			entity.hurtArmor(entity.level().damageSources().generic(), 2000);
 
-	@Override
-	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots == null && !DamageUtil.isEnvironmentalDamage(event.getSource()) && event.getAmount() > plData.player().getHealth() && plData.equipment().isCooledDown("necro_armour")) {
-			Player pl = plData.player();
+			if (entity.getHealth() < 4)
+				entity.setHealth(4);
 
-			event.setAmount(0);
-			plData.equipment().setCooldown("necro_armour", 72000);
-			pl.hurtArmor(pl.level().damageSources().generic(), 2000);
+			if (entity instanceof ServerPlayer pl)
+				PlayerUtil.getAdventPlayer(pl).equipment().setCooldown("necro_armour", 72000);
 
-			if (pl.getHealth() < 4)
-				pl.setHealth(4);
-
-			((ServerLevel)pl.level()).sendParticles(ParticleTypes.HEART, pl.getX(), pl.getBoundingBox().maxY, pl.getZ(), 5, 0, 0, 0, (double)0);
+			ParticleBuilder.forRandomPosInEntity(ParticleTypes.HEART, entity)
+					.spawnNTimes(5)
+					.sendToAllPlayersTrackingEntity((ServerLevel)entity.level(), entity);
 		}
 	}
 
 	@Override
-	public void onPlayerDeath(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDeathEvent event) {
-		if (slots != null) {
-			Level level = plData.player().level();
-			int count = slots.size();
-			int slotIndex = 0;
-			Inventory inv = plData.player().getInventory();
+	public void onEntityDeath(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDeathEvent ev) {
+		if (!equippedPieces.contains(Piece.FULL_SET) || !(entity instanceof ServerPlayer pl))
+			return;
 
-			for (NonNullList<ItemStack> compartment : inv.compartments) {
-				for (int i = 0; i < compartment.size(); i++) {
-					ItemStack stack = compartment.get(i);
+		Level level = entity.level();
+		ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
+		int count = perPieceValue(equippedPieces, 1);
+		int slotIndex = 0;
 
-					if (!stack.isEmpty() && !EnchantmentUtil.hasEnchantment(level, stack, AoAEnchantments.INTERVENTION) && !EnchantmentUtil.hasEnchantment(level, stack, Enchantments.VANISHING_CURSE)) {
-						plData.storeItem(slotIndex + i, stack);
-						compartment.set(i, ItemStack.EMPTY);
-						count--;
+		for (NonNullList<ItemStack> compartment : pl.getInventory().compartments) {
+			for (int i = 0; i < compartment.size(); i++) {
+				ItemStack stack = compartment.get(i);
 
-						if (count == 0)
-							return;
-					}
+				if (!stack.isEmpty() && !EnchantmentUtil.hasEnchantment(level, stack, AoAEnchantments.INTERVENTION) && !EnchantmentUtil.hasEnchantment(level, stack, Enchantments.VANISHING_CURSE)) {
+					plData.storeItem(slotIndex + i, stack);
+					compartment.set(i, ItemStack.EMPTY);
+					count--;
+
+					if (count == 0)
+						return;
 				}
-
-				slotIndex += compartment.size();
 			}
+
+			slotIndex += compartment.size();
 		}
 	}
 

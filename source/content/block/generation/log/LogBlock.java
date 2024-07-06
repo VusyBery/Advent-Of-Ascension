@@ -8,8 +8,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.ToolAction;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.ItemAbilities;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
@@ -35,10 +35,10 @@ public class LogBlock extends RotatedPillarBlock {
 
 	@Nullable
 	@Override
-	public BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
+	public BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility ItemAbility, boolean simulate) {
 		if (strippedBlock == null)
-			return super.getToolModifiedState(state, context, toolAction, simulate);
+			return super.getToolModifiedState(state, context, ItemAbility, simulate);
 
-		return ToolActions.AXE_STRIP.equals(toolAction) ? strippedBlock.get() : null;
+		return ItemAbilities.AXE_STRIP.equals(ItemAbility) ? strippedBlock.get() : null;
 	}
 }

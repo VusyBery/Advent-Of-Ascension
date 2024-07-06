@@ -13,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
@@ -57,10 +56,10 @@ public class LyonicStaff extends BaseStaff<List<LivingEntity>> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
 		for (float x = -1; x <= 1; x += 0.125f) {
 			for (float z = -1; z <= 1; z += 0.125f) {
-				world.addFreshEntity(new LyonicShotEntity(caster, this, 1, x, 0, z));
+				level.addFreshEntity(new LyonicShotEntity(caster, this, 1, x, 0, z));
 			}
 		}
 	}

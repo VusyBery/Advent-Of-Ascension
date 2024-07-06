@@ -45,8 +45,7 @@ public class SasquatchEntity extends AoAMeleeMob<SasquatchEntity> {
 
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(
-				DefaultAnimations.genericWalkIdleController(this),
+		controllers.add(DefaultAnimations.genericWalkIdleController(this),
 				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SWING));
 	}
 }

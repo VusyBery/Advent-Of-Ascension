@@ -19,7 +19,7 @@ import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.lighting.LightEngine;
-import net.neoforged.neoforge.common.ToolAction;
+import net.neoforged.neoforge.common.ItemAbility;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -159,7 +159,7 @@ public class AoAGrassBlock extends GrassBlock {
 	}
 
 	@Override
-	public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction, boolean simulate) {
-		return super.getToolModifiedState(state, context, toolAction, simulate);
+	public @Nullable BlockState getToolModifiedState(BlockState state, UseOnContext context, ItemAbility ItemAbility, boolean simulate) {
+		return super.getToolModifiedState(state, context, ItemAbility, simulate);
 	}
 }

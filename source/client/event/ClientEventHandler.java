@@ -5,10 +5,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -17,7 +15,6 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
-import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
@@ -26,6 +23,7 @@ import net.tslat.aoa3.advent.AoAResourceCaching;
 import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.client.gui.overlay.ScreenEffectRenderer;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.client.render.dimension.AoADimensionEffectsRenderer;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.HaloSelectPacket;
@@ -33,10 +31,8 @@ import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
-import net.tslat.aoa3.content.entity.monster.greckon.SilencerEntity;
 import net.tslat.aoa3.data.server.AoASkillReqReloadListener;
 import net.tslat.aoa3.event.GlobalEvents;
-import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -56,7 +52,6 @@ public final class ClientEventHandler {
 		forgeBus.addListener(EventPriority.NORMAL, false, ClientPlayerNetworkEvent.LoggingIn.class, ClientEventHandler::onPlayerJoin);
 		forgeBus.addListener(EventPriority.NORMAL, false, ClientPlayerNetworkEvent.LoggingOut.class, ClientEventHandler::onPlayerLogout);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingDeathEvent.class, ClientEventHandler::onPlayerDeath);
-		forgeBus.addListener(EventPriority.NORMAL, false, PlaySoundEvent.class, ClientEventHandler::onSoundPlay);
 		forgeBus.addListener(EventPriority.NORMAL, false, ItemTooltipEvent.class, ClientEventHandler::onTooltip);
 		forgeBus.addListener(EventPriority.NORMAL, false, ViewportEvent.RenderFog.class, ClientEventHandler::onFogRender);
 		forgeBus.addListener(EventPriority.NORMAL, false, EntityTickEvent.Post.class, ClientEventHandler::onEntityTick);
@@ -91,23 +86,6 @@ public final class ClientEventHandler {
 	private static void onPlayerDeath(LivingDeathEvent ev) {
 		if (ev.getEntity() == Minecraft.getInstance().player)
 			ScreenEffectRenderer.clearOverlays();
-	}
-
-	private static void onSoundPlay(PlaySoundEvent ev) {
-		if (SilencerEntity.isClientNearby) {
-			LocalPlayer player = Minecraft.getInstance().player;
-
-			if (player == null) {
-				SilencerEntity.isClientNearby = false;
-
-				return;
-			}
-
-			if (player.level().getEntitiesOfClass(SilencerEntity.class, player.getBoundingBox().inflate(8)).isEmpty()) {
-				SilencerEntity.isClientNearby = false;
-				Minecraft.getInstance().getSoundManager().updateSourceVolume(SoundSource.MASTER, SilencerEntity.previousGain);
-			}
-		}
 	}
 
 	private static void onTooltip(final ItemTooltipEvent ev) {

@@ -1,12 +1,16 @@
 package net.tslat.aoa3.player.ability.extraction;
 
 import com.google.gson.JsonObject;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.RetrieveSmeltedItemEvent;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
+import net.tslat.aoa3.util.InventoryUtil;
 
 import java.util.Random;
 
@@ -35,15 +39,34 @@ public class BonusSmeltResult extends ScalableModAbility {
 
 	@Override
 	public void handleItemSmelting(RetrieveSmeltedItemEvent ev) {
+		ItemStack baseStack = ev.getOriginalStack();
 		ItemStack smeltedStack = ev.getOutputStack();
 
-		if (smeltedStack.getFoodProperties(ev.getEntity()) == null) {
-			random.setSeed(this.uniqueIdHash * ev.getEntity().level().getGameTime() >> 4);
-			random.setSeed(random.nextLong());
-			random.setSeed(random.nextLong());
+		if (!smeltedStack.has(DataComponents.FOOD)) {
+			int additional = 0;
+			Player player = ev.getEntity();
 
-			if (random.nextFloat() < getScaledValue())
-				smeltedStack.setCount(smeltedStack.getCount() + 1);
+			this.random.setSeed(this.uniqueIdHash * player.level().getGameTime() - (player.level().isClientSide ? 0 : 1) >> 4);
+			this.random.setSeed(this.random.nextLong());
+			this.random.setSeed(this.random.nextLong());
+
+			for (int i = 0; i < baseStack.getCount(); i++) {
+				if (this.random.nextFloat() < getScaledValue())
+					additional++;
+			}
+
+			if (additional > 0) {
+				int stackSize = smeltedStack.getMaxStackSize();
+
+				while (smeltedStack.getCount() + additional > stackSize) {
+					if (player instanceof ServerPlayer pl)
+						InventoryUtil.giveItemTo(pl, smeltedStack.copyWithCount(stackSize));
+
+					additional -= stackSize;
+				}
+
+				smeltedStack.setCount(smeltedStack.getCount() + additional);
+			}
 		}
 	}
 }

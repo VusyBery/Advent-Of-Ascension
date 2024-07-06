@@ -15,11 +15,6 @@ public class HydrangicArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.HYDRANGIC;
-	}
-
-	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(setEffectHeader());
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.aoa3.hydrangic_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));

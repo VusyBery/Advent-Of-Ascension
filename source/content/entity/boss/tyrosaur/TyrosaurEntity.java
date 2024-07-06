@@ -12,8 +12,8 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -22,7 +22,7 @@ import net.tslat.aoa3.content.entity.boss.AoABoss;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.EntitySpawningUtil;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -76,17 +76,13 @@ public class TyrosaurEntity extends AoABoss {
     public void die(DamageSource source) {
         super.die(source);
 
-        if (getKillCredit() instanceof ServerPlayer pl && WOUNDED.is(this, true)) {
-            ItemStack stack = ItemUtil.getStackFromInventory(pl, AoAItems.BONE_HORN.get());
-
-            if (stack != null && stack.isDamaged())
-                stack.setDamageValue(0);
-        }
+        if (getKillCredit() instanceof ServerPlayer pl && WOUNDED.is(this, true))
+            InventoryUtil.findItem(pl, stack -> stack.is(AoAItems.BONE_HORN) && stack.isDamaged()).ifPresent(pair -> pair.right().setDamageValue(0));
     }
 
     @Override
-    protected void onHurt(DamageSource source, float amount) {
-        if (level() instanceof ServerLevel level && source.is(DamageTypeTags.IS_FIRE) && WOUNDED.is(this, true) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
+    public void onDamageTaken(DamageContainer damageContainer) {
+        if (level() instanceof ServerLevel level && damageContainer.getSource().is(DamageTypeTags.IS_FIRE) && WOUNDED.is(this, true) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
             ParticleBuilder.forRandomPosInEntity(ParticleTypes.LARGE_SMOKE, this)
                     .colourOverride(255, 255, 255, 255)
                     .spawnNTimes(20)

@@ -37,7 +37,7 @@ import net.tslat.aoa3.library.object.PositionAndRotation;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.AdvancementUtil;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
@@ -96,7 +96,7 @@ public final class NowhereEvents {
 						if (!AdvancementUtil.isAdvancementCompleted(serverPlayer, AdventOfAscension.id("nowhere/root"))) {
 							AoAScheduler.scheduleSyncronisedTask(() -> {
 								PlayerUtil.resetToDefaultStatus(serverPlayer);
-								ItemUtil.clearInventoryOfItems(serverPlayer, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+								InventoryUtil.clearItems(serverPlayer, AoAItems.RETURN_CRYSTAL);
 								serverPlayer.sendSystemMessage(LocaleUtil.getLocaleMessage("deathScreen.title", ChatFormatting.DARK_RED));
 								serverPlayer.connection.teleport(17.5d, 452.5d, 3.5d, 0, serverPlayer.getXRot());
 							}, 1);
@@ -109,7 +109,7 @@ public final class NowhereEvents {
 								if (CheckpointBlock.isValidCheckpoint(serverPlayer.level(), checkpoint)) {
 									AoAScheduler.scheduleSyncronisedTask(() -> {
 										if (NowhereEvents.isInBossRegion(serverPlayer.blockPosition()))
-											ItemUtil.clearInventoryOfItems(serverPlayer, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+											InventoryUtil.clearItems(serverPlayer, AoAItems.RETURN_CRYSTAL);
 
 										PlayerUtil.resetToDefaultStatus(serverPlayer);
 
@@ -152,16 +152,19 @@ public final class NowhereEvents {
 	}
 
 	public static void doDimensionChange(final PlayerEvent.PlayerChangedDimensionEvent ev) {
-		ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer((ServerPlayer)ev.getEntity());
+		if (ev.getEntity() instanceof ServerPlayer pl) {
+			ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
 
-		plData.returnItemStorage();
-		plData.clearCheckpoint();
+			plData.returnItemStorage();
+			plData.clearCheckpoint();
 
-		ItemUtil.clearInventoryOfItems(ev.getEntity(), new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
-		((ServerPlayer)ev.getEntity()).gameMode.getGameModeForPlayer().updatePlayerAbilities(ev.getEntity().getAbilities());
+			InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
+			pl.gameMode.getGameModeForPlayer().updatePlayerAbilities(pl.getAbilities());
+		}
+
 	}
 
-	public static void doDeathPrevention(final LivingDamageEvent ev, ServerPlayerDataManager plData) {
+	public static void doDeathPrevention(final LivingDamageEvent.Pre ev, ServerPlayerDataManager plData) {
 		ServerPlayer player = plData.player();
 		LivingEntity killer = player.getKillCredit();
 
@@ -169,7 +172,7 @@ public final class NowhereEvents {
 
 		if (killer != null) {
 			player.awardStat(Stats.ENTITY_KILLED_BY.get(killer.getType()));
-			killer.awardKillScore(player, 1, ev.getSource());
+			killer.awardKillScore(player, 1, ev.getContainer().getSource());
 		}
 
 		player.awardStat(Stats.DEATHS);
@@ -180,7 +183,7 @@ public final class NowhereEvents {
 			AoAScheduler.scheduleSyncronisedTask(() -> {
 				PlayerUtil.resetToDefaultStatus(player);
 				player.connection.teleport(17.5d, 452.5d, 3.5d, 0, player.getXRot());
-				ItemUtil.clearInventoryOfItems(player, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+				InventoryUtil.clearItems(player, AoAItems.RETURN_CRYSTAL);
 				PlayerUtil.getAdventPlayer(player).returnItemStorage();
 			}, 1);
 		}
@@ -189,7 +192,7 @@ public final class NowhereEvents {
 		}
 
 		player.sendSystemMessage(LocaleUtil.getLocaleMessage("deathScreen.title", ChatFormatting.DARK_RED));
-		ev.setCanceled(true);
+		ev.getContainer().setNewDamage(0);
 	}
 
 	public static void handleNowhereRightClickItem(final PlayerInteractEvent.RightClickItem ev) {

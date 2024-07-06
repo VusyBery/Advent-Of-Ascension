@@ -1,3 +1,4 @@
+/*
 package net.tslat.aoa3.client.model.entity.animal;
 
 import net.minecraft.resources.ResourceLocation;
@@ -34,3 +35,4 @@ public class CorateeModel extends DefaultedEntityGeoModel<CorateeEntity> {
 		}
 	}
 }
+*/

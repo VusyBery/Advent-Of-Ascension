@@ -1,45 +1,17 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
-import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import net.tslat.smartbrainlib.util.RandomUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.List;
 
 public class SpacekingArmour extends AdventArmour {
 	public SpacekingArmour(ArmorItem.Type slot) {
 		super(AoAArmourMaterials.SPACEKING, slot, 62);
-	}
-
-	@Override
-	public Type getSetType() {
-		return Type.SPACEKING;
-	}
-
-	@Override
-	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots == null && !DamageUtil.isEnvironmentalDamage(event.getSource()) && !DamageUtil.isPoisonDamage(event.getSource())) {
-			Player pl = plData.player();
-
-			if (!pl.level().isClientSide && pl.getHealth() > 0 && RandomUtil.oneInNChance(3)) {
-				/*OrblingEntity orbling = new OrblingEntity(AoAEntities.Minions.ORBLING.get(), pl.level);
-
-				orbling.setPos(pl.getX(), pl.getY() + 1.5, pl.getZ());
-				orbling.tame(pl);
-				pl.level.addFreshEntity(orbling);*/ // TODO
-			}
-		}
 	}
 
 	@Override

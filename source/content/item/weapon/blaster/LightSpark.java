@@ -115,7 +115,7 @@ public class LightSpark extends BaseBlaster {
 					if (stack.getItem() != this)
 						return false;
 
-					ItemUtil.damageItem(stack, shooter, hand);
+					ItemUtil.damageItemForUser(player, stack, hand);
 				}
 			}
 

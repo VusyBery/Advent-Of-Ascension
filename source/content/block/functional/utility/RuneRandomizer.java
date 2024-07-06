@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.block.functional.utility;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -17,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LootUtil;
 
 public class RuneRandomizer extends Block {
@@ -32,7 +31,7 @@ public class RuneRandomizer extends Block {
 				if (!serverPlayer.isCreative())
 					stack.shrink(1);
 
-				ItemUtil.givePlayerMultipleItems(serverPlayer, LootUtil.generateLoot(AdventOfAscension.id("misc/rune_randomizer"), LootUtil.getGiftParameters(serverPlayer.serverLevel(), Vec3.atLowerCornerOf(pos), player)));
+				InventoryUtil.giveItemsTo(serverPlayer, LootUtil.generateLoot(AdventOfAscension.id("misc/rune_randomizer"), LootUtil.getGiftParameters(serverPlayer.serverLevel(), Vec3.atLowerCornerOf(pos), player)));
 
 				serverPlayer.level().playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_RUNE_RANDOMIZER_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 			}

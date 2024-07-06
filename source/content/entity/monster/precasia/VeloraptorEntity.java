@@ -26,6 +26,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoAAttributes;
@@ -87,8 +88,8 @@ public class VeloraptorEntity extends AoAMeleeMob<VeloraptorEntity> {
 	}
 
 	@Override
-	protected float getAttackVectorPositionOffset() {
-		return 1.0625f;
+	protected double getAttackReach() {
+		return 1.11f;
 	}
 
 	@Nullable
@@ -175,8 +176,8 @@ public class VeloraptorEntity extends AoAMeleeMob<VeloraptorEntity> {
 	}
 
 	@Override
-	protected void onHurt(DamageSource source, float amount) {
-		if (level() instanceof ServerLevel level && source.is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
+	public void onDamageTaken(DamageContainer damageContainer) {
+		if (level() instanceof ServerLevel level && damageContainer.getSource().is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
 			ParticleBuilder.forRandomPosInEntity(ParticleTypes.LARGE_SMOKE, this)
 					.colourOverride(255, 255, 255, 255)
 					.spawnNTimes(20)
@@ -206,11 +207,6 @@ public class VeloraptorEntity extends AoAMeleeMob<VeloraptorEntity> {
 
 	public VeloraptorVariant getVariant() {
 		return this.variant;
-	}
-
-	@Override
-	public float getEyeHeightAccess(Pose pose) {
-		return getDimensions(pose).height() * 0.99f;
 	}
 
 	@Override

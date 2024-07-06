@@ -13,7 +13,7 @@ import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
 import net.tslat.aoa3.content.entity.projectile.gun.SeedDartEntity;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -41,7 +41,7 @@ public class DartGun extends BaseGun {
 	@Nullable
 	@Override
 	public BaseBullet findAndConsumeAmmo(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
-		if (!(shooter instanceof Player pl) || ItemUtil.findItemByTag(pl, Tags.Items.SEEDS, !shooter.level().isClientSide(), shooter.level() instanceof ServerLevel level ? AoAEnchantments.modifyAmmoCost(level, gunStack, 1) : 1))
+		if (!(shooter instanceof Player pl) || InventoryUtil.findItemForConsumption(pl, Tags.Items.SEEDS, pl.getAbilities().instabuild ? 0 : AoAEnchantments.modifyAmmoCost(pl.level(), gunStack, 1), true))
 			return createProjectileEntity(shooter, gunStack, hand);
 
 		return null;

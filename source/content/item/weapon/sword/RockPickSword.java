@@ -1,8 +1,11 @@
 package net.tslat.aoa3.content.item.weapon.sword;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -11,19 +14,17 @@ import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.List;
 
 public class RockPickSword extends BaseSword {
 	public RockPickSword(Tier tier, Item.Properties properties) {
-		super(tier, properties);
-	}
-
-	// TODO after Neoforge patch
-	/*public RockPickSword(Tier tier, Item.Properties properties) {
-		super(tier, properties.component(DataComponents.TOOL, createToolProperties()));
+		super(tier, properties, createToolProperties(tier, AoATags.Blocks.INCORRECT_FOR_ROCK_PICK_TOOL));
 	}
 
 	public static Tool createToolProperties(Tier tier, TagKey<Block> toolMineableTag) {
@@ -33,7 +34,7 @@ public class RockPickSword extends BaseSword {
 		rules.addAll(List.of(Tool.Rule.minesAndDrops(List.of(Blocks.COBWEB), 15.0F), Tool.Rule.overrideSpeed(BlockTags.SWORD_EFFICIENT, 1.5F)));
 
 		return new Tool(List.copyOf(rules), 1, 2);
-	}*/
+	}
 
 	@Override
 	public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity) {

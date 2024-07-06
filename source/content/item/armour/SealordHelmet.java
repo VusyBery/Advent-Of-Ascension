@@ -2,21 +2,18 @@ package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class SealordHelmet extends AdventArmour {
@@ -27,28 +24,21 @@ public class SealordHelmet extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.ALL;
+	public boolean isCompatibleWithAnySet() {
+		return true;
 	}
 
 	@Override
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		Player player = plData.player();
-
-		if (player.isEyeInFluid(FluidTags.WATER)) {
-			AttributeUtil.applyTransientModifier(plData.player(), Attributes.ATTACK_SPEED, SEALORD_ATTACK_BUFF);
+	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
+		if (entity.isEyeInFluid(FluidTags.WATER)) {
+			AttributeUtil.applyTransientModifier(entity, Attributes.ATTACK_SPEED, SEALORD_ATTACK_BUFF);
 		}
 		else {
-			AttributeUtil.removeModifier(plData.player(), Attributes.ATTACK_SPEED, SEALORD_ATTACK_BUFF);
+			AttributeUtil.removeModifier(entity, Attributes.ATTACK_SPEED, SEALORD_ATTACK_BUFF);
 		}
 
-		if (plData.player().isInWater())
-			plData.player().setAirSupply(-10);
-	}
-
-	@Override
-	public void onUnequip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
-		AttributeUtil.removeModifier(plData.player(), Attributes.ATTACK_SPEED, SEALORD_ATTACK_BUFF);
+		if (entity.isInWater())
+			entity.setAirSupply(-10);
 	}
 
 	@Override

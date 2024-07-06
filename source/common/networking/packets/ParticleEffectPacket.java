@@ -23,12 +23,9 @@ import org.jetbrains.annotations.Nullable;
 public record ParticleEffectPacket(Type effectType, int senderId, int entityId) implements AoAPacket {
 	public static final CustomPacketPayload.Type<ParticleEffectPacket> TYPE = new CustomPacketPayload.Type<>(AdventOfAscension.id("particle_effect"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, ParticleEffectPacket> CODEC = StreamCodec.composite(
-			NeoForgeStreamCodecs.enumCodec(Type.class),
-			ParticleEffectPacket::effectType,
-			ByteBufCodecs.VAR_INT,
-			ParticleEffectPacket::senderId,
-			ByteBufCodecs.VAR_INT,
-			ParticleEffectPacket::entityId,
+			NeoForgeStreamCodecs.enumCodec(Type.class), ParticleEffectPacket::effectType,
+			ByteBufCodecs.VAR_INT, ParticleEffectPacket::senderId,
+			ByteBufCodecs.VAR_INT, ParticleEffectPacket::entityId,
 			ParticleEffectPacket::new);
 
 	@Override

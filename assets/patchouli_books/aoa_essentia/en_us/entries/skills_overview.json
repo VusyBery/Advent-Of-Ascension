@@ -14,7 +14,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Every $(thing)skill$() maxes out its bonuses at level 100, but you may continue increasing your levels all the way up to level 1000, just to show your friends who's the best.$(br2)Beware however, levelling all the way up can take a lot of time and effort, and you'll likely need to $(l:aoa3:cycles)cycle$(/l) your $(thing)skill$() a number of times before you reach the top"
+      "text": "Every $(thing)skill$() maxes out its bonuses at level 100, but you may continue increasing your levels all the way up to level 1000, just to show your friends who's the best.$(br2)Beware however, levelling all the way up can take a lot of time and effort, and you'll likely need to $(l:aoa3:cycles)cycle$(/l) your $(thing)skill$() a number of times before you reach the top."
     },
     {
       "type": "patchouli:link",

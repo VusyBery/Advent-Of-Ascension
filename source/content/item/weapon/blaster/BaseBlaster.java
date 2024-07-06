@@ -32,11 +32,11 @@ import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.content.entity.projectile.staff.BaseEnergyShot;
 import net.tslat.aoa3.content.item.EnergyProjectileWeapon;
-import net.tslat.aoa3.content.item.armour.AdventArmour;
 import net.tslat.aoa3.content.item.datacomponent.BlasterStats;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.library.constant.AttackSpeed;
@@ -133,7 +133,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 
 			if (player == null || player.getCooldowns().getCooldownPercent(this, 0) == 0) {
 				if (tryFireBlaster(serverLevel, shooter, stack, player)) {
-					ItemUtil.damageItem(stack, shooter, shooter.getUsedItemHand(), 1);
+					ItemUtil.damageItemForUser(serverLevel, stack, 1, shooter, shooter.getUsedItemHand());
 
 					if (player != null) {
 						player.awardStat(Stats.ITEM_USED.get(this));
@@ -245,12 +245,10 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 
 		float spiritCost = getBaseSpiritCost(stack);
 
-		if (pl.level() instanceof ServerLevel level) {
-			spiritCost = AoAEnchantments.modifySpiritConsumption(level, stack, spiritCost);
-			spiritCost *= (1 + AoAEnchantments.modifyAmmoCost(level, stack, 0) * 0.3f);
-		}
+		spiritCost = AoAEnchantments.modifySpiritConsumption(pl.level(), stack, spiritCost);
+		spiritCost *= (1 + AoAEnchantments.modifyAmmoCost(pl.level(), stack, 0) * 0.3f);
 
-		if (PlayerUtil.isWearingFullSet(pl, AdventArmour.Type.GHOULISH))
+		if (PlayerUtil.isWearingFullSet(pl, AoAArmourMaterials.GHOULISH))
 			spiritCost *= 0.7f;
 
 		return spiritCost;

@@ -1,13 +1,14 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
+import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.EnumSet;
 import java.util.List;
 
 public class UtopianArmour extends AdventArmour {
@@ -16,27 +17,20 @@ public class UtopianArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.UTOPIAN;
-	}
+	public void onEquip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
+		if (entity instanceof ServerPlayer pl) {
+			float mod = equippedPieces.contains(Piece.FULL_SET) ? 0.1f : 0.05f;
 
-	@Override
-	public void onEquip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
-		if (slot == null) {
-			plData.getSkills().forEach(skill -> skill.applyXpModifier(0.1f));
-		}
-		else {
-			plData.getSkills().forEach(skill -> skill.applyXpModifier(0.05f));
+			PlayerUtil.getAdventPlayer(pl).getSkills().forEach(skill -> skill.applyXpModifier(mod));
 		}
 	}
 
 	@Override
-	public void onUnequip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
-		if (slot == null) {
-			plData.getSkills().forEach(skill -> skill.removeXpModifier(0.1f));
-		}
-		else {
-			plData.getSkills().forEach(skill -> skill.removeXpModifier(0.05f));
+	public void onUnequip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
+		if (entity instanceof ServerPlayer pl) {
+			float mod = equippedPieces.contains(Piece.FULL_SET) ? 0.1f : 0.05f;
+
+			PlayerUtil.getAdventPlayer(pl).getSkills().forEach(skill -> skill.removeXpModifier(mod));
 		}
 	}
 

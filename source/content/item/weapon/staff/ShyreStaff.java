@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
@@ -49,8 +50,8 @@ public class ShyreStaff extends BaseStaff<Object> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, Object args) {
-		world.addFreshEntity(new ShyreShotEntity(caster, this, 120));
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Object args) {
+		level.addFreshEntity(new ShyreShotEntity(caster, this, 120));
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.item.weapon.staff;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
@@ -57,15 +58,16 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 				return InteractionResultHolder.fail(stack);
 		}
 
-		if (player instanceof ServerPlayer) {
-			return checkPreconditions(player, stack).filter(data -> findAndConsumeRunes(runeCost(stack).runeCosts(), (ServerPlayer)player, true, stack)).map(data -> {
+		if (player instanceof ServerPlayer pl) {
+			return checkPreconditions(pl, stack).filter(data -> findAndConsumeRunes(runeCost(stack).runeCosts(), pl, true, stack)).map(data -> {
 				if (getCastingSound() != null)
-					AoANetworking.sendToAllPlayersTrackingEntity(new AoASoundBuilderPacket(new SoundBuilder(getCastingSound()).isPlayer().followEntity(player)), player);
+					AoANetworking.sendToAllPlayersTrackingEntity(new AoASoundBuilderPacket(new SoundBuilder(getCastingSound()).isPlayer().followEntity(pl)), pl);
 
-				player.getCooldowns().addCooldown(this, 24);
-				player.awardStat(Stats.ITEM_USED.get(this));
-				ItemUtil.damageItem(stack, player, hand);
-				cast(world, stack, player, data);
+				pl.getCooldowns().addCooldown(this, 24);
+				pl.awardStat(Stats.ITEM_USED.get(this));
+				ItemUtil.damageItemForUser(pl, stack, hand);
+				cast(pl.serverLevel(), stack, pl, data);
+				doCastFx(pl.serverLevel(), stack, pl, data);
 
 				return InteractionResults.ItemUse.succeedAndSwingArmOneSide(stack);
 			}).orElseGet(() -> InteractionResults.ItemUse.denyUsage(stack));
@@ -87,7 +89,8 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 		return null;
 	}
 
-	public abstract void cast(Level world, ItemStack staff, LivingEntity caster, T args);
+	public abstract void cast(ServerLevel level, ItemStack staff, LivingEntity caster, T args);
+	public void doCastFx(ServerLevel level, ItemStack staff, LivingEntity caster, T args) {}
 
 	@Override
 	public void doBlockImpact(BaseEnergyShot shot, Vec3 hitPos, LivingEntity shooter) {}

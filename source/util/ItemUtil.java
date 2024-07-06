@@ -7,8 +7,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -16,305 +16,163 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.registration.AoATags;
+import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.item.armour.AdventArmour;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Consumer;
 
 public final class ItemUtil {
-	public static final EquipmentSlot[] BOTH_HANDS = new EquipmentSlot[] {EquipmentSlot.MAINHAND, EquipmentSlot.OFFHAND};
-
-	public static void damageItem(ItemStack stack, LivingEntity entity, InteractionHand hand) {
-		damageItem(stack, entity, hand, 1);
+	public static void consume(LivingEntity entity, ItemStack stack) {
+		consume(entity, stack, 1);
 	}
 
-	public static void damageItem(ItemStack stack, LivingEntity entity, InteractionHand hand, int amount) {
-		damageItem(stack, entity, amount, EntityUtil.handToEquipmentSlotType(hand));
+	public static void consume(LivingEntity entity, ItemStack stack, int amount) {
+		if (!entity.level().isClientSide && !entity.hasInfiniteMaterials())
+			consume(stack, amount);
 	}
 
-	public static void damageItem(ItemStack stack, LivingEntity entity, int amount, EquipmentSlot slot) {
-		stack.hurtAndBreak(amount, entity, slot);
+	public static void consume(ItemStack stack) {
+		consume(stack, 1);
 	}
 
-	public static void givePlayerMultipleItems(Player pl, ItemStack... stacks) {
-		givePlayerMultipleItems(pl, Arrays.asList(stacks));
+	public static void consume(ItemStack stack, int amount) {
+		stack.shrink(amount);
 	}
 
-	public static void givePlayerMultipleItems(Player pl, Collection<ItemStack> stacks) {
-		for (ItemStack stack : stacks) {
-			if (!stack.isEmpty() && !pl.getInventory().add(stack))
-				pl.spawnAtLocation(stack, 0.5f);
-		}
-
-		if (!stacks.isEmpty())
-			pl.inventoryMenu.broadcastChanges();
+	public static void damageItemForUser(Player player, InteractionHand hand) {
+		damageItemForUser(player, 1, hand);
 	}
 
-	public static void givePlayerItemOrDrop(Player player, ItemStack stack) {
-		if (stack.isEmpty())
-			return;
-
-		if (!player.getInventory().add(stack))
-			player.spawnAtLocation(stack, 0.5f);
-
-		player.inventoryMenu.broadcastChanges();
+	public static void damageItemForUser(Player player, EquipmentSlot slot) {
+		damageItemForUser(player, 1, slot);
 	}
 
-	public static boolean isHoldingItem(LivingEntity entity, Item item) {
-		return entity.getMainHandItem().getItem() == item || entity.getOffhandItem().getItem() == item;
+	public static void damageItemForUser(Player player, ItemStack stack, InteractionHand hand) {
+		damageItemForUser(player, stack, 1, hand);
 	}
 
-	public static void clearInventoryOfItems(Player player, ItemStack... stacks) {
-		if (player.isCreative())
-			return;
-
-		ItemStack checkStack;
-
-		if (!(checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)).isEmpty()) {
-			for (ItemStack stack : stacks) {
-				if (areStacksEqualIgnoringData(checkStack, stack)) {
-					checkStack.setCount(0);
-
-					break;
-				}
-			}
-		}
-
-		if (!(checkStack = player.getItemInHand(InteractionHand.OFF_HAND)).isEmpty()) {
-			for (ItemStack stack : stacks) {
-				if (areStacksEqualIgnoringData(checkStack, stack)) {
-					checkStack.setCount(0);
-
-					break;
-				}
-			}
-		}
-
-		for (ItemStack checkStack2 : player.getInventory().items) {
-			if (!checkStack2.isEmpty()) {
-				for (ItemStack stack : stacks) {
-					if (areStacksEqualIgnoringData(checkStack2, stack)) {
-						checkStack2.setCount(0);
-
-						break;
-					}
-				}
-			}
-		}
-
-		for (ItemStack checkStack2 : player.getInventory().armor) {
-			if (!checkStack2.isEmpty()) {
-				for (ItemStack stack : stacks) {
-					if (areStacksEqualIgnoringData(checkStack2, stack)) {
-						checkStack2.setCount(0);
-
-						break;
-					}
-				}
-			}
-		}
+	public static void damageItemForUser(Player player, ItemStack stack, EquipmentSlot slot) {
+		damageItemForUser(player, stack, 1, slot);
 	}
 
-	public static boolean findItemByTag(Player player, TagKey<Item> tag, boolean consumeItem, int amount) {
-		if (amount <= 0 || player.isCreative())
-			return true;
-
-		if (amount == 1) {
-			ItemStack checkStack;
-
-			if ((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)).is(tag) && !checkStack.isEmpty()) {
-				if (consumeItem)
-					checkStack.shrink(1);
-
-				return true;
-			}
-			else if ((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)).is(tag) && !checkStack.isEmpty()) {
-				if (consumeItem)
-					checkStack.shrink(1);
-
-				return true;
-			}
-			else {
-				for (ItemStack checkStack2 : player.getInventory().items) {
-					if (!checkStack2.isEmpty() && checkStack2.is(tag)) {
-						if (consumeItem)
-							checkStack2.shrink(1);
-
-						return true;
-					}
-				}
-
-				for (ItemStack checkStack2 : player.getInventory().armor) {
-					if (!checkStack2.isEmpty() && checkStack2.is(tag)) {
-						if (consumeItem)
-							checkStack2.shrink(1);
-
-						return true;
-					}
-				}
-			}
-
-			return false;
-		}
-		else {
-			List<ItemStack> matchedStacks = new ObjectArrayList<>();
-			int foundCount = 0;
-			ItemStack checkStack;
-
-			if ((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)).is(tag) && !checkStack.isEmpty()) {
-				matchedStacks.add(checkStack);
-				foundCount += checkStack.getCount();
-			}
-
-			if (foundCount < amount && (checkStack = player.getItemInHand(InteractionHand.OFF_HAND)).is(tag) && !checkStack.isEmpty()) {
-				matchedStacks.add(checkStack);
-				foundCount += checkStack.getCount();
-			}
-
-			if (foundCount < amount) {
-				for (ItemStack checkStack2 : player.getInventory().items) {
-					if (!checkStack2.isEmpty() && checkStack2.is(tag)) {
-						matchedStacks.add(checkStack2);
-						foundCount += checkStack2.getCount();
-
-						if (foundCount >= amount)
-							break;
-					}
-				}
-			}
-
-			if (foundCount < amount) {
-				for (ItemStack checkStack2 : player.getInventory().armor) {
-					if (!checkStack2.isEmpty() && checkStack2.is(tag)) {
-						matchedStacks.add(checkStack2);
-						foundCount += checkStack2.getCount();
-
-						if (foundCount >= amount)
-							break;
-					}
-				}
-			}
-
-			if (foundCount < amount)
-				return false;
-
-			if (!consumeItem)
-				return true;
-
-			for (ItemStack matchedStack : matchedStacks) {
-				int consumeAmount = Math.min(matchedStack.getCount(), Math.min(amount, foundCount));
-
-				matchedStack.shrink(consumeAmount);
-				foundCount -= consumeAmount;
-			}
-
-			return true;
-		}
+	public static void damageItemForUser(Player player, int amount, InteractionHand hand) {
+		if (player instanceof ServerPlayer pl && !pl.hasInfiniteMaterials())
+			damageItemForUser(pl.serverLevel(), pl, amount, hand);
 	}
 
-	public static boolean findInventoryItem(Player player, ItemStack stack, boolean consumeItem, int amount, boolean ignoreCreative) {
-		if (stack.isEmpty())
-			return false;
+	public static void damageItemForUser(Player player, int amount, EquipmentSlot slot) {
+		if (player instanceof ServerPlayer pl && !pl.hasInfiniteMaterials())
+			damageItemForUser(pl.serverLevel(), pl, amount, slot);
+	}
 
-		if (amount <= 0 || (!ignoreCreative && player.getAbilities().instabuild))
-			return true;
+	public static void damageItemForUser(Player player, ItemStack stack, int amount, InteractionHand hand) {
+		if (player instanceof ServerPlayer pl && !pl.hasInfiniteMaterials())
+			damageItemForUser(pl.serverLevel(), stack, amount, pl, EntityUtil.handToEquipmentSlotType(hand));
+	}
 
-		if (amount == 1) {
-			ItemStack checkStack;
+	public static void damageItemForUser(Player player, ItemStack stack, int amount, EquipmentSlot slot) {
+		if (player instanceof ServerPlayer pl && !pl.hasInfiniteMaterials())
+			damageItemForUser(pl.serverLevel(), stack, amount, pl, slot);
+	}
 
-			if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
-				if (consumeItem)
-					checkStack.shrink(1);
+	public static void damageItemForUser(ServerLevel level, LivingEntity user, InteractionHand hand) {
+		damageItemForUser(level, user, 1, hand);
+	}
 
-				return true;
-			}
-			else if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
-				if (consumeItem)
-					checkStack.shrink(1);
+	public static void damageItemForUser(ServerLevel level, LivingEntity user, int amount, InteractionHand hand) {
+		final EquipmentSlot slot = EntityUtil.handToEquipmentSlotType(hand);
 
-				return true;
-			}
-			else {
-				for (ItemStack checkStack2 : player.getInventory().items) {
-					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
-						if (consumeItem)
-							checkStack2.shrink(1);
+		damageItemForUser(level, user.getItemBySlot(slot), amount, user, slot);
+	}
 
-						return true;
-					}
-				}
+	public static void damageItemForUser(ServerLevel level, LivingEntity user, EquipmentSlot slot) {
+		damageItemForUser(level, user.getItemBySlot(slot), user, slot);
+	}
 
-				for (ItemStack checkStack2 : player.getInventory().armor) {
-					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
-						if (consumeItem)
-							checkStack2.shrink(1);
+	public static void damageItemForUser(ServerLevel level, LivingEntity user, int amount, EquipmentSlot slot) {
+		damageItemForUser(level, user.getItemBySlot(slot), amount, user, slot);
+	}
 
-						return true;
-					}
-				}
-			}
+	public static void damageItemForUser(ServerLevel level, ItemStack stack, LivingEntity user, EquipmentSlot slot) {
+		damageItemForUser(level, stack, 1, user, slot);
+	}
 
-			return false;
+	public static void damageItemForUser(ServerLevel level, ItemStack stack, LivingEntity user, InteractionHand hand) {
+		damageItemForUser(level, stack, 1, user, EntityUtil.handToEquipmentSlotType(hand));
+	}
+
+	public static void damageItemForUser(ServerLevel level, ItemStack stack, int amount, LivingEntity user, InteractionHand hand) {
+		damageItemForUser(level, stack, amount, user, EntityUtil.handToEquipmentSlotType(hand));
+	}
+
+	public static void damageItemForUser(ServerLevel level, ItemStack stack, int amount, LivingEntity user, EquipmentSlot slot) {
+		damageItem(level, stack, amount, user, item -> {
+			user.onEquippedItemBroken(item, slot);
+
+			if (user instanceof ServerPlayer player)
+				EventHooks.onPlayerDestroyItem(player, stack, slot.isArmor() ? null : slot == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+		});
+	}
+
+	public static void damageItemForUser(ServerLevel level, ItemStack stack, int amount, LivingEntity user, Consumer<Item> onBreak) {
+		damageItem(level, stack, amount, user, onBreak);
+	}
+
+	public static void damageItemNoUser(ServerLevel level, ItemStack stack) {
+		damageItemNoUser(level, stack, 1);
+	}
+
+	public static void damageItemNoUser(ServerLevel level, ItemStack stack, int amount) {
+		damageItemNoUser(level, stack, amount, item -> {});
+	}
+
+	public static void damageItemNoUser(ServerLevel level, ItemStack stack, int amount, Consumer<Item> onBreak) {
+		damageItem(level, stack, amount, null, onBreak);
+	}
+
+	public static void damageItem(ServerLevel level, ItemStack stack, int amount, @Nullable LivingEntity entity, Consumer<Item> onBreak) {
+		stack.hurtAndBreak(amount, level, entity, onBreak);
+	}
+
+	public static ItemStack damageAndConvertIfBroken(ServerLevel level, ItemStack stack, ItemLike convertTo) {
+		return damageAndConvertIfBroken(level, stack, 1, convertTo, null, item -> {});
+	}
+
+	public static ItemStack damageAndConvertIfBroken(ServerLevel level, ItemStack stack, ItemLike convertTo, LivingEntity user, EquipmentSlot slot) {
+		return damageAndConvertIfBroken(level, stack, 1, convertTo, user, slot);
+	}
+
+	public static ItemStack damageAndConvertIfBroken(ServerLevel level, ItemStack stack, int amount, ItemLike convertTo, LivingEntity user, EquipmentSlot slot) {
+		return damageAndConvertIfBroken(level, stack, amount, convertTo, user, item -> {
+			user.onEquippedItemBroken(item, slot);
+
+			if (user instanceof ServerPlayer player)
+				EventHooks.onPlayerDestroyItem(player, stack, slot.isArmor() ? null : slot == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+		});
+	}
+
+	public static ItemStack damageAndConvertIfBroken(ServerLevel level, ItemStack stack, int amount, ItemLike convertTo, @Nullable LivingEntity entity, Consumer<Item> onBreak) {
+		damageItem(level, stack, amount, entity, onBreak);
+
+		if (stack.isEmpty()) {
+			ItemStack copy = new ItemStack(convertTo.asItem().builtInRegistryHolder(), 1, stack.getComponentsPatch());
+
+			if (copy.isDamageableItem())
+				copy.setDamageValue(0);
+
+			return copy;
 		}
-		else {
-			List<ItemStack> matchedStacks = new ObjectArrayList<>();
-			int foundCount = 0;
-			ItemStack checkStack;
 
-			if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
-				matchedStacks.add(checkStack);
-				foundCount += checkStack.getCount();
-			}
-
-			if (foundCount < amount && areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
-				matchedStacks.add(checkStack);
-				foundCount += checkStack.getCount();
-			}
-
-			if (foundCount < amount) {
-				for (ItemStack checkStack2 : player.getInventory().items) {
-					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
-						matchedStacks.add(checkStack2);
-						foundCount += checkStack2.getCount();
-
-						if (foundCount >= amount)
-							break;
-					}
-				}
-			}
-
-			if (foundCount < amount) {
-				for (ItemStack checkStack2 : player.getInventory().armor) {
-					if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2)) {
-						matchedStacks.add(checkStack2);
-						foundCount += checkStack2.getCount();
-
-						if (foundCount >= amount)
-							break;
-					}
-				}
-			}
-
-			if (foundCount < amount)
-				return false;
-
-			if (!consumeItem)
-				return true;
-
-			for (ItemStack matchedStack : matchedStacks) {
-				int consumeAmount = Math.min(matchedStack.getCount(), Math.min(amount, foundCount));
-
-				matchedStack.shrink(consumeAmount);
-				foundCount -= consumeAmount;
-			}
-
-			return true;
-		}
+		return stack;
 	}
 
 	public static boolean findAndConsumeRunes(Object2IntMap<Item> runeMap, ServerPlayer player, boolean allowBuffs, @NotNull ItemStack heldItem) {
@@ -322,7 +180,7 @@ public final class ItemUtil {
 			return true;
 
 		Reference2IntOpenHashMap<Item> requiredRunes = new Reference2IntOpenHashMap<>(runeMap);
-		boolean nightmareArmour = allowBuffs && PlayerUtil.getAdventPlayer(player).equipment().getCurrentFullArmourSet() == AdventArmour.Type.NIGHTMARE;
+		boolean nightmareArmour = allowBuffs && PlayerUtil.isWearingFullSet(player, AoAArmourMaterials.NIGHTMARE);
 
 		for (Item item : requiredRunes.keySet()) {
 			requiredRunes.computeIntIfPresent(item, (rune, cost) -> {
@@ -469,72 +327,6 @@ public final class ItemUtil {
 		}
 
 		return false;
-	}
-
-	public static boolean hasItemInHotbar(Player player, Item item) {
-		return getStackFromInventory(player, item) != null;
-	}
-
-	@Nullable
-	public static ItemStack getStackFromHotbar(Player player, Item item) {
-		for (int i = 0; i < 9; i++) {
-			ItemStack stack;
-
-			if ((stack = player.getInventory().getItem(i)).getItem() == item)
-				return stack;
-		}
-
-		return null;
-	}
-
-	public static boolean hasItemInOffhand(Player player, Item item) {
-		return player.getItemInHand(InteractionHand.OFF_HAND).getItem() == item;
-	}
-
-	@Nullable
-	public static ItemStack getStackFromInventory(Player player, Item item) {
-		ItemStack stack = new ItemStack(item);
-		ItemStack checkStack;
-
-		if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.MAIN_HAND)), stack) && !checkStack.isEmpty()) {
-			return checkStack;
-		}
-		else if (areStacksEqualIgnoringData((checkStack = player.getItemInHand(InteractionHand.OFF_HAND)), stack) && !checkStack.isEmpty()) {
-			return checkStack;
-		}
-		else {
-			for (ItemStack checkStack2 : player.getInventory().items) {
-				if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2))
-					return checkStack2;
-			}
-
-			for (ItemStack checkStack2 : player.getInventory().armor) {
-				if (!checkStack2.isEmpty() && areStacksEqualIgnoringData(stack, checkStack2))
-					return checkStack2;
-			}
-		}
-
-		return null;
-	}
-
-	public static boolean areStacksFunctionallyEqual(ItemStack a, ItemStack b) {
-		if (!areStacksEqualIgnoringData(a, b))
-			return false;
-
-		return Objects.equals(a.getComponents(), b.getComponents());
-	}
-
-	public static boolean areStacksEqualIgnoringData(ItemStack a, ItemStack b) {
-		if (a == b)
-			return true;
-
-		if (a.getItem() != b.getItem())
-			return false;
-
-		if (a.isDamageableItem() ^ b.isDamageableItem())
-			return false;
-
-		return a.isDamageableItem() || a.getDamageValue() == b.getDamageValue();
 	}
 
 	public static List<ItemStack> increaseStackSize(ItemStack stack, int addAmount) {

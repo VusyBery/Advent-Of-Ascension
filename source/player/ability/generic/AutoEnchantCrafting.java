@@ -9,6 +9,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.tslat.aoa3.common.menu.ImbuingChamberMenu;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.ItemCraftingEvent;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -73,6 +74,9 @@ public class AutoEnchantCrafting extends ScalableModAbility {
 
 	@Override
 	public void handleItemCrafting(ItemCraftingEvent ev) {
+		if (ev.getCraftingInputs() instanceof ImbuingChamberMenu.ImbuingInventory)
+			return;
+
 		ItemStack output = ev.getOutputStack();
 
 		for (ObjectIntPair<Holder<Enchantment>> data : enchantments) {

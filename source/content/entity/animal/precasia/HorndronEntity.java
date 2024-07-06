@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
@@ -105,8 +106,8 @@ public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 	}
 
 	@Override
-	protected void onHurt(DamageSource source, float amount) {
-		if (level() instanceof ServerLevel level && source.is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
+	public void onDamageTaken(DamageContainer damageContainer) {
+		if (level() instanceof ServerLevel level && damageContainer.getSource().is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
 			ParticleBuilder.forRandomPosInEntity(ParticleTypes.LARGE_SMOKE, this)
 					.colourOverride(255, 255, 255, 255)
 					.spawnNTimes(20)

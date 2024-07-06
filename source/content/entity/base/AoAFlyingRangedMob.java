@@ -84,9 +84,6 @@ public abstract class AoAFlyingRangedMob extends FlyingMob implements Enemy, Ran
 	}
 
 	@Override
-	public abstract float getEyeHeightAccess(Pose pose);
-
-	@Override
 	public SoundSource getSoundSource() {
 		return SoundSource.HOSTILE;
 	}

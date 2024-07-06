@@ -37,6 +37,7 @@ import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.event.AoAPlayerEvents;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.util.EntityUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.NotNull;
@@ -76,29 +77,29 @@ public class FishingCageEntity extends Entity {
 
 	@Override
 	public InteractionResult interact(Player player, InteractionHand hand) {
-		if (!level().isClientSide() && ownerUUID == null || player.getUUID().equals(ownerUUID)) {
+		if (player instanceof ServerPlayer pl && (ownerUUID == null || pl.getUUID().equals(ownerUUID))) {
 			ItemStack fishingCage = new ItemStack(AoATools.FISHING_CAGE.get());
 			int damage = this.damage + 1;
 
 			if (damage < fishingCage.getMaxDamage()) {
 				fishingCage.setDamageValue(damage);
 
-				if (!player.isCreative())
-					ItemUtil.givePlayerItemOrDrop(player, fishingCage);
+				if (!pl.getAbilities().instabuild)
+					InventoryUtil.giveItemTo(pl, fishingCage);
 			}
 
 			if (hasCatches()) {
-				AoAPlayerEvents.handleCustomInteraction((ServerPlayer)player, "fishing_cage_harvest", loot);
+				AoAPlayerEvents.handleCustomInteraction(pl, "fishing_cage_harvest", loot);
 
 				for (ItemStack drop : loot) {
 					if (drop.is(ItemTags.FISHES))
-						player.awardStat(Stats.FISH_CAUGHT, 1);
+						pl.awardStat(Stats.FISH_CAUGHT, 1);
 
-					ItemUtil.givePlayerItemOrDrop(player, drop);
+					InventoryUtil.giveItemTo(pl, drop);
 				}
 			}
 
-			player.awardStat(Stats.ITEM_USED.get(AoATools.FISHING_CAGE.get()));
+			pl.awardStat(Stats.ITEM_USED.get(AoATools.FISHING_CAGE.get()));
 			discard();
 
 			return InteractionResult.SUCCESS;

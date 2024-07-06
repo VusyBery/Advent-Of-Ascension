@@ -26,7 +26,7 @@ public class AttributeModification extends ScalableModAbility {
 	private static final ListenerType[] LISTENERS = new ListenerType[] {ATTRIBUTE_MODIFIERS, LEVEL_CHANGE};
 
 	private final Holder<Attribute> attribute;
-	private final AttributeModifier modifier;
+	private AttributeModifier modifier;
 
 	private float loginHealth = -1;
 	private int lastUpdateLevel = 0;
@@ -43,6 +43,12 @@ public class AttributeModification extends ScalableModAbility {
 
 		this.attribute = AoARegistries.ENTITY_ATTRIBUTES.getHolder(ResourceLocation.read(data.getString("attribute")).getOrThrow());
 		this.modifier = new AttributeModifier(RegistryUtil.getId(this.type()).withSuffix(getUniqueIdentifier()), getScaledValue(), AttributeModifier.Operation.BY_ID.apply(data.getInt("operation")));
+	}
+
+	protected AttributeModifier updateModifier() {
+		markForClientSync();
+
+		return this.modifier = new AttributeModifier(this.modifier.id(), getScaledValue(), this.modifier.operation());
 	}
 
 	@Override
@@ -103,7 +109,7 @@ public class AttributeModification extends ScalableModAbility {
 
 	@Override
 	public void handleLevelChange(PlayerLevelChangeEvent ev) {
-		AttributeUtil.applyTransientModifier(ev.getEntity(), this.attribute, this.modifier);
+		AttributeUtil.applyTransientModifier(ev.getEntity(), this.attribute, updateModifier());
 	}
 
 	@Override
@@ -130,6 +136,13 @@ public class AttributeModification extends ScalableModAbility {
 		}
 
 		return data;
+	}
+
+	@Override
+	public void receiveSyncData(CompoundTag data) {
+		super.receiveSyncData(data);
+
+		updateModifier();
 	}
 
 	@Override

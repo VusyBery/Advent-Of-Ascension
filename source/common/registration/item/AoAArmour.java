@@ -6,6 +6,7 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.content.item.armour.*;
 
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -97,6 +98,13 @@ public final class AoAArmour {
 			this.chestplate = AoAItems.registerItem(registryPrefix + "_chestplate", () -> constructor.apply(ArmorItem.Type.CHESTPLATE), AoACreativeModeTabs.ARMOUR.getKey());
 			this.leggings = AoAItems.registerItem(registryPrefix + "_leggings", () -> constructor.apply(ArmorItem.Type.LEGGINGS), AoACreativeModeTabs.ARMOUR.getKey());
 			this.boots = AoAItems.registerItem(registryPrefix + "_boots", () -> constructor.apply(ArmorItem.Type.BOOTS), AoACreativeModeTabs.ARMOUR.getKey());
+		}
+
+		public void forEach(Consumer<Item> consumer) {
+			consumer.accept(this.helmet.get());
+			consumer.accept(this.chestplate.get());
+			consumer.accept(this.leggings.get());
+			consumer.accept(this.boots.get());
 		}
 	}
 }

@@ -16,7 +16,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.BonemealableBlock;
@@ -86,7 +85,7 @@ public class ReefStaff extends BaseStaff<Boolean> {
 	}
 
 	@Override
-	public void cast(Level level, ItemStack staff, LivingEntity caster, Boolean args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Boolean args) {
 		Vec3 lookAngle = caster.getLookAngle();
 
 		if (lookAngle.horizontalDistanceSqr() > 0.0000001d || lookAngle.y != -1) {

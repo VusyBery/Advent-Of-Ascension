@@ -13,6 +13,7 @@ import net.minecraft.world.item.enchantment.ConditionalEffect;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.advent.AdventOfAscension;
@@ -54,10 +55,14 @@ public final class AoAEnchantments {
 		return mutableFloat.floatValue();
 	}
 
-	public static float modifySpiritConsumption(ServerLevel level, ItemStack stack, float spiritCost) {
+	public static float modifySpiritConsumption(Level level, ItemStack stack, float spiritCost) {
+		if (!(level instanceof ServerLevel serverLevel))
+			return spiritCost;
+
+
 		final MutableFloat mutableFloat = new MutableFloat(spiritCost);
 
-		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(SPIRIT_CONSUMPTION.get(), level, enchantLevel, stack, mutableFloat));
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(SPIRIT_CONSUMPTION.get(), serverLevel, enchantLevel, stack, mutableFloat));
 
 		return mutableFloat.floatValue();
 	}
@@ -86,10 +91,13 @@ public final class AoAEnchantments {
 		return mutableFloat.floatValue();
 	}
 
-	public static int modifyAmmoCost(ServerLevel level, ItemStack stack, int cost) {
+	public static int modifyAmmoCost(Level level, ItemStack stack, int cost) {
+		if (!(level instanceof ServerLevel serverLevel))
+			return cost;
+
 		final MutableFloat mutableFloat = new MutableFloat(cost);
 
-		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(AMMO_COST.get(), level, enchantLevel, stack, mutableFloat));
+		EnchantmentHelper.runIterationOnItem(stack, (enchant, enchantLevel) -> enchant.value().modifyItemFilteredCount(AMMO_COST.get(), serverLevel, enchantLevel, stack, mutableFloat));
 
 		return Mth.ceil(mutableFloat.floatValue());
 	}

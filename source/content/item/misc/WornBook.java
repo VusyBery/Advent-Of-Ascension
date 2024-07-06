@@ -19,7 +19,7 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.data.client.MiscellaneousReloadListener;
 import net.tslat.aoa3.integration.IntegrationManager;
 import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
@@ -34,11 +34,11 @@ public class WornBook extends WrittenBookItem {
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		ItemStack bookStack = player.getItemInHand(hand);
 
-		if (!world.isClientSide) {
-			if (!ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.BLANK_REALMSTONE.get()), false, 1, false)) {
-				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.BLANK_REALMSTONE.get()));
-				player.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("wornBook.droppedRealmstone")));
-				PlayerUtil.getAdventPlayer((ServerPlayer)player).addPatchouliBook(AdventOfAscension.id("worn_book"));
+		if (player instanceof ServerPlayer pl) {
+			if (!InventoryUtil.hasItem(pl, AoAItems.BLANK_REALMSTONE)) {
+				InventoryUtil.giveItemTo(pl, AoAItems.BLANK_REALMSTONE);
+				pl.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("wornBook.droppedRealmstone")));
+				PlayerUtil.getAdventPlayer(pl).addPatchouliBook(AdventOfAscension.id("worn_book"));
 			}
 		}
 		else {

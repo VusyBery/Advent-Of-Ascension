@@ -111,6 +111,7 @@ public abstract class BossSpawningItem<T extends Entity> extends TooltipItem imp
 					plData.setPortalReturnLocation(nowhere.dimension(), returnLoc);
 			}
 			else {
+				PlayerUtil.getAdventPlayer(pl).setPortalReturnLocation(nowhere.dimension(), new PortalCoordinatesContainer(pl.level().dimension(), pl.blockPosition()));
 				pl.changeDimension(AoAPortal.getTransitionForLevel(nowhere, pl, AoABlocks.NOWHERE_PORTAL.get()));
 				pl.connection.teleport(17.5d, 452.5d, 3.5d, 0, pl.getXRot());
 			}

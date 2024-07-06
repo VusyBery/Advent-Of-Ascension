@@ -14,8 +14,8 @@ public class BasicWaterFishRenderer extends AnimatedMobRenderer<BasicFishEntity>
 	}
 
 	@Override
-	protected void applyRotations(BasicFishEntity entityLiving, PoseStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks) {
-		super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
+	protected void applyRotations(BasicFishEntity entityLiving, PoseStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks, float scale) {
+		super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks, scale);
 
 		matrixStackIn.mulPose(Axis.YP.rotationDegrees(4.3f * Mth.sin(0.6f * ageInTicks)));
 

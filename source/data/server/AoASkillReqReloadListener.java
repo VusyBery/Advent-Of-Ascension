@@ -42,8 +42,8 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		SkillReqHandler handler = getRequirements(RegistryUtil.getId(item));
 
 		if (handler != null && !handler.canEquip(plData)) {
-			if (notifyPlayer && !plData.player().level().isClientSide())
-				handler.notifyPlayerCantEquip((ServerPlayer)plData.player());
+			if (notifyPlayer && plData.player() instanceof ServerPlayer pl)
+				handler.notifyPlayerCantEquip(pl);
 
 			return false;
 		}
@@ -55,8 +55,8 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		SkillReqHandler handler = getRequirements(RegistryUtil.getId(block));
 
 		if (handler != null && !handler.canPlaceBlock(plData)) {
-			if (notifyPlayer && !plData.player().level().isClientSide())
-				handler.notifyPlayerCantPlaceBlock((ServerPlayer)plData.player());
+			if (notifyPlayer && plData.player() instanceof ServerPlayer pl)
+				handler.notifyPlayerCantPlaceBlock(pl);
 
 			return false;
 		}
@@ -68,8 +68,8 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		SkillReqHandler handler = getRequirements(RegistryUtil.getId(block));
 
 		if (handler != null && !handler.canBreakBlock(plData)) {
-			if (notifyPlayer && !plData.player().level().isClientSide())
-				handler.notifyPlayerCantBreakBlock((ServerPlayer)plData.player());
+			if (notifyPlayer && plData.player() instanceof ServerPlayer pl)
+				handler.notifyPlayerCantBreakBlock(pl);
 
 			return false;
 		}
@@ -81,8 +81,8 @@ public class AoASkillReqReloadListener extends SimpleJsonResourceReloadListener 
 		SkillReqHandler handler = getRequirements(RegistryUtil.getId(block));
 
 		if (handler != null && !handler.canInteractWith(plData)) {
-			if (notifyPlayer && !plData.player().level().isClientSide())
-				handler.notifyPlayerCantInteract((ServerPlayer)plData.player());
+			if (notifyPlayer && plData.player() instanceof ServerPlayer pl)
+				handler.notifyPlayerCantInteract(pl);
 
 			return false;
 		}

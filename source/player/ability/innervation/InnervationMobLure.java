@@ -9,7 +9,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
@@ -25,7 +25,7 @@ import net.tslat.aoa3.util.PlayerUtil;
 import java.util.function.Consumer;
 
 public class InnervationMobLure extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.PLAYER_TICK, ListenerType.INCOMING_ATTACK_DURING};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.PLAYER_TICK, ListenerType.INCOMING_DAMAGE};
 
 	private final float onHitDrain;
 	private final float perTickDrain;
@@ -113,7 +113,7 @@ public class InnervationMobLure extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handleIncomingAttack(LivingHurtEvent ev) {
+	public void handleIncomingDamage(LivingIncomingDamageEvent ev) {
 		if (isLuring && ev.getSource().getEntity() == luringEntity) {
 			skill.getPlayerDataManager().getResource(AoAResources.SPIRIT.get()).consume(this.onHitDrain, true);
 			ev.setAmount(ev.getAmount() * this.luredDamageModifier);

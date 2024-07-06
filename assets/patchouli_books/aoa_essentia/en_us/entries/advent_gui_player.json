@@ -6,7 +6,7 @@
     {
       "type": "patchouli:text",
       "anchor": "player_tab",
-      "text": "The $(thing)player tab$() is the default tab that is opened whenever the $(l:aoa3:advent_gui_base)Advent GUI$(/l) is opened.$(br)It contains an overview of the player's current $(l:aoa3:skills_overview)skills$(/l)",
+      "text": "The $(thing)player tab$() is the default tab that is opened whenever the $(l:aoa3:advent_gui_base)Advent GUI$(/l) is opened.$(br)It contains an overview of the player's current $(l:aoa3:skills_overview)skills$(/l).",
       "title": "Player Tab"
     },
     {
@@ -15,7 +15,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Clicking on any ability listed in the ability pane will disable it if it is currently active, or enable it if it was previously disabled by you.$(br)Disabling an ability removes any bonuses it currently places on you, or prevents it from having any effect on the game as you play.$(br2)If you have reached level 100, a button to $(l:aoa3:cycles)cycle$(/l) the skill will be made available"
+      "text": "Clicking on any ability listed in the ability pane will disable it if it is currently active, or enable it if it was previously disabled by you.$(br)Disabling an ability removes any bonuses it currently places on you, or prevents it from having any effect on the game as you play.$(br2)If you have reached level 100, a button to $(l:aoa3:cycles)cycle$(/l) the skill will be made available."
     }
   ],
   "sortnum": 1

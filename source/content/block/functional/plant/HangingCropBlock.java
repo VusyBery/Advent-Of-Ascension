@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.IPlantable;
+import net.neoforged.neoforge.common.util.TriState;
 
 import java.util.function.Supplier;
 
@@ -40,7 +40,7 @@ public abstract class HangingCropBlock extends AoACropBlock {
 			int age = this.getAge(state);
 
 			if (age < this.getMaxAge()) {
-				float growthMod = getGrowthMod(this, world, pos);
+				float growthMod = getGrowthMod(state, world, pos);
 
 				if (CommonHooks.canCropGrow(world, pos, state, random.nextInt((int)(25.0F / growthMod) + 1) == 0)) {
 					world.setBlock(pos, this.getStateForAge(age + 1), 2);
@@ -50,7 +50,7 @@ public abstract class HangingCropBlock extends AoACropBlock {
 		}
 	}
 
-	public float getGrowthMod(Block block, BlockGetter level, BlockPos pos) {
+	public float getGrowthMod(BlockState state, BlockGetter level, BlockPos pos) {
 		float modifier = 1;
 		BlockPos.MutableBlockPos testPos = new BlockPos.MutableBlockPos();
 
@@ -59,7 +59,7 @@ public abstract class HangingCropBlock extends AoACropBlock {
 				float adjacentMod = 0;
 				BlockState blockstate = level.getBlockState(testPos.set(pos.getX() + x, pos.getY() + 1, pos.getZ() + z));
 
-				if (blockstate.canSustainPlant(level, testPos, Direction.DOWN, (IPlantable)block)) {
+				if (blockstate.canSustainPlant(level, testPos, Direction.DOWN, state) != TriState.FALSE) {
 					adjacentMod = 1.0F;
 
 					if (blockstate.isFertile(level, testPos.move(Direction.DOWN)))
@@ -75,6 +75,7 @@ public abstract class HangingCropBlock extends AoACropBlock {
 
 		BlockPos eastPos = pos.west();
 		BlockPos westPos = pos.east();
+		Block block = state.getBlock();
 		boolean latitudeAdjacent = block == level.getBlockState(eastPos).getBlock() || block == level.getBlockState(westPos).getBlock();
 		boolean longitudeAdjacent = block == level.getBlockState(pos.north()).getBlock() || block == level.getBlockState(pos.south()).getBlock();
 

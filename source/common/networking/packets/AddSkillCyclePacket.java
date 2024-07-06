@@ -12,8 +12,7 @@ import net.tslat.aoa3.util.PlayerUtil;
 public record AddSkillCyclePacket(AoASkill skill) implements AoAPacket {
 	public static final Type<AddSkillCyclePacket> TYPE = new Type<>(AdventOfAscension.id("add_skill_cycle"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, AddSkillCyclePacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.registry(AoARegistries.SKILLS_REGISTRY_KEY),
-			AddSkillCyclePacket::skill,
+			ByteBufCodecs.registry(AoARegistries.SKILLS_REGISTRY_KEY), AddSkillCyclePacket::skill,
 			AddSkillCyclePacket::new);
 
 	@Override

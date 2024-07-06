@@ -1,20 +1,17 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class PredatiousArmour extends AdventArmour {
@@ -23,20 +20,15 @@ public class PredatiousArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.PREDATIOUS;
+	public void handleOutgoingAttack(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
+		if (DamageUtil.isRangedDamage(ev.getSource()))
+			ev.setAmount(ev.getAmount() * (1f + perPieceValue(equippedPieces, 0.1f)));
 	}
 
 	@Override
-	public void onDamageDealt(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots != null && DamageUtil.isRangedDamage(event.getSource()))
-			event.setAmount(event.getAmount() * (1f + (0.1f * (float)slots.size())));
-	}
-
-	@Override
-	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots == null && event.getEntity() != null && DamageUtil.isMeleeDamage(event.getSource()) && event.getSource().getDirectEntity() instanceof LivingEntity)
-			event.getSource().getDirectEntity().hurt(plData.player().level().damageSources().thorns(plData.player()), 1);
+	public void afterTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Post ev) {
+		if (equippedPieces.contains(Piece.FULL_SET) && DamageUtil.isMeleeDamage(ev.getSource()) && ev.getSource().getDirectEntity() instanceof LivingEntity attacker)
+			attacker.hurt(entity.level().damageSources().thorns(entity), 1);
 	}
 
 	@Override

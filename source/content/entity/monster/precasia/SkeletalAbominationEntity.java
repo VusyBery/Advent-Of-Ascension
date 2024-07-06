@@ -75,11 +75,6 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
     }
 
     @Override
-    public float getEyeHeightAccess(Pose pose) {
-        return (isStanding() ? 1.9047619f : 1.2619047f) * getDefaultDimensions(pose).height();
-    }
-
-    @Override
     public void makeStuckInBlock(BlockState state, Vec3 pMotionMultiplier) {
         if (!state.is(AoABlocks.TAR.getBlock()))
             super.makeStuckInBlock(state, pMotionMultiplier);
@@ -119,12 +114,17 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
 
         toggleMultipart(!standing);
         refreshDimensions();
-    }
+    }/*
+
+    @Override
+    public float getEyeHeightAccess(Pose pose) {
+        return (isStanding() ? 1.9047619f : 1.2619047f) * getDefaultDimensions(pose).height();
+    }*/
 
     @Override
     public EntityDimensions getDefaultDimensions(Pose pose) {
         if (isStanding())
-            return EntityDimensions.scalable(1, 2.6875f).scale(getScale());
+            return new EntityDimensions(1, 2.6875f, 5.1190476f, getType().getDimensions().attachments(), getType().getDimensions().fixed()).scale(getScale());
 
         return super.getDefaultDimensions(pose);
     }
@@ -185,7 +185,7 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
     }
 
     @Override
-    protected float getAttackVectorPositionOffset() {
-        return 1.5625f;
+    protected double getAttackReach() {
+        return 1.5625;
     }
 }

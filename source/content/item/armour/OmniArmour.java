@@ -2,20 +2,18 @@ package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.DamageTypeTags;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class OmniArmour extends AdventArmour {
@@ -24,20 +22,15 @@ public class OmniArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.OMNI;
+	public void handleOutgoingAttack(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
+		if (ev.getSource().is(DamageTypeTags.IS_EXPLOSION))
+			ev.setAmount(ev.getAmount() * (1 + perPieceValue(equippedPieces, 0.1f)));
 	}
 
 	@Override
-	public void onDamageDealt(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots != null && event.getSource().is(DamageTypeTags.IS_EXPLOSION))
-			event.setAmount(event.getAmount() * (1 + (0.1f * slots.size())));
-	}
-
-	@Override
-	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots == null && DamageUtil.isMeleeDamage(event.getSource()))
-			WorldUtil.createExplosion(plData.player(), plData.player().level(), plData.player().blockPosition(), 1.75f);
+	public void afterTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Post ev) {
+		if (ev.getNewDamage() > 0 && DamageUtil.isMeleeDamage(ev.getSource()))
+			WorldUtil.createExplosion(entity, entity.level(), entity.blockPosition(), 1.75f);
 	}
 
 	@Override

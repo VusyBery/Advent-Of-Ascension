@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.*;
@@ -59,12 +60,13 @@ public final class AoAPlayerEvents {
 		forgeBus.addListener(EventPriority.NORMAL, false, ItemFishedEvent.class, AoAPlayerEvents::onItemFished);
 		forgeBus.addListener(EventPriority.NORMAL, false, HaulingRodPullEntityEvent.class, AoAPlayerEvents::onHaulingRodPullEntity);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.EntityInteractSpecific.class, AoAPlayerEvents::onEntityInteract);
-		forgeBus.addListener(EventPriority.NORMAL, false, MobEffectEvent.Added.class, AoAPlayerEvents::onPotionApplied);
+		forgeBus.addListener(EventPriority.NORMAL, false, MobEffectEvent.Applicable.class, AoAPlayerEvents::onMobEffectApplying);
+		forgeBus.addListener(EventPriority.NORMAL, false, MobEffectEvent.Added.class, AoAPlayerEvents::onMobEffectApplied);
 		forgeBus.addListener(EventPriority.NORMAL, false, CriticalHitEvent.class, AoAPlayerEvents::onCriticalHit);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingChangeTargetEvent.class, AoAPlayerEvents::onEntityTargeted);
-		forgeBus.addListener(EventPriority.NORMAL, false, LivingAttackEvent.class, AoAPlayerEvents::onPreAttack);
-		forgeBus.addListener(EventPriority.NORMAL, false, LivingHurtEvent.class, AoAPlayerEvents::onAttack);
-		forgeBus.addListener(EventPriority.NORMAL, false, LivingDamageEvent.class, AoAPlayerEvents::onPostAttack);
+		forgeBus.addListener(EventPriority.NORMAL, false, EntityInvulnerabilityCheckEvent.class, AoAPlayerEvents::onEntityInvulnerabilityCheck);
+		forgeBus.addListener(EventPriority.NORMAL, false, LivingIncomingDamageEvent.class, AoAPlayerEvents::onAttack);
+		forgeBus.addListener(EventPriority.NORMAL, false, LivingDamageEvent.Post.class, AoAPlayerEvents::onPostAttack);
 	}
 
 	public static void issueEvent(ServerPlayer pl, AoAPlayerEventListener.ListenerType listener, Consumer<? super AoAPlayerEventListener> eventConsumer) {
@@ -270,9 +272,14 @@ public final class AoAPlayerEvents {
 			issueEvent(pl, ENTITY_INTERACT, listener -> listener.handleEntityInteraction(ev));
 	}
 
-	private static void onPotionApplied(final MobEffectEvent.Added ev) {
+	private static void onMobEffectApplying(final MobEffectEvent.Applicable ev) {
 		if (ev.getEntity() instanceof ServerPlayer pl)
-			issueEvent(pl, POTION_APPLIED, listener -> listener.handleAppliedPotion(ev));
+			issueEvent(pl, MOB_EFFECT_TEST, listener -> listener.handleEffectApplicability(ev));
+	}
+
+	private static void onMobEffectApplied(final MobEffectEvent.Added ev) {
+		if (ev.getEntity() instanceof ServerPlayer pl)
+			issueEvent(pl, MOB_EFFECT_APPLIED, listener -> listener.handleAppliedMobEffect(ev));
 	}
 
 	private static void onCriticalHit(final CriticalHitEvent ev) {
@@ -285,30 +292,26 @@ public final class AoAPlayerEvents {
 			issueEvent(pl, ENTITY_TARGET, listener -> listener.handleEntityTarget(ev));
 	}
 
-	private static void onPreAttack(final LivingAttackEvent ev) {
+	private static void onEntityInvulnerabilityCheck(final EntityInvulnerabilityCheckEvent ev) {
+		if (ev.getEntity() instanceof ServerPlayer pl)
+			issueEvent(pl, ENTITY_INVULNERABILITY, listener -> listener.handleEntityInvulnerability(ev));
+	}
+
+	private static void onAttack(final LivingIncomingDamageEvent ev) {
 		if (ev.getEntity() instanceof ServerPlayer pl) {
-			issueEvent(pl, INCOMING_ATTACK_BEFORE, listener -> listener.handlePreIncomingAttack(ev));
+			issueEvent(pl, INCOMING_DAMAGE, listener -> listener.handleIncomingDamage(ev));
 		}
 		else if (ev.getSource().getEntity() instanceof ServerPlayer pl) {
-			issueEvent(pl, OUTGOING_ATTACK_BEFORE, listener -> listener.handlePreOutgoingAttack(ev));
+			issueEvent(pl, OUTGOING_ATTACK, listener -> listener.handleOutgoingAttack(ev));
 		}
 	}
 
-	private static void onAttack(final LivingHurtEvent ev) {
+	private static void onPostAttack(final LivingDamageEvent.Post ev) {
 		if (ev.getEntity() instanceof ServerPlayer pl) {
-			issueEvent(pl, INCOMING_ATTACK_DURING, listener -> listener.handleIncomingAttack(ev));
+			issueEvent(pl, INCOMING_DAMAGE_AFTER, listener -> listener.handleAfterDamaged(ev));
 		}
 		else if (ev.getSource().getEntity() instanceof ServerPlayer pl) {
-			issueEvent(pl, OUTGOING_ATTACK_DURING, listener -> listener.handleOutgoingAttack(ev));
-		}
-	}
-
-	private static void onPostAttack(final LivingDamageEvent ev) {
-		if (ev.getEntity() instanceof ServerPlayer pl) {
-			issueEvent(pl, INCOMING_ATTACK_AFTER, listener -> listener.handlePostIncomingAttack(ev));
-		}
-		else if (ev.getSource().getEntity() instanceof ServerPlayer pl) {
-			issueEvent(pl, OUTGOING_ATTACK_AFTER, listener -> listener.handlePostOutgoingAttack(ev));
+			issueEvent(pl, OUTGOING_ATTACK_AFTER, listener -> listener.handleAfterAttacking(ev));
 		}
 	}
 

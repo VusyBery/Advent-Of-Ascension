@@ -29,6 +29,7 @@ import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.tslat.aoa3.common.registration.entity.AoAProfessions;
 import net.tslat.aoa3.content.entity.ai.trader.TraderFaceCustomerGoal;
@@ -96,13 +97,12 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 			if (hand == InteractionHand.MAIN_HAND)
 				player.awardStat(Stats.TALKED_TO_VILLAGER);
 
-			if (!getOffers().isEmpty()) {
-				if (!level().isClientSide) {
-					updateSpecialPrices(player);
-					setTradingPlayer(player);
-					openTradingScreen(player, getDisplayName(), getVillagerData().getLevel());
-				}
+			if (!level().isClientSide && !getOffers().isEmpty()) {
+				updateSpecialPrices(player);
+				setTradingPlayer(player);
+				openTradingScreen(player, getDisplayName(), getVillagerData().getLevel());
 			}
+
 			return InteractionResult.sidedSuccess(level().isClientSide);
 		}
 		else {
@@ -216,30 +216,35 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 	}
 
 	@Override
-	public void die(DamageSource cause) {
-		if (cause.getEntity() != null)
-			tellWitnessesThatIWasMurdered(cause.getEntity());
+	public void die(DamageSource source) {
+		if (CommonHooks.onLivingDeath(this, source))
+			return;
 
-		if (!CommonHooks.onLivingDeath(this, cause)) {
-			if (!isRemoved() && !dead) {
-				Entity entity = cause.getEntity();
-				LivingEntity killer = getKillCredit();
+		if (!isRemoved() && !this.dead) {
+			Entity attacker = source.getEntity();
+			LivingEntity killer = getKillCredit();
 
-				if (deathScore >= 0 && killer != null)
-					killer.awardKillScore(this, deathScore, cause);
+			if (this.deathScore >= 0 && killer != null)
+				killer.awardKillScore(this, this.deathScore, source);
 
-				dead = true;
+			if (isSleeping())
+				stopSleeping();
 
-				getCombatTracker().recheckStatus();
+			this.dead = true;
 
-				if (this.level() instanceof ServerLevel level) {
-					dropAllDeathLoot(level, cause);
+			getCombatTracker().recheckStatus();
+
+			if (level() instanceof ServerLevel serverlevel) {
+				if (attacker == null || attacker.killedEntity(serverlevel, this)) {
+					gameEvent(GameEvent.ENTITY_DIE);
+					dropAllDeathLoot(serverlevel, source);
 					createWitherRose(killer);
 				}
 
 				level().broadcastEntityEvent(this, (byte)3);
-				setPose(Pose.DYING);
 			}
+
+			setPose(Pose.DYING);
 		}
 
 		stopTrading();

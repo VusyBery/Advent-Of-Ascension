@@ -12,7 +12,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.TickRateManager;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.client.player.ClientPlayerDataManager;
@@ -28,7 +28,7 @@ import net.tslat.aoa3.util.PlayerUtil;
 import java.util.function.Consumer;
 
 public class InnervationDodge extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.INCOMING_ATTACK_BEFORE};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.INCOMING_DAMAGE};
 
 	private final float energyCost;
 
@@ -108,7 +108,7 @@ public class InnervationDodge extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handlePreIncomingAttack(LivingAttackEvent ev) {
+	public void handleIncomingDamage(LivingIncomingDamageEvent ev) {
 		if (ev.getEntity().level().getGameTime() < activationTime + 5 && DamageUtil.isMeleeDamage(ev.getSource()))
 			ev.setCanceled(true);
 	}

@@ -15,18 +15,17 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.neoforged.neoforge.common.IPlantable;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.common.PlantType;
+import net.neoforged.neoforge.common.util.TriState;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class StackablePlant extends Block implements IShearable, IPlantable {
+public class StackablePlant extends Block implements IShearable {
 	protected Supplier<? extends StackablePlant> hatBlock;
 	protected Supplier<? extends StackablePlant> stemBlock;
-// TODO fix this to use blockstates =/
+
 	public StackablePlant(Block.Properties properties) {
 		super(properties);
 
@@ -60,12 +59,7 @@ public class StackablePlant extends Block implements IShearable, IPlantable {
 	public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
 		BlockState targetState = level.getBlockState(pos.below());
 
-		return targetState.getBlock() == this.stemBlock.get() || targetState.canSustainPlant(level, pos.below(), Direction.UP, this);
-	}
-
-	@Override
-	public PlantType getPlantType(BlockGetter level, BlockPos pos) {
-		return PlantType.CAVE;
+		return targetState.getBlock() == this.stemBlock.get() || targetState.canSustainPlant(level, pos.below(), Direction.UP, state) != TriState.FALSE;
 	}
 
 	@Override
@@ -94,19 +88,7 @@ public class StackablePlant extends Block implements IShearable, IPlantable {
 	}
 
 	@Override
-	public BlockState getPlant(BlockGetter world, BlockPos pos) {
-		BlockState state = world.getBlockState(pos);
-
-		if (state.getBlock() != this)
-			return defaultBlockState();
-
-		return state;
-	}
-
-	@Override
 	public List<ItemStack> onSheared(@Nullable Player player, ItemStack item, Level level, BlockPos pos) {
 		return ObjectArrayList.of(asItem().getDefaultInstance());
 	}
-
-	// TODO Look at random offset? RE: DoublePlantBlock
 }

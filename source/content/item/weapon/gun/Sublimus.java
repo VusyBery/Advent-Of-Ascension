@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.item.weapon.gun;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,7 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.content.entity.projectile.gun.BaseBullet;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +31,7 @@ public class Sublimus extends BaseGun {
 	@Nullable
 	@Override
 	public BaseBullet findAndConsumeAmmo(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
-		if (!(shooter instanceof Player pl) || ItemUtil.findInventoryItem(pl, new ItemStack(getAmmoItem()), !shooter.level().isClientSide() && (!shooter.level().isDay() || !shooter.level().canSeeSky(shooter.blockPosition())), shooter.level() instanceof ServerLevel level ? AoAEnchantments.modifyAmmoCost(level, gunStack, 1) : 1, false))
+		if (!(shooter instanceof Player pl) || InventoryUtil.findItemForConsumption(pl, getAmmoItem(), pl.getAbilities().instabuild ? 0 : AoAEnchantments.modifyAmmoCost(pl.level(), gunStack, 1), !pl.level().isDay() || !pl.level().canSeeSky(pl.blockPosition())))
 			return createProjectileEntity(shooter, gunStack, hand);
 
 		return null;

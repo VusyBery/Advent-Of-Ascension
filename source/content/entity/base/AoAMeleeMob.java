@@ -32,10 +32,6 @@ public abstract class AoAMeleeMob<T extends AoAMeleeMob<T>> extends AoAMonster<T
 				new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration()));
 	}
 
-	protected float getAttackVectorPositionOffset() {
-		return 0;
-	}
-
 	protected double getAttackReach() {
 		return this.attackReach;
 	}
@@ -43,7 +39,6 @@ public abstract class AoAMeleeMob<T extends AoAMeleeMob<T>> extends AoAMonster<T
 	@Override
 	protected AABB getAttackBoundingBox() {
 		AABB boundingBox = getBoundingBox();
-		double attackPositionOffset = getAttackVectorPositionOffset() - boundingBox.getXsize() / 2f;
 		double reach = getAttackReach();
 
 		if (getVehicle() != null) {
@@ -57,9 +52,6 @@ public abstract class AoAMeleeMob<T extends AoAMeleeMob<T>> extends AoAMonster<T
 					Math.max(boundingBox.maxZ, vehicleBounds.maxZ)
 			);
 		}
-
-		if (attackPositionOffset > 0)
-			reach += attackPositionOffset;
 
 		return boundingBox.inflate(reach, 0, reach);
 	}

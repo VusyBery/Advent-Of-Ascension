@@ -19,7 +19,7 @@ public class LunarAssaultRifle extends BaseGun {
 	public LunarAssaultRifle(Item.Properties properties) {
 		super(properties);
 
-		final float baseDamage = getGunDamage(getDefaultInstance());
+		final float baseDamage = getGunStats(getDefaultInstance()).damage();
 		this.minDamage = baseDamage - (baseDamage / 2d);
 		this.maxDamage = baseDamage + (baseDamage / 2d);
 	}

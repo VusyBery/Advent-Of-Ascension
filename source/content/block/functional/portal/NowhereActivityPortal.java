@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -18,7 +17,7 @@ import net.tslat.aoa3.content.world.nowhere.NowhereParkourCourse;
 import net.tslat.aoa3.event.dimension.NowhereEvents;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
@@ -85,18 +84,18 @@ public class NowhereActivityPortal extends PortalBlock {
 
 			plData.storeInventoryContents();
 		}),
-		PARKOUR_1(pl -> findParkourCourse(pl, 1), pl -> ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()))),
-		PARKOUR_2(pl -> findParkourCourse(pl, 2), pl -> ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()))),
-		PARKOUR_3(pl -> findParkourCourse(pl, 3), pl -> ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()))),
-		PARKOUR_4(pl -> findParkourCourse(pl, 4), pl -> ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()))),
-		PARKOUR_5(pl -> findParkourCourse(pl, 5), pl -> ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()))),
-		PARKOUR_6(pl -> findParkourCourse(pl, 6), pl -> ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()))),
+		PARKOUR_1(pl -> findParkourCourse(pl, 1), pl -> InventoryUtil.giveItemTo(pl, AoAItems.RETURN_CRYSTAL)),
+		PARKOUR_2(pl -> findParkourCourse(pl, 2), pl -> InventoryUtil.giveItemTo(pl, AoAItems.RETURN_CRYSTAL)),
+		PARKOUR_3(pl -> findParkourCourse(pl, 3), pl -> InventoryUtil.giveItemTo(pl, AoAItems.RETURN_CRYSTAL)),
+		PARKOUR_4(pl -> findParkourCourse(pl, 4), pl -> InventoryUtil.giveItemTo(pl, AoAItems.RETURN_CRYSTAL)),
+		PARKOUR_5(pl -> findParkourCourse(pl, 5), pl -> InventoryUtil.giveItemTo(pl, AoAItems.RETURN_CRYSTAL)),
+		PARKOUR_6(pl -> findParkourCourse(pl, 6), pl -> InventoryUtil.giveItemTo(pl, AoAItems.RETURN_CRYSTAL)),
 		BOSSES(17.5d, 502.5d, 3.5d, 0),
 		DUNGEON(6.5d, 1501.5d, 16.5d, -90),
 		UTILITY(25.5d, 1001.5d, 16, 90),
 		RETURN(pl -> doReturnPortalTeleport(pl, 16.5d, 1501.5d, 16.5d, 180), pl -> {
 			if (!NowhereEvents.isInParkourRegion(pl.blockPosition())) {
-				ItemUtil.clearInventoryOfItems(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+				InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
 				PlayerUtil.getAdventPlayer(pl).returnItemStorage();
 				PlayerUtil.resetToDefaultStatus(pl);
 			}
@@ -123,8 +122,7 @@ public class NowhereActivityPortal extends PortalBlock {
 				pl.connection.teleport(x, y, z, rot, pl.getXRot());
 
 				return true;
-			},
-					afterTeleportFunction == null ? pl -> {} : afterTeleportFunction);
+			}, afterTeleportFunction == null ? pl -> {} : afterTeleportFunction);
 		}
 
 		@Override

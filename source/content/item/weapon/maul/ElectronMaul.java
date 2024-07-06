@@ -56,9 +56,11 @@ public class ElectronMaul extends BaseMaul {
 
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		doMeleeEffect(stack, target, attacker, stack.getOrDefault(AoADataComponents.MELEE_SWING_STRENGTH, 1f));
-		ItemUtil.damageItem(stack, attacker, InteractionHand.MAIN_HAND);
-		attacker.getAttribute(Attributes.ATTACK_KNOCKBACK).addOrUpdateTransientModifier(getKnockbackModifier(1 * getKnockbackMultiplier(attacker)));
+		if (attacker.level() instanceof ServerLevel level) {
+			doMeleeEffect(stack, target, attacker, stack.getOrDefault(AoADataComponents.MELEE_SWING_STRENGTH, 1f));
+			ItemUtil.damageItemForUser(level, stack, attacker, InteractionHand.MAIN_HAND);
+			attacker.getAttribute(Attributes.ATTACK_KNOCKBACK).addOrUpdateTransientModifier(getKnockbackModifier(1 * getKnockbackMultiplier(attacker)));
+		}
 
 		return true;
 	}

@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.item.armour;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -19,13 +20,8 @@ public class IceArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.ICE;
-	}
-
-	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-		if (!level.isClientSide && isInArmourSlot(slotId) && entity instanceof LivingEntity wearer) {
+		if (!level.isClientSide && slotId >= Inventory.INVENTORY_SIZE && slotId <= Inventory.INVENTORY_SIZE + 4 && entity instanceof LivingEntity wearer) {
 			if (stack.getDamageValue() > 0 && wearer.getRandom().nextFloat() < 0.02f && WorldUtil.getAmbientTemperature(level, wearer.blockPosition()) < 0.15f)
 				stack.setDamageValue(stack.getDamageValue() - 1);
 		}

@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.item.tool.axe;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -43,7 +44,7 @@ public class Chainsaw extends BaseAxe {
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
 		if (!attacker.level().isClientSide) {
 			attacker.level().playSound(null, attacker.getX(), attacker.getY(), attacker.getZ(), AoASounds.ITEM_CHAINSAW_USE.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
-			ItemUtil.damageItem(stack, attacker, 1, EquipmentSlot.MAINHAND);
+			ItemUtil.damageItemForUser((ServerLevel)attacker.level(), stack, attacker, EquipmentSlot.MAINHAND);
 		}
 
 		return true;

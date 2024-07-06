@@ -273,10 +273,13 @@ public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 				StreamCodecUtil.nonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), ImbuingRecipe::getIngredients,
 				(imbuingLevelReq, xpOverride, showUnlockNotification, enchant, enchantLevel, foci) -> {
 					Ingredient powerSource = foci.getFirst();
+					NonNullList<Ingredient> patchedIngredients = NonNullList.withSize(foci.size() - 1, Ingredient.EMPTY);
 
-					foci.set(0, Ingredient.EMPTY);
+					for (int i = 1; i < foci.size(); i++) {
+						patchedIngredients.set(i - 1, foci.get(i));
+					}
 
-					return new ImbuingRecipe(imbuingLevelReq, xpOverride, enchant, enchantLevel, foci, powerSource, showUnlockNotification);
+					return new ImbuingRecipe(imbuingLevelReq, xpOverride, enchant, enchantLevel, patchedIngredients, powerSource, showUnlockNotification);
 				});
 
 		@Override

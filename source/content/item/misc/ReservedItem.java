@@ -4,7 +4,6 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -20,14 +19,9 @@ import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.common.registration.item.AoAWeapons;
-import net.tslat.aoa3.content.entity.monster.shyrelands.ArcwormEntity;
-import net.tslat.aoa3.content.item.weapon.blaster.ExperimentW801;
-import net.tslat.aoa3.util.EntityUtil;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.RegistryUtil;
-import net.tslat.effectslib.api.util.EffectBuilder;
 
 import java.util.List;
 import java.util.Locale;
@@ -92,8 +86,8 @@ public class ReservedItem extends Item implements SequenceVerifiedItem {
 				}
 			}
 			else if (stack.getItem() == AoAItems.MOONSTONE.get()) {
-				if (target instanceof ArcwormEntity)
-					EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.LEVITATION, 200).level(11).hideParticles());
+				//if (target instanceof ArcwormEntity)
+				//	EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.LEVITATION, 200).level(11).hideParticles());
 
 				return true;
 			}
@@ -129,7 +123,7 @@ public class ReservedItem extends Item implements SequenceVerifiedItem {
 		}
 	}
 
-	public static void handleArcworm(ArcwormEntity arcworm) {
+	/*public static void handleArcworm(ArcwormEntity arcworm) {
 		if (arcworm.getY() > 275 && arcworm.getKillCredit() instanceof Player) {
 			if (arcworm.getKillCredit().getMainHandItem().getItem() == AoAItems.MOONSTONE.get()) {
 				arcworm.spawnAtLocation(((ExperimentW801)AoAWeapons.EXPERIMENT_W_801.get()).newValidStack(), 0);
@@ -137,7 +131,7 @@ public class ReservedItem extends Item implements SequenceVerifiedItem {
 				arcworm.discard();
 			}
 		}
-	}
+	}*/
 
 	public static void handlePlayerDeath(Player pl) {
 		if (pl.getHealth() > 0 && !pl.level().getLevelData().isHardcore())
@@ -160,7 +154,7 @@ public class ReservedItem extends Item implements SequenceVerifiedItem {
 		if (!RegistryUtil.getId(armour.get(0).getItem()).getPath().toLowerCase(Locale.ENGLISH).startsWith("n"))
 			return;
 
-		if (ItemUtil.findInventoryItem(pl, new ItemStack(AoAItems.ALIEN_ORB.get()), false, 1, false))
+		if (InventoryUtil.hasItem(pl, AoAItems.ALIEN_ORB))
 			return;
 
 		pl.spawnAtLocation(((ReservedItem)AoAItems.ALIEN_ORB.get()).newValidStack(), 0);

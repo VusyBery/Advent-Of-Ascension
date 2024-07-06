@@ -95,8 +95,8 @@ public class StunStrike extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handlePostOutgoingAttack(LivingDamageEvent ev) {
-		if (ev.getAmount() > 0 && primedAttack && DamageUtil.isMeleeDamage(ev.getSource()) && !getPlayer().getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
+	public void handleAfterAttacking(LivingDamageEvent.Post ev) {
+		if (ev.getNewDamage() > 0 && primedAttack && DamageUtil.isMeleeDamage(ev.getSource()) && !getPlayer().getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
 			this.primedAttack = false;
 
 			if (skill.getPlayerDataManager().getResource(AoAResources.ENERGY.get()).consume(this.energyCost, true)) {

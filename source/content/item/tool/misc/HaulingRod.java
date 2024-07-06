@@ -118,9 +118,7 @@ public class HaulingRod extends FishingRodItem {
 				}
 			}
 
-			if (!player.isCreative())
-				ItemUtil.damageItem(stack, player, hand, event.getRodDamage());
-
+			ItemUtil.damageItemForUser(player, stack, event.getRodDamage(), hand);
 			player.level().addFreshEntity(new ExperienceOrb(player.level(), player.getX() + 0.5d, player.getY() + 0.5d, player.getZ() + 0.5d, event.getXp()));
 			bobber.discard();
 		}
@@ -154,8 +152,8 @@ public class HaulingRod extends FishingRodItem {
 
 				pullStrength = event.getPullStrength();
 
-				if (event.getAdditionalRodDamage() > 0 && !player.isCreative())
-					ItemUtil.damageItem(stack, player, hand, event.getAdditionalRodDamage());
+				if (event.getAdditionalRodDamage() > 0)
+					ItemUtil.damageItemForUser(player, stack, event.getAdditionalRodDamage(), hand);
 			}
 
 			EntityUtil.pullEntityIn(player, hookedEntity, pullStrength, true);

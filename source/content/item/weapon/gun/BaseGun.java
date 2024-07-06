@@ -158,7 +158,7 @@ public abstract class BaseGun extends Item {
 					if (hand == InteractionHand.MAIN_HAND && EnchantmentUtil.hasEnchantment(level, (offhand = shooter.getOffhandItem()), AoAEnchantments.BRACE))
 						offhand.onUseTick(serverLevel, shooter, count);
 
-					ItemUtil.damageItem(stack, shooter, 1, hand == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
+					ItemUtil.damageItemForUser(serverLevel, stack, shooter, hand == InteractionHand.OFF_HAND ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND);
 
 					if (player != null) {
 						player.awardStat(Stats.ITEM_USED.get(this));
@@ -239,7 +239,7 @@ public abstract class BaseGun extends Item {
 
 	@Nullable
 	public BaseBullet findAndConsumeAmmo(LivingEntity shooter, ItemStack gunStack, InteractionHand hand) {
-		if (!(shooter instanceof Player pl) || ItemUtil.findInventoryItem(pl, new ItemStack(getAmmoItem()), !shooter.level().isClientSide(), shooter.level() instanceof ServerLevel level ? AoAEnchantments.modifyAmmoCost(level, gunStack, 1) : 1, false))
+		if (!(shooter instanceof Player pl) || InventoryUtil.findItemForConsumption(pl, getAmmoItem(), pl.getAbilities().instabuild ? 0 : AoAEnchantments.modifyAmmoCost(pl.level(), gunStack, 1), true))
 			return createProjectileEntity(shooter, gunStack, hand);
 
 		return null;

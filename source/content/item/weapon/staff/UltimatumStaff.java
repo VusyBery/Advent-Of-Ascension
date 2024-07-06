@@ -4,13 +4,13 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -44,8 +44,8 @@ public class UltimatumStaff extends BaseStaff<Object> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, Object args) {
-		world.addFreshEntity(new UltimatumShotEntity(caster, this, 60));
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Object args) {
+		level.addFreshEntity(new UltimatumShotEntity(caster, this, 60));
 	}
 
 	@Override

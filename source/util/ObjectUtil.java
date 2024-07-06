@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -65,6 +66,15 @@ public final class ObjectUtil {
 		}
 
 		return array;
+	}
+
+	public static <T> boolean allEquivalent(BiPredicate<@Nullable T, @Nullable T> predicate, T... elements) {
+		for (int i = 0; i < elements.length - 1; i++) {
+			if (!predicate.test(elements[i], elements[i + 1]))
+				return false;
+		}
+
+		return true;
 	}
 
 	public static Path getOrCreateDirectory(Path parentPath, String directory) throws IOException {

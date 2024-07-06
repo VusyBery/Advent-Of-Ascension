@@ -22,7 +22,7 @@
     {
       "type": "patchouli:link",
       "link_text": "AoA Wiki",
-      "text": "Find info on all of the $(thing)guns$() in $(aoa) on the $(thing)official wiki$().'",
+      "text": "Find info on all of the $(thing)guns$() in $(aoa) on the $(thing)official wiki$().",
       "title": "Read More",
       "url": "https://adventofascension.fandom.com/wiki/Guns"
     }

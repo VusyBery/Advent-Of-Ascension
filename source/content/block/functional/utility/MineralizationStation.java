@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.block.functional.utility;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.RegistryUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
@@ -24,7 +25,7 @@ public class MineralizationStation extends Block {
 
 	@Override
 	public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-		if (!level.isClientSide && !player.getItemInHand(hand).isEmpty()) {
+		if (player instanceof ServerPlayer pl && !pl.getItemInHand(hand).isEmpty()) {
 			Item tokensItem = null;
 			int baseAmount = 5;
 
@@ -58,8 +59,8 @@ public class MineralizationStation extends Block {
 					tokensItem = AoAItems.COPPER_COIN.get();
 				}
 				case "blank_realmstone" -> {
-					player.setItemInHand(hand, new ItemStack(AoAItems.IROMINE_REALMSTONE.get()));
-					player.inventoryMenu.broadcastChanges();
+					pl.setItemInHand(hand, new ItemStack(AoAItems.IROMINE_REALMSTONE.get()));
+					pl.inventoryMenu.broadcastChanges();
 					return ItemInteractionResult.CONSUME;
 				}
 				default -> {
@@ -71,10 +72,10 @@ public class MineralizationStation extends Block {
 			}
 
 			if (tokensItem != null) {
-				if (!player.isCreative())
+				if (!pl.getAbilities().instabuild)
 					stack.shrink(1);
 
-				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(tokensItem, baseAmount + player.getRandom().nextInt(baseAmount)));
+				InventoryUtil.giveItemTo(pl, new ItemStack(tokensItem, baseAmount + pl.getRandom().nextInt(baseAmount)));
 				return ItemInteractionResult.CONSUME;
 			}
 		}

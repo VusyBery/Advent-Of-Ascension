@@ -4,13 +4,13 @@ import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 
 public class RageResource extends AoAResource.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.INCOMING_ATTACK_DURING, ListenerType.PLAYER_TICK};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.INCOMING_DAMAGE_AFTER, ListenerType.PLAYER_TICK};
 
 	private final float maxValue;
 	private final float perTickDrain;
@@ -52,9 +52,9 @@ public class RageResource extends AoAResource.Instance {
 	}
 
 	@Override
-	public void handleIncomingAttack(LivingHurtEvent ev) {
+	public void handleAfterDamaged(LivingDamageEvent.Post ev) {
 		if (ev.getSource().getEntity() != null)
-			this.value = Math.min(getMaxValue(), this.value + ev.getAmount());
+			this.value = Math.min(getMaxValue(), this.value + ev.getNewDamage());
 	}
 
 	@Override

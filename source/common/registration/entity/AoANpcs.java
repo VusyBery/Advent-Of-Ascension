@@ -9,7 +9,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.npc.ambient.DryadSpriteEntity;
-import net.tslat.aoa3.content.entity.npc.lottoman.LottomanEntity;
+import net.tslat.aoa3.content.entity.npc.trader.LottomanEntity;
 import net.tslat.aoa3.content.entity.npc.trader.CorruptedTravellerEntity;
 import net.tslat.aoa3.content.entity.npc.trader.SkillMasterEntity;
 import net.tslat.aoa3.content.entity.npc.trader.UndeadHeraldEntity;

@@ -1,24 +1,21 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
-import org.jetbrains.annotations.Nullable;
+import net.tslat.effectslib.api.util.EffectBuilder;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class BoreicArmour extends AdventArmour {
@@ -27,21 +24,13 @@ public class BoreicArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.BOREIC;
-	}
+	public void afterTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Post ev) {
+		if (ev.getNewDamage() > 0 && entity.isInWater() && !DamageUtil.isEnvironmentalDamage(ev.getSource())) {
+			WorldUtil.createExplosion(entity, entity.level(), entity.blockPosition(), 0.7f + perPieceValue(equippedPieces, 0.3f));
 
-	@Override
-	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		Player pl = plData.player();
-
-		if (pl.isInWater() && !DamageUtil.isEnvironmentalDamage(event.getSource())) {
-			if (slots != null) {
-				WorldUtil.createExplosion(pl, pl.level(), pl.blockPosition() , 0.7f + 0.3f * slots.size());
-			}
-			else {
-				for (LivingEntity entity : pl.level().getEntitiesOfClass(LivingEntity.class, pl.getBoundingBox().inflate(4), EntityUtil::isHostileMob)) {
-					entity.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 1, false, true));
+			if (equippedPieces.contains(Piece.FULL_SET)) {
+				for (LivingEntity entity2 : EntityRetrievalUtil.<LivingEntity>getEntities(entity, 4, entity2 -> entity2 instanceof LivingEntity && EntityUtil.isHostileMob(entity2))) {
+					entity2.addEffect(new EffectBuilder(MobEffects.MOVEMENT_SLOWDOWN, 40).level(2).isAmbient().build());
 				}
 			}
 		}

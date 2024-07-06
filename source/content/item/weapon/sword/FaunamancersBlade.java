@@ -5,8 +5,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.common.ToolAction;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.ItemAbilities;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.List;
@@ -17,11 +17,11 @@ public class FaunamancersBlade extends BaseSword {
 	}
 
 	@Override
-	public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
-		if (toolAction == ToolActions.SWORD_SWEEP)
+	public boolean canPerformAction(ItemStack stack, ItemAbility ItemAbility) {
+		if (ItemAbility == ItemAbilities.SWORD_SWEEP)
 			return false;
 
-		return super.canPerformAction(stack, toolAction);
+		return super.canPerformAction(stack, ItemAbility);
 	}
 
 	@Override

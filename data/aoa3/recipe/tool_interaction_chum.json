@@ -2,7 +2,7 @@
   "type": "aoa3:tool_interaction",
   "ingredients": [
     {
-      "tag": "neoforge:rawfish"
+      "tag": "c:foods/raw_fishes"
     },
     {
       "tag": "minecraft:swords"

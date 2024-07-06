@@ -78,9 +78,6 @@ public abstract class AoAWaterRangedMob extends WaterAnimal implements RangedAtt
 		return super.finalizeSpawn(world, difficulty, reason, spawnData);
 	}
 
-	@Override
-	public abstract float getEyeHeightAccess(Pose pose);
-
 	@Nullable
 	@Override
 	protected SoundEvent getDeathSound() {

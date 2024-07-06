@@ -10,9 +10,4 @@ public class OldBoot extends AdventArmour {
 	public OldBoot() {
 		super(AoAArmourMaterials.OLD_BOOT, ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(30)).rarity(Rarity.RARE));
 	}
-
-	@Override
-	public Type getSetType() {
-		return Type.NONE;
-	}
 }

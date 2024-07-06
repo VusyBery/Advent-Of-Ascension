@@ -11,7 +11,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Fully draining your $(thing)energy$() reserves, or taking damage will temporarily halt your $(thing)energy$() regeneration, so be careful when using it in the field.$(br)Total depletion in particular will halt regeneration for a noticeable period of time, so try not to drain yourself completely."
+      "text": "Fully draining your $(thing)energy$() reserves or taking damage will temporarily halt your $(thing)energy$() regeneration, so be careful when using it in the field.$(br)Total depletion in particular will halt regeneration for a noticeable period of time, so try not to drain yourself completely."
     },
     {
       "type": "patchouli:link",

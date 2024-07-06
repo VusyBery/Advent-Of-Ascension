@@ -31,12 +31,12 @@ public abstract class BaseVulcane extends Item {
 		super(properties);
 	}
 
-	public VulcaneStats vulcaneStats() {
-		return components().get(AoADataComponents.VULCANE_STATS.get());
+	public VulcaneStats vulcaneStats(ItemStack stack) {
+		return stack.get(AoADataComponents.VULCANE_STATS.get());
 	}
 
-	public double getVulcaneDamage() {
-		return vulcaneStats().damage();
+	public double getVulcaneDamage(ItemStack stack) {
+		return vulcaneStats(stack).damage();
 	}
 
 	@Override
@@ -62,12 +62,12 @@ public abstract class BaseVulcane extends Item {
 	public InteractionResultHolder<ItemStack> activate(AoAResource.Instance rage, ItemStack vulcane, InteractionHand hand) {
 		Player pl = rage.getPlayerDataManager().player();
 		float targetHealth = pl.getLastHurtByMob().getHealth();
-		float damage = (float) getVulcaneDamage() * (1 + ((rage.getCurrentValue() - 50) / 100));
+		float damage = (float) getVulcaneDamage(vulcane) * (1 + ((rage.getCurrentValue() - 50) / 100));
 
 		if (DamageUtil.doVulcaneAttack(pl, pl.getLastHurtByMob(), damage)) {
 			doAdditionalEffect(pl.getLastHurtByMob(), pl, Math.min(targetHealth, damage));
 			AoANetworking.sendToAllPlayersTrackingEntity(new AoASoundBuilderPacket(new SoundBuilder(AoASounds.ITEM_VULCANE_USE.get()).isPlayer().followEntity(pl)), pl);
-			ItemUtil.damageItem(vulcane, pl, hand);
+			ItemUtil.damageItemForUser(pl, vulcane, hand);
 			rage.consume(rage.getCurrentValue(), true);
 
 			return InteractionResultHolder.success(vulcane);
@@ -85,7 +85,7 @@ public abstract class BaseVulcane extends Item {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getVulcaneDamage())));
+		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getVulcaneDamage(stack))));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_COST, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.VULCANE_GRACE_PERIOD, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 	}

@@ -58,7 +58,6 @@ public final class AoAProjectiles {
 	public static final DeferredHolder<EntityType<?>, EntityType<CottonCandorShotEntity>> COTTON_CANDOR_SHOT = registerProjectile("cotton_candor_shot", CottonCandorShotEntity::new);
 	public static final DeferredHolder<EntityType<?>, EntityType<CraexxeusNukeEntity>> CRAEXXEUS_NUKE = registerProjectile("craexxeus_nuke", CraexxeusNukeEntity::new);
 	public static final DeferredHolder<EntityType<?>, EntityType<CraexxeusShotEntity>> CRAEXXEUS_SHOT = registerProjectile("craexxeus_shot", CraexxeusShotEntity::new);
-	public static final DeferredHolder<EntityType<?>, EntityType<CreeperShotEntity>> CREEPER_SHOT = registerProjectile("creeper_shot", CreeperShotEntity::new);
 	public static final DeferredHolder<EntityType<?>, EntityType<CreepBombEntity>> CREEP_BOMB = registerProjectile("creep_bomb", CreepBombEntity::new);
 	public static final DeferredHolder<EntityType<?>, EntityType<CreepTubeEntity>> CREEP_TUBE = registerProjectile("creep_tube", CreepTubeEntity::new);
 	public static final DeferredHolder<EntityType<?>, EntityType<CyanShotEntity>> CYAN_SHOT = registerProjectile("cyan_shot", CyanShotEntity::new);

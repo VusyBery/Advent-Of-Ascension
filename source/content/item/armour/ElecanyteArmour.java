@@ -1,21 +1,19 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
-import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
+import net.tslat.aoa3.util.PlayerUtil;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class ElecanyteArmour extends AdventArmour {
@@ -24,14 +22,9 @@ public class ElecanyteArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.ELECANYTE;
-	}
-
-	@Override
-	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots != null && !DamageUtil.isEnvironmentalDamage(event.getSource()))
-			plData.getResource(AoAResources.SPIRIT.get()).addValue(event.getAmount() * 2.5f * slots.size());
+	public void afterTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Post ev) {
+		if (ev.getNewDamage() > 0 && entity instanceof ServerPlayer pl && !DamageUtil.isEnvironmentalDamage(ev.getSource()))
+			PlayerUtil.addResourceToPlayer(pl, AoAResources.SPIRIT.get(), ev.getNewDamage() * perPieceValue(equippedPieces, 2.5f));
 	}
 
 	@Override

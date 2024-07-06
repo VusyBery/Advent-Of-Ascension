@@ -22,6 +22,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.item.ChargeableItem;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 
@@ -36,7 +37,7 @@ public class GuardiansSword extends BaseSword implements ChargeableItem {
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack heldStack = player.getItemInHand(hand);
 
-		if (getCharge(heldStack) <= 0 && ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.CRYSTALLITE.get()), true, 1, false)) {
+		if (getCharge(heldStack) <= 0 && InventoryUtil.findItemForConsumption(player, AoAItems.CRYSTALLITE, player.getAbilities().instabuild ? 0 : 1, true)) {
 			setCharge(heldStack, level.getGameTime() + 2400);
 			heldStack.update(DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY, modifiers -> modifiers.withModifierAdded(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, 3 + getTier().getAttackDamageBonus(), AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND));
 
@@ -67,7 +68,8 @@ public class GuardiansSword extends BaseSword implements ChargeableItem {
 
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		ItemUtil.damageItem(stack, attacker, 1, EquipmentSlot.MAINHAND);
+		if (attacker.level() instanceof ServerLevel level)
+			ItemUtil.damageItemForUser(level, stack, attacker, EquipmentSlot.MAINHAND);
 
 		return true;
 	}

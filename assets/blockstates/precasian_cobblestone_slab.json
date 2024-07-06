@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "aoa3:block/precasian_cobblestone_slab"
+    },
+    "type=double": {
+      "model": "aoa3:block/precasian_cobblestone"
+    },
+    "type=top": {
+      "model": "aoa3:block/precasian_cobblestone_slab_top"
+    }
+  }
+}

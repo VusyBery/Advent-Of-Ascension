@@ -1,5 +1,6 @@
 package net.tslat.aoa3.common.menu;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
@@ -10,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.AoAMenus;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.npc.trader.CorruptedTravellerEntity;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 
 public class CorruptedTravellerMenu extends AbstractContainerMenu {
 	private final Container input;
@@ -68,7 +69,9 @@ public class CorruptedTravellerMenu extends AbstractContainerMenu {
 			ItemStack stack = slots.get(0).container.getItem(0);
 
 			if (!stack.isEmpty() && stack.getFoodProperties(this.player) != null) {
-				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.WORN_BOOK.get()));
+				if (this.player instanceof ServerPlayer pl)
+					InventoryUtil.giveItemTo(pl, AoAItems.WORN_BOOK);
+
 				stack.shrink(1);
 			}
 

@@ -9,14 +9,14 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 
 public class BowDamageIncrease extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK_DURING};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK};
 
 	private final boolean requireFullyCharged;
 	private final float modifier;
@@ -46,10 +46,10 @@ public class BowDamageIncrease extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handleOutgoingAttack(LivingHurtEvent ev) {
+	public void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
 		DamageSource source = ev.getSource();
 
-		if (source.is(DamageTypeTags.IS_PROJECTILE) && source.getDirectEntity() instanceof AbstractArrow && (!requireFullyCharged || ((AbstractArrow)source.getDirectEntity()).isCritArrow()))
+		if (source.is(DamageTypeTags.IS_PROJECTILE) && source.getDirectEntity() instanceof AbstractArrow arrow && (!this.requireFullyCharged || arrow.isCritArrow()))
 			ev.setAmount(ev.getAmount() * modifier);
 	}
 

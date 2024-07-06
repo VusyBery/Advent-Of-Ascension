@@ -19,7 +19,7 @@ import net.tslat.aoa3.advent.AoAResourceCaching;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.event.dimension.NowhereEvents;
 import net.tslat.aoa3.util.AdvancementUtil;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LootUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -149,12 +149,7 @@ public class NowhereParkourCourse {
 	}
 
 	public void grantRewards(ServerPlayer player) {
-		this.rewardLootTable.ifPresent(tableId -> {
-			ServerLevel level = player.serverLevel();
-
-			ItemUtil.givePlayerMultipleItems(player, LootUtil.generateLoot(tableId, LootUtil.getGiftParameters(level, player.position(), player.getLuck(), player)));
-		});
-
+		this.rewardLootTable.ifPresent(tableId -> InventoryUtil.giveItemsTo(player, LootUtil.generateLoot(tableId, LootUtil.getGiftParameters(player.serverLevel(), player.position(), player.getLuck(), player))));
 		AdvancementUtil.grantCriterion(player, AdventOfAscension.id("nowhere/tier_" + this.tier + "_acrobat"), "complete_course");
 	}
 

@@ -26,7 +26,7 @@ import java.util.HashSet;
 import java.util.function.Consumer;
 
 public class PotionDurationReducer extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.POTION_APPLIED};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.MOB_EFFECT_APPLIED};
 
 	private final float modifier;
 	private final boolean useAddition;
@@ -120,7 +120,7 @@ public class PotionDurationReducer extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handleAppliedPotion(MobEffectEvent.Added ev) {
+	public void handleAppliedMobEffect(MobEffectEvent.Added ev) {
 		MobEffectInstance effect = ev.getEffectInstance();
 
 		if (!effectMatches(effect))

@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -24,7 +24,6 @@ import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,8 +52,8 @@ public class MoonlightStaff extends BaseStaff<BlockPos> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, BlockPos args) {
-		world.addFreshEntity(new MoonlightFallEntity(caster, this, args.getX(), args.getY() + 30, args.getZ(), 3f));
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, BlockPos args) {
+		level.addFreshEntity(new MoonlightFallEntity(caster, this, args.getX(), args.getY() + 30, args.getZ(), 3f));
 	}
 
 	@Override

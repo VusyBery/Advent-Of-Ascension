@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.FireworkExplosion;
 import net.minecraft.world.item.component.Fireworks;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.util.EntityUtil;
@@ -25,7 +25,6 @@ import net.tslat.effectslib.api.util.EffectBuilder;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,11 +54,11 @@ public class ShowStaff extends BaseStaff<List<LivingEntity>> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, List<LivingEntity> args) {
 		for (LivingEntity entity : args) {
 			entity.igniteForSeconds(5);
 			EntityUtil.applyPotions(entity, new EffectBuilder(MobEffects.GLOWING, 100));
-			world.addFreshEntity(new FireworkRocketEntity(world, entity.getX(), entity.getBoundingBox().maxY, entity.getZ(), makeFireworksStack()));
+			level.addFreshEntity(new FireworkRocketEntity(level, entity.getX(), entity.getBoundingBox().maxY, entity.getZ(), makeFireworksStack()));
 		}
 	}
 

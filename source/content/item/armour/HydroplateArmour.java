@@ -1,18 +1,17 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class HydroplateArmour extends AdventArmour {
@@ -21,20 +20,15 @@ public class HydroplateArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.HYDROPLATE;
+	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
+		if (entity.isInWater())
+			entity.heal(perPieceValue(equippedPieces, 0.0125f));
 	}
 
 	@Override
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		if (slots != null && plData.player().isInWater())
-			plData.player().heal(0.0125f * (float)slots.size());
-	}
-
-	@Override
-	public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots == null && plData.player().isInWater() && !DamageUtil.isEnvironmentalDamage(event.getSource()))
-			event.setAmount(event.getAmount() * 0.8f);
+	public void handleIncomingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
+		if (equippedPieces.contains(Piece.FULL_SET) && entity.isInWater() && !DamageUtil.isEnvironmentalDamage(ev.getSource()))
+			ev.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> DamageUtil.percentDamageReduction(container, reduction, 0.2f));
 	}
 
 	@Override

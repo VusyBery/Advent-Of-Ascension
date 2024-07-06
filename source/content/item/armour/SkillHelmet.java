@@ -5,6 +5,7 @@ import net.minecraft.client.model.Model;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,15 +15,16 @@ import net.minecraft.world.item.component.Unbreakable;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.model.armor.AoAMiscModels;
-import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.client.player.ClientPlayerDataManager;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
+import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.RegistryUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -46,8 +48,8 @@ public class SkillHelmet extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.ALL;
+	public boolean isCompatibleWithAnySet() {
+		return true;
 	}
 
 	@Override
@@ -56,13 +58,15 @@ public class SkillHelmet extends AdventArmour {
 	}
 
 	@Override
-	public void onEquip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
-		plData.getSkill(getSkill()).applyXpModifier(0.5f);
+	public void onEquip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
+		if (entity instanceof ServerPlayer pl)
+			PlayerUtil.getAdventPlayer(pl).getSkill(getSkill()).applyXpModifier(0.5f);
 	}
 
 	@Override
-	public void onUnequip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
-		plData.getSkill(getSkill()).removeXpModifier(0.5f);
+	public void onUnequip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
+		if (entity instanceof ServerPlayer pl)
+			PlayerUtil.getAdventPlayer(pl).getSkill(getSkill()).removeXpModifier(0.5f);
 	}
 
 	@Override

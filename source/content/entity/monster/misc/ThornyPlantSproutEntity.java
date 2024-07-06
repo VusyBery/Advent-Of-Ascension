@@ -97,11 +97,6 @@ public class ThornyPlantSproutEntity extends AoAMeleeMob<ThornyPlantSproutEntity
 	}
 
 	@Override
-	public float getEyeHeightAccess(Pose pose) {
-		return 1.4f;
-	}
-
-	@Override
 	protected void customServerAiStep() {
 		if (this.isCrop && this.tickCount % 5 == 0 && level().getBlockState(BlockPos.containing(getX(), getY() + 0.25f, getZ())).getBlock() != AoABlocks.THORNY_PLANT_CROP.get())
 			discard();

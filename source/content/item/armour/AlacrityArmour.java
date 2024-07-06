@@ -1,19 +1,21 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
-import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.library.object.Text;
-import org.jetbrains.annotations.Nullable;
+import net.tslat.aoa3.util.DamageUtil;
+import net.tslat.aoa3.util.LocaleUtil;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class AlacrityArmour extends AdventArmour {
@@ -22,18 +24,15 @@ public class AlacrityArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.ALACRITY;
+	public void checkDamageInvulnerability(LivingEntity entity, EnumSet<Piece> equippedPieces, EntityInvulnerabilityCheckEvent ev) {
+		if (equippedPieces.contains(Piece.FULL_SET) && ev.getSource().is(DamageTypeTags.IS_FALL))
+			ev.setInvulnerable(true);
 	}
 
 	@Override
-	public void onPlayerLandingFall(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingFallEvent event) {
-		if (slots == null) {
-			event.setCanceled(true);
-		}
-		else if (plData.equipment().getCurrentFullArmourSet() != getSetType()) {
-			event.setDamageMultiplier(1 - (slots.size() * 0.2f));
-		}
+	public void handleIncomingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
+		if (!equippedPieces.contains(Piece.FULL_SET))
+			ev.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> DamageUtil.percentDamageReduction(container, reduction, equippedPieces.size() * 0.2f));
 	}
 
 	@Override

@@ -1,18 +1,20 @@
 package net.tslat.aoa3.content.item.misc;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
 
 import java.util.List;
@@ -29,7 +31,7 @@ public class DistortingArtifact extends Item {
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level world, Entity entity, int itemSlot, boolean isSelected) {
-		if (itemSlot >= 9)
+		if (itemSlot >= 9 && (!(entity instanceof LivingEntity user) || user.getItemInHand(InteractionHand.OFF_HAND) != stack))
 			return;
 
 		if (!world.isClientSide && stack.getDamageValue() < stack.getMaxDamage()) {
@@ -40,10 +42,15 @@ public class DistortingArtifact extends Item {
 				if (entity instanceof LivingEntity) {
 					EntityUtil.applyPotions(entity, new EffectBuilder(MobEffects.BLINDNESS, 40).isAmbient().hideParticles());
 
-					if (entity instanceof Player && PlayerUtil.shouldPlayerBeAffected((Player)entity)) {
-						ItemUtil.damageItem(stack, (Player)entity, 1, null);
-						((Player)entity).inventoryMenu.broadcastChanges();
-					}
+					if (entity instanceof ServerPlayer pl)
+						ItemUtil.damageItemForUser(pl.serverLevel(), stack, 1, pl, item -> {
+							EquipmentSlot slot = isSelected ? EquipmentSlot.MAINHAND : pl.getItemBySlot(EquipmentSlot.OFFHAND) == stack ? EquipmentSlot.OFFHAND : null;
+
+							if (slot != null)
+								pl.onEquippedItemBroken(item, slot);
+
+							EventHooks.onPlayerDestroyItem(pl, stack, slot != null && slot.isArmor() ? null : slot == EquipmentSlot.MAINHAND ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND);
+						});
 				}
 			}
 		}

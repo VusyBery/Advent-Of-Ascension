@@ -43,12 +43,11 @@ public class CandyBlade extends BaseGreatblade {
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level world, LivingEntity entity) {
-		if (entity instanceof Player) {
-			Player pl = (Player)entity;
+		if (entity instanceof Player pl) {
 			int foodHealAmount = Math.min(20 - pl.getFoodData().getFoodLevel(), stack.getMaxDamage() - stack.getDamageValue());
 
 			pl.getFoodData().eat(foodHealAmount, 20f);
-			ItemUtil.damageItem(stack, entity, foodHealAmount * 4, pl.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
+			ItemUtil.damageItemForUser(pl, stack, foodHealAmount * 4, pl.getUsedItemHand() == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
 		}
 
 		return stack;

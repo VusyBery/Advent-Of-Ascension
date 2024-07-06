@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
@@ -104,14 +105,12 @@ public class FlamewalkerEntity extends AoARangedMob<FlamewalkerEntity> {
     }
 
     @Override
-    protected void onHurt(DamageSource source, float amount) {
-        if (DamageUtil.isMeleeDamage(source)) {
-            Entity target = source.getEntity();
+    public void onDamageTaken(DamageContainer damageContainer) {
+        if (DamageUtil.isMeleeDamage(damageContainer.getSource()) && damageContainer.getSource().getEntity() instanceof LivingEntity attacker) {
+            attacker.igniteForSeconds(3);
 
-            target.igniteForSeconds(3);
-
-            if (DamageUtil.safelyDealDamage(DamageUtil.entityDamage(AoADamageTypes.MOB_FIRE_RECOIL, this), target, 3) && rand().oneInNChance(15))
-                EntityUtil.applyPotions(target, new EffectBuilder(AoAMobEffects.BURNED, 600));
+            if (DamageUtil.safelyDealDamage(DamageUtil.entityDamage(AoADamageTypes.MOB_FIRE_RECOIL, this), attacker, 3) && rand().oneInNChance(15))
+                EntityUtil.applyPotions(attacker, new EffectBuilder(AoAMobEffects.BURNED, 600));
         }
     }
 

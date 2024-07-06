@@ -1,18 +1,16 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class HazmatArmour extends AdventArmour {
@@ -21,21 +19,14 @@ public class HazmatArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.HAZMAT;
+	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
+		if (equippedPieces.contains(Piece.FULL_SET) && entity.getAirSupply() < entity.getMaxAirSupply())
+			entity.setAirSupply(entity.getMaxAirSupply());
 	}
 
 	@Override
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		if (slots == null) {
-			if (plData.player().isInWater())
-				plData.player().setAirSupply(-10);
-		}
-	}
-
-	@Override
-	public boolean isHelmetAirTight(ServerPlayer player) {
-		return PlayerUtil.isWearingFullSet(player, getSetType());
+	public boolean isHelmetAirTight(Player player) {
+		return PlayerUtil.isWearingFullSet(player, getMaterial());
 	}
 
 	@Override

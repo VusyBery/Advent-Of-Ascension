@@ -2,19 +2,16 @@ package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class PrimordialArmour extends AdventArmour {
@@ -23,16 +20,9 @@ public class PrimordialArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.PRIMORDIAL;
-	}
-
-	@Override
-	public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots == null || (DamageUtil.isMeleeDamage(event.getSource()) && plData.equipment().getCurrentFullArmourSet() != getSetType())) {
-			if (event.getSource().getEntity() instanceof LivingEntity attacker && attacker.hasEffect(MobEffects.WITHER))
-				event.setAmount(event.getAmount() * (1 - 0.15f * (slots == null ? 4 : slots.size())));
-		}
+	public void handleIncomingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
+		if ((equippedPieces.contains(Piece.FULL_SET) || DamageUtil.isMeleeDamage(ev.getSource())) && ev.getSource().getEntity() instanceof LivingEntity attacker && attacker.hasEffect(MobEffects.WITHER))
+			ev.setAmount(ev.getAmount() * (1 - perPieceValue(equippedPieces, 0.15f)));
 	}
 
 	@Override

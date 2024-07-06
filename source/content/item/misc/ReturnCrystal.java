@@ -57,7 +57,7 @@ public class ReturnCrystal extends Item {
 					AoAScheduler.scheduleSyncronisedTask(() -> {
 						PlayerUtil.resetToDefaultStatus(pl);
 						pl.connection.teleport(17.5d, 452.5d, 3.5d, 0, pl.getXRot());
-						ItemUtil.clearInventoryOfItems(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+						InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
 						PlayerUtil.getAdventPlayer(pl).returnItemStorage();
 					}, 1);
 				}
@@ -65,7 +65,7 @@ public class ReturnCrystal extends Item {
 					AoAScheduler.scheduleSyncronisedTask(() -> {
 						PlayerUtil.resetToDefaultStatus(pl);
 						pl.connection.teleport(16.5d, 1501.5d, 16.5d, 180, pl.getXRot());
-						ItemUtil.clearInventoryOfItems(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+						InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
 						PlayerUtil.getAdventPlayer(pl).returnItemStorage();
 					}, 1);
 				}

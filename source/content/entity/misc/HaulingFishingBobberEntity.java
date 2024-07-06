@@ -35,7 +35,7 @@ import net.tslat.aoa3.content.item.tool.misc.HaulingRod;
 import net.tslat.aoa3.data.server.AoAHaulingFishReloadListener;
 import net.tslat.aoa3.event.AoAPlayerEvents;
 import net.tslat.aoa3.util.EntityUtil;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
@@ -44,7 +44,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Function;
 
 public class HaulingFishingBobberEntity extends FishingHook {
-	protected static final EntityDataAccessor<Integer> HOOKED_ENTITY = SynchedEntityData.defineId(HaulingFishingBobberEntity.class, EntityDataSerializers.INT);
 	protected static final EntityDataAccessor<Integer> STATE = SynchedEntityData.defineId(HaulingFishingBobberEntity.class, EntityDataSerializers.INT);
 
 	protected final ItemStack rod;
@@ -69,6 +68,7 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		this.zo = getZ();
 		this.luck = 0;
 		this.lureReduction = 0;
+		getEntityData().set(DATA_HOOKED_ENTITY, -1);
 	}
 
 	public HaulingFishingBobberEntity(ServerPlayer player, Level world, ItemStack rod) {
@@ -88,11 +88,12 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		float castStrength = getCastStrength();
 
 		setDeltaMovement(getDeltaMovement().multiply(castStrength, castStrength, castStrength));
+		getEntityData().set(DATA_HOOKED_ENTITY, -1);
 	}
 
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
-		builder.define(HOOKED_ENTITY, -1);
+		super.defineSynchedData(builder);
 		builder.define(STATE, 0);
 	}
 
@@ -287,7 +288,7 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		doBobbing(fluidState);
 
 		if (state == State.STUCK || state == State.MIDAIR)
-			setDeltaMovement(getDeltaMovement().subtract(0, 0.08d, 0));
+			setDeltaMovement(getDeltaMovement().subtract(0, 0.03d, 0));
 
 		if (state == State.IN_FLUID)
 			setDeltaMovement(getDeltaMovement().scale(0.92d));
@@ -508,7 +509,7 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		if (owner.distanceToSqr(this) > maxCastDistance * maxCastDistance)
 			return false;
 
-		return ItemUtil.isHoldingItem(owner, rod.getItem());
+		return InventoryUtil.isHoldingItem(owner, rod.getItem());
 	}
 
 	@Override
@@ -522,8 +523,8 @@ public class HaulingFishingBobberEntity extends FishingHook {
 
 	@Override
 	public void onSyncedDataUpdated(EntityDataAccessor<?> param) {
-		if (param.equals(HOOKED_ENTITY)) {
-			int id = getEntityData().get(HOOKED_ENTITY);
+		if (param.equals(DATA_HOOKED_ENTITY)) {
+			int id = getEntityData().get(DATA_HOOKED_ENTITY);
 
 			this.hookedEntity = id == -1 ? null : this.level().getEntity(id);
 		}
@@ -537,7 +538,7 @@ public class HaulingFishingBobberEntity extends FishingHook {
 
 	protected void updateHookedEntity() {
 		if (!level().isClientSide())
-			getEntityData().set(HOOKED_ENTITY, this.hookedEntity == null ? -1 : this.hookedEntity.getId());
+			getEntityData().set(DATA_HOOKED_ENTITY, this.hookedEntity == null ? -1 : this.hookedEntity.getId());
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.block.functional.utility;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -11,6 +12,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -26,7 +28,7 @@ import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.util.EntityUtil;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -63,48 +65,39 @@ public class TeaSink extends HorizontalDirectionalBlock {
 	@Override
 	public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (state.getValue(FILLED)) {
-			if (stack.getItem() == AoAItems.CUP.get() && player.getInventory().contains(new ItemStack(AoAItems.TEA_SHREDDINGS.get()))) {
-				if (!level.isClientSide()) {
-					boolean success = false;
+			if (!stack.is(AoAItems.CUP))
+				return ItemInteractionResult.FAIL;
 
-					if (ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.MYSTIC_SHROOMS.get()), true, 1, false)) {
-						ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.TEA_SHREDDINGS.get()), true, 1, false);
-						ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.FUNGAL_TEA.get()));
+			return InventoryUtil.findItem(player, AoAItems.TEA_SHREDDINGS).map(shreddings -> {
+				if (player instanceof ServerPlayer pl) {
+					ItemLike tea = AoAItems.TEA;
 
-						success = true;
+					if (InventoryUtil.findItemForConsumption(pl, AoAItems.MYSTIC_SHROOMS, pl.getAbilities().instabuild ? 0 : 1, true)) {
+						tea = AoAItems.FUNGAL_TEA;
 					}
-					else if (ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.NATURE_MELON_SLICE.get()), true, 1, false)) {
-						ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.TEA_SHREDDINGS.get()), true, 1, false);
-						ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.NATURAL_TEA.get()));
-
-						success = true;
-					}
-					else if (ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.TEA_SHREDDINGS.get()), true, 1, false)) {
-						ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.TEA.get()));
-
-						success = true;
+					else if (InventoryUtil.findItemForConsumption(pl, AoAItems.NATURE_MELON_SLICE, pl.getAbilities().instabuild ? 0 : 1, true)) {
+						tea = AoAItems.NATURE_MELON_SLICE;
 					}
 
-					if (success) {
-						if (!player.isCreative())
-							stack.shrink(1);
+					if (!pl.getAbilities().instabuild)
+						shreddings.right().shrink(1);
 
-						level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_TEA_SINK_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
+					InventoryUtil.giveItemTo(pl, tea);
+					level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_TEA_SINK_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 
-						if (RandomUtil.oneInNChance(7))
-							level.setBlockAndUpdate(pos, AoABlocks.TEA_SINK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, state.getValue(HorizontalDirectionalBlock.FACING)));
-					}
+					if (RandomUtil.oneInNChance(7))
+						level.setBlockAndUpdate(pos, AoABlocks.TEA_SINK.get().defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, state.getValue(HorizontalDirectionalBlock.FACING)));
 				}
-			}
 
-			return ItemInteractionResult.sidedSuccess(level.isClientSide);
+				return ItemInteractionResult.sidedSuccess(level.isClientSide);
+			}).orElse(ItemInteractionResult.FAIL);
 		}
 		else {
 			if (stack.getItem() == Items.WATER_BUCKET) {
-				if (!level.isClientSide()) {
-					if (!player.isCreative()) {
+				if (player instanceof ServerPlayer pl) {
+					if (!pl.getAbilities().instabuild) {
 						stack.shrink(1);
-						ItemUtil.givePlayerItemOrDrop(player, new ItemStack(Items.BUCKET));
+						InventoryUtil.giveItemTo(pl, Items.BUCKET);
 					}
 
 					level.setBlockAndUpdate(pos, defaultBlockState().setValue(HorizontalDirectionalBlock.FACING, state.getValue(HorizontalDirectionalBlock.FACING)).setValue(FILLED, true));

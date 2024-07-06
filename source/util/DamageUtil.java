@@ -2,7 +2,6 @@ package net.tslat.aoa3.util;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
@@ -18,6 +17,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.entity.PartEntity;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.tslat.aoa3.common.registration.AoATags;
@@ -221,9 +221,16 @@ public final class DamageUtil {
 		return source.getEntity() == null && source.is(Tags.DamageTypes.IS_ENVIRONMENT);
 	}
 
-	public static boolean isPlayerEnvironmentallyProtected(ServerPlayer player) {
-		Item helmet = player.getInventory().armor.get(EquipmentSlot.HEAD.getIndex()).getItem();
+	public static boolean isPlayerEnvironmentallyProtected(Player player) {
+		Item helmet = player.getItemBySlot(EquipmentSlot.HEAD).getItem();
 
-		return helmet instanceof AdventArmour && ((AdventArmour)helmet).isHelmetAirTight(player);
+		if (!(helmet instanceof AdventArmour adventArmour))
+			return player.getItemBySlot(EquipmentSlot.HEAD).is(AoATags.Items.AIRTIGHT);
+
+		return adventArmour.isHelmetAirTight(player);
+	}
+
+	public static float percentDamageReduction(DamageContainer container, float existingReduction, float percentReduction) {
+		return existingReduction + (container.getNewDamage() - existingReduction) * percentReduction;
 	}
 }

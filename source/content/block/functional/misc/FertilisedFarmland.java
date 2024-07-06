@@ -2,6 +2,7 @@ package net.tslat.aoa3.content.block.functional.misc;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FarmBlock;
@@ -9,8 +10,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.neoforged.neoforge.common.IPlantable;
-import net.neoforged.neoforge.common.PlantType;
+import net.neoforged.neoforge.common.util.TriState;
 
 public class FertilisedFarmland extends FarmBlock {
 	public static final BooleanProperty WELL_FERTILISED = BooleanProperty.create("well_fertilised");
@@ -27,10 +27,11 @@ public class FertilisedFarmland extends FarmBlock {
 	}
 
 	@Override
-	public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
-		PlantType type = plantable.getPlantType(world, pos.relative(facing));
+	public TriState canSustainPlant(BlockState state, BlockGetter level, BlockPos soilPosition, Direction facing, BlockState plant) {
+		if (state.is(BlockTags.CROPS))
+			return TriState.TRUE;
 
-		return type == PlantType.CROP;
+		return TriState.DEFAULT;
 	}
 
 	@Override

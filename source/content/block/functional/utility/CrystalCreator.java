@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.block.functional.utility;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
@@ -13,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 
 import java.util.function.Supplier;
 
@@ -33,10 +34,10 @@ public class CrystalCreator extends Block {
 	@Override
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (stack.getItem() == gemstone.get() || stack.getItem() == gemtrap.get()) {
-			if (!level.isClientSide()) {
-				player.setItemInHand(hand, ItemStack.EMPTY);
+			if (player instanceof ServerPlayer pl) {
+				pl.setItemInHand(hand, ItemStack.EMPTY);
 
-				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(crystal.get(), stack.getCount()));
+				InventoryUtil.giveItemTo(pl, new ItemStack(this.crystal.get(), stack.getCount()));
 				level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_CRYSTAL_CREATOR_CONVERT.get(), SoundSource.BLOCKS, 1.0f, 1.0f);
 			}
 

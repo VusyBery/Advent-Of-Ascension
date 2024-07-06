@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
@@ -100,8 +101,8 @@ public class SmilodonEntity extends AoAMeleeMob<SmilodonEntity> {
 	}
 
 	@Override
-	protected void onHurt(DamageSource source, float amount) {
-		if (level() instanceof ServerLevel level && source.is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
+	public void onDamageTaken(DamageContainer damageContainer) {
+		if (level() instanceof ServerLevel level && damageContainer.getSource().is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
 			ParticleBuilder.forRandomPosInEntity(ParticleTypes.LARGE_SMOKE, this)
 					.colourOverride(255, 255, 255, 255)
 					.spawnNTimes(20)
@@ -131,13 +132,8 @@ public class SmilodonEntity extends AoAMeleeMob<SmilodonEntity> {
 	}
 
 	@Override
-	protected float getAttackVectorPositionOffset() {
-		return 1.5625f;
-	}
-
-	@Override
 	protected double getAttackReach() {
-		return isSprinting() ? super.getAttackReach() * 1.1f : super.getAttackReach();
+		return 1.51 * (isSprinting() ? 1.25f : 1);
 	}
 
 	@Override

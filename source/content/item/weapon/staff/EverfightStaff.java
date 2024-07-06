@@ -4,13 +4,13 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.util.EntityUtil;
@@ -46,7 +46,7 @@ public class EverfightStaff extends BaseStaff<Float> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, Float args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Float args) {
 		EntityUtil.applyPotions(caster, new EffectBuilder(MobEffects.DAMAGE_RESISTANCE, (int)(1200f * (1 - args))));
 	}
 

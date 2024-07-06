@@ -20,6 +20,7 @@ import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoAAttributes;
@@ -35,7 +36,6 @@ import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.EntitySpawningUtil;
-import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
@@ -184,8 +184,8 @@ public class SpinoledonEntity extends AoAMeleeMob<SpinoledonEntity> {
 	}
 
 	@Override
-	protected float getAttackVectorPositionOffset() {
-		return 3f;
+	protected double getAttackReach() {
+		return 3.05f;
 	}
 
 	@Override
@@ -195,8 +195,8 @@ public class SpinoledonEntity extends AoAMeleeMob<SpinoledonEntity> {
 	}
 
 	@Override
-	protected void onHurt(DamageSource source, float amount) {
-		if (level() instanceof ServerLevel level && source.is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
+	public void onDamageTaken(DamageContainer damageContainer) {
+		if (level() instanceof ServerLevel level && damageContainer.getSource().is(DamageTypeTags.IS_FIRE) && level().getFluidState(BlockPos.containing(getEyePosition())).getFluidType() == AoAFluidTypes.TAR.get() && level().getFluidState(blockPosition().above()).getFluidType() == AoAFluidTypes.TAR.get()) {
 			ParticleBuilder.forRandomPosInEntity(ParticleTypes.LARGE_SMOKE, this)
 					.colourOverride(255, 255, 255, 255)
 					.spawnNTimes(20)

@@ -15,11 +15,6 @@ public class NightmareArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.NIGHTMARE;
-	}
-
-	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(setEffectHeader());
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.aoa3.nightmare_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));

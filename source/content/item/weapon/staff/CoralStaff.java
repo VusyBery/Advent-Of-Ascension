@@ -7,6 +7,7 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -23,7 +23,6 @@ import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -89,14 +88,14 @@ public class CoralStaff extends BaseStaff<List<BlockPos>> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, List<BlockPos> args) {
-		if (!world.isClientSide && caster instanceof Player) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, List<BlockPos> args) {
+		if (!level.isClientSide && caster instanceof Player) {
 			for (BlockPos pos : args) {
-				world.setBlock(pos, Blocks.BRAIN_CORAL_BLOCK.defaultBlockState(), 2);
+				level.setBlock(pos, Blocks.BRAIN_CORAL_BLOCK.defaultBlockState(), 2);
 			}
 
-			world.playSound(null, caster.getX(), caster.getY(), caster.getZ(), AoASounds.ITEM_REEF_STAFF_CAST.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
-			new CoralStaffTask(world, args).schedule(600);
+			level.playSound(null, caster.getX(), caster.getY(), caster.getZ(), AoASounds.ITEM_REEF_STAFF_CAST.get(), SoundSource.PLAYERS, 1.0f, 1.0f);
+			new CoralStaffTask(level, args).schedule(600);
 		}
 	}
 

@@ -91,7 +91,7 @@ public class CorruptedTravellerScreen extends AbstractContainerScreen<CorruptedT
 			ItemRenderer itemRenderer = mc.getItemRenderer();
 			BakedModel model = itemRenderer.getModel(stack, null, null, 0);
 
-			mc.textureManager.getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
+			mc.getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
 			RenderUtil.setRenderingTexture(TextureAtlas.LOCATION_BLOCKS);
 			RenderSystem.enableBlend();
 			RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

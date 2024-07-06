@@ -2,20 +2,21 @@ package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
+import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
+import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class PoisonArmour extends AdventArmour {
@@ -24,22 +25,26 @@ public class PoisonArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.POISON;
-	}
+	public void onEffectApplication(LivingEntity entity, EnumSet<Piece> equippedPieces, MobEffectEvent.Applicable ev) {
+		if (equippedPieces.contains(Piece.FULL_SET) && ev.getEffectInstance().getEffect().is(MobEffects.POISON)) {
+			ev.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
 
-	@Override
-	public void onPreAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingAttackEvent event) {
-		if (slots == null && DamageUtil.isPoisonDamage(event.getSource())) {
-			event.setCanceled(true);
-			plData.player().addEffect(new EffectBuilder(MobEffects.DAMAGE_RESISTANCE, 60).isAmbient().hideEffectIcon().build());
+			if (!entity.level().isClientSide)
+				AoAScheduler.scheduleSyncronisedTask(() -> entity.addEffect(new EffectBuilder(MobEffects.DAMAGE_RESISTANCE, 60).isAmbient().hideEffectIcon().build()), 1);
 		}
 	}
 
 	@Override
-	public void onAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingHurtEvent event) {
-		if (slots != null && DamageUtil.isPoisonDamage(event.getSource()))
-			event.setAmount(event.getAmount() * (1 - (slots.size() * 0.25f)));
+	public void checkDamageInvulnerability(LivingEntity entity, EnumSet<Piece> equippedPieces, EntityInvulnerabilityCheckEvent ev) {
+		if (equippedPieces.contains(Piece.FULL_SET) && DamageUtil.isPoisonDamage(ev.getSource()))
+			ev.setInvulnerable(true);
+	}
+
+	@Override
+	public void handleIncomingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
+		if (DamageUtil.isPoisonDamage(ev.getSource())) {
+			ev.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> DamageUtil.percentDamageReduction(container, reduction, perPieceValue(equippedPieces, 0.25f)));
+		}
 	}
 
 	@Override

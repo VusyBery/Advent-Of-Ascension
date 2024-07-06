@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "$(thing)Hauling$() is trained in 3 main ways:$(br)1. Fishing with a standard fishing rod$(br)2. Fishing with a Hauling rod$(br)3. Fishing with a Fishing cage$(br2)Each method has its benefits and drawbacks",
+      "text": "$(thing)Hauling$() is trained in 3 main ways:$(br)1. Fishing with a standard fishing rod$(br)2. Fishing with a Hauling rod$(br)3. Fishing with a Fishing cage$(br2)Each method has its benefits and drawbacks.",
       "title": "Training Methods"
     },
     {
@@ -32,7 +32,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "To use a hauling rod, right click to cast out your line, then wait for a fish to become interested. Once a fish is interested, it will approach your lure before latching on and attempting to swim away with it.$(br)Once this happens, right-click as fast as you can to reel it in!$(br)Taking too long to reel in the fish may cause it to escape, and you'll have to start again"
+      "text": "To use a hauling rod, right click to cast out your line, then wait for a fish to become interested. Once a fish is interested, it will approach your lure before latching on and attempting to swim away with it.$(br)Once this happens, right-click as fast as you can to reel it in!$(br)Taking too long to reel in the fish may cause it to escape, and you'll have to start again."
     },
     {
       "type": "patchouli:text",
@@ -41,11 +41,11 @@
     {
       "type": "patchouli:spotlight",
       "item": "aoa3:fishing_cage",
-      "text": "Fishing cages are for the lazy fisherman in us all"
+      "text": "Fishing cages are for the lazy fisherman in us all."
     },
     {
       "type": "patchouli:text",
-      "text": "Fishing cages are an alternate, and supplementary fishing method for catching fish, and may be used whilst fishing with a rod.$(br)To use a fishing cage, simply throw it into the water and let it sink to the bottom. Once in place, it will begin to passively capture fish and other items.$(br)Typically, fishing cages are a much slower method of catching fish, and also tend to catch less valuable fish & items"
+      "text": "Fishing cages are an alternate, and supplementary fishing method for catching fish, and may be used whilst fishing with a rod.$(br)To use a fishing cage, simply throw it into the water and let it sink to the bottom. Once in place, it will begin to passively capture fish and other items.$(br)Typically, fishing cages are a much slower method of catching fish, and also tend to catch less valuable fish & items."
     }
   ],
   "sortnum": 0

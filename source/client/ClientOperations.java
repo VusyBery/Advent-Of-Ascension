@@ -27,7 +27,6 @@ import net.tslat.aoa3.client.gui.realmstone.BlankRealmstoneScreen;
 import net.tslat.aoa3.client.render.entity.misc.OccultBlockRenderer;
 import net.tslat.aoa3.common.networking.packets.UpdateClientMovementPacket;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.entity.monster.greckon.SilencerEntity;
 import net.tslat.aoa3.content.item.misc.WornBook;
 import net.tslat.aoa3.content.item.tool.pickaxe.OccultPickaxe;
 import net.tslat.aoa3.library.builder.SoundBuilder;
@@ -61,21 +60,6 @@ public final class ClientOperations {
 
 	public static void addOccultBlocks(int renderUntil, List<OccultPickaxe.LocatedBlock> blocks) {
 		OccultBlockRenderer.addOccultBlocks(renderUntil, blocks);
-	}
-
-	public static void doSilencerSilence(SilencerEntity silencer) {
-		if (!SilencerEntity.isClientNearby) {
-			Minecraft mc = Minecraft.getInstance();
-
-			if (mc.getSoundManager().soundEngine.getVolume(SoundSource.MASTER) > 0) {
-				if (silencer.distanceToSqr(mc.player) < 8 * 8) {
-					SilencerEntity.isClientNearby = true;
-					SilencerEntity.previousGain = mc.getSoundManager().soundEngine.listener.getGain();
-
-					mc.getSoundManager().soundEngine.updateCategoryVolume(SoundSource.MASTER, 0);
-				}
-			}
-		}
 	}
 
 	public static void syncModonomiconBooks(List<ResourceLocation> books) {

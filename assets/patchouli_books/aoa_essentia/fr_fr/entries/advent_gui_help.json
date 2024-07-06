@@ -1,0 +1,18 @@
+{
+  "category": "aoa3:advent_gui",
+  "icon": "minecraft:structure_block",
+  "name": "Onglet Aide",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "help_tab",
+      "text": "L'$(thing)onglet Aide$() du $(thing)menu d'Advent$() est le dernier onglet de la liste, accessible depuis le bouton tout en bas de la section à gauche du menu.",
+      "title": "Onglet Aide"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "L'onglet contient une petite section donnant des informations utiles, des liens vers les sites officiels liés au mod, un sélecteur de thème, et une astuce aléatoire qui change à chaque fois que le menu est ouvert.$(br2)Changer le thème grâce au sélecteur de thème permet de changer l'apparence du menu d'Advent, et ce changement persiste même dans d'autres mondes."
+    }
+  ],
+  "sortnum": 5
+}

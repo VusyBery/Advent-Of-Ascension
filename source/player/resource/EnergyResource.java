@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 public class EnergyResource extends AoAResource.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_TICK, ListenerType.INCOMING_ATTACK_AFTER};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_TICK, ListenerType.INCOMING_DAMAGE_AFTER};
 
 	private final float maxValue;
 	private final int dischargeDelay;
@@ -94,9 +94,9 @@ public class EnergyResource extends AoAResource.Instance {
 	}
 
 	@Override
-	public void handlePostIncomingAttack(LivingDamageEvent ev) {
-		if (ev.getAmount() > 0) {
-			currentDelay += hitDelay;
+	public void handleAfterDamaged(LivingDamageEvent.Post ev) {
+		if (ev.getNewDamage() > 0) {
+			this.currentDelay += this.hitDelay;
 
 			if (this.currentDelay > 1200)
 				this.currentDelay = 1200;

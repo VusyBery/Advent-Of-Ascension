@@ -128,7 +128,7 @@ public class NowhereBossArena {
 					ServerPlayer pl = (ServerPlayer)player;
 					PlayerUtil.resetToDefaultStatus(pl);
 					pl.connection.teleport(17.5d, 452.5d, 3.5d, 0, pl.getXRot());
-					ItemUtil.clearInventoryOfItems(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+					InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
 					PlayerUtil.getAdventPlayer(pl).returnItemStorage();
 				}, 1);
 			}
@@ -167,7 +167,7 @@ public class NowhereBossArena {
 					spawnBoss = true;
 
 					serverPlayer.connection.teleport(pos.x, pos.y, pos.z, 0, 0);
-					ItemUtil.givePlayerItemOrDrop(serverPlayer, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+					InventoryUtil.giveItemTo(serverPlayer, AoAItems.RETURN_CRYSTAL);
 					serverPlayer.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("nowhere.boss.bossWarning"), ChatFormatting.GREEN));
 				}
 				else {

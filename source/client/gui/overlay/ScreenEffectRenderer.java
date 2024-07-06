@@ -49,6 +49,7 @@ public final class ScreenEffectRenderer {
 		long gameTime = mc.level.getGameTime();
 		boolean hasExpiredEffects = false;
 		PoseStack poseStack = guiGraphics.pose();
+		boolean rendered = false;
 
 		RenderSystem.disableDepthTest();
 		RenderSystem.depthMask(false);
@@ -63,6 +64,7 @@ public final class ScreenEffectRenderer {
 				continue;
 			}
 
+			rendered = true;
 			float scale = effect.getScale();
 			float fadeTime = (effect.getExpiry() - gameTime) / (float)effect.getDuration();
 
@@ -89,10 +91,12 @@ public final class ScreenEffectRenderer {
 				buffer.addVertex(pose, 0, 0, -90).setUv(0, 0);
 			}
 
-			BufferUploader.drawWithShader(buffer.buildOrThrow());
 			poseStack.popPose();
 			RenderUtil.resetShaderColour();
 		}
+
+		if (rendered)
+			BufferUploader.drawWithShader(buffer.buildOrThrow());
 
 		RenderSystem.depthMask(true);
 		RenderSystem.enableDepthTest();

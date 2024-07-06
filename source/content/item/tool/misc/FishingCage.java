@@ -11,6 +11,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.content.entity.misc.FishingCageEntity;
+import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public class FishingCage extends Item {
 
 		if (!level.isClientSide()) {
 			level.addFreshEntity(new FishingCageEntity(level, player, stack));
-			stack.shrink(1);
+			ItemUtil.consume(player, stack);
 		}
 
 		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());

@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
@@ -31,7 +31,7 @@ public class CrystalExtensionShrine extends Block {
 	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 		if (!player.getItemInHand(hand).isEmpty()) {
 			if (stack.getItem() == AoAItems.RAINBOW_DRUSE.get()) {
-				if (player instanceof ServerPlayer) {
+				if (player instanceof ServerPlayer serverPlayer) {
 					List<ItemEntity> crystalList = level.getEntitiesOfClass(ItemEntity.class, new AABB(pos.getX() - 5, pos.getY() - 1, pos.getZ() - 5, pos.getX() + 5, pos.getY() + 1, pos.getZ() + 5), entity -> isCrystal(entity.getItem().getItem()));
 					int count = 0;
 
@@ -43,7 +43,7 @@ public class CrystalExtensionShrine extends Block {
 					}
 
 					if (count < 10) {
-						PlayerUtil.notifyPlayer(player, Component.translatable(LocaleUtil.createFeedbackLocaleKey("crystalExtensionShrine.crystals")));
+						PlayerUtil.notifyPlayer(serverPlayer, Component.translatable(LocaleUtil.createFeedbackLocaleKey("crystalExtensionShrine.crystals")));
 
 						return ItemInteractionResult.FAIL;
 					}
@@ -61,10 +61,10 @@ public class CrystalExtensionShrine extends Block {
 						i -= size - 1;
 					}
 
-					if (!player.isCreative())
+					if (!serverPlayer.getAbilities().instabuild)
 						stack.shrink(1);
 
-					ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.GIANT_CRYSTAL.get()));
+					InventoryUtil.giveItemTo(serverPlayer, AoAItems.GIANT_CRYSTAL);
 				}
 
 				return ItemInteractionResult.sidedSuccess(level.isClientSide);

@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.GsonHelper;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -14,7 +14,7 @@ import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.NumberUtil;
 
 public class VulcaneDamageIncrease extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK_DURING};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK};
 
 	private final float minRage;
 	private final float modifier;
@@ -44,7 +44,7 @@ public class VulcaneDamageIncrease extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handleOutgoingAttack(LivingHurtEvent ev) {
+	public void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
 		if (DamageUtil.isVulcaneDamage(ev.getSource()))
 			ev.setAmount(ev.getAmount() * this.modifier);
 	}

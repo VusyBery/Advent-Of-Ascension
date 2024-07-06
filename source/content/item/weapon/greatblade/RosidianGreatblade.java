@@ -2,6 +2,7 @@ package net.tslat.aoa3.content.item.weapon.greatblade;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -62,7 +63,7 @@ public class RosidianGreatblade extends BaseGreatblade {
 								}
 							}
 
-							ItemUtil.damageItem(stack, entity, 1, EquipmentSlot.MAINHAND);
+							ItemUtil.damageItemForUser((ServerLevel)entity.level(), stack, entity, EquipmentSlot.MAINHAND);
 
 							if (player != null)
 								player.awardStat(Stats.BLOCK_MINED.get(newBlock));

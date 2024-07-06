@@ -128,8 +128,8 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> CHOMPER = new GeckoLibRendererPackage<>(AoAMonsters.CHOMPER).path("mob/overworld/chomper");
 	public static final EntityRendererPackage<?> CYCLOPS = new GeckoLibRendererPackage<>(AoAMonsters.CYCLOPS).path("mob/overworld/cyclops", true);
 	//public static final EntityRendererPackage<?> DOUBLER = new GeckoLibRendererPackage<>(AoAMonsters.DOUBLER).path("mob/deeplands/doubler");
-	public static final EntityRendererPackage<?> DUNKLEOSTEUS = new GeckoLibRendererPackage<>(AoAMonsters.DUNKLEOSTEUS).renderer(DunkleosteusRenderer::new);
-	public static final EntityRendererPackage<?> EMBRAKE = new GeckoLibRendererPackage<>(AoAMonsters.EMBRAKE).path("mob/nether/embrake", true).emissive();
+	public static final EntityRendererPackage<?> DUNKLEOSTEUS = new GeckoLibRendererPackage<>(AoAMonsters.DUNKLEOSTEUS).renderer(DunkleosteusRenderer::new).shadowSize(entityType -> entityType.getWidth() / 2f);
+	public static final EntityRendererPackage<?> EMBRAKE = new GeckoLibRendererPackage<>(AoAMonsters.EMBRAKE).path("mob/nether/embrake", true).emissive().shadowSize(entityType -> entityType.getWidth() / 2f);
 	public static final EntityRendererPackage<?> FLAMEWALKER = new GeckoLibRendererPackage<>(AoAMonsters.FLAMEWALKER).model(new FlamewalkerModel()).emissive();
 	//public static final EntityRendererPackage<?> FLYE = new GeckoLibRendererPackage<>(AoAMonsters.FLYE).path("mob/lelyetia/flye");
 	public static final EntityRendererPackage<?> GHOST = new GeckoLibRendererPackage<>(AoAMonsters.GHOST).renderer(GhostRenderer::new);
@@ -152,14 +152,14 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> SASQUATCH = new GeckoLibRendererPackage<>(AoAMonsters.SASQUATCH).path("mob/overworld/sasquatch");
 	//public static final EntityRendererPackage<?> SEA_VIPER = new GeckoLibRendererPackage<>(AoAMonsters.SEA_VIPER).path("mob/lborean/sea_viper");
 	public static final EntityRendererPackage<?> SKELETAL_ABOMINATION = new GeckoLibRendererPackage<>(AoAMonsters.SKELETAL_ABOMINATION).model(new SkeletalAbominationModel());
-	public static final EntityRendererPackage<?> SMILODON = new GeckoLibRendererPackage<>(AoAMonsters.SMILODON).path("mob/precasia/smilodon", true);
-	public static final EntityRendererPackage<?> SPINOLEDON = new GeckoLibRendererPackage<>(AoAMonsters.SPINOLEDON).model(new SpinoledonModel());
+	public static final EntityRendererPackage<?> SMILODON = new GeckoLibRendererPackage<>(AoAMonsters.SMILODON).path("mob/precasia/smilodon", true).shadowSize(entityType -> entityType.getWidth() / 2f);
+	public static final EntityRendererPackage<?> SPINOLEDON = new GeckoLibRendererPackage<>(AoAMonsters.SPINOLEDON).model(new SpinoledonModel()).shadowSize(entityType -> entityType.getWidth() / 2f);
 	public static final EntityRendererPackage<?> STONE_GIANT = new GeckoLibRendererPackage<>(AoAMonsters.STONE_GIANT).path("mob/overworld/stone_giant");
 	//public static final EntityRendererPackage<?> SYSKER = new GeckoLibRendererPackage<>(AoAMonsters.SYSKER).path("mob/shyrelands/sysker");
 	//public static final EntityRendererPackage<?> TRACKER = new GeckoLibRendererPackage<>(AoAMonsters.TRACKER).path("mob/lelyetia/tracker");
 	public static final EntityRendererPackage<?> TREE_SPIRIT = new GeckoLibRendererPackage<>(AoAMonsters.TREE_SPIRIT).path("mob/overworld/tree_spirit").emissive();
 	//public static final EntityRendererPackage<?> UNDEAD_TROLL = new GeckoLibRendererPackage<>(AoAMonsters.UNDEAD_TROLL).path("mob/mysterium/undead_troll");
-	public static final EntityRendererPackage<?> VELORAPTOR = new GeckoLibRendererPackage<>(AoAMonsters.VELORAPTOR).model(new VeloraptorModel());
+	public static final EntityRendererPackage<?> VELORAPTOR = new GeckoLibRendererPackage<>(AoAMonsters.VELORAPTOR).model(new VeloraptorModel()).shadowSize(entityType -> entityType.getWidth() / 2f);
 	//public static final EntityRendererPackage<?> VISULAR = new GeckoLibRendererPackage<>(AoAMonsters.VISULAR).path("mob/lunalus/visular");
 	//public static final EntityRendererPackage<?> VISULON = new GeckoLibRendererPackage<>(AoAMonsters.VISULON).path("mob/lunalus/visulon");
 	public static final EntityRendererPackage<?> VOID_WALKER = new GeckoLibRendererPackage<>(AoAMonsters.VOID_WALKER).path("mob/overworld/void_walker");
@@ -257,7 +257,6 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> COTTON_CANDOR_SHOT = new EntityRendererPackage<>(AoAProjectiles.COTTON_CANDOR_SHOT).provider(CottonCandorShotRenderer::new);
 	public static final EntityRendererPackage<?> CRAEXXEUS_NUKE = new EntityRendererPackage<>(AoAProjectiles.CRAEXXEUS_NUKE).provider(CraexxeusNukeRenderer::new);
 	public static final EntityRendererPackage<?> CRAEXXEUS_SHOT = new EntityRendererPackage<>(AoAProjectiles.CRAEXXEUS_SHOT).provider(CraexxeusShotRenderer::new);
-	public static final EntityRendererPackage<?> CREEPER_SHOT = new EntityRendererPackage<>(AoAProjectiles.CREEPER_SHOT).provider(CreeperShotRenderer::new);
 	public static final EntityRendererPackage<?> CREEP_BOMB = new EntityRendererPackage<>(AoAProjectiles.CREEP_BOMB).provider(CreepBombRenderer::new);
 	public static final EntityRendererPackage<?> CREEP_TUBE = new EntityRendererPackage<>(AoAProjectiles.CREEP_TUBE).provider(CreepTubeRenderer::new);
 	public static final EntityRendererPackage<?> CYAN_SHOT = new EntityRendererPackage<>(AoAProjectiles.CYAN_SHOT).provider(CyanShotRenderer::new);
@@ -723,15 +722,12 @@ public final class AoAEntityRendering {
 			if (this.model == null && this.provider == null)
 				throw new IllegalStateException("No provided model or renderer for GeckoLib model for " + this.entityType.getId().toString());
 
-			if (this.shadowSize == -1)
-				this.shadowSize = this.entityType.get().getWidth() / 3f;
-
 			if (this.provider != null)
 				return this.provider;
 
 			return context -> {
 				GeoEntityRenderer renderer = switch (this.type) {
-					case LIVING -> buildLivingRenderer(context, (GeoModel)this.model, this.shadowSize, this.transparent);
+					case LIVING -> buildLivingRenderer(context, (GeoModel)this.model, this.shadowSize.apply(this.entityType.get()), this.transparent);
 					case PROJECTILE -> {
 						if (this.transparent) {
 							yield new AnimatedProjectileRenderer<>(context, this.model) {
@@ -779,7 +775,7 @@ public final class AoAEntityRendering {
 		protected final HashMap<String, Pair<ModelLayerLocation, Supplier<LayerDefinition>>> layerDefinitions = new HashMap<>();
 
 		protected EntityRendererProvider<T> rendererProvider = null;
-		protected float shadowSize = -1;
+		protected Function<EntityType<T>, Float> shadowSize = entityType -> entityType.getWidth() / (entityType.getWidth() > 1 ? 2.5f : 3f);
 
 		private EntityRendererPackage(DeferredHolder<EntityType<?>, EntityType<T>> entityType) {
 			this.entityType = entityType;
@@ -788,7 +784,11 @@ public final class AoAEntityRendering {
 		}
 
 		protected EntityRendererPackage<T> shadowSize(float shadow) {
-			this.shadowSize = shadow;
+			return shadowSize(entityType -> shadow);
+		}
+
+		protected EntityRendererPackage<T> shadowSize(Function<EntityType<T>, Float> shadowSize) {
+			this.shadowSize = shadowSize;
 
 			return this;
 		}
@@ -814,7 +814,7 @@ public final class AoAEntityRendering {
 		}
 
 		private EntityRendererPackage<T> defaultMobRenderer(Function<ModelPart, EntityModel<? extends Mob>> model, String texturePath, float scale) {
-			return provider(context -> new AoAMobRenderer(context, model.apply(context.bakeLayer(this.layerDefinitions.get("main").getFirst())), this.shadowSize, scale, AdventOfAscension.id(texturePath)));
+			return provider(context -> new AoAMobRenderer(context, model.apply(context.bakeLayer(this.layerDefinitions.get("main").getFirst())), this.shadowSize.apply(this.entityType.get()), scale, AdventOfAscension.id(texturePath)));
 		}
 
 		private void registerModelLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
@@ -835,9 +835,6 @@ public final class AoAEntityRendering {
 		protected EntityRendererProvider<T> build() {
 			if (this.rendererProvider == null)
 				throw new IllegalStateException("No registered renderer provider for entity: " + this.entityType.getId());
-
-			if (this.shadowSize == -1)
-				this.shadowSize = this.entityType.get().getWidth() / 3f;
 
 			return this.rendererProvider;
 		}

@@ -16,9 +16,9 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.IPlantable;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+import net.neoforged.neoforge.common.util.TriState;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.content.block.functional.misc.FertilisedFarmland;
 import net.tslat.aoa3.util.ItemUtil;
@@ -51,7 +51,7 @@ public class FertilisedFarmlandLootModifier extends LootModifier {
 			BlockPos farmlandPos = BlockPos.containing(pos).below();
 			BlockState belowBlock = context.getLevel().getBlockState(farmlandPos);
 
-			if (belowBlock.getBlock() instanceof FertilisedFarmland && belowBlock.getBlock().canSustainPlant(belowBlock, context.getLevel(), farmlandPos, Direction.UP, (IPlantable)state.getBlock())) {
+			if (belowBlock.getBlock() instanceof FertilisedFarmland && belowBlock.getBlock().canSustainPlant(belowBlock, context.getLevel(), farmlandPos, Direction.UP, state) != TriState.FALSE) {
 				int increaseAmount = belowBlock.getValue(FertilisedFarmland.WELL_FERTILISED) ? 2 : 1;
 				Item seeds = ((CropBlock)state.getBlock()).getCloneItemStack(context.getLevel(), BlockPos.containing(pos), state).getItem();
 

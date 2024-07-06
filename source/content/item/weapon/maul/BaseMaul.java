@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -107,9 +108,9 @@ public class BaseMaul extends Item {
 	}
 
 	@Override
-	public boolean mineBlock(ItemStack stack, Level world, BlockState state, BlockPos pos, LivingEntity holder) {
-		if (!world.isClientSide && (double)state.getDestroySpeed(world, pos) != 0.0D)
-			ItemUtil.damageItem(stack, holder, state.getSoundType() == SoundType.STONE ? 1 : 2, EquipmentSlot.MAINHAND);
+	public boolean mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity user) {
+		if (!level.isClientSide && (double)state.getDestroySpeed(level, pos) != 0.0D)
+			ItemUtil.damageItemForUser((ServerLevel)level, stack, state.getSoundType(level, pos, user) == SoundType.STONE ? 1 : 2, user, EquipmentSlot.MAINHAND);
 
 		return true;
 	}
@@ -126,9 +127,11 @@ public class BaseMaul extends Item {
 
 	@Override
 	public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-		doMeleeEffect(stack, target, attacker, stack.getOrDefault(AoADataComponents.MELEE_SWING_STRENGTH, 1f));
-		ItemUtil.damageItem(stack, attacker, InteractionHand.MAIN_HAND);
-		AttributeUtil.applyTransientModifier(attacker, Attributes.ATTACK_KNOCKBACK, getKnockbackModifier(1));
+		if (attacker.level() instanceof ServerLevel level) {
+			doMeleeEffect(stack, target, attacker, stack.getOrDefault(AoADataComponents.MELEE_SWING_STRENGTH, 1f));
+			ItemUtil.damageItemForUser(level, stack, attacker, InteractionHand.MAIN_HAND);
+			AttributeUtil.applyTransientModifier(attacker, Attributes.ATTACK_KNOCKBACK, getKnockbackModifier(1));
+		}
 
 		return true;
 	}

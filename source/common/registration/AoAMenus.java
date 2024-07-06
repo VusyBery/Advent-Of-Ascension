@@ -9,7 +9,7 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.network.IContainerFactory;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.common.menu.*;
-import net.tslat.aoa3.content.entity.npc.banker.AoABanker;
+import net.tslat.aoa3.content.entity.npc.trader.AoABanker;
 import net.tslat.aoa3.content.entity.npc.trader.CorruptedTravellerEntity;
 
 public final class AoAMenus {

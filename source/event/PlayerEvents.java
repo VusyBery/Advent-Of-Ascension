@@ -1,5 +1,6 @@
 package net.tslat.aoa3.event;
 
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -7,7 +8,6 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -20,10 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BonemealableBlock;
-import net.minecraft.world.level.block.ComposterBlock;
-import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -41,11 +38,10 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.advent.Logging;
+import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.block.functional.misc.CheckpointBlock;
-import net.tslat.aoa3.content.item.armour.AdventArmour;
 import net.tslat.aoa3.content.item.misc.ReservedItem;
 import net.tslat.aoa3.content.item.tool.misc.ExpFlask;
 import net.tslat.aoa3.content.item.weapon.sword.BaseSword;
@@ -58,6 +54,7 @@ import net.tslat.aoa3.library.object.Text;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.*;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class PlayerEvents {
@@ -67,11 +64,11 @@ public class PlayerEvents {
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerTickEvent.Pre.class, PlayerEvents::onPlayerTickStart);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerTickEvent.Post.class, PlayerEvents::onPlayerTickEnd);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingEvent.LivingJumpEvent.class, PlayerEvents::onPlayerJump);
-		forgeBus.addListener(EventPriority.NORMAL, false, LivingAttackEvent.class, PlayerEvents::onPlayerHit);
-		forgeBus.addListener(EventPriority.NORMAL, false, LivingHurtEvent.class, PlayerEvents::onPlayerHurt);
-		forgeBus.addListener(EventPriority.LOWEST, false, LivingDamageEvent.class, PlayerEvents::onPlayerDamaged);
-		forgeBus.addListener(EventPriority.NORMAL, false, LivingFallEvent.class, PlayerEvents::onPlayerFall);
+		forgeBus.addListener(EventPriority.NORMAL, false, LivingIncomingDamageEvent.class, PlayerEvents::onPlayerDamage);
+		forgeBus.addListener(EventPriority.LOWEST, false, LivingDamageEvent.Pre.class, PlayerEvents::onPlayerDamagedPre);
+		forgeBus.addListener(EventPriority.NORMAL, false, LivingDamageEvent.Post.class, PlayerEvents::onPlayerDamagedPost);
 		forgeBus.addListener(EventPriority.LOWEST, false, LivingDeathEvent.class, PlayerEvents::onEntityDeath);
+		forgeBus.addListener(EventPriority.NORMAL, false, LivingFallEvent.class, PlayerEvents::onPlayerFall);
 		forgeBus.addListener(EventPriority.NORMAL, false, BlockEvent.BreakEvent.class, PlayerEvents::onBlockBreak);
 		forgeBus.addListener(EventPriority.NORMAL, false, BlockEvent.EntityPlaceEvent.class, PlayerEvents::onBlockPlace);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.RightClickBlock.class, PlayerEvents::onBlockInteract);
@@ -107,32 +104,30 @@ public class PlayerEvents {
 			LunalusEvents.doPlayerJump((Player)ev.getEntity());
 	}
 
-	private static void onPlayerHit(final LivingAttackEvent ev) {
-		if (ev.getEntity() instanceof ServerPlayer && ev.getEntity().getHealth() - ev.getAmount() <= 0 && ev.getEntity().level().getLevelData().isHardcore())
-			ReservedItem.handlePlayerDeath((ServerPlayer)ev.getEntity());
-	}
-
-	private static void onPlayerHurt(final LivingHurtEvent ev) {
-		Entity attacker = ev.getSource().getEntity();
-
-		if (DamageUtil.isMeleeDamage(ev.getSource()) && attacker instanceof LivingEntity) {
-			ItemStack weapon = ((LivingEntity)attacker).getItemInHand(InteractionHand.MAIN_HAND);
-
-			if (weapon.getItem() instanceof BaseSword baseSword)
-				ev.setAmount(baseSword.getDamageForAttack(ev.getEntity(), (LivingEntity)attacker, weapon, ev.getSource(), ev.getAmount()));
-		}
-
+	private static void onPlayerDamagedPost(final LivingDamageEvent.Post ev) {
 		if (ev.getEntity() instanceof ServerPlayer pl) {
-			if (pl.getHealth() > 0 && ev.getSource().is(DamageTypeTags.IS_EXPLOSION) && ev.getSource().getDirectEntity() instanceof Creeper) {
-				if ((!pl.level().getEntitiesOfClass(PrimedTnt.class, ev.getSource().getDirectEntity().getBoundingBox().inflate(3)).isEmpty() || !pl.level().getEntitiesOfClass(PrimedTnt.class, pl.getBoundingBox().inflate(3)).isEmpty()) && ItemUtil.findInventoryItem(pl, new ItemStack(AoAItems.BLANK_REALMSTONE.get()), true, 1, false))
-					ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.CREEPONIA_REALMSTONE.get()));
+			if (ev.getEntity().getHealth() - ev.getNewDamage() <= 0 && ev.getEntity().level().getLevelData().isHardcore())
+				ReservedItem.handlePlayerDeath(pl);
+
+			if (pl.getHealth() > 0 && ev.getSource().is(DamageTypeTags.IS_EXPLOSION) && ev.getSource().getDirectEntity() instanceof Creeper creeper) {
+				if (!EntityRetrievalUtil.getEntities(pl.level(), pl.getBoundingBox().minmax(creeper.getBoundingBox()), entity -> entity instanceof PrimedTnt && (entity.distanceToSqr(pl) <= 9) || entity.distanceToSqr(creeper) <= 9).isEmpty() && InventoryUtil.findItemForConsumption(pl, AoAItems.BLANK_REALMSTONE, 1, true))
+					InventoryUtil.giveItemTo(pl, AoAItems.CREEPONIA_REALMSTONE);
 			}
 		}
 	}
 
-	private static void onPlayerDamaged(final LivingDamageEvent ev) {
+	private static void onPlayerDamage(final LivingIncomingDamageEvent ev) {
+		if (ev.getSource().getEntity() instanceof LivingEntity attacker && DamageUtil.isMeleeDamage(ev.getSource())) {
+			ItemStack weapon = attacker.getItemInHand(InteractionHand.MAIN_HAND);
+
+			if (weapon.getItem() instanceof BaseSword baseSword)
+				ev.setAmount(baseSword.getDamageForAttack(ev.getEntity(), attacker, weapon, ev.getSource(), ev.getAmount()));
+		}
+	}
+
+	private static void onPlayerDamagedPre(final LivingDamageEvent.Pre ev) {
 		if (ev.getEntity() instanceof ServerPlayer pl) {
-			if (pl.getHealth() <= ev.getAmount()) {
+			if (pl.getHealth() <= ev.getContainer().getNewDamage()) {
 				ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
 				PositionAndRotation checkpoint = plData.getCheckpoint();
 
@@ -140,7 +135,7 @@ public class PlayerEvents {
 					if (CheckpointBlock.isValidCheckpoint(pl.level(), checkpoint)) {
 						AoAScheduler.scheduleSyncronisedTask(() -> {
 							if (NowhereEvents.isInBossRegion(pl.blockPosition()))
-								ItemUtil.clearInventoryOfItems(pl, new ItemStack(AoAItems.RETURN_CRYSTAL.get()));
+								InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
 
 							PlayerUtil.resetToDefaultStatus(pl);
 							pl.sendSystemMessage(LocaleUtil.getLocaleMessage("deathScreen.title", ChatFormatting.DARK_RED));
@@ -148,7 +143,7 @@ public class PlayerEvents {
 							checkpoint.applyToEntity(pl);
 						}, 1);
 
-						ev.setCanceled(true);
+						ev.getContainer().setNewDamage(0);
 
 						return;
 					}
@@ -166,8 +161,8 @@ public class PlayerEvents {
 
 	private static void onPlayerFall(final LivingFallEvent ev) {
 		if (ev.getEntity() instanceof ServerPlayer player) {
-			if (ev.getDistance() > 25 && ev.getDamageMultiplier() > 0 && ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.BLANK_REALMSTONE.get()), true, 1, false))
-				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.LELYETIA_REALMSTONE.get()));
+			if (ev.getDistance() > 25 && ev.getDamageMultiplier() > 0 && InventoryUtil.findItemForConsumption(player, AoAItems.BLANK_REALMSTONE, 1, true))
+				InventoryUtil.giveItemTo(player, AoAItems.LELYETIA_REALMSTONE);
 
 			if (WorldUtil.isWorld(player.level(), AoADimensions.LUNALUS))
 				LunalusEvents.doPlayerLanding(player, ev);
@@ -189,13 +184,13 @@ public class PlayerEvents {
 	}
 
 	private static void onBlockBreak(final BlockEvent.BreakEvent ev) {
-		Player pl = ev.getPlayer();
+		Player player = ev.getPlayer();
 
-		if (pl instanceof ServerPlayer) {
+		if (player instanceof ServerPlayer pl) {
 			BlockPos pos = ev.getPos();
 
-			if (!pl.isCreative() && ev.getState().is(Tags.Blocks.ORES) && pos.getY() <= pl.level().getMinBuildHeight() + 5 && ItemUtil.findInventoryItem(pl, new ItemStack(AoAItems.BLANK_REALMSTONE.get()), true, 1, false))
-				ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.DEEPLANDS_REALMSTONE.get()));
+			if (!pl.getAbilities().instabuild && ev.getState().is(Tags.Blocks.ORES) && pos.getY() <= pl.level().getMinBuildHeight() + 5 && InventoryUtil.findItemForConsumption(pl, AoAItems.BLANK_REALMSTONE, 1, true))
+				InventoryUtil.giveItemTo(pl, AoAItems.DEEPLANDS_REALMSTONE);
 		}
 	}
 
@@ -203,8 +198,8 @@ public class PlayerEvents {
 		if (!(ev.getEntity() instanceof ServerPlayer player))
 			return;
 
-		if (PlayerUtil.isWearingFullSet(player, AdventArmour.Type.HYDRANGIC)) {
-			if (ev.getPlacedBlock().getBlock() instanceof BonemealableBlock && BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), ev.getEntity().level(), ev.getPos(), player)) {
+		if (PlayerUtil.isWearingFullSet(player, AoAArmourMaterials.HYDRANGIC)) {
+			if (ev.getPlacedBlock().getBlock() instanceof CropBlock && BoneMealItem.applyBonemeal(new ItemStack(Items.BONE_MEAL), ev.getEntity().level(), ev.getPos(), player)) {
 				ev.getLevel().levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, ev.getPos(), 0);
 				player.hurtArmor(player.level().damageSources().generic(), 16);
 			}
@@ -253,7 +248,7 @@ public class PlayerEvents {
 
 			if (item == AoAItems.BLANK_REALMSTONE.get() && entityItem.getOwner() == player) {
 				if (player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())) {
-					ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.NETHER_REALMSTONE.get()));
+					InventoryUtil.giveItemTo(player, AoAItems.NETHER_REALMSTONE);
 					ev.getEntity().discard();
 				}
 			}
@@ -265,14 +260,12 @@ public class PlayerEvents {
 
 	private static void onPlayerPickupXp(final PlayerXpEvent.PickupXp ev) {
 		if (!ev.getEntity().level().isClientSide && ev.getOrb().value > 0) {
-			ItemStack stack = ItemUtil.getStackFromInventory(ev.getEntity(), AoATools.EXP_FLASK.get());
-
-			if (stack != null && stack.getItem() instanceof ExpFlask flask) {
-				flask.addCharge(stack, ev.getOrb().value);
+			InventoryUtil.findItem(ev.getEntity(), stack -> stack.getItem() instanceof ExpFlask).map(Pair::right).ifPresent(flask -> {
+				((ExpFlask)flask.getItem()).addCharge(flask, ev.getOrb().value);
 				ev.setCanceled(true);
 				ev.getOrb().value = 0;
 				ev.getOrb().discard();
-			}
+			});
 		}
 	}
 

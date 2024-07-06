@@ -15,11 +15,6 @@ public class BaronArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.BARON;
-	}
-
-	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText("item.aoa3.baron_armour.desc.1", LocaleUtil.ItemDescriptionType.BENEFICIAL));
 	}

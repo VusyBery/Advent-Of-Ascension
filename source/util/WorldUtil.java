@@ -95,7 +95,7 @@ public final class WorldUtil {
 		if (ignoreBlockLight)
 			return world.getBrightness(LightLayer.SKY, position) - world.getSkyDarken();
 
-		return world.getRawBrightness(position, 0);
+		return world.getMaxLocalRawBrightness(position);
 	}
 
 	public static void spawnLightning(ServerLevel world, @Nullable ServerPlayer caster, double x, double y, double z, boolean destructive, boolean createFire) {

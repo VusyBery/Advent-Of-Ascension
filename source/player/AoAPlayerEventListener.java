@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.*;
@@ -411,15 +412,26 @@ public interface AoAPlayerEventListener {
 	default void handleEntityInteraction(final PlayerInteractEvent.EntityInteractSpecific ev) {}
 
 	/**
+	 * This method gets triggered when the player is about to have a mob effect applied to them
+	 * <p>
+	 * Override to determine eligibility of a given mob effect for a player.
+	 * <p>
+	 * Will only trigger if {@link ListenerType#MOB_EFFECT_TEST} is included in the returned event listener types in {@link #getListenerTypes}
+	 *
+	 * @param ev {@link MobEffectEvent.Applicable} event
+	 */
+	default void handleEffectApplicability(final MobEffectEvent.Applicable ev) {}
+
+	/**
 	 * This method gets triggered when the player has a potion effect applied to them. It is also triggered if an existing effect is upgraded or extended.
 	 * <p>
 	 * Override to trigger effects for when a player is afflicted with a potion effect of any kind.
 	 * <p>
-	 * Will only trigger if {@link ListenerType#POTION_APPLIED} is included in the returned event listener types in {@link #getListenerTypes}
+	 * Will only trigger if {@link ListenerType#MOB_EFFECT_APPLIED} is included in the returned event listener types in {@link #getListenerTypes}
 	 *
 	 * @param ev {@link MobEffectEvent.Added} event
 	 */
-	default void handleAppliedPotion(final MobEffectEvent.Added ev) {}
+	default void handleAppliedMobEffect(final MobEffectEvent.Added ev) {}
 
 	/**
 	 * This method gets triggered when player attribute modifiers should be applied. Usually this is on login and during a clone of the player's data.
@@ -466,70 +478,73 @@ public interface AoAPlayerEventListener {
 	default void handleEntityTarget(final LivingChangeTargetEvent ev) {}
 
 	/**
-	 * This method gets triggered when the player is about to be attacked by another entity.
+	 * This method gets triggered when an entity is being checked for invulnerabilities.
 	 * <p>
-	 * Override this method to trigger effects that may occur when being attacked by another entity, regardless of whether the attack is successful or not.
+	 * Override this method to add or modify invulnerabilities for an entity. Should only be used for static invulnerabilities - not chance or resource-based
 	 * <p>
-	 * Will only trigger if {@link ListenerType#INCOMING_ATTACK_BEFORE} is included in the returned event listener types in {@link #getListenerTypes}
+	 * Will only trigger if {@link ListenerType#ENTITY_INVULNERABILITY} is included in the returned event listener types in {@link #getListenerTypes}
 	 *
-	 * @param ev {@link LivingAttackEvent} event
+	 * @param ev {@link EntityInvulnerabilityCheckEvent} event
 	 */
-	default void handlePreIncomingAttack(final LivingAttackEvent ev) {}
-
-	/**
-	 * This method gets triggered when the player is about to attack another entity.
-	 * <p>
-	 * Override this method to trigger effects that may occur when attacking another entity, regardless of whether the attack is successful or not.
-	 * <p>
-	 * Will only trigger if {@link ListenerType#OUTGOING_ATTACK_BEFORE} is included in the returned event listener types in {@link #getListenerTypes}
-	 *
-	 * @param ev {@link LivingAttackEvent} event
-	 */
-	default void handlePreOutgoingAttack(final LivingAttackEvent ev) {}
+	default void handleEntityInvulnerability(final EntityInvulnerabilityCheckEvent ev) {}
 
 	/**
 	 * This method gets triggered when the player is being attacked by another entity.
 	 * <p>
-	 * Override this method to modify the damage to be used for the event. The damage value of the attack provided here is prior to any armour, enchantment, or potion modifications take place.
+	 * Override this method to modify the damage value, apply dynamic invulnerabilities, or apply stage-specific damage mitigation.
 	 * <p>
-	 * Will only trigger if {@link ListenerType#INCOMING_ATTACK_DURING} is included in the returned event listener types in {@link #getListenerTypes}
+	 * Will only trigger if {@link ListenerType#INCOMING_DAMAGE} is included in the returned event listener types in {@link #getListenerTypes}
 	 *
-	 * @param ev {@link LivingHurtEvent} event
+	 * @param ev {@link LivingIncomingDamageEvent} event
 	 */
-	default void handleIncomingAttack(final LivingHurtEvent ev) {}
+	default void handleIncomingDamage(final LivingIncomingDamageEvent ev) {}
 
 	/**
 	 * This method gets triggered when the player is attacking another entity.
 	 * <p>
 	 * Override this method to modify the damage to be used for the event. The damage value of the attack provided here is prior to any armour, enchantment, or potion modifications take place.
 	 * <p>
-	 * Will only trigger if {@link ListenerType#OUTGOING_ATTACK_DURING} is included in the returned event listener types in {@link #getListenerTypes}
+	 * Will only trigger if {@link ListenerType#OUTGOING_ATTACK} is included in the returned event listener types in {@link #getListenerTypes}
 	 *
-	 * @param ev {@link LivingHurtEvent} event
+	 * @param ev {@link LivingIncomingDamageEvent} event
 	 */
-	default void handleOutgoingAttack(final LivingHurtEvent ev) {}
+	default void handleOutgoingAttack(final LivingIncomingDamageEvent ev) {}
+
+	/**
+	 * This method gets triggered when the player has been successfully attacked and is last-minute checking the damage before applying it
+	 * <p>
+	 * Override this method to handle last-minute damage changes. Realistically this should only be used to prevent specific attacks like lethal damage.
+	 * Note that the damage value here may be 0, as that is still considered a successful attack at this stage.
+	 * <p>
+	 * Will only trigger if {@link ListenerType#INCOMING_DAMAGE_APPLICATION} is included in the returned event listener types in {@link #getListenerTypes}
+	 *
+	 * @param ev {@link LivingDamageEvent.Pre} event
+	 */
+	default void handlePreDamageApplication(final LivingDamageEvent.Pre ev) {}
 
 	/**
 	 * This method gets triggered when the player has been successfully attacked by another entity.
 	 * <p>
 	 * Override this method to handle damage-triggered effects. The damage value of the attack is final here, use one of the earlier attack events to modify damage.
+	 * Note that the damage value here may be 0, as that is still considered a successful attack at this stage.
 	 * <p>
-	 * Will only trigger if {@link ListenerType#INCOMING_ATTACK_AFTER} is included in the returned event listener types in {@link #getListenerTypes}
+	 * Will only trigger if {@link ListenerType#INCOMING_DAMAGE_AFTER} is included in the returned event listener types in {@link #getListenerTypes}
 	 *
-	 * @param ev {@link LivingDamageEvent} event
+	 * @param ev {@link LivingDamageEvent.Post} event
 	 */
-	default void handlePostIncomingAttack(final LivingDamageEvent ev) {}
+	default void handleAfterDamaged(final LivingDamageEvent.Post ev) {}
 
 	/**
 	 * This method gets triggered when the player has attacked an entity successfully.
 	 * <p>
 	 * Override this method to handle attack-triggered effects. The damage value of the attack is final here, use one of the earlier attack events to modify damage.
+	 * Note that the damage value here may be 0, as that is still considered a successful attack at this stage.
 	 * <p>
 	 * Will only trigger if {@link ListenerType#OUTGOING_ATTACK_AFTER} is included in the returned event listener types in {@link #getListenerTypes}
 	 *
-	 * @param ev {@link LivingDamageEvent} event
+	 * @param ev {@link LivingDamageEvent.Post} event
 	 */
-	default void handlePostOutgoingAttack(final LivingDamageEvent ev) {}
+	default void handleAfterAttacking(final LivingDamageEvent.Post ev) {}
 
 	/**
 	 * This method gets triggered when an entity is killed and the player is determined to have at least partially contributed.
@@ -662,16 +677,17 @@ public interface AoAPlayerEventListener {
 		FISHED_ITEM,
 		HAULING_ROD_PULL_ENTITY,
 		ENTITY_INTERACT,
-		POTION_APPLIED,
+		MOB_EFFECT_TEST,
+		MOB_EFFECT_APPLIED,
 		LOOT_MODIFICATION,
 		ATTRIBUTE_MODIFIERS,
 		CRITICAL_HIT,
 		ENTITY_TARGET,
-		INCOMING_ATTACK_BEFORE,
-		INCOMING_ATTACK_DURING,
-		INCOMING_ATTACK_AFTER,
-		OUTGOING_ATTACK_BEFORE,
-		OUTGOING_ATTACK_DURING,
+		ENTITY_INVULNERABILITY,
+		INCOMING_DAMAGE,
+		INCOMING_DAMAGE_APPLICATION,
+		INCOMING_DAMAGE_AFTER,
+		OUTGOING_ATTACK,
 		OUTGOING_ATTACK_AFTER,
 		ENTITY_KILL,
 		ANIMAL_BREED,

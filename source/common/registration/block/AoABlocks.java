@@ -82,6 +82,8 @@ public final class AoABlocks {
 	public static final StoneBlockGroup RUNIC_STONE = registerGroup("runic_stone", StoneBlockGroup::new, registrar -> registrar.baseStone().mapColour(MapColor.COLOR_BLUE));
 	public static final StoneBlockGroup WEIGHTLESS_STONE = registerGroup("weightless_stone", StoneBlockGroup::new, registrar -> registrar.baseStone().mapColour(MapColor.TERRACOTTA_LIGHT_BLUE));
 
+	public static final StoneBlockGroup PRECASIAN_COBBLESTONE = registerGroup("precasian_cobblestone", StoneBlockGroup::new, registrar -> registrar.baseCobblestone().mapColour(MapColor.COLOR_BROWN));
+
 	public static final DeferredBlock<Block> ARCHAIC_DIRT = register("archaic_dirt", registrar -> registrar.baseDirt().mapColour(MapColor.DIRT).stats(1.5f, 4f));
 	public static final DeferredBlock<Block> AROMATIC_DIRT = register("aromatic_dirt", registrar -> registrar.baseDirt().mapColour(MapColor.COLOR_MAGENTA));
 	public static final DeferredBlock<Block> BLACKENED_SOIL = register("blackened_soil", registrar -> registrar.baseDirt().mapColour(MapColor.COLOR_GRAY));
@@ -122,7 +124,7 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> BARONYTE_ORE = register("baronyte_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.TERRACOTTA_CYAN));
 	public static final DeferredBlock<Block> BLAZIUM_ORE = register("blazium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.FIRE));
 	public static final DeferredBlock<Block> BLOODSTONE_ORE = register("bloodstone_ore", registrar -> registrar.baseOre(UniformInt.of(6, 11)).mapColour(MapColor.NETHER));
-	public static final DeferredBlock<Block> CHARGED_RUNIUM_ORE = register("charged_runium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.COLOR_LIGHT_GRAY));
+	public static final DeferredBlock<Block> CHARGED_RUNIUM_ORE = register("charged_runium_ore", registrar -> registrar.baseOre(UniformInt.of(4, 8)).mapColour(MapColor.COLOR_LIGHT_GRAY));
 	public static final DeferredBlock<Block> CRYSTALLITE_ORE = register("crystallite_ore", registrar -> registrar.baseOre(UniformInt.of(6, 11)).mapColour(MapColor.TERRACOTTA_LIGHT_BLUE));
 	public static final DeferredBlock<Block> ELECANIUM_ORE = register("elecanium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.COLOR_BLUE));
 	public static final DeferredBlock<Block> EMBERSTONE_ORE = register("emberstone_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).sounds(SoundType.NETHER_GOLD_ORE).mapColour(MapColor.NETHER));
@@ -151,12 +153,15 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> LYON_ORE = register("lyon_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.COLOR_GRAY));
 	public static final DeferredBlock<Block> MYSTITE_ORE = register("mystite_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.TERRACOTTA_BLUE));
 	public static final DeferredBlock<Block> ORNAMYTE_ORE = register("ornamyte_ore", registrar -> registrar.baseOre(UniformInt.of(4, 8)).mapColour(MapColor.COLOR_GRAY));
-	public static final DeferredBlock<Block> RUNIUM_ORE = register("runium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.STONE));
-	public static final DeferredBlock<Block> DEEPSLATE_RUNIUM_ORE = register("deepslate_runium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).sounds(SoundType.DEEPSLATE).stats(4.5f, 3f).mapColour(MapColor.STONE));
-	public static final DeferredBlock<Block> NETHER_RUNIUM_ORE = register("nether_runium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).sounds(SoundType.NETHER_ORE).mapColour(MapColor.STONE));
+	public static final DeferredBlock<Block> RUNIUM_ORE = register("runium_ore", registrar -> registrar.baseOre(UniformInt.of(2, 6)).mapColour(MapColor.STONE));
+	public static final DeferredBlock<Block> DEEPSLATE_RUNIUM_ORE = register("deepslate_runium_ore", registrar -> registrar.baseOre(UniformInt.of(2, 6)).sounds(SoundType.DEEPSLATE).stats(4.5f, 3f).mapColour(MapColor.STONE));
+	public static final DeferredBlock<Block> NETHER_RUNIUM_ORE = register("nether_runium_ore", registrar -> registrar.baseOre(UniformInt.of(2, 6)).sounds(SoundType.NETHER_ORE).mapColour(MapColor.STONE));
 	public static final DeferredBlock<Block> SHYREGEM_ORE = register("shyregem_ore", registrar -> registrar.baseOre(UniformInt.of(6, 13)).mapColour(MapColor.TERRACOTTA_YELLOW));
 	public static final DeferredBlock<Block> SHYRESTONE_ORE = register("shyrestone_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.TERRACOTTA_YELLOW));
 	public static final DeferredBlock<Block> VARSIUM_ORE = register("varsium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.TERRACOTTA_CYAN));
+
+	public static final StoneBlockGroup PRECASIAN_STONE_BRICKS = registerGroup("precasian_stone_bricks", StoneBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.COLOR_BROWN).stats(1.5f, 6));
+	public static final DeferredBlock<Block> CHISELLED_PRECASIAN_STONE_BRICKS = register("chiselled_precasian_stone_bricks", registrar -> registrar.baseBricks().sounds(SoundType.STONE).mapColour(MapColor.COLOR_BROWN).stats(1.5f, 6));
 
 	public static final StoneBlockGroup ARCHAIC_TILE = registerGroup("archaic_tile", StoneBlockGroup::new, registrar -> registrar.baseStone().mapColour(MapColor.COLOR_RED).stats(2f, 10f));
 	public static final StoneBlockGroup ARCHAIC_TILE_NODE = registerGroup("archaic_tile_node", StoneBlockGroup::new, registrar -> registrar.baseStone().mapColour(MapColor.COLOR_RED).stats(2f, 10f));

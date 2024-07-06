@@ -14,7 +14,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -50,8 +49,8 @@ public class MechaStaff extends BaseStaff<Object> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, Object args) {
-		world.addFreshEntity(new LyonicShotEntity(caster, this, 60));
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Object args) {
+		level.addFreshEntity(new LyonicShotEntity(caster, this, 60));
 	}
 
 	@Override

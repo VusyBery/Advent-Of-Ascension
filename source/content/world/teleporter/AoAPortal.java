@@ -309,11 +309,11 @@ public interface AoAPortal extends Portal {
 
     default BlockPos findSuitablePortalLocation(Level level, Entity entity, BlockPos originPos) {
         final int searchRadius = AoAConfigs.SERVER.portalSearchRadius.get();
-        final int worldHeight = level.getMaxBuildHeight();
         final int worldFloor = level.getMinBuildHeight();
+        final int worldCeiling = worldFloor + level.dimensionType().logicalHeight();
         final BlockPos.MutableBlockPos checkPos = new BlockPos.MutableBlockPos();
         final int posX = Mth.floor(originPos.getX());
-        final int posY = originPos.getY() >= worldHeight ? 65 : Mth.floor(originPos.getY());
+        final int posY = originPos.getY() >= worldCeiling ? Math.min(worldCeiling, 65) : Mth.floor(originPos.getY());
         final int posZ = Mth.floor(originPos.getZ());
         BlockPos fallbackPos = null;
         boolean isCleanSpawn = true;
@@ -322,7 +322,7 @@ public interface AoAPortal extends Portal {
             for (int x = posX - 2; x <= posX + 2 && isCleanSpawn; x++) {
                 for (int z = posZ - 2; z <= posZ + 2 && isCleanSpawn; z++) {
                     for (int y = posY + 1; y <= posY + 6 && isCleanSpawn; y++) {
-                        if (y >= worldHeight || !sectionAccess.getBlockState(checkPos.set(x, y, z)).isAir())
+                        if (y >= worldCeiling || !sectionAccess.getBlockState(checkPos.set(x, y, z)).isAir())
                             isCleanSpawn = false;
                     }
                 }
@@ -337,7 +337,7 @@ public interface AoAPortal extends Portal {
 
             for (int radius = 1; radius <= searchRadius; radius++) {
                 for (int y = posY - radius; y <= posY + radius; y += radius * 2) {
-                    if (y < worldFloor || y >= worldHeight - 6)
+                    if (y < worldFloor || y >= worldCeiling - 6)
                         continue;
 
                     int xNeg = -1;
@@ -398,7 +398,7 @@ public interface AoAPortal extends Portal {
                 for (int y = 0; y <= radius - 1; y++) {
                     int y2 = posY + y * yNeg;
 
-                    if (y2 < 0 || y2 >= worldHeight - 6)
+                    if (y2 < 0 || y2 >= worldCeiling - 6)
                         continue;
 
                     if (yNeg == 1 && y != 0)
@@ -511,7 +511,7 @@ public interface AoAPortal extends Portal {
                     for (int x2 = x - 2; x2 <= x + 2 && isCleanSpawn; x2++) {
                         for (int z2 = z - 2; z2 <= z + 2 && isCleanSpawn; z2++) {
                             for (int y2 = y + 1; y2 <= y + 6 && isCleanSpawn; y2++) {
-                                if (!sectionAccess.getBlockState(checkPos.set(x2, y2, z2)).isAir() || y2 >= worldHeight - 6)
+                                if (!sectionAccess.getBlockState(checkPos.set(x2, y2, z2)).isAir() || y2 >= worldCeiling - 6)
                                     isCleanSpawn = false;
                             }
                         }
@@ -524,7 +524,7 @@ public interface AoAPortal extends Portal {
 
             for (int x = posX - searchRadius; x <= posX + searchRadius; x++) {
                 for (int z = posZ - searchRadius; z <= posZ + searchRadius; z++) {
-                    checkPos.set(x, worldHeight - 7, z);
+                    checkPos.set(x, worldCeiling - 7, z);
 
                     while (sectionAccess.getBlockState(checkPos.move(Direction.DOWN)).isAir() && checkPos.getY() >= posY + searchRadius);
 
@@ -549,7 +549,7 @@ public interface AoAPortal extends Portal {
         if (fallbackPos != null)
             return fallbackPos;
 
-        return BlockPos.containing(originPos.getX(), Math.clamp(originPos.getY() + 2, worldFloor + 1, worldHeight - 10), originPos.getZ());
+        return BlockPos.containing(originPos.getX(), Math.clamp(originPos.getY() + 2, worldFloor + 1, worldCeiling - 10), originPos.getZ());
     }
 
     default BlockPos createPortalFrameAndSpace(Level level, Entity entity, BlockPos pos) {

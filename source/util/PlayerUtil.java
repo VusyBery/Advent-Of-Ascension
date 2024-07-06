@@ -10,12 +10,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.food.FoodData;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameType;
@@ -26,6 +27,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.tslat.aoa3.client.ClientOperations;
+import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.common.registration.AoADataAttachments;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
@@ -33,7 +35,6 @@ import net.tslat.aoa3.common.toast.ItemRequirementToastData;
 import net.tslat.aoa3.common.toast.ResourceRequirementToastData;
 import net.tslat.aoa3.common.toast.SkillRequirementToastData;
 import net.tslat.aoa3.content.item.armour.AdventArmour;
-import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.PlayerDataManager;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.resource.AoAResource;
@@ -42,6 +43,7 @@ import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -157,29 +159,37 @@ public final class PlayerUtil {
         return XP_MAP.get(currentLevel);
     }
 
-    public static boolean isWearingFullSet(Player player, AdventArmour.Type setType) {
-        return getCurrentArmourSet(player) == setType;
+    public static boolean isWearingFullSet(Player player, @Nullable Holder<ArmorMaterial> setType) {
+        return Objects.equals(setType, getCurrentArmourSet(player));
     }
 
-    public static AdventArmour.Type getCurrentArmourSet(Player player) {
+    @Nullable
+    public static Holder<ArmorMaterial> getCurrentArmourSet(Player player) {
         if (player instanceof ServerPlayer serverPlayer)
             return getAdventPlayer(serverPlayer).equipment().getCurrentFullArmourSet();
 
-        if (!(player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof AdventArmour bootsArmour))
-            return AdventArmour.Type.NONE;
+        Holder<ArmorMaterial> material = null;
 
-        AdventArmour.Type type = bootsArmour.getSetType();
+        for (int i = 0; i < Inventory.ALL_ARMOR_SLOTS.length; i++) {
+            int index = Inventory.ALL_ARMOR_SLOTS[i];
+            ItemStack piece = player.getInventory().getArmor(index);
 
-        if (!(player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof AdventArmour legsArmour) || legsArmour.getSetType() != type)
-            return AdventArmour.Type.NONE;
+            if (!(piece.getItem() instanceof AdventArmour armour))
+                return null;
 
-        if (!(player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof AdventArmour chestArmour) || chestArmour.getSetType() != type)
-            return AdventArmour.Type.NONE;
+            if (i == 0)
+                continue;
 
-        if (!(player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof AdventArmour headArmour) || (headArmour.getSetType() != type && headArmour.getSetType() != AdventArmour.Type.ALL))
-            return AdventArmour.Type.NONE;
+            AdventArmour last = (AdventArmour)player.getInventory().getArmor(Inventory.ALL_ARMOR_SLOTS[i - 1]).getItem();
 
-        return type;
+            if (!armour.getMaterial().is(last.getMaterial()) && !armour.isCompatibleWithAnySet() && !last.isCompatibleWithAnySet())
+                return null;
+
+            if (material == null && !armour.isCompatibleWithAnySet())
+                material = armour.getMaterial();
+        }
+
+        return material;
     }
 
     public static float getXpRemainingUntilLevel(PlayerDataManager plData, AoASkill skill) {
@@ -294,19 +304,12 @@ public final class PlayerUtil {
 
     @Nullable
     public static Player getPlayerOrOwnerIfApplicable(@Nullable Entity entity) {
-        if (entity == null)
-            return null;
-
-        if (entity instanceof Player player)
-            return player;
-
-        if (entity instanceof OwnableEntity tameable && tameable.getOwner() instanceof Player player)
-            return player;
-
-        if (entity instanceof Projectile projectile && projectile.getOwner() instanceof Player player)
-            return player;
-
-        return null;
+        return switch (entity) {
+            case Player player -> player;
+            case OwnableEntity tameable when tameable.getOwner() instanceof Player player -> player;
+            case Projectile projectile when projectile.getOwner() instanceof Player player -> player;
+            case null, default -> null;
+        };
     }
 
     public static GameType getGameMode(Player player) {

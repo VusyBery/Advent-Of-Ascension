@@ -81,7 +81,7 @@ public class HoeAreaHarvest extends AoAAbility.Instance {
 								WorldUtil.harvestAdditionalBlock(world, ev.getEntity(), pos.immutable(), true);
 
 								if (this.perBlockHoeDamage > 0) {
-									ItemUtil.damageItem(heldStack, player, ev.getHand(), this.perBlockHoeDamage);
+									ItemUtil.damageItemForUser(player, heldStack, this.perBlockHoeDamage, ev.getHand());
 
 									if (heldStack.isEmpty())
 										return;

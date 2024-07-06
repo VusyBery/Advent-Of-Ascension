@@ -3,18 +3,17 @@ package net.tslat.aoa3.content.item.armour;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class GhastlyArmour extends AdventArmour {
@@ -23,14 +22,9 @@ public class GhastlyArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.GHASTLY;
-	}
-
-	@Override
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		if (slots != null && plData.player().level().getGameTime() % 5 == 0 && plData.player().isShiftKeyDown()) {
-			for (LivingEntity entity : plData.player().level().getEntitiesOfClass(LivingEntity.class, plData.player().getBoundingBox().inflate(4 * slots.size()), EntityUtil::isHostileMob)) {
+	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
+		if (entity.tickCount % 5 == 0 && entity instanceof Player pl ? pl.isShiftKeyDown() : entity.isCrouching()) {
+			for (LivingEntity hostile : EntityRetrievalUtil.<LivingEntity>getEntities(entity, perPieceValue(equippedPieces, 4), EntityUtil::isHostileMob)) {
 				entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 6, 0, true, false));
 			}
 		}

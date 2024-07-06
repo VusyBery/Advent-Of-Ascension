@@ -10,9 +10,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.entity.AoANpcs;
-import net.tslat.aoa3.content.entity.npc.lottoman.LottomanEntity;
+import net.tslat.aoa3.content.entity.npc.trader.LottomanEntity;
 import net.tslat.aoa3.util.EnchantmentUtil;
-import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 
 public class VoxCrate extends Block {

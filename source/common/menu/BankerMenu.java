@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.tslat.aoa3.common.registration.AoAMenus;
 import net.tslat.aoa3.common.registration.item.AoAItems;
-import net.tslat.aoa3.content.entity.npc.banker.AoABanker;
+import net.tslat.aoa3.content.entity.npc.trader.AoABanker;
 
 public class BankerMenu extends AbstractContainerMenu {
 	private final Container inputs;

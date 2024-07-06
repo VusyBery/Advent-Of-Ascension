@@ -32,6 +32,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -128,11 +129,11 @@ public class WoodGiantEntity extends AoAMeleeMob<WoodGiantEntity> {
 	}
 
 	@Override
-	protected void onHurt(DamageSource source, float amount) {
-		if (!level().isClientSide && DamageUtil.isMeleeDamage(source)) {
+	public void onDamageTaken(DamageContainer damageContainer) {
+		if (level() instanceof ServerLevel level && DamageUtil.isMeleeDamage(damageContainer.getSource())) {
 			lastMeleeHit = tickCount;
 
-			if (source.getEntity() instanceof LivingEntity attacker) {
+			if (damageContainer.getSource().getEntity() instanceof LivingEntity attacker) {
 				TELParticlePacket particlePacket = new TELParticlePacket();
 				ItemStack weapon = attacker.getItemInHand(InteractionHand.MAIN_HAND);
 
@@ -149,7 +150,7 @@ public class WoodGiantEntity extends AoAMeleeMob<WoodGiantEntity> {
 					STAGE.set(this, getStage() + 1);
 					particlePacket.particle(ParticleBuilder.forRandomPosInEntity(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.OAK_LOG.defaultBlockState()), this).spawnNTimes(5));
 
-					if (!(attacker instanceof ServerPlayer pl) || !pl.isCreative()) {
+					if (!(attacker instanceof ServerPlayer pl) || !pl.getAbilities().invulnerable) {
 						if (attacker instanceof ServerPlayer pl)
 							new ScreenImageEffect(ScreenImageEffect.Type.BLOOD).duration(80).randomScale().coloured(255, 0, 0, 127).sendToPlayer(pl);
 
@@ -159,7 +160,7 @@ public class WoodGiantEntity extends AoAMeleeMob<WoodGiantEntity> {
 					new SoundBuilder(AoASounds.HEAVY_WOOD_SHATTER.get()).followEntity(this).isMonster().execute();
 				}
 
-				particlePacket.sendToAllNearbyPlayers((ServerLevel)level(), position(), 20);
+				particlePacket.sendToAllNearbyPlayers(level, position(), 20);
 			}
 		}
 	}

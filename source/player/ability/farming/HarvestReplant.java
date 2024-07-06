@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.CropBlock;
@@ -14,7 +15,7 @@ import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.scheduling.AoAScheduler;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
 public class HarvestReplant extends ScalableModAbility {
@@ -38,15 +39,15 @@ public class HarvestReplant extends ScalableModAbility {
 		BlockState state = ev.getState();
 
 		if (state.getBlock() instanceof CropBlock crop && testAsChance()) {
-			LevelAccessor world = ev.getLevel();
+			LevelAccessor level = ev.getLevel();
 			BlockPos pos = ev.getPos();
 
-			if (ItemUtil.findInventoryItem(ev.getPlayer(), crop.getCloneItemStack(world, pos, state), true, 1, false))
+			if (InventoryUtil.findItemForConsumption(ev.getPlayer(), stack -> ItemStack.isSameItemSameComponents(stack, crop.getCloneItemStack(level, pos, state)), 1, true))
 				AoAScheduler.scheduleSyncronisedTask(() -> {
-					if (world.getBlockState(pos).isAir()) {
-						world.setBlock(pos, state.setValue(((CropBlock)state.getBlock()).getAgeProperty(), 0), Block.UPDATE_ALL);
+					if (level.getBlockState(pos).isAir()) {
+						level.setBlock(pos, state.setValue(crop.getAgeProperty(), 0), Block.UPDATE_ALL);
 
-						if (!world.isClientSide())
+						if (!level.isClientSide())
 							PlayerUtil.giveXpToPlayer((ServerPlayer)ev.getPlayer(), AoASkills.FARMING.get(), PlayerUtil.getTimeBasedXpForLevel(PlayerUtil.getLevel(ev.getPlayer(), AoASkills.FARMING.get()), 3), false);
 					}
 				}, 1);

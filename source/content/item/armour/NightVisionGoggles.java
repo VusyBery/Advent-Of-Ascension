@@ -25,8 +25,8 @@ public class NightVisionGoggles extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.ALL;
+	public boolean isCompatibleWithAnySet() {
+		return true;
 	}
 
 	@Override

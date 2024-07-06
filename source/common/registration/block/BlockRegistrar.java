@@ -67,6 +67,13 @@ public final class BlockRegistrar<T extends Block> {
 		return this;
 	}
 
+	public BlockRegistrar<T> baseCobblestone() {
+		basedOn(Blocks.COBBLESTONE);
+		generationBlocksTab();
+
+		return this;
+	}
+
 	public BlockRegistrar<T> baseGrass() {
 		basedOn(Blocks.GRASS_BLOCK);
 		generationBlocksTab();
@@ -193,6 +200,7 @@ public final class BlockRegistrar<T extends Block> {
 
 	public BlockRegistrar<T> baseStackablePlant(Function<BlockBehaviour.Properties, Block> factory) {
 		basePlant();
+		modelOffset(BlockBehaviour.OffsetType.NONE);
 		factory(factory);
 
 		return this;

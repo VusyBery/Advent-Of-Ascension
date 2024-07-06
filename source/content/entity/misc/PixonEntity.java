@@ -32,7 +32,7 @@ import net.tslat.aoa3.common.registration.entity.variant.PixonVariant;
 import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.common.toast.ItemRequirementToastData;
 import net.tslat.aoa3.library.builder.SoundBuilder;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LootUtil;
 import net.tslat.aoa3.util.MathUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
@@ -141,9 +141,11 @@ public class PixonEntity extends Entity {
 
             List<Player> siphoningPlayers = EntityRetrievalUtil.getPlayers(this, 2f + this.magnitude * 0.05f, LivingEntity::isAlive);
 
-            for (Player pl : siphoningPlayers) {
+            for (Player player : siphoningPlayers) {
+                ServerPlayer pl = (ServerPlayer)player;
+
                 if (pl.getUseItem().getItem() != AoATools.ATTUNING_BOWL.get()) {
-                    checkForPlayerAttuningBowl((ServerPlayer)pl);
+                    checkForPlayerAttuningBowl(pl);
 
                     continue;
                 }
@@ -151,7 +153,7 @@ public class PixonEntity extends Entity {
                 float scaling = Math.min(25, this.magnitude);
 
                 if (this.random.nextFloat() < scaling / 250f) {
-                    ItemUtil.givePlayerMultipleItems(pl, LootUtil.generateLoot(this.variant.lootTable().location(), new LootParams.Builder(level)
+                    InventoryUtil.giveItemsTo(pl, LootUtil.generateLoot(this.variant.lootTable().location(), new LootParams.Builder(level)
                             .withParameter(LootContextParams.THIS_ENTITY, this)
                             .withParameter(LootContextParams.ORIGIN, position())
                             .withParameter(LootContextParams.DAMAGE_SOURCE, level.damageSources().playerAttack(pl))
@@ -210,13 +212,12 @@ public class PixonEntity extends Entity {
         final UUID uuid = pl.getUUID();
 
         if (this.itemDeficitAlertedPlayers == null || !this.itemDeficitAlertedPlayers.containsKey(uuid) || pl.tickCount - this.itemDeficitAlertedPlayers.getInt(uuid) > 100) {
-            if (!ItemUtil.findInventoryItem(pl, AoATools.ATTUNING_BOWL.get().getDefaultInstance(), false, 1, true)) {
+            if (!InventoryUtil.hasItem(pl, AoATools.ATTUNING_BOWL)) {
                 if (this.itemDeficitAlertedPlayers == null)
                     this.itemDeficitAlertedPlayers = new Object2IntArrayMap<>(1);
 
                 this.itemDeficitAlertedPlayers.put(uuid, pl.tickCount);
                 ItemRequirementToastData.sendToastPopupTo(pl, AoATools.ATTUNING_BOWL.get());
-
             }
         }
     }

@@ -1,18 +1,19 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.tslat.aoa3.common.registration.item.AoAArmour;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class CandyArmour extends AdventArmour {
@@ -21,33 +22,25 @@ public class CandyArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.CANDY;
-	}
-
-	@Override
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		if (plData.player().getFoodData().needsFood()) {
-			if (slots == null || plData.equipment().isCooledDown("candy_armour")) {
-				if (findAndConsumeFood(plData.player()))
-					plData.equipment().setCooldown("candy_armour", 12000 / (slots == null ? 4 : slots.size()));
+	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
+		if (entity instanceof ServerPlayer pl && pl.getFoodData().needsFood()) {
+			if (equippedPieces.contains(Piece.FULL_SET) || !isOnCooldown(pl)) {
+				if (findAndConsumeFood(pl))
+					setArmourCooldown(pl, AoAArmour.CANDY_ARMOUR, 12000 / perPieceValue(equippedPieces, 1));
 			}
 		}
 	}
 
 	private boolean findAndConsumeFood(Player player) {
-		for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-			ItemStack stack = player.getInventory().getItem(i);
-			FoodProperties foodProperties = stack.getFoodProperties(player);
+		return InventoryUtil.findItem(player, stack -> {
+			FoodProperties properties = stack.getFoodProperties(player);
 
-			if (foodProperties != null && foodProperties.nutrition() > 0 && foodProperties.saturation() > 0) {
-				player.getInventory().setItem(i, stack.getItem().finishUsingItem(stack, player.level(), player));
+			return properties != null && properties.nutrition() > 0 && properties.saturation() > 0;
+		}).map(pair -> {
+			player.getInventory().setItem(pair.leftInt(), pair.right().getItem().finishUsingItem(pair.right(), player.level(), player));
 
-				return true;
-			}
-		}
-
-		return false;
+			return true;
+		}).orElse(false);
 	}
 
 	@Override

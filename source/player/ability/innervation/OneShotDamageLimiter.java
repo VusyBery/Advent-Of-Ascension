@@ -18,7 +18,7 @@ import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
 public class OneShotDamageLimiter extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.INCOMING_ATTACK_AFTER};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.INCOMING_DAMAGE_APPLICATION};
 
 	private final float restoreHealthTo;
 	private final float minActivationHealth;
@@ -53,14 +53,14 @@ public class OneShotDamageLimiter extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handlePostIncomingAttack(LivingDamageEvent ev) {
-		if (ev.getSource().is(Tags.DamageTypes.IS_TECHNICAL))
+	public void handlePreDamageApplication(LivingDamageEvent.Pre ev) {
+		if (ev.getContainer().getSource().is(Tags.DamageTypes.IS_TECHNICAL))
 			return;
 
 		LivingEntity player = ev.getEntity();
 
-		if (player instanceof ServerPlayer pl && player.getHealth() - ev.getAmount() <= 0 && player.getHealth() >= (minActivationHealth == 0 ? player.getMaxHealth() : minActivationHealth)) {
-			ev.setCanceled(true);
+		if (player instanceof ServerPlayer pl && player.getHealth() - ev.getContainer().getNewDamage() <= 0 && player.getHealth() >= (minActivationHealth == 0 ? player.getMaxHealth() : minActivationHealth)) {
+			ev.getContainer().setNewDamage(0);
 			player.setHealth(restoreHealthTo);
 			skill.getPlayerDataManager().getResource(AoAResources.ENERGY.get()).setValue(0);
 

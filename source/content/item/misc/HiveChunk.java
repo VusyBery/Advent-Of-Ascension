@@ -16,7 +16,7 @@ public class HiveChunk extends Item {
 				attacker.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(AoAItems.HIVE_EGG.get()));
 			}
 			else {
-				ItemUtil.givePlayerItemOrDrop((Player)attacker, new ItemStack(AoAItems.HIVE_EGG.get()));
+				InventoryUtil.giveItemTo((Player)attacker, AoAItems.HIVE_EGG);
 				stack.shrink(1);
 			}
 

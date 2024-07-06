@@ -16,6 +16,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.EntityEvents;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.EntityUtil;
@@ -40,30 +41,30 @@ public class InnervationSkill extends AoASkill.Instance {
 	}
 
 	@Override
-	public void handlePostOutgoingAttack(LivingDamageEvent ev) {
+	public void handleAfterAttacking(LivingDamageEvent.Post ev) {
 		LivingEntity target = ev.getEntity();
 
-		attackTracker.compute(target.getId(), (id, value) -> {
+		this.attackTracker.compute(target.getId(), (id, value) -> {
 			if (value == null)
-				return Pair.of(target.level().getGameTime(), ev.getAmount());
+				return Pair.of(target.level().getGameTime(), ev.getNewDamage());
 
-			return Pair.of(target.level().getGameTime(), Math.min(target.getMaxHealth() * 1.5f, ev.getAmount() + value.getSecond()));
+			return Pair.of(target.level().getGameTime(), Math.min(target.getMaxHealth() * 1.5f, ev.getNewDamage() + value.getSecond()));
 		});
 	}
 
 	@Override
 	public void handleEntityKill(LivingDeathEvent ev) {
 		LivingEntity target = ev.getEntity();
-		Pair<Long, Float> attackEntry = attackTracker.get(target.getId());
+		Pair<Long, Float> attackEntry = this.attackTracker.get(target.getId());
 		float damageDealt = attackEntry == null ? 5f : attackEntry.getSecond();
 
 		if (attackEntry != null)
-			attackTracker.remove(ev.getEntity().getId());
+			this.attackTracker.remove(ev.getEntity().getId());
 
 		if (canGainXp(true))
 			PlayerUtil.giveXpToPlayer((ServerPlayer)getPlayer(), type(), getKillXpForEntity(target, damageDealt), false);
 
-		if (attackTracker.size() > 10)
+		if (this.attackTracker.size() > 10)
 			purgeTracker(target.level().getGameTime());
 	}
 
@@ -72,7 +73,7 @@ public class InnervationSkill extends AoASkill.Instance {
 	}
 
 	public Int2ObjectMap.FastEntrySet<Pair<Long, Float>> getAttackEntries() {
-		return attackTracker.int2ObjectEntrySet();
+		return this.attackTracker.int2ObjectEntrySet();
 	}
 
 	public boolean hasAttackedEntity(Entity entity) {
@@ -87,7 +88,7 @@ public class InnervationSkill extends AoASkill.Instance {
 
 		xp *= 1 + (float)(Math.pow(armour / 30, 2) + Math.pow(toughness / 15, 1.5d));
 
-		if (target.getPersistentData().contains("spawned_by_spawner"))
+		if (target.getPersistentData().contains(EntityEvents.SPAWNED_BY_SPAWNER_TAG))
 			xp *= 0.25f;
 
 		if (target instanceof FlyingMob || (target instanceof Mob mob && mob.getNavigation() instanceof WaterBoundPathNavigation))

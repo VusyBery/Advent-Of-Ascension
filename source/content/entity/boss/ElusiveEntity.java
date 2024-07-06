@@ -77,7 +77,7 @@ public class ElusiveEntity extends AoAMeleeMob<ElusiveEntity> {
 	public InteractionResult interactAt(Player player, Vec3 vec, InteractionHand hand) {
 		if (player.getItemInHand(hand).getItem() == AoAItems.NIGHTMARE_FLAKES.get()) {
 			if (!level.isClientSide() && ItemUtil.findInventoryItem(player, new ItemStack(AoAItems.BLANK_REALMSTONE.get()), true, 1)) {
-				ItemUtil.givePlayerItemOrDrop(player, new ItemStack(AoAItems.GRECKON_REALMSTONE.get()));
+				InventoryUtil.giveItemTo(player, AoAItems.GRECKON_REALMSTONE);
 				player.getItemInHand(hand).shrink(1);
 			}
 

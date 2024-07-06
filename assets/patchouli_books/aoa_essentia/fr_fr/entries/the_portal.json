@@ -1,0 +1,101 @@
+{
+  "category": "aoa3:guides",
+  "extra_recipe_mappings": {
+    "aoa3:carved_rune_of_power": 4
+  },
+  "icon": "aoa3:abyss_portal",
+  "name": "Le portail",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Pour accéder aux autres dimensions d'$(aoa), tu vas devoir construire ton propre portail.$(br2)Les portails d'$(aoa) sont faits de $(thing)roche antique$() et de $(thing)runes gravées$(), et doivent être construits dans une forme particulière.$(br2)Pour faire un cadre portail, fabrique un rectangle vertical creux en $(thing)roche antique$(), puis remplace le bloc au milieu en bas par une $(l:aoa3:the_portal#carved_rune_of_power)rune gravée de puissance$(/l).",
+      "title": "Le portail"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Ensuite, il faut insérer $(l)une$() de chacune de ces quatres $(thing)runes gravées$() n'importe où dans le cadre:$(br2)$(thing)Rune gravée de réalité$()$(br2)$(thing)Rune gravée de déplacement$()$(br2)$(thing)Rune gravée d'espace$()$(br2)$(thing)Rune gravée de direction$()"
+    },
+    {
+      "type": "patchouli:multiblock",
+      "anchor": "portal_frame",
+      "multiblock": {
+        "mapping": {
+          "0": "aoa3:carved_rune_of_power",
+          "A": "aoa3:carved_rune_of_space",
+          "B": "aoa3:carved_rune_of_direction",
+          "C": "aoa3:carved_rune_of_reality",
+          "D": "aoa3:carved_rune_of_travel",
+          "a": "aoa3:ancient_rock"
+        },
+        "pattern": [
+          [
+            "a",
+            "a",
+            "a",
+            "a",
+            "a"
+          ],
+          [
+            "C",
+            " ",
+            " ",
+            " ",
+            "D"
+          ],
+          [
+            "a",
+            " ",
+            " ",
+            " ",
+            "a"
+          ],
+          [
+            "a",
+            " ",
+            " ",
+            " ",
+            "a"
+          ],
+          [
+            "A",
+            " ",
+            " ",
+            " ",
+            "B"
+          ],
+          [
+            "a",
+            "a",
+            "0",
+            "a",
+            "a"
+          ]
+        ]
+      },
+      "name": "Cadre de téléporteur",
+      "text": "Le portail doit inclure les 5 runes et 13 blocs de roche."
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Quatre des runes gravées peuvent être trouvées à la Surface (ou Overworld), cachées dans des coffres, lâchées par diverses créatures, ou obtenues grâce à diverses actions.$(br2) La cinquième; la $(l:aoa3:the_portal#carved_rune_of_power)rune gravée de puissance$(/l), doit être fabriquée."
+    },
+    {
+      "type": "patchouli:crafting",
+      "anchor": "carved_rune_of_power",
+      "recipe": "aoa3:crafting_shaped_carved_rune_of_power",
+      "text": "",
+      "title": "Rune gravée de puissance"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Une fois que le cadre est construit, tu peux l'activer en utilisant une $(thing)relique$() dessus. Un seul portail peut servir à accéder à de nombreux mondes."
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Plus d'informations peuvent être trouvées sur le $(thing)wiki officiel$().",
+      "url": "https://adventofascension.fandom.com/wiki/Ancient_Teleportation#Creating_the_portal_frame"
+    }
+  ],
+  "sortnum": 2
+}

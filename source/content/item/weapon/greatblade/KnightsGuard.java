@@ -7,8 +7,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.common.ToolAction;
-import net.neoforged.neoforge.common.ToolActions;
+import net.neoforged.neoforge.common.ItemAbility;
+import net.neoforged.neoforge.common.ItemAbilities;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.List;
@@ -24,8 +24,8 @@ public class KnightsGuard extends BaseGreatblade {
 	}
 
 	@Override
-	public boolean canPerformAction(ItemStack stack, ToolAction toolAction) {
-		return ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
+	public boolean canPerformAction(ItemStack stack, ItemAbility ItemAbility) {
+		return ItemAbilities.DEFAULT_SHIELD_ACTIONS.contains(ItemAbility);
 	}
 
 	@Override

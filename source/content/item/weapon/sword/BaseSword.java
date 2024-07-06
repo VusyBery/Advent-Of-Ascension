@@ -12,12 +12,17 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.Tool;
 import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 
 public class BaseSword extends SwordItem {
 	public BaseSword(Tier tier, Item.Properties properties) {
 		super(tier, properties);
+	}
+
+	public BaseSword(Tier tier, Item.Properties properties, Tool toolComponent) {
+		super(tier, properties, toolComponent);
 	}
 
 	public float getBaseDamage(ItemStack stack) {

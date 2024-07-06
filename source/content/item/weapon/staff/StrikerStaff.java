@@ -12,7 +12,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -20,7 +19,6 @@ import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +45,7 @@ public class StrikerStaff extends BaseStaff<BlockPos> {
 	}
 
 	@Override
-	public void cast(Level level, ItemStack staff, LivingEntity caster, BlockPos args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, BlockPos args) {
 		if (level instanceof ServerLevel serverLevel)
 			WorldUtil.spawnLightning(serverLevel, caster instanceof ServerPlayer ? (ServerPlayer)caster : null, args.getX(), args.getY(), args.getZ(), true, false);
 	}

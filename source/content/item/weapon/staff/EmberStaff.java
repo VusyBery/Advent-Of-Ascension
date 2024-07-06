@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
@@ -15,7 +16,6 @@ import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -26,7 +26,6 @@ import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,13 +63,13 @@ public class EmberStaff extends BaseStaff<Pair<List<BlockPos>, List<Entity>>> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, Pair<List<BlockPos>, List<Entity>> args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Pair<List<BlockPos>, List<Entity>> args) {
 		for (Entity entity : args.getSecond()) {
 			entity.clearFire();
 		}
 
 		for (BlockPos pos : args.getFirst()) {
-			world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+			level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
 		}
 	}
 

@@ -59,9 +59,7 @@ public class ThermallyInsulatedRod extends HaulingRod {
 				}
 			}
 
-			if (!player.isCreative())
-				ItemUtil.damageItem(stack, player, hand, event.getRodDamage());
-
+			ItemUtil.damageItemForUser(player, stack, event.getRodDamage(), hand);
 			player.level().addFreshEntity(new ExperienceOrb(player.level(), player.getX() + 0.5d, player.getY() + 0.5d, player.getZ() + 0.5d, event.getXp()));
 			bobber.discard();
 		}

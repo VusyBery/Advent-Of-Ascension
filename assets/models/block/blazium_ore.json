@@ -1,8 +1,9 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "aoa3:block/overlay_cube",
   "render_type": "minecraft:cutout_mipped",
   "textures": {
-    "all": "aoa3:block/blazium_ore",
-    "particle": "aoa3:block/blazium_ore"
+    "overlay": "aoa3:block/blazium_ore",
+    "particle": "#texture",
+    "texture": "aoa3:block/hellstone"
   }
 }

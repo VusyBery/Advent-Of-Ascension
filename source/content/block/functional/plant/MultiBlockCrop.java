@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.neoforged.neoforge.common.IPlantable;
 
 import java.util.function.Supplier;
 
@@ -75,14 +74,6 @@ public abstract class MultiBlockCrop extends AoACropBlock {
 	@Override
 	protected boolean mayPlaceOn(BlockState state, BlockGetter world, BlockPos pos) {
 		return (state.getBlock() == this && isMaxAgeForPart(state)) || state.getBlock() instanceof FarmBlock;
-	}
-
-	@Override
-	public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) {
-		if (state.getBlock() == this)
-			return state.getValue(getHeightProperty()) < getGrowthHeight() && isMaxAgeForPart(state);
-
-		return super.canSustainPlant(state, world, pos, facing, plantable);
 	}
 
 	@Override
@@ -188,7 +179,7 @@ public abstract class MultiBlockCrop extends AoACropBlock {
 			int height = state.getValue(getHeightProperty());
 
 			if (age <= stagesPerBlock() * (1 + height) - 1) {
-				float growthSpeed = getGrowthSpeed(this, world, pos);
+				float growthSpeed = getGrowthSpeed(state, world, pos);
 
 				if (CommonHooks.canCropGrow(world, pos, state, rand.nextInt((int)(25f / growthSpeed) + 1) == 0)) {
 					growDown(world, pos, state);

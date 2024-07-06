@@ -12,7 +12,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LevelEvent;
@@ -25,7 +24,6 @@ import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +72,7 @@ public class FungalStaff extends BaseStaff<Object2BooleanArrayMap<BlockPos>> {
 	}
 
 	@Override
-	public void cast(Level level, ItemStack staff, LivingEntity caster, Object2BooleanArrayMap<BlockPos> args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Object2BooleanArrayMap<BlockPos> args) {
 		if (level instanceof ServerLevel) {
 			for (Object2BooleanArrayMap.Entry<BlockPos> entry : args.object2BooleanEntrySet()) {
 				BlockPos pos = entry.getKey();

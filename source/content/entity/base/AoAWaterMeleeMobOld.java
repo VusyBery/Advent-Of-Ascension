@@ -80,9 +80,6 @@ public abstract class AoAWaterMeleeMobOld extends WaterAnimal implements Enemy, 
 		return super.finalizeSpawn(world, difficulty, reason, spawnData);
 	}
 
-	@Override
-	public abstract float getEyeHeightAccess(Pose pose);
-
 	@Nullable
 	@Override
 	protected SoundEvent getDeathSound() {

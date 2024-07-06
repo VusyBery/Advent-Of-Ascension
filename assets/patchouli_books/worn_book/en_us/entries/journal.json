@@ -19,7 +19,7 @@
     {
       "type": "patchouli:crafting",
       "recipe": "aoa3:crafting_shaped_carved_rune_of_power",
-      "text": "The fifth key rune must be hand-crafted from a combination of $(thing)unpowered runes$() and an $(thing)ender eye$(), imbued into a central blackened stone. Something like this"
+      "text": "The fifth key rune must be hand-crafted from a combination of $(thing)unpowered runes$() and an $(thing)ender eye$(), imbued into a central blackened stone. Something like this:"
     },
     {
       "type": "patchouli:text",

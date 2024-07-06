@@ -8,14 +8,14 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.GsonHelper;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 
 public class OnKillDamageBoost extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK_DURING, ListenerType.ENTITY_KILL};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK, ListenerType.ENTITY_KILL};
 
 	private long boostExpiry;
 
@@ -47,7 +47,7 @@ public class OnKillDamageBoost extends AoAAbility.Instance {
 	}
 
 	@Override
-	public void handleOutgoingAttack(LivingHurtEvent ev) {
+	public void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
 		if (ev.getEntity().level().getGameTime() < boostExpiry && !ev.getSource().is(DamageTypeTags.IS_EXPLOSION))
 			ev.setAmount(ev.getAmount() * this.modifier);
 	}

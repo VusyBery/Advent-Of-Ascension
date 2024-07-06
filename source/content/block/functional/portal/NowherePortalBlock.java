@@ -55,4 +55,12 @@ public class NowherePortalBlock extends PortalBlock {
 
 		return super.findExistingPortal(targetLevel, entity, originPos);
 	}
+
+	@Override
+	public BlockPos findSuitablePortalLocation(Level level, Entity entity, BlockPos originPos) {
+		if (WorldUtil.isWorld(level, Level.OVERWORLD))
+			return level.getSharedSpawnPos();
+
+		return super.findSuitablePortalLocation(level, entity, originPos);
+	}
 }

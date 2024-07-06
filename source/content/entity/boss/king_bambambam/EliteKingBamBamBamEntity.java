@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
@@ -292,9 +293,9 @@ public class EliteKingBamBamBamEntity extends AoABoss implements AoARangedAttack
 	}
 
 	@Override
-	protected void onHurt(DamageSource source, float amount) {
+	public void onDamageTaken(DamageContainer damageContainer) {
 		if (EXHAUSTED.is(this, false))
-			consumeEnergy((int)Math.floor(amount));
+			consumeEnergy((int)Math.floor(damageContainer.getNewDamage()));
 	}
 
 	@Override

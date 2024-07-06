@@ -67,9 +67,9 @@ public class SpiritResource extends AoAResource.Instance {
 	}
 
 	@Override
-	public void handlePostOutgoingAttack(LivingDamageEvent ev) {
+	public void handleAfterAttacking(LivingDamageEvent.Post ev) {
 		if (this.value < getMaxValue() && !ev.getSource().is(AoATags.DamageTypes.NO_SPIRIT_REGEN))
-			addValue(getHealthScaledRegen(this.regenPerDamage * ev.getAmount()));
+			addValue(getHealthScaledRegen(this.regenPerDamage * ev.getNewDamage()));
 	}
 
 	@Override

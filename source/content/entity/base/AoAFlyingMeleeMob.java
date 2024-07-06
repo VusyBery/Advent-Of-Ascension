@@ -74,9 +74,6 @@ public abstract class AoAFlyingMeleeMob extends FlyingMob implements Enemy, GeoE
 	}
 
 	@Override
-	public abstract float getEyeHeightAccess(Pose pose);
-
-	@Override
 	public SoundSource getSoundSource() {
 		return SoundSource.HOSTILE;
 	}

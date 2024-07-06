@@ -4,18 +4,17 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.util.LocaleUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 
 public class ShadowlordStaff extends BaseStaff<Object> {
@@ -37,7 +36,7 @@ public class ShadowlordStaff extends BaseStaff<Object> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, Object args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, Object args) {
 		//caster.level.addFreshEntity(new ShadowStalkerEntity(world, caster)); TODO
 	}
 

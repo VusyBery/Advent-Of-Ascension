@@ -7,7 +7,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -27,11 +26,6 @@ public class GyrocopterEntity extends Entity {
         super(entityType, world);
 
         setSilent(true);
-    }
-
-    @Override
-    public float getEyeHeightAccess(Pose pose) {
-        return 0.8125f;
     }
 
     @Override

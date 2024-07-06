@@ -1,19 +1,18 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class EmbrodiumArmour extends AdventArmour {
@@ -22,21 +21,18 @@ public class EmbrodiumArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.EMBRODIUM;
-	}
+	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
+		if (entity instanceof ServerPlayer player) {
+			if (equippedPieces.contains(Piece.FULL_SET)) {
+				PlayerUtil.addResourceToPlayer(player, AoAResources.SPIRIT.get(), 0.08f);
 
-	@Override
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		if (slots == null) {
-			plData.getResource(AoAResources.SPIRIT.get()).addValue(0.08f);
-		}
-		else {
-			Player pl = plData.player();
-			float temp = WorldUtil.getAmbientTemperature(pl.level(), pl.blockPosition());
+				return;
+			}
+
+			float temp = WorldUtil.getAmbientTemperature(player.level(), player.blockPosition());
 
 			if (temp > 0.8f)
-				plData.getResource(AoAResources.SPIRIT.get()).addValue(0.08f * slots.size() * Math.min(1f, (temp / 2f)));
+				PlayerUtil.addResourceToPlayer(player, AoAResources.SPIRIT.get(), 0.08f * equippedPieces.size() * Math.min(1f, (temp / 2f)));
 		}
 	}
 

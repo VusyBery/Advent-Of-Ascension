@@ -27,7 +27,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Using a $(thing)Hauling rod$() isn't too different from the standard rod. The key difference is that instead of the fish being a stream of bubbles, and instantly reeling it in; the fish itself actually bites onto the lure, and attempts to swim away in panic.$(br)You'll need to continuously pull the entity towards you with fast clicking to successfully land it"
+      "text": "Using a $(thing)Hauling rod$() isn't too different from the standard rod. The key difference is that instead of the fish being a stream of bubbles, and instantly reeling it in; the fish itself actually bites onto the lure, and attempts to swim away in panic.$(br)You'll need to continuously pull the entity towards you with fast clicking to successfully land it."
     },
     {
       "type": "patchouli:spotlight",
@@ -36,7 +36,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "An upgrade of the standard Hauling rod, this enhanced version uses a heavier lure and thermally-resistant materials to allow you to finally pull in some creatures from the depths of lava.$(br)Fishing in lava offers alternative creatures and loot"
+      "text": "An upgrade of the standard Hauling rod, this enhanced version uses a heavier lure and thermally-resistant materials to allow you to finally pull in some creatures from the depths of lava.$(br)Fishing in lava offers alternative creatures and loot."
     },
     {
       "type": "patchouli:spotlight",

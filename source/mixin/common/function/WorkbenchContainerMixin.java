@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class WorkbenchContainerMixin {
 	@WrapOperation(method = "slotChangedCraftingGrid", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/ResultContainer;setItem(ILnet/minecraft/world/item/ItemStack;)V"))
     private static void aoa3$fireCraftingEvent(ResultContainer container, int slotIndex, ItemStack stack, Operation<Void> original, @Local(argsOnly = true, index = 2) Player player, @Local(argsOnly = true, index = 3) CraftingContainer craftingInventory) {
-		if (AoAEvents.firePlayerCraftingEvent(player, container.getItem(0), craftingInventory, container))
+		if (AoAEvents.firePlayerCraftingEvent(player, stack, craftingInventory, container))
 			stack = ItemStack.EMPTY;
 
 		original.call(container, slotIndex, stack);

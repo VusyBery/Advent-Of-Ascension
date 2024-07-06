@@ -17,8 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.common.ToolActions;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntityDataSerializers;
@@ -72,7 +72,7 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 		if (heldItem.isEmpty())
 			return getType().getDescriptionId() + ".interact.empty";
 
-		if (!heldItem.getItem().canPerformAction(heldItem, ToolActions.HOE_TILL))
+		if (!heldItem.getItem().canPerformAction(heldItem, ItemAbilities.HOE_TILL))
 			return getType().getDescriptionId() + ".interact.incorrect";
 
 		return null;
@@ -98,7 +98,7 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 			if (OWNER.get(this).isEmpty())
 				OWNER.set(this, Optional.of(player.getUUID()));
 
-			if (heldStack.canPerformAction(ToolActions.HOE_TILL)) {
+			if (heldStack.canPerformAction(ItemAbilities.HOE_TILL)) {
 				if (getVariant().isCorrectOffering(heldStack)) {
 					if (!level().isClientSide()) {
 						SUCCESS_TIMER.set(this, 44);

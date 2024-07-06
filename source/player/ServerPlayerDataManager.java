@@ -1,9 +1,12 @@
 package net.tslat.aoa3.player;
 
 import com.google.common.collect.ArrayListMultimap;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
@@ -16,10 +19,12 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -48,11 +53,9 @@ import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.scheduling.AoAScheduler;
-import net.tslat.aoa3.util.AdvancementUtil;
-import net.tslat.aoa3.util.EnchantmentUtil;
-import net.tslat.aoa3.util.ItemUtil;
-import net.tslat.aoa3.util.PlayerUtil;
+import net.tslat.aoa3.util.*;
 import net.tslat.smartbrainlib.util.RandomUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
@@ -69,26 +72,25 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	private PlayerEquipment equipment;
 
 	private final Object2ObjectOpenHashMap<AoASkill, AoASkill.Instance> skills = new Object2ObjectOpenHashMap<>(10);
-	private final Object2ObjectOpenHashMap<AoAResource, AoAResource.Instance> resources = new Object2ObjectOpenHashMap<>(1);
+	private final Object2ObjectOpenHashMap<AoAResource, AoAResource.Instance> resources = new Object2ObjectOpenHashMap<>(3);
 
 	private final ArrayListMultimap<ListenerType, AoAPlayerEventListener> activeEventListeners = ArrayListMultimap.create();
 	private final ArrayListMultimap<ListenerType, AoAPlayerEventListener> disabledEventListeners = ArrayListMultimap.create();
 	private final ObjectOpenHashSet<AoAPlayerEventListener> dirtyListeners = new ObjectOpenHashSet<>();
 
-	private Object2ObjectOpenHashMap<ResourceKey<Level>, PortalCoordinatesContainer> portalCoordinatesMap = new Object2ObjectOpenHashMap<>();
+	private final Object2ObjectOpenHashMap<ResourceKey<Level>, PortalCoordinatesContainer> portalCoordinatesMap = new Object2ObjectOpenHashMap<>();
+	private final CopyOnWriteArraySet<ResourceLocation> patchouliBooks = new CopyOnWriteArraySet<>();
+
 	private ItemStack[] itemStorage = null;
 	private PositionAndRotation checkpoint = null;
 
-	private CopyOnWriteArraySet<ResourceLocation> patchouliBooks = null;
 	private boolean syncBooks = false;
-
 	private boolean isLegitimate = true;
-
 	private boolean abilitiesRegionLocked = false;
 
 	public ServerPlayerDataManager(ServerPlayer player) {
 		this.player = player;
-		this.equipment = new PlayerEquipment(this);
+		this.equipment = new PlayerEquipment();
 
 		populateSkillsAndResources();
 		gatherListeners();
@@ -230,12 +232,8 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		if (baseTag.contains("PatchouliBooks")) {
 			ListTag booksNbt = baseTag.getList("PatchouliBooks", Tag.TAG_STRING);
 
-			if (patchouliBooks == null) {
-				patchouliBooks = new CopyOnWriteArraySet<>();
-			}
-			else if (!patchouliBooks.isEmpty()) {
+			if (!patchouliBooks.isEmpty())
 				patchouliBooks.clear();
-			}
 
 			for (Tag book : booksNbt) {
 				ResourceLocation.read(book.getAsString()).resultOrPartial(err -> Logging.logMessage(org.apache.logging.log4j.Level.WARN, err)).ifPresent(patchouliBooks::add);
@@ -302,13 +300,13 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	private void selfDestruct() {
 		player = null;
 		equipment = null;
-		patchouliBooks = null;
 		checkpoint = null;
 
 		skills.clear();
 		resources.clear();
 		portalCoordinatesMap.clear();
 		activeEventListeners.clear();
+		patchouliBooks.clear();
 
 		if (itemStorage != null)
 			Arrays.fill(this.itemStorage, null);
@@ -339,11 +337,8 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	public static void syncNewPlayer(ServerPlayer pl) {
 		ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
 
-		if (plData.patchouliBooks == null && IntegrationManager.isPatchouliActive()) {
-			plData.patchouliBooks = new CopyOnWriteArraySet<>();
-
+		if (plData.patchouliBooks.isEmpty() && IntegrationManager.isPatchouliActive())
 			plData.patchouliBooks.add(AdventOfAscension.id("aoa_essentia"));
-		}
 
 		if (SkillsLeaderboard.isEnabled())
 			LeaderboardActions.addNewPlayer(plData);
@@ -373,8 +368,6 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 				listeners.remove();
 			}
 		}
-
-		equipment.handleEquipmentCheck(this);
 
 		CompoundTag syncData = null;
 		CompoundTag skillData = null;
@@ -469,7 +462,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 
                 this.itemStorage[i] = ItemStack.EMPTY;
             }
-            else if (ItemUtil.areStacksFunctionallyEqual(slotItem, storageItem)) {
+            else if (ItemStack.isSameItemSameComponents(slotItem, storageItem)) {
                 int growSize = Math.min(slotItem.getMaxStackSize(), slotItem.getCount() + storageItem.getCount()) - slotItem.getCount();
 
                 if (growSize > 0) {
@@ -486,7 +479,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
             }
         }
 
-        ItemUtil.givePlayerMultipleItems(this.player, this.itemStorage);
+        InventoryUtil.giveItemsTo(this.player, this.itemStorage);
 
         this.itemStorage = null;
     }
@@ -648,11 +641,6 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	}
 
 	@Override
-	public void handleArmourChange(final LivingEquipmentChangeEvent ev) {
-		equipment().markDirty();
-	}
-
-	@Override
 	public boolean isLegitimate() {
 		return this.isLegitimate;
 	}
@@ -669,9 +657,6 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	}
 
 	public void addPatchouliBook(ResourceLocation book) {
-		if (patchouliBooks == null)
-			patchouliBooks = new CopyOnWriteArraySet<>();
-
 		patchouliBooks.add(book);
 		syncBooks = true;
 	}
@@ -694,11 +679,11 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 				newInstance.loadFromNbt(entry.getValue().saveToNbt());
 		}
 
-		this.equipment.cooldowns = sourceData.equipment.cooldowns;
-		this.portalCoordinatesMap = sourceData.portalCoordinatesMap;
+		this.equipment.cooldowns.putAll(sourceData.equipment.cooldowns);
+		this.portalCoordinatesMap.putAll(sourceData.portalCoordinatesMap);
+		this.patchouliBooks.addAll(sourceData.patchouliBooks);
+		this.itemStorage = ArrayUtils.clone(sourceData.itemStorage);
 		this.checkpoint = sourceData.checkpoint;
-		this.itemStorage = sourceData.itemStorage;
-		this.patchouliBooks = sourceData.patchouliBooks;
 		this.isLegitimate = sourceData.isLegitimate;
 
 		AoAScheduler.scheduleSyncronisedTask(sourceData::selfDestruct, 1);
@@ -798,38 +783,24 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 	}
 
 	public final class PlayerEquipment implements AoAPlayerEventListener {
-		private final ServerPlayerDataManager playerDataManager;
+		private final Object2IntMap<String> cooldowns = new Object2IntOpenHashMap<>();
+		private final Map<Holder<ArmorMaterial>, AdventArmourSetContainer> armourMap = new Object2ObjectOpenHashMap<>(4);
+		private final EnumMap<AdventArmour.Piece, AdventArmour> equippedArmour = new EnumMap<>(AdventArmour.Piece.class);
 
-		private HashMap<String, Integer> cooldowns = new HashMap<>(1);
-		private final HashMap<AdventArmour.Type, ArmourEffectWrapper> armourMap = new HashMap<>(4);
-
-		private boolean checkEquipment = true;
-
-		private AdventArmour currentFullSet = null;
-
-		private AdventArmour helmet = null;
-		private AdventArmour body = null;
-		private AdventArmour legs = null;
-		private AdventArmour boots = null;
-
-		private PlayerEquipment(ServerPlayerDataManager playerData) {
-			this.playerDataManager = playerData;
-		}
-
-		public void markDirty() {
-			this.checkEquipment = true;
-		}
+		private boolean checkNewArmour = false;
 
 		@Override
 		public ListenerType[] getListenerTypes() {
 			return new ListenerType[] {
-					ListenerType.INCOMING_ATTACK_BEFORE,
-					ListenerType.INCOMING_ATTACK_DURING,
-					ListenerType.INCOMING_ATTACK_AFTER,
-					ListenerType.OUTGOING_ATTACK_DURING,
-					ListenerType.PLAYER_FALL,
-					ListenerType.PLAYER_DEATH,
-					ListenerType.PLAYER_TICK
+					ListenerType.EQUIPMENT_CHANGE,
+					ListenerType.PLAYER_TICK,
+					ListenerType.ENTITY_INVULNERABILITY,
+					ListenerType.INCOMING_DAMAGE,
+					ListenerType.INCOMING_DAMAGE_APPLICATION,
+					ListenerType.INCOMING_DAMAGE_AFTER,
+					ListenerType.OUTGOING_ATTACK,
+					ListenerType.OUTGOING_ATTACK_AFTER,
+					ListenerType.PLAYER_DEATH
 			};
 		}
 
@@ -845,139 +816,73 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 			cooldowns.put(counter, cooldownTicks);
 		}
 
-		public AdventArmour.Type getCurrentFullArmourSet() {
-			return currentFullSet != null ? currentFullSet.getSetType() : AdventArmour.Type.NONE;
+		@Nullable
+		public Holder<ArmorMaterial> getCurrentFullArmourSet() {
+			AdventArmour setArmour = this.equippedArmour.get(AdventArmour.Piece.FULL_SET);
+
+			return setArmour != null ? setArmour.getMaterial() : null;
 		}
 
 		@Override
-		public void handlePreIncomingAttack(final LivingAttackEvent ev) {
-			if (currentFullSet != null)
-				currentFullSet.onPreAttackReceived(playerDataManager, null, ev);
-
-			for (ArmourEffectWrapper wrapper : armourMap.values()) {
-				wrapper.armour.onPreAttackReceived(playerDataManager, wrapper.currentSlots, ev);
+		public void handleEntityInvulnerability(final EntityInvulnerabilityCheckEvent ev) {
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.checkDamageInvulnerability(player, wrapper.equippedPieces(), ev);
 			}
 		}
 
 		@Override
-		public void handleIncomingAttack(final LivingHurtEvent ev) {
-			if (currentFullSet != null)
-				currentFullSet.onAttackReceived(playerDataManager, null, ev);
-
-			for (ArmourEffectWrapper wrapper : armourMap.values()) {
-				wrapper.armour.onAttackReceived(playerDataManager, wrapper.currentSlots, ev);
+		public void handleIncomingDamage(final LivingIncomingDamageEvent ev) {
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.handleIncomingDamage(player, wrapper.equippedPieces(), ev);
 			}
 		}
 
 		@Override
-		public void handleOutgoingAttack(final LivingHurtEvent ev) {
-			if (currentFullSet != null)
-				currentFullSet.onDamageDealt(playerDataManager, null, ev);
-
-			for (ArmourEffectWrapper wrapper : armourMap.values()) {
-				wrapper.armour.onDamageDealt(playerDataManager, wrapper.currentSlots, ev);
+		public void handleOutgoingAttack(final LivingIncomingDamageEvent ev) {
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.handleOutgoingAttack(player, wrapper.equippedPieces(), ev);
 			}
 		}
 
 		@Override
-		public void handlePostIncomingAttack(final LivingDamageEvent ev) {
-			if (currentFullSet != null)
-				currentFullSet.onPostAttackReceived(playerDataManager, null, ev);
-
-			for (ArmourEffectWrapper wrapper : armourMap.values()) {
-				wrapper.armour.onPostAttackReceived(playerDataManager, wrapper.currentSlots, ev);
+		public void handlePreDamageApplication(LivingDamageEvent.Pre ev) {
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.beforeTakingDamage(player, wrapper.equippedPieces(), ev);
 			}
 		}
 
 		@Override
-		public void handlePlayerFall(final LivingFallEvent ev) {
-			if (currentFullSet != null)
-				currentFullSet.onPlayerLandingFall(playerDataManager, null, ev);
+		public void handleAfterDamaged(final LivingDamageEvent.Post ev) {
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.afterTakingDamage(player, wrapper.equippedPieces(), ev);
+			}
+		}
 
-			for (ArmourEffectWrapper wrapper : armourMap.values()) {
-				wrapper.armour.onPlayerLandingFall(playerDataManager, wrapper.currentSlots, ev);
+		@Override
+		public void handleAfterAttacking(final LivingDamageEvent.Post ev) {
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.afterOutgoingAttack(player, wrapper.equippedPieces(), ev);
 			}
 		}
 
 		@Override
 		public void handlePlayerDeath(final LivingDeathEvent ev) {
-			if (currentFullSet != null)
-				currentFullSet.onPlayerDeath(playerDataManager, null, ev);
-
-			for (ArmourEffectWrapper wrapper : armourMap.values()) {
-				wrapper.armour.onPlayerDeath(playerDataManager, wrapper.currentSlots, ev);
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.onEntityDeath(player, wrapper.equippedPieces(), ev);
 			}
 		}
 
-		void handleEquipmentCheck(ServerPlayerDataManager playerDataManager) {
-			if (!checkEquipment)
-				return;
-
-			boolean armourChanged;
-
-			armourChanged = checkAndHandleArmourSwap(boots, player.getInventory().armor.get(0).getItem(), EquipmentSlot.FEET);
-			armourChanged |= checkAndHandleArmourSwap(legs, player.getInventory().armor.get(1).getItem(), EquipmentSlot.LEGS);
-			armourChanged |= checkAndHandleArmourSwap(body, player.getInventory().armor.get(2).getItem(), EquipmentSlot.CHEST);
-			armourChanged |= checkAndHandleArmourSwap(helmet, player.getInventory().armor.get(3).getItem(), EquipmentSlot.HEAD);
-
-			AdventArmour oldSet = currentFullSet;
-
-			if (armourChanged) {
-				if (boots != null && legs != null && body != null && helmet != null && boots.getSetType() == legs.getSetType() && legs.getSetType() == body.getSetType() && body.isSetHelmet(helmet)) {
-					currentFullSet = boots;
-
-					if (currentFullSet != oldSet) {
-						if (oldSet != null)
-							unequipAdventArmour(playerDataManager, oldSet, null);
-
-						equipAdventArmour(playerDataManager, currentFullSet, null);
-					}
-				}
-				else {
-					currentFullSet = null;
-
-					if (oldSet != null)
-						unequipAdventArmour(playerDataManager, oldSet, null);
-				}
-			}
-
-			checkEquipment = false;
+		@Override
+		public void handleArmourChange(final LivingEquipmentChangeEvent ev) {
+			if (ev.getSlot().isArmor())
+				this.checkNewArmour = true;
 		}
 
-		private boolean checkAndHandleArmourSwap(@Nullable AdventArmour currentPiece, @NotNull Item newPiece, @NotNull EquipmentSlot slot) {
-			boolean changed = false;
-
-			if (newPiece != currentPiece) {
-				changed = true;
-
-				if (currentPiece != null)
-					unequipAdventArmour(playerDataManager, currentPiece, slot);
-
-				switch (slot) {
-					case FEET -> {
-						boots = newPiece instanceof AdventArmour ? (AdventArmour)newPiece : null;
-						if (boots != null && AoASkillReqReloadListener.canEquip(playerDataManager, boots, false))
-							equipAdventArmour(playerDataManager, boots, slot);
-					}
-					case LEGS -> {
-						legs = newPiece instanceof AdventArmour ? (AdventArmour)newPiece : null;
-						if (legs != null && AoASkillReqReloadListener.canEquip(playerDataManager, legs, false))
-							equipAdventArmour(playerDataManager, legs, slot);
-					}
-					case CHEST -> {
-						body = newPiece instanceof AdventArmour ? (AdventArmour)newPiece : null;
-						if (body != null && AoASkillReqReloadListener.canEquip(playerDataManager, body, false))
-							equipAdventArmour(playerDataManager, body, slot);
-					}
-					case HEAD -> {
-						helmet = newPiece instanceof AdventArmour ? (AdventArmour)newPiece : null;
-						if (helmet != null && AoASkillReqReloadListener.canEquip(playerDataManager, helmet, false))
-							equipAdventArmour(playerDataManager, helmet, slot);
-					}
-				}
+		@Override
+		public void handleEffectApplicability(MobEffectEvent.Applicable ev) {
+			for (AdventArmourSetContainer wrapper : armourMap.values()) {
+				wrapper.armour.onEffectApplication(player, wrapper.equippedPieces(), ev);
 			}
-
-			return changed;
 		}
 
 		@Override
@@ -985,123 +890,135 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 			if (!player.isAlive() || player.isSpectator())
 				return;
 
+			this.cooldowns.object2IntEntrySet().removeIf(entry -> entry.setValue(entry.getIntValue() - 1) <= 1);
+
+			if (this.checkNewArmour)
+				checkNewArmour();
+
+			if (!checkEquippedItems())
+				return;
+
+			for (AdventArmourSetContainer container : this.armourMap.values()) {
+				container.armour().onArmourTick(player, container.equippedPieces());
+			}
+		}
+
+		private void checkNewArmour() {
 			boolean armourChanged = false;
 
-			if (PlayerUtil.shouldPlayerBeAffected(player)) {
-				boolean handsChanged = false;
+			for (AdventArmour.Piece piece : AdventArmour.Piece.values()) {
+				EquipmentSlot slot = piece.toVanillaSlot();
 
-				for (InteractionHand hand : InteractionHand.values()) {
-					ItemStack heldStack = player.getItemInHand(hand);
+				if (slot == null)
+					continue;
 
-					if (!AoASkillReqReloadListener.canEquip(playerDataManager, heldStack.getItem(), true)) {
-						handsChanged = true;
+				AdventArmour existingArmour = this.equippedArmour.get(piece);
+				Item wornItem = player.getItemBySlot(slot).getItem();
 
-						ItemHandlerHelper.giveItemToPlayer(player, heldStack);
-						player.setItemInHand(hand, ItemStack.EMPTY);
+				if (existingArmour == wornItem)
+					continue;
+
+				armourChanged = true;
+
+				if (existingArmour != null)
+					unequipAdventArmour(existingArmour, piece);
+
+				AdventArmour newArmour = wornItem instanceof AdventArmour adventArmour ? adventArmour : null;
+
+				this.equippedArmour.put(piece, newArmour);
+
+				if (newArmour != null && (player.getAbilities().instabuild || AoASkillReqReloadListener.canEquip(ServerPlayerDataManager.this, newArmour, false)))
+					equipAdventArmour(newArmour, piece);
+			}
+
+			if (armourChanged) {
+				AdventArmour oldSet = this.equippedArmour.remove(AdventArmour.Piece.FULL_SET);
+				AdventArmour newSet = null;
+
+				if (ObjectUtil.allEquivalent((piece1, piece2) -> piece1 != null && piece2 != null && (piece1.getMaterial().is(piece2.getMaterial()) || piece1.isCompatibleWithAnySet() || piece2.isCompatibleWithAnySet()), this.equippedArmour.values().toArray(new AdventArmour[0]))) {
+					for (AdventArmour armour : this.equippedArmour.values()) {
+						if (!armour.isCompatibleWithAnySet()) {
+							newSet = armour;
+
+							break;
+						}
 					}
 				}
 
-				if (boots != null && !AoASkillReqReloadListener.canEquip(playerDataManager, boots, true)) {
-					armourChanged = true;
+				if (newSet != null)
+					this.equippedArmour.put(AdventArmour.Piece.FULL_SET, newSet);
 
-					ItemHandlerHelper.giveItemToPlayer(player, player.getInventory().armor.get(0));
-					player.getInventory().armor.set(0, ItemStack.EMPTY);
-					unequipAdventArmour(playerDataManager, boots, EquipmentSlot.FEET);
-				}
+				if (newSet != oldSet) {
+					if (oldSet != null)
+						unequipAdventArmour(oldSet, AdventArmour.Piece.FULL_SET);
 
-				if (legs != null && !AoASkillReqReloadListener.canEquip(playerDataManager, legs, true)) {
-					armourChanged = true;
-
-					ItemHandlerHelper.giveItemToPlayer(player, player.getInventory().armor.get(1));
-					player.getInventory().armor.set(1, ItemStack.EMPTY);
-					unequipAdventArmour(playerDataManager, legs, EquipmentSlot.LEGS);
-				}
-
-				if (body != null && !AoASkillReqReloadListener.canEquip(playerDataManager, body, true)) {
-					armourChanged = true;
-
-					ItemHandlerHelper.giveItemToPlayer(player, player.getInventory().armor.get(2));
-					player.getInventory().armor.set(2, ItemStack.EMPTY);
-					unequipAdventArmour(playerDataManager, body, EquipmentSlot.CHEST);
-				}
-
-				if (helmet != null && !AoASkillReqReloadListener.canEquip(playerDataManager, helmet, true)) {
-					armourChanged = true;
-
-					ItemHandlerHelper.giveItemToPlayer(player, player.getInventory().armor.get(3));
-					player.getInventory().armor.set(3, ItemStack.EMPTY);
-					unequipAdventArmour(playerDataManager, helmet, EquipmentSlot.HEAD);
-				}
-
-				if (handsChanged || armourChanged)
-					player.inventoryMenu.broadcastChanges();
-			}
-
-			if (!armourChanged) {
-				if (currentFullSet != null)
-					currentFullSet.onEffectTick(playerDataManager, null);
-
-				for (ArmourEffectWrapper wrapper : armourMap.values()) {
-					wrapper.armour.onEffectTick(playerDataManager, wrapper.currentSlots);
-				}
-			}
-
-			handleCooldowns();
-		}
-
-		private void equipAdventArmour(ServerPlayerDataManager plData, AdventArmour item, @Nullable EquipmentSlot slot) {
-			item.onEquip(plData, slot);
-
-			ArmourEffectWrapper armourEffectWrapper = armourMap.get(item.getSetType());
-
-			if (slot != null) {
-				if (armourEffectWrapper == null) {
-					armourMap.put(item.getSetType(), new ArmourEffectWrapper(item, slot));
-				}
-				else {
-					armourEffectWrapper.currentSlots.add(slot);
+					if (newSet != null)
+						equipAdventArmour(newSet, AdventArmour.Piece.FULL_SET);
 				}
 			}
 		}
 
-		private void unequipAdventArmour(ServerPlayerDataManager plData, AdventArmour item, @Nullable EquipmentSlot slot) {
-			item.onUnequip(plData, slot);
+		private boolean checkEquippedItems() {
+			if (player.getAbilities().instabuild)
+				return true;
 
-			ArmourEffectWrapper armourEffectWrapper = armourMap.get(item.getSetType());
+			boolean updateInventory = false;
+			boolean doArmourTick = true;
 
-			if (armourEffectWrapper != null && slot != null) {
-				if (armourEffectWrapper.currentSlots.size() <= 1) {
-					armourMap.remove(item.getSetType());
-				}
-				else {
-					armourEffectWrapper.currentSlots.remove(slot);
-				}
-			}
-		}
+			for (InteractionHand hand : InteractionHand.values()) {
+				ItemStack heldStack = player.getItemInHand(hand);
 
-		private void handleCooldowns() {
-			Iterator<Map.Entry<String, Integer>> cooldownsIterator = cooldowns.entrySet().iterator();
+				if (!AoASkillReqReloadListener.canEquip(ServerPlayerDataManager.this, heldStack.getItem(), true)) {
+					updateInventory = true;
 
-			while (cooldownsIterator.hasNext()) {
-				Map.Entry<String, Integer> entry = cooldownsIterator.next();
-
-				if (entry.getValue() <= 1) {
-					cooldownsIterator.remove();
-				}
-				else {
-					entry.setValue(entry.getValue() - 1);
+					ItemHandlerHelper.giveItemToPlayer(player, heldStack);
+					player.setItemInHand(hand, ItemStack.EMPTY);
 				}
 			}
+
+			for (AdventArmour.Piece piece : AdventArmour.Piece.values()) {
+				if (piece == AdventArmour.Piece.FULL_SET)
+					continue;
+
+				AdventArmour armour = this.equippedArmour.get(piece);
+
+				if (armour != null && !AoASkillReqReloadListener.canEquip(ServerPlayerDataManager.this, armour, true)) {
+					updateInventory = true;
+					doArmourTick = false;
+					EquipmentSlot slot = armour.getEquipmentSlot();
+
+					ItemHandlerHelper.giveItemToPlayer(player, player.getItemBySlot(slot));
+					player.setItemSlot(slot, ItemStack.EMPTY);
+					unequipAdventArmour(armour, piece);
+				}
+			}
+
+			if (updateInventory)
+				player.inventoryMenu.broadcastChanges();
+
+			return doArmourTick;
 		}
 
-		private static class ArmourEffectWrapper {
-			private final AdventArmour armour;
-			private final HashSet<EquipmentSlot> currentSlots = new HashSet<>(4);
+		private void equipAdventArmour(AdventArmour item, AdventArmour.Piece piece) {
+			AdventArmourSetContainer pieceContainer = this.armourMap.computeIfAbsent(item.getMaterial(), material -> new AdventArmourSetContainer(item));
 
-			private ArmourEffectWrapper(AdventArmour armour, EquipmentSlot firstSlotEquipped) {
-				this.armour = armour;
+			item.onEquip(player, piece, pieceContainer.equippedPieces);
+			pieceContainer.equippedPieces().add(piece);
+		}
 
-				currentSlots.add(firstSlotEquipped);
+		private void unequipAdventArmour(AdventArmour item, AdventArmour.Piece piece) {
+			AdventArmourSetContainer pieceContainer = this.armourMap.get(item.getMaterial());
+
+			item.onUnequip(player, piece, pieceContainer.equippedPieces());
+			pieceContainer.equippedPieces().remove(piece);
+
+			if (pieceContainer.equippedPieces().isEmpty())
+				this.armourMap.remove(item.getMaterial());
+		}
+
+		private record AdventArmourSetContainer(AdventArmour armour, EnumSet<AdventArmour.Piece> equippedPieces) {
+			private AdventArmourSetContainer(AdventArmour armour) {
+				this(armour, EnumSet.noneOf(AdventArmour.Piece.class));
 			}
 		}
 	}

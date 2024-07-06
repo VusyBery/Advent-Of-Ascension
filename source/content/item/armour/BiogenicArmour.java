@@ -1,22 +1,20 @@
 package net.tslat.aoa3.content.item.armour;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.LocaleUtil;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 
 public class BiogenicArmour extends AdventArmour {
@@ -25,40 +23,36 @@ public class BiogenicArmour extends AdventArmour {
 	}
 
 	@Override
-	public Type getSetType() {
-		return Type.BIOGENIC;
-	}
+	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
+		if (equippedPieces.contains(Piece.FULL_SET)) {
+			if (entity.isInWater())
+				entity.setAirSupply(-10);
 
-	public void onEffectTick(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots) {
-		if (slots == null) {
-			if (plData.player().isInWater())
-				plData.player().setAirSupply(-10);
-
-			if (plData.player().isEyeInFluid(FluidTags.WATER)) {
-				plData.player().addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false));
+			if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) {
+				entity.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 300, 0, true, false));
 			}
 			else {
-				MobEffectInstance nightVision = plData.player().getEffect(MobEffects.NIGHT_VISION);
+				MobEffectInstance nightVision = entity.getEffect(MobEffects.NIGHT_VISION);
 
 				if (nightVision != null && nightVision.getDuration() <= 300)
-					plData.player().removeEffect(MobEffects.NIGHT_VISION);
+					entity.removeEffect(MobEffects.NIGHT_VISION);
 			}
 		}
 	}
 
 	@Override
-	public void onPostAttackReceived(ServerPlayerDataManager plData, @Nullable HashSet<EquipmentSlot> slots, LivingDamageEvent event) {
-		if (slots != null && DamageUtil.isMeleeDamage(event.getSource()) && event.getSource().getEntity() instanceof LivingEntity)
-			((LivingEntity)event.getSource().getEntity()).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, (int)event.getAmount() * 3 * slots.size(), slots.size() >= 2 ? 1 : 0, false, true));
+	public void afterTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Post ev) {
+		if (ev.getNewDamage() > 0 && DamageUtil.isMeleeDamage(ev.getSource()) && ev.getSource().getEntity() instanceof LivingEntity attacker)
+			attacker.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, Mth.ceil(ev.getNewDamage() * perPieceValue(equippedPieces, 3)), equippedPieces.size() >= 2 ? 1 : 0, false, true));
 	}
 
 	@Override
-	public void onUnequip(ServerPlayerDataManager plData, @Nullable EquipmentSlot slot) {
-		if (slot == null) {
-			MobEffectInstance nightVision = plData.player().getEffect(MobEffects.NIGHT_VISION);
+	public void onUnequip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
+		if (piece == Piece.FULL_SET) {
+			MobEffectInstance nightVision = entity.getEffect(MobEffects.NIGHT_VISION);
 
 			if (nightVision != null && nightVision.getDuration() <= 300)
-				plData.player().removeEffect(MobEffects.NIGHT_VISION);
+				entity.removeEffect(MobEffects.NIGHT_VISION);
 		}
 	}
 

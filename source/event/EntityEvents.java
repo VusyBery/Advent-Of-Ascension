@@ -1,6 +1,7 @@
 package net.tslat.aoa3.event;
 
 import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobSpawnType;
@@ -23,8 +24,9 @@ import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.scheduling.AoAScheduler;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.WorldUtil;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 
 public final class EntityEvents {
 	public static final String SPAWNED_BY_SPAWNER_TAG = "spawned_by_spawner";
@@ -70,16 +72,16 @@ public final class EntityEvents {
 	private static void onEntityJoinWorld(EntityJoinLevelEvent ev) {
 		if (!ev.getLevel().isClientSide && WorldUtil.isWorld(ev.getLevel(), AoADimensions.NETHER)) {
 			if (ev.getEntity() instanceof WitherBoss && ((WitherBoss)ev.getEntity()).getInvulnerableTicks() == 220) {
-				for (Player pl : ev.getLevel().getEntitiesOfClass(Player.class, ev.getEntity().getBoundingBox().inflate(50))) {
-					if (ItemUtil.findInventoryItem(pl, new ItemStack(AoAItems.BLANK_REALMSTONE.get()), true, 1, false))
-						ItemUtil.givePlayerItemOrDrop(pl, new ItemStack(AoAItems.ABYSS_REALMSTONE.get()));
+				for (Player pl : EntityRetrievalUtil.getPlayers(ev.getLevel(), ev.getEntity().getBoundingBox().inflate(50))) {
+					if (InventoryUtil.findItemForConsumption(pl, AoAItems.BLANK_REALMSTONE, pl.getAbilities().instabuild ? 0 : 1, true))
+						InventoryUtil.giveItemTo((ServerPlayer)pl, AoAItems.ABYSS_REALMSTONE);
 				}
 			}
 		}
 	}
 
 	private static void onEntitySpawn(final FinalizeSpawnEvent ev) {
-		if (ev.getSpawnType() == MobSpawnType.SPAWNER)
+		if (ev.getSpawnType() == MobSpawnType.SPAWNER || ev.getSpawnType() == MobSpawnType.TRIAL_SPAWNER)
 			ev.getEntity().getPersistentData().putBoolean(SPAWNED_BY_SPAWNER_TAG, true);
 	}
 

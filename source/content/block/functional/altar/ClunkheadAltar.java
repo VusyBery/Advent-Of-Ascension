@@ -40,9 +40,7 @@ public class ClunkheadAltar extends BossAltarBlock {
 		if (player instanceof ServerPlayer) {
 			if (getActivationItem() == null || stack.getItem() == getActivationItem()) {
 				if (checkActivationConditions(player, hand, state, pos)) {
-					if (!player.getAbilities().instabuild)
-						ItemUtil.damageItem(stack, player, hand);
-
+					ItemUtil.damageItemForUser(player, hand);
 					doActivationEffect(player, hand, state, pos);
 				}
 			}

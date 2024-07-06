@@ -10,11 +10,11 @@
     },
     {
       "type": "patchouli:text",
-      "text": "As you increase your $(thing)Imbuing$() expertise however, you'll find that you need to start putting the concentrated energy to use.$(br)Normally this would be done through imbuing items in the $(l:aoa3:imbuing_chamber)Imbuing Chamber$(/l), with higher power requirements usually giving more experience"
+      "text": "As you increase your $(thing)Imbuing$() expertise however, you'll find that you need to start putting the concentrated energy to use.$(br)Normally this would be done through imbuing items in the $(l:aoa3:imbuing_chamber)Imbuing Chamber$(/l), with higher power requirements usually giving more experience."
     },
     {
       "type": "patchouli:text",
-      "text": "Additionally, utilising any Imbuing-specific abilities will often give decent amounts of Imbuing experience, depending on the power requirement of that ability"
+      "text": "Additionally, utilising any Imbuing-specific abilities will often give decent amounts of Imbuing experience, depending on the power requirement of that ability."
     }
   ],
   "sortnum": 0

@@ -5,10 +5,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.item.AoAItems;
@@ -16,7 +16,6 @@ import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +53,7 @@ public class NatureStaff extends BaseStaff<List<BlockPos>> {
 	}
 
 	@Override
-	public void cast(Level world, ItemStack staff, LivingEntity caster, List<BlockPos> args) {
+	public void cast(ServerLevel level, ItemStack staff, LivingEntity caster, List<BlockPos> args) {
 		for (BlockPos pos : args) {
 			BoneMealItem.growCrop(new ItemStack(Items.BONE_MEAL), caster.level(), pos);
 		}

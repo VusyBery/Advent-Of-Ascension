@@ -184,9 +184,9 @@ public final class AoARegistries {
 	}
 
 	private static void createCustomDatapackRegistries(final DataPackRegistryEvent.NewRegistry ev) {
-		ev.dataPackRegistry(CUSTOM_SPAWNERS_REGISTRY_KEY, AoACustomSpawners.CODEC);
-		ev.dataPackRegistry(NOWHERE_BOSS_ARENAS_REGISTRY_KEY, NowhereBossArena.CODEC);
-		ev.dataPackRegistry(NOWHERE_PARKOUR_COURSES_REGISTRY_KEY, NowhereParkourCourse.CODEC);
+		ev.dataPackRegistry(CUSTOM_SPAWNERS_REGISTRY_KEY, AoACustomSpawners.CODEC, AoACustomSpawners.CODEC);
+		ev.dataPackRegistry(NOWHERE_BOSS_ARENAS_REGISTRY_KEY, NowhereBossArena.CODEC, NowhereBossArena.CODEC);
+		ev.dataPackRegistry(NOWHERE_PARKOUR_COURSES_REGISTRY_KEY, NowhereParkourCourse.CODEC, NowhereParkourCourse.CODEC);
 	}
 
 	public record RegistryHelper<T>(Supplier<Registry<T>> registry, DeferredRegister<T> deferredRegister, Runnable registrationTasks) implements IdMap<T>, Keyable {

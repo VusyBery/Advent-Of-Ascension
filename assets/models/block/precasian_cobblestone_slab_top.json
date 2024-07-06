@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "render_type": "minecraft:solid",
+  "textures": {
+    "bottom": "aoa3:block/precasian_cobblestone",
+    "side": "aoa3:block/precasian_cobblestone",
+    "top": "aoa3:block/precasian_cobblestone"
+  }
+}

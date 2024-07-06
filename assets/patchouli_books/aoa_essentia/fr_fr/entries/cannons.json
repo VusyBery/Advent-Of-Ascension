@@ -1,0 +1,31 @@
+{
+  "category": "aoa3:weapons",
+  "icon": "aoa3:big_blast",
+  "name": "Canons",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "cannons",
+      "text": "Les $(thing)canons$() sont la troisième sous-classe des $(l:aoa3:guns#guns)fusils$(/l), qui compensent leur cadence de tir lente et leurs munitions chères payées par une puissance de feu dévastatrice.$(br)Les $(thing)canons$() offrent également des dégâts supplémentaires aux cibles en armure, la possibilité d'écarter les boucliers des adversaires, et la force nécessaire pour repousser les cibles en arrière.",
+      "title": "Canons"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "On peut voir les $(thing)canons$() comme les grands frères des $(l:aoa3:guns#guns)fusils$(/l), avec un fonctionnement similaire mais une puissance supérieure, et la capacité de faire de $(o)lourds$() dégâts aux cibles en armure.$(br2)Les $(thing)fusils$() sont mieux adaptés pour les dégâtq rapides ou pour combattre des hordes d'ennemis faibles, tandis que les $(thing)canons$() sont une sorte d'équivalent à longue distance des $(l:aoa3:mauls#mauls)marteaux(/l), infligeant beaucoup de recul."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:missile_maker",
+      "text": "Dégomme tes adversaires avec ces armes à feu taille XXL.",
+      "title": "Un canon"
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Trouve des infos sur tous les $(thing)canons$() d'$(aoa) sur le $(thing)wiki officiel$().",
+      "title": "En savoir plus",
+      "url": "https://adventofascension.fandom.com/wiki/Cannons"
+    }
+  ],
+  "sortnum": 8
+}
