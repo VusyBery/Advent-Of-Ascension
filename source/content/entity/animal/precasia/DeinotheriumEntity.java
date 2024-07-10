@@ -158,7 +158,7 @@ public class DeinotheriumEntity extends AoAAnimal<DeinotheriumEntity> {
 										new Idle<>().runFor(entity -> 60)),
 								new SetRandomWalkTarget<>().speedModifier(0.9f),
 								new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60)))
-				).startCondition(entity -> !BrainUtils.memoryOrDefault(entity, MemoryModuleType.IS_PANICKING, () -> false)));
+				).noTimeout().startCondition(entity -> !BrainUtils.memoryOrDefault(entity, MemoryModuleType.IS_PANICKING, () -> false)));
 	}
 
 	@Override

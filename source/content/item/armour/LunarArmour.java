@@ -20,7 +20,7 @@ public class LunarArmour extends AdventArmour {
 
 	@Override
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
-		entity.addEffect(new MobEffectInstance(MobEffects.JUMP, 0, perPieceValue(equippedPieces, 1) - 1, true, false));
+		entity.addEffect(new MobEffectInstance(MobEffects.JUMP, 2, perPieceValue(equippedPieces, 1) - 1, true, false));
 	}
 
 	@Override

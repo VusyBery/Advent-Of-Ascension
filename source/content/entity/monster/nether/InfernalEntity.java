@@ -51,7 +51,7 @@ public class InfernalEntity extends AoAMeleeMob<InfernalEntity> {
         return BrainActivityGroup.fightTasks(
                 new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && (pl.isCreative() || pl.isSpectator())) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
                 new SetWalkTargetToAttackTarget<>(),
-                new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration()).whenActivating(entity -> {
+                new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration() + 2).whenActivating(entity -> {
                     Entity target = BrainUtils.getTargetOfEntity(entity);
                     BlockPos pos = (target == null ? entity : target).blockPosition();
                     BlockState state = level().getBlockState(pos);

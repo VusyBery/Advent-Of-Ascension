@@ -45,7 +45,7 @@ public class KnightArmour extends AdventArmour {
 	@Override
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
 		if (equippedPieces.contains(Piece.FULL_SET) && entity.isAlive() && EntityUtil.getHealthPercent(entity) < 0.2f)
-			entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 0, 1, false, true));
+			entity.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, 2, 1, false, true));
 	}
 
 	@Override

@@ -20,7 +20,7 @@ public class SkeletalArmour extends AdventArmour {
 
 	@Override
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
-		if (entity instanceof ServerPlayer pl && pl.getFoodData().getSaturationLevel() < 1) {
+		if (entity instanceof ServerPlayer pl && pl.getFoodData().getSaturationLevel() < 1 && equippedPieces.contains(Piece.FULL_SET)) {
 			FoodData foodStats = pl.getFoodData();
 			int foodLvl = foodStats.getFoodLevel();
 

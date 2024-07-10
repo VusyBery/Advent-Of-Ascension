@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
+import net.tslat.aoa3.player.resource.SpiritResource;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
@@ -23,16 +24,15 @@ public class EmbrodiumArmour extends AdventArmour {
 	@Override
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
 		if (entity instanceof ServerPlayer player) {
-			if (equippedPieces.contains(Piece.FULL_SET)) {
-				PlayerUtil.addResourceToPlayer(player, AoAResources.SPIRIT.get(), 0.08f);
-
-				return;
-			}
-
+			float perTickRegen = PlayerUtil.getAdventPlayer(player).getResource(AoAResources.SPIRIT.get()) instanceof SpiritResource spirit ? spirit.getPerTickRegen() : 0.04f;
+			float amount = equippedPieces.contains(Piece.FULL_SET) ? perTickRegen * 0.25f : 0;
 			float temp = WorldUtil.getAmbientTemperature(player.level(), player.blockPosition());
 
 			if (temp > 0.8f)
-				PlayerUtil.addResourceToPlayer(player, AoAResources.SPIRIT.get(), 0.08f * equippedPieces.size() * Math.min(1f, (temp / 2f)));
+				amount += perPieceValue(equippedPieces, perTickRegen * 0.25f) * Math.min(1f, (temp / 2f));
+
+			if (amount > 0)
+				PlayerUtil.addResourceToPlayer(player, AoAResources.SPIRIT.get(), amount);
 		}
 	}
 

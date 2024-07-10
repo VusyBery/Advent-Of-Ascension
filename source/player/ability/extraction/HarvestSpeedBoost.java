@@ -137,8 +137,7 @@ public class HarvestSpeedBoost extends AoAAbility.Instance {
 		AoAResource.Instance energy = skill.getPlayerDataManager().getResource(AoAResources.ENERGY.get());
 		Player player = getPlayer();
 
-		if (!player.isCreative() && !player.isSpectator() && energy.consume(energy.getPerTickRegen() + energyDrainPerTick - costReductionPerLevel * skill.getLevel(true), true)) {
-
+		if (!player.getAbilities().instabuild && !player.isSpectator() && energy.consume(energy.getPerTickRegen() + energyDrainPerTick - costReductionPerLevel * skill.getLevel(true), true)) {
 			if (player.level().getGameTime() % 10 == 0)
 				activatedActionKey((ServerPlayer)player);
 		}

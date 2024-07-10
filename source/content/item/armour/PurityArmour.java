@@ -37,7 +37,7 @@ public class PurityArmour extends AdventArmour {
 
 	@Override
 	public void onEffectApplication(LivingEntity entity, EnumSet<Piece> equippedPieces, MobEffectEvent.Applicable ev) {
-		if (IMMUNE_EFFECTS.get().contains(ev.getEffectInstance().getEffect()))
+		if (equippedPieces.contains(Piece.FULL_SET) && IMMUNE_EFFECTS.get().contains(ev.getEffectInstance().getEffect()))
 			ev.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
 	}
 

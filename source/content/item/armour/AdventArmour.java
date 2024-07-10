@@ -232,15 +232,15 @@ public abstract class AdventArmour extends ArmorItem {
 		if (cooldown == null)
 			return 0;
 
-		return cooldown.endTime - cooldown.startTime;
+		return cooldown.endTime - cooldowns.tickCount;
 	}
 
 	public int perPieceValue(EnumSet<Piece> equippedPieces, int perPiece) {
-		return perPiece * equippedPieces.size() - (equippedPieces.contains(Piece.FULL_SET) ? 1 : 0);
+		return perPiece * (equippedPieces.size() - (equippedPieces.contains(Piece.FULL_SET) ? 1 : 0));
 	}
 
 	public float perPieceValue(EnumSet<Piece> equippedPieces, float perPiece) {
-		return perPiece * equippedPieces.size() - (equippedPieces.contains(Piece.FULL_SET) ? 1 : 0);
+		return perPiece * (equippedPieces.size() - (equippedPieces.contains(Piece.FULL_SET) ? 1 : 0));
 	}
 
 	public enum Piece {

@@ -54,7 +54,7 @@ public class RageResource extends AoAResource.Instance {
 	@Override
 	public void handleAfterDamaged(LivingDamageEvent.Post ev) {
 		if (ev.getSource().getEntity() != null)
-			this.value = Math.min(getMaxValue(), this.value + ev.getNewDamage());
+			this.value = Math.min(getMaxValue(), this.value + ev.getOriginalDamage());
 	}
 
 	@Override

@@ -149,6 +149,8 @@ public class AttributeModification extends ScalableModAbility {
 	public void loadFromNbt(CompoundTag data) {
 		super.loadFromNbt(data);
 
+		updateModifier();
+
 		if (attribute == Attributes.MAX_HEALTH && getListenerState() == ListenerState.ACTIVE && data.contains("current_health")) {
 			if (getLevelReq() == 1) {
 				loginHealth = (float)data.getDouble("current_health");

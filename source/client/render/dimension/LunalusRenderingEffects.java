@@ -23,16 +23,15 @@ public class LunalusRenderingEffects extends AoADimensionEffectsRenderer {
     @Override
     public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f frustumMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
         PoseStack poseStack = new PoseStack();
-        BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+        Tesselator tesellator = Tesselator.getInstance();
 
-        poseStack.mulPose(projectionMatrix);
+        poseStack.mulPose(frustumMatrix);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.depthMask(false);
         RenderUtil.prepRenderTexture(TEXTURE);
 
-
-        for(int i = 0; i < 6; ++i) {
+        for (int i = 0; i < 6; ++i) {
             poseStack.pushPose();
 
             switch (i) {
@@ -44,12 +43,13 @@ public class LunalusRenderingEffects extends AoADimensionEffectsRenderer {
                 default -> {}
             }
 
-            Matrix4f matrix4f = poseStack.last().pose();
+            Matrix4f pose = poseStack.last().pose();
+            BufferBuilder buffer = tesellator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 
-            buffer.addVertex(matrix4f, -100, -100, -100).setUv(0, 0).setColor(150, 150, 150, 255);
-            buffer.addVertex(matrix4f, -100, -100, 100).setUv(0, 1).setColor(150, 150, 150, 255);
-            buffer.addVertex(matrix4f, 100, -100, 100).setUv(1, 1).setColor(150, 150, 150, 255);
-            buffer.addVertex(matrix4f, 100, -100, -100).setUv(1, 0).setColor(150, 150, 150, 255);
+            buffer.addVertex(pose, -100, -100, -100).setUv(0.0F, 0.0F).setColor(150, 150, 150, 255);
+            buffer.addVertex(pose, -100, -100, 100).setUv(0.0F, 1).setColor(150, 150, 150, 255);
+            buffer.addVertex(pose, 100, -100, 100).setUv(1, 1).setColor(150, 150, 150, 255);
+            buffer.addVertex(pose, 100, -100, -100).setUv(1, 0.0F).setColor(150, 150, 150, 255);
             BufferUploader.drawWithShader(buffer.buildOrThrow());
             poseStack.popPose();
         }

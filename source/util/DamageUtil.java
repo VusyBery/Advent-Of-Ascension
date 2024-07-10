@@ -42,7 +42,7 @@ public final class DamageUtil {
 	}
 
 	public static DamageSource positionedEntityDamage(ResourceKey<DamageType> damageType, Entity attacker, Vec3 position) {
-		return new DamageSource(RegistryUtil.getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), attacker, null, position);
+		return new DamageSource(RegistryUtil.getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), attacker, attacker, position);
 	}
 
 	public static DamageSource indirectEntityDamage(ResourceKey<DamageType> damageType, Entity attacker, Entity projectile) {

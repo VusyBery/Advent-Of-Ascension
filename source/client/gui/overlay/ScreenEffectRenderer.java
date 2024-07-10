@@ -42,9 +42,9 @@ public final class ScreenEffectRenderer {
 		if (Minecraft.getInstance().options.getCameraType() != CameraType.FIRST_PERSON || effects.isEmpty() || Minecraft.getInstance().level == null)
 			return;
 
+		Tesselator tesselator = Tesselator.getInstance();
 		Minecraft mc = Minecraft.getInstance();
 		Window window = mc.getWindow();
-		BufferBuilder buffer = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
 		long gameTime = mc.level.getGameTime();
 		boolean hasExpiredEffects = false;
@@ -67,16 +67,17 @@ public final class ScreenEffectRenderer {
 			rendered = true;
 			float scale = effect.getScale();
 			float fadeTime = (effect.getExpiry() - gameTime) / (float)effect.getDuration();
+			BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
 
 			poseStack.pushPose();
 			RenderSystem.setShaderColor(effect.getRed(), effect.getGreen(), effect.getBlue(), effect.getAlpha() * fadeTime);
 			RenderUtil.setRenderingTexture(effect.getTexture());
 
 			if (effect.isFullscreen()) {
+				buffer.addVertex(0, 0, -90).setUv(0, 0);
 				buffer.addVertex(0, window.getGuiScaledHeight(), -90).setUv(0, 1);
 				buffer.addVertex(window.getGuiScaledWidth(), window.getGuiScaledHeight(), -90).setUv(1, 1);
 				buffer.addVertex(window.getGuiScaledWidth(), 0, -90).setUv(1, 0);
-				buffer.addVertex(0, 0, -90).setUv(0, 0);
 			}
 			else {
 				poseStack.translate(-256, -256, 0);
@@ -91,12 +92,12 @@ public final class ScreenEffectRenderer {
 				buffer.addVertex(pose, 0, 0, -90).setUv(0, 0);
 			}
 
+			BufferUploader.drawWithShader(buffer.buildOrThrow());
 			poseStack.popPose();
 			RenderUtil.resetShaderColour();
 		}
 
 		if (rendered)
-			BufferUploader.drawWithShader(buffer.buildOrThrow());
 
 		RenderSystem.depthMask(true);
 		RenderSystem.enableDepthTest();

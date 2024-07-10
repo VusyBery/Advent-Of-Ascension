@@ -48,6 +48,7 @@ import java.util.List;
 
 public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 	private static final RawAnimation ACTIVATE = RawAnimation.begin().thenPlay("misc.activate").thenLoop("misc.active_idle");
+	private static final RawAnimation ACTIVE_IDLE = RawAnimation.begin().thenLoop("misc.active_idle");
 	private static final RawAnimation DEACTIVATE = RawAnimation.begin().thenPlay("misc.deactivate");
 
 	public TreeSpiritEntity(EntityType<? extends TreeSpiritEntity> entityType, Level world) {
@@ -179,7 +180,7 @@ public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "Living", 1, state -> {
+		controllers.add(new AnimationController<>(this, "Living", 0, state -> {
 			if (ATTACK_STATE.is(this, 1))
 				return state.setAndContinue(ACTIVATE);
 

@@ -14,6 +14,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.tslat.aoa3.common.registration.item.AoAArmour;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
@@ -33,7 +34,7 @@ public class NecroArmour extends AdventArmour {
 
 	@Override
 	public void beforeTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Pre ev) {
-		if (equippedPieces.contains(Piece.FULL_SET) && !DamageUtil.isEnvironmentalDamage(ev.getContainer().getSource()) && ev.getContainer().getNewDamage() > entity.getHealth() && (!(entity instanceof Player pl) || !isOnCooldown(pl))) {
+		if (equippedPieces.contains(Piece.FULL_SET) && !DamageUtil.isEnvironmentalDamage(ev.getContainer().getSource()) && ev.getContainer().getNewDamage() >= entity.getHealth() && (!(entity instanceof Player pl) || !isOnCooldown(pl))) {
 			ev.getContainer().setNewDamage(0);
 			entity.hurtArmor(entity.level().damageSources().generic(), 2000);
 
@@ -41,7 +42,7 @@ public class NecroArmour extends AdventArmour {
 				entity.setHealth(4);
 
 			if (entity instanceof ServerPlayer pl)
-				PlayerUtil.getAdventPlayer(pl).equipment().setCooldown("necro_armour", 72000);
+				setArmourCooldown(pl, AoAArmour.NECRO_ARMOUR, 72000);
 
 			ParticleBuilder.forRandomPosInEntity(ParticleTypes.HEART, entity)
 					.spawnNTimes(5)
@@ -51,7 +52,7 @@ public class NecroArmour extends AdventArmour {
 
 	@Override
 	public void onEntityDeath(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDeathEvent ev) {
-		if (!equippedPieces.contains(Piece.FULL_SET) || !(entity instanceof ServerPlayer pl))
+		if (!(entity instanceof ServerPlayer pl))
 			return;
 
 		Level level = entity.level();

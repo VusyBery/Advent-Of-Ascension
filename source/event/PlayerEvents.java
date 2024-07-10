@@ -11,7 +11,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.FishingHook;
@@ -20,7 +19,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ComposterBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
@@ -54,7 +56,6 @@ import net.tslat.aoa3.library.object.Text;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.*;
-import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class PlayerEvents {
@@ -110,8 +111,8 @@ public class PlayerEvents {
 				ReservedItem.handlePlayerDeath(pl);
 
 			if (pl.getHealth() > 0 && ev.getSource().is(DamageTypeTags.IS_EXPLOSION) && ev.getSource().getDirectEntity() instanceof Creeper creeper) {
-				if (!EntityRetrievalUtil.getEntities(pl.level(), pl.getBoundingBox().minmax(creeper.getBoundingBox()), entity -> entity instanceof PrimedTnt && (entity.distanceToSqr(pl) <= 9) || entity.distanceToSqr(creeper) <= 9).isEmpty() && InventoryUtil.findItemForConsumption(pl, AoAItems.BLANK_REALMSTONE, 1, true))
-					InventoryUtil.giveItemTo(pl, AoAItems.CREEPONIA_REALMSTONE);
+				/*if (!EntityRetrievalUtil.getEntities(pl.level(), pl.getBoundingBox().minmax(creeper.getBoundingBox()), entity -> entity instanceof PrimedTnt && (entity.distanceToSqr(pl) <= 9) || entity.distanceToSqr(creeper) <= 9).isEmpty() && InventoryUtil.findItemForConsumption(pl, AoAItems.BLANK_REALMSTONE, 1, true))
+					InventoryUtil.giveItemTo(pl, AoAItems.CREEPONIA_REALMSTONE);*/
 			}
 		}
 	}

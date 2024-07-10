@@ -26,20 +26,20 @@ public class SubterraneanArmour extends AdventArmour {
 
 	@Override
 	public void onEquip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
-		if (equippedPieces.contains(Piece.FULL_SET))
+		if (piece == Piece.FULL_SET)
 			AttributeUtil.applyTransientModifier(entity, Attributes.ATTACK_SPEED, ATTACK_SPEED_DEBUFF);
 	}
 
 	@Override
 	public void onUnequip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
-		if (equippedPieces.contains(Piece.FULL_SET))
+		if (piece == Piece.FULL_SET)
 			AttributeUtil.removeModifier(entity, Attributes.ATTACK_SPEED, ATTACK_SPEED_DEBUFF);
 	}
 
 	@Override
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
 		if (equippedPieces.contains(Piece.FULL_SET))
-			entity.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 0, 1, true, false));
+			entity.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 2, 1, true, false));
 	}
 
 	@Override

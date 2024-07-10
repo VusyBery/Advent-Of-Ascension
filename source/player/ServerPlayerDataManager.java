@@ -795,6 +795,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 					ListenerType.EQUIPMENT_CHANGE,
 					ListenerType.PLAYER_TICK,
 					ListenerType.ENTITY_INVULNERABILITY,
+					ListenerType.MOB_EFFECT_TEST,
 					ListenerType.INCOMING_DAMAGE,
 					ListenerType.INCOMING_DAMAGE_APPLICATION,
 					ListenerType.INCOMING_DAMAGE_AFTER,
@@ -1009,11 +1010,13 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		private void unequipAdventArmour(AdventArmour item, AdventArmour.Piece piece) {
 			AdventArmourSetContainer pieceContainer = this.armourMap.get(item.getMaterial());
 
-			item.onUnequip(player, piece, pieceContainer.equippedPieces());
-			pieceContainer.equippedPieces().remove(piece);
+			if (pieceContainer != null) {
+				item.onUnequip(player, piece, pieceContainer.equippedPieces());
+				pieceContainer.equippedPieces().remove(piece);
 
-			if (pieceContainer.equippedPieces().isEmpty())
-				this.armourMap.remove(item.getMaterial());
+				if (pieceContainer.equippedPieces().isEmpty())
+					this.armourMap.remove(item.getMaterial());
+			}
 		}
 
 		private record AdventArmourSetContainer(AdventArmour armour, EnumSet<AdventArmour.Piece> equippedPieces) {

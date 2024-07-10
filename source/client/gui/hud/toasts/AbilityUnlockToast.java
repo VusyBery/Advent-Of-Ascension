@@ -12,6 +12,7 @@ import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.RegistryUtil;
 
 public class AbilityUnlockToast extends GenericToast {
 	private final AoASkill skill;
@@ -24,7 +25,7 @@ public class AbilityUnlockToast extends GenericToast {
 
 	@Override
 	protected boolean stillValid() {
-		return ClientPlayerDataManager.get().getSkill(this.skill) != null;
+		return ClientPlayerDataManager.get().getSkill(this.skill) != null && RegistryUtil.getId(this.skill) != null;
 	}
 
 	@Override

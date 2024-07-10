@@ -31,7 +31,7 @@ public abstract class AoAWaterMeleeMob<T extends AoAWaterMeleeMob<T>> extends Ao
         return BrainActivityGroup.fightTasks(
                 new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
                 new SetWalkTargetToAttackTarget<>(),
-                new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration()));
+                new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration() + 2));
     }
 
     protected float getAttackVectorPositionOffset() {

@@ -52,9 +52,9 @@ public final class AoATools {
 	public static final DeferredItem<Chainsaw> CHAINSAW = registerTool("chainsaw", () -> new Chainsaw(AoATiers.CHAINSAW, BaseAxe.baseProperties(AoATiers.CHAINSAW)));
 
 	public static final DeferredItem<DryadsBlessing> DRYADS_BLESSING = registerTool("dryads_blessing", DryadsBlessing::new);
-	public static final DeferredItem<BaseHoe> LIMONITE_HOE = registerTool("limonite_hoe", () -> new BaseHoe(AoATiers.LIMONITE, -6.5f, AttackSpeed.forAttacksPerSecond(3)));
-	public static final DeferredItem<BaseHoe> JADE_HOE = registerTool("jade_hoe", () -> new BaseHoe(AoATiers.JADE, -7.5f, AttackSpeed.forAttacksPerSecond(4)));
-	public static final DeferredItem<BaseHoe> EMBERSTONE_HOE = registerTool("emberstone_hoe", () -> new BaseHoe(AoATiers.EMBERSTONE, -12f, AttackSpeed.forAttacksPerSecond(4)));
+	public static final DeferredItem<BaseHoe> LIMONITE_HOE = registerTool("limonite_hoe", () -> new BaseHoe(AoATiers.LIMONITE, -5.5f, AttackSpeed.forAttacksPerSecond(3)));
+	public static final DeferredItem<BaseHoe> JADE_HOE = registerTool("jade_hoe", () -> new BaseHoe(AoATiers.JADE, -6.5f, AttackSpeed.forAttacksPerSecond(4)));
+	public static final DeferredItem<BaseHoe> EMBERSTONE_HOE = registerTool("emberstone_hoe", () -> new BaseHoe(AoATiers.EMBERSTONE, -11f, AttackSpeed.forAttacksPerSecond(4)));
 
 	public static final DeferredItem<Item> HAULING_ROD = registerTool("hauling_rod", () -> new HaulingRod(new Item.Properties().durability(400)));
 	public static final DeferredItem<Item> THERMALLY_INSULATED_ROD = registerTool("thermally_insulated_rod", () -> new ThermallyInsulatedRod(new Item.Properties().durability(400)));

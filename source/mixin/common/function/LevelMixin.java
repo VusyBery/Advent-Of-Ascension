@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.WritableLevelData;
+import net.tslat.aoa3.common.registration.AoAGameRules;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +25,7 @@ public abstract class LevelMixin {
             cir.setReturnValue(new GameRules(this.levelData.getGameRules().rules) {
                 @Override
                 public boolean getBoolean(Key<BooleanValue> key) {
-                    if (key == GameRules.RULE_MOBGRIEFING)
+                    if (key == GameRules.RULE_MOBGRIEFING || key == AoAGameRules.DESTRUCTIVE_WEAPON_PHYSICS)
                         return false;
 
                     return super.getBoolean(key);

@@ -25,7 +25,7 @@ public class GhastlyArmour extends AdventArmour {
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
 		if (entity.tickCount % 5 == 0 && entity instanceof Player pl ? pl.isShiftKeyDown() : entity.isCrouching()) {
 			for (LivingEntity hostile : EntityRetrievalUtil.<LivingEntity>getEntities(entity, perPieceValue(equippedPieces, 4), EntityUtil::isHostileMob)) {
-				entity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 6, 0, true, false));
+				hostile.addEffect(new MobEffectInstance(MobEffects.GLOWING, 6, 0, true, false));
 			}
 		}
 	}

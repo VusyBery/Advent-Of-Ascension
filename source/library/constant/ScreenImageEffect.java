@@ -18,16 +18,11 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ScreenImageEffect {
 	public static final StreamCodec<FriendlyByteBuf, ScreenImageEffect> STREAM_CODEC = StreamCodec.composite(
-			NeoForgeStreamCodecs.enumCodec(Type.class),
-			ScreenImageEffect::getType,
-			ByteBufCodecs.FLOAT,
-			ScreenImageEffect::getScale,
-			ByteBufCodecs.VAR_INT,
-			ScreenImageEffect::getColour,
-			ByteBufCodecs.VAR_INT,
-			ScreenImageEffect::getDuration,
-			ByteBufCodecs.BOOL,
-			ScreenImageEffect::isFullscreen,
+			NeoForgeStreamCodecs.enumCodec(Type.class), ScreenImageEffect::getType,
+			ByteBufCodecs.FLOAT, ScreenImageEffect::getScale,
+			ByteBufCodecs.INT, ScreenImageEffect::getColour,
+			ByteBufCodecs.VAR_INT, ScreenImageEffect::getDuration,
+			ByteBufCodecs.BOOL, ScreenImageEffect::isFullscreen,
             ScreenImageEffect::new);
 
 	private final Type type;

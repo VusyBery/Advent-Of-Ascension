@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.worldgen.AoABiomes;
 import net.tslat.aoa3.content.entity.monster.nether.NethengeicBeastEntity;
@@ -29,14 +29,14 @@ public final class AoAEntitySpawnPlacements {
     }
 
     @SubscribeEvent
-    private static void registerSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
+    private static void registerSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
         setOverworldSpawnPlacements(ev);
         setNetherSpawnPlacements(ev);
         setPrecasiaSpawnPlacements(ev);
         setMiscSpawnPlacements(ev);
     }
 
-    private static void setOverworldSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
+    private static void setOverworldSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
         register(ev, AoAMonsters.ANCIENT_GOLEM.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
         register(ev, AoAMonsters.BOMB_CARRIER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 5f));
         register(ev, AoAMonsters.BUSH_BABY.get(), ON_GROUND, MOTION_BLOCKING, SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
@@ -57,7 +57,7 @@ public final class AoAEntitySpawnPlacements {
         register(ev, AoAMonsters.YETI.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(45).spawnChance(1 / 2f));
     }
 
-    private static void setNetherSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
+    private static void setNetherSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
         register(ev, AoAMonsters.EMBRAKE.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
         register(ev, AoAMonsters.FLAMEWALKER.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
         register(ev, AoAMonsters.INFERNAL.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 10f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
@@ -65,7 +65,7 @@ public final class AoAEntitySpawnPlacements {
         register(ev, AoAMonsters.NETHENGEIC_BEAST.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock().and(NethengeicBeastEntity::checkSpawnConditions));
     }
 
-    private static void setPrecasiaSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
+    private static void setPrecasiaSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
         register(ev, AoAMonsters.SPINOLEDON.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, random) -> pos.getY() >= 60 || pos.getY() <= -13).difficultyBasedSpawnChance(0.05f));
         register(ev, AoAAnimals.HORNDRON.get(), SpawnBuilder.DEFAULT_ANIMAL);
         register(ev, AoAAnimals.DEINOTHERIUM.get(), SpawnBuilder.DEFAULT_ANIMAL);
@@ -76,7 +76,7 @@ public final class AoAEntitySpawnPlacements {
         register(ev, AoAMonsters.DUNKLEOSTEUS.get(), IN_WATER, OCEAN_FLOOR, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noHigherThanY(55).difficultyBasedSpawnChance(0.05f));
     }
 
-    private static void setMiscSpawnPlacements(final SpawnPlacementRegisterEvent ev) {
+    private static void setMiscSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
         register(ev, AoAAnimals.SHINY_SQUID.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, new SpawnBuilder<>(GlowSquid::checkGlowSquidSpawnRules).spawnChance(1 / 1000f));
         register(ev, EntityType.SNIFFER, SpawnBuilder.DEFAULT_ANIMAL);
         register(ev, AoANpcs.LOTTOMAN.get(), new SpawnBuilder<>().ifValidSpawnBlock());
@@ -111,12 +111,12 @@ public final class AoAEntitySpawnPlacements {
         register(ev, AoAAnimals.VIOLET_SKIPPER.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
     }
 
-    private static <T extends Entity> void register(SpawnPlacementRegisterEvent ev, EntityType<T> entityType, SpawnPlacements.SpawnPredicate<?> predicate) {
+    private static <T extends Entity> void register(RegisterSpawnPlacementsEvent ev, EntityType<T> entityType, SpawnPlacements.SpawnPredicate<?> predicate) {
         register(ev, entityType, ON_GROUND, MOTION_BLOCKING_NO_LEAVES, predicate);
     }
 
-    private static <T extends Entity> void register(SpawnPlacementRegisterEvent ev, EntityType<T> entityType, SpawnPlacementType type, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<?> predicate) {
-        ev.register(entityType, type, heightmap, (SpawnPlacements.SpawnPredicate<T>)predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
+    private static <T extends Entity> void register(RegisterSpawnPlacementsEvent ev, EntityType<T> entityType, SpawnPlacementType type, Heightmap.Types heightmap, SpawnPlacements.SpawnPredicate<?> predicate) {
+        ev.register(entityType, type, heightmap, (SpawnPlacements.SpawnPredicate<T>)predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
     private static final class SpawnBuilder<T extends Entity> implements SpawnPlacements.SpawnPredicate<T> {

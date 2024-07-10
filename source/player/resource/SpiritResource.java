@@ -28,8 +28,8 @@ public class SpiritResource extends AoAResource.Instance {
 
 		this.maxValue = Math.max(0, GsonHelper.getAsFloat(jsonData, "max_value"));
 		this.regenPerTick = GsonHelper.getAsFloat(jsonData, "regen_per_tick", 0.04f);
-		this.regenPerDamage = GsonHelper.getAsFloat(jsonData, "regen_per_damage", 0.75f);
-		this.healthModMax = GsonHelper.getAsFloat(jsonData, "inverse_health_regen_mod", 2f);
+		this.regenPerDamage = GsonHelper.getAsFloat(jsonData, "regen_per_damage", 0.4f);
+		this.healthModMax = GsonHelper.getAsFloat(jsonData, "inverse_health_regen_mod", 3.5f);
 	}
 
 	public SpiritResource(CompoundTag nbtData) {

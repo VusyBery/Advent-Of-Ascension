@@ -21,7 +21,6 @@ public final class AoATags {
 	public static class Blocks {
 		public static final TagKey<Block> GRASS = tag("grass");
 		public static final TagKey<Block> MUSHROOMS = tag("mushrooms");
-		public static final TagKey<Block> FARMLAND = tag("farmland");
 
 		public static final TagKey<Block> INCORRECT_FOR_EMBERSTONE_TOOL = aoaTag("incorrect_for_emberstone_tool");
 		public static final TagKey<Block> INCORRECT_FOR_JADE_TOOL = aoaTag("incorrect_for_jade_tool");

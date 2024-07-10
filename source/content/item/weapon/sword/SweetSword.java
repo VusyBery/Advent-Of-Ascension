@@ -20,7 +20,7 @@ public class SweetSword extends BaseSword {
 	protected void doMeleeEffect(ItemStack stack, LivingEntity target, LivingEntity attacker, float attackCooldown) {
 		if (RandomUtil.percentChance(0.2f * attackCooldown)) {
 			ItemStack drop = AoARegistries.ITEMS.registry().get()
-					.getTag(Tags.Items.FOODS_CANDIES)
+					.getTag(Tags.Items.FOODS_CANDY)
 					.map(tag -> tag.getRandomElement(target.level().random).map(Holder::value))
 					.get().map(Item::getDefaultInstance)
 					.orElseGet(() -> new ItemStack(Items.SUGAR, 3));

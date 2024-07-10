@@ -66,6 +66,7 @@ public final class AoAPlayerEvents {
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingChangeTargetEvent.class, AoAPlayerEvents::onEntityTargeted);
 		forgeBus.addListener(EventPriority.NORMAL, false, EntityInvulnerabilityCheckEvent.class, AoAPlayerEvents::onEntityInvulnerabilityCheck);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingIncomingDamageEvent.class, AoAPlayerEvents::onAttack);
+		forgeBus.addListener(EventPriority.NORMAL, false, LivingDamageEvent.Pre.class, AoAPlayerEvents::onPreAttack);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingDamageEvent.Post.class, AoAPlayerEvents::onPostAttack);
 	}
 
@@ -288,7 +289,7 @@ public final class AoAPlayerEvents {
 	}
 
 	private static void onEntityTargeted(final LivingChangeTargetEvent ev) {
-		if (ev.getNewTarget() instanceof ServerPlayer pl)
+		if (ev.getNewAboutToBeSetTarget() instanceof ServerPlayer pl)
 			issueEvent(pl, ENTITY_TARGET, listener -> listener.handleEntityTarget(ev));
 	}
 
@@ -304,6 +305,11 @@ public final class AoAPlayerEvents {
 		else if (ev.getSource().getEntity() instanceof ServerPlayer pl) {
 			issueEvent(pl, OUTGOING_ATTACK, listener -> listener.handleOutgoingAttack(ev));
 		}
+	}
+
+	private static void onPreAttack(final LivingDamageEvent.Pre ev) {
+		if (ev.getEntity() instanceof ServerPlayer pl)
+			issueEvent(pl, INCOMING_DAMAGE_APPLICATION, listener -> listener.handlePreDamageApplication(ev));
 	}
 
 	private static void onPostAttack(final LivingDamageEvent.Post ev) {

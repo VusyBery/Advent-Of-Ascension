@@ -95,8 +95,8 @@ public class LottoTotemEntity extends Entity {
 	}
 
 	@Override
-	public void onRemovedFromWorld() {
-		super.onRemovedFromWorld();
+	public void onRemovedFromLevel() {
+		super.onRemovedFromLevel();
 
 		if (level().isClientSide && !isAlive()) {
 			for (int i = 0; i < 3; i++) {

@@ -26,7 +26,7 @@ public class SharpshotArmour extends AdventArmour {
 		Item gun;
 
 		if (DamageUtil.isGunDamage(ev.getSource()) && ((gun = entity.getMainHandItem().getItem()) instanceof BaseGun || (gun = entity.getOffhandItem().getItem()) instanceof BaseGun)) {
-			float mod = equippedPieces.contains(Piece.FULL_SET) && gun instanceof BaseSniper ? 1.1f : (1 + perPieceValue(equippedPieces, 0.07f));
+			float mod = equippedPieces.contains(Piece.FULL_SET) && gun instanceof BaseSniper ? 1.38f : (1 + perPieceValue(equippedPieces, 0.07f));
 
 			ev.setAmount(ev.getAmount() * mod);
 		}

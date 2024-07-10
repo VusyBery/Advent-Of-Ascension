@@ -5,7 +5,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.util.DamageUtil;
@@ -20,9 +19,9 @@ public class ZargoniteArmour extends AdventArmour {
 	}
 
 	@Override
-	public void handleIncomingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
+	public void handleOutgoingAttack(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
 		if (DamageUtil.isMagicDamage(ev.getSource()))
-			ev.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> DamageUtil.percentDamageReduction(container, reduction, perPieceValue(equippedPieces, 0.1f)));
+			ev.setAmount(ev.getAmount() * (1 + perPieceValue(equippedPieces, 0.1f)));
 	}
 
 	@Override

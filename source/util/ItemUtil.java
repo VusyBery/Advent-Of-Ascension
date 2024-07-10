@@ -187,8 +187,12 @@ public final class ItemUtil {
 				if (allowBuffs) {
 					cost = Mth.ceil(AoAEnchantments.modifyRuneCost(player.serverLevel(), heldItem, cost));
 
-					if (nightmareArmour)
-						cost = rune == AoAItems.DISTORTION_RUNE.get() ? 0 : Math.max(cost - 1, 1);
+					if (nightmareArmour) {
+						if (rune == AoAItems.DISTORTION_RUNE.get())
+							return null;
+
+						cost = Math.max(cost - 1, 1);
+					}
 				}
 
 				return Mth.ceil(AoAEnchantments.modifyAmmoCost(player.serverLevel(), heldItem, cost));

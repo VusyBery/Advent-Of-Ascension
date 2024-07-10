@@ -77,8 +77,11 @@ public class ShrapnelExplosion extends ExtendedExplosion {
 		}
 
 		this.affectedEntities.removeIf(entity -> !this.collatedEntityImpacts.containsKey(entity.getUUID()));
-		this.affectedBlocks.forEach((pos, state) -> this.toBlow.add(pos));
-		this.toBlow.sort(Comparator.comparingDouble(pos -> pos.distToCenterSqr(this.origin)));
+
+		if (shouldDamageBlocks()) {
+			this.affectedBlocks.forEach((pos, state) -> this.toBlow.add(pos));
+			this.toBlow.sort(Comparator.comparingDouble(pos -> pos.distToCenterSqr(this.origin)));
+		}
 	}
 
 	protected void populateRays() {
@@ -134,7 +137,7 @@ public class ShrapnelExplosion extends ExtendedExplosion {
 			if (blastResistance.isEmpty()) {
 				emptyPos.add(immutablePos);
 			}
-			else if (!blockDamage || !this.damageCalculator.shouldBlockExplode(this, this.level, immutablePos, state, (this.info.getBaseDamage() + this.info.getEffectiveRadius()) / 2f)) {
+			else if (state.blocksMotion() && (!blockDamage || !this.damageCalculator.shouldBlockExplode(this, this.level, immutablePos, state, (this.info.getBaseDamage() + this.info.getEffectiveRadius()) / 2f))) {
 				checkForEntitiesInRay(ray, exactPos, nearbyEntities, entities);
 
 				return 0;

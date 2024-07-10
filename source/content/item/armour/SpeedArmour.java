@@ -43,13 +43,13 @@ public class SpeedArmour extends AdventArmour {
 
 	@Override
 	public void onEquip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
-		if (equippedPieces.contains(Piece.FULL_SET))
+		if (piece == Piece.FULL_SET)
 			AttributeUtil.applyTransientModifier(entity, Attributes.MOVEMENT_SPEED, SET_BONUS);
 	}
 
 	@Override
 	public void onUnequip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
-		if (equippedPieces.contains(Piece.FULL_SET))
+		if (piece == Piece.FULL_SET)
 			AttributeUtil.removeModifier(entity, Attributes.MOVEMENT_SPEED, SET_BONUS);
 	}
 

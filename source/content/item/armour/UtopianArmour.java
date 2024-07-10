@@ -19,7 +19,7 @@ public class UtopianArmour extends AdventArmour {
 	@Override
 	public void onEquip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
 		if (entity instanceof ServerPlayer pl) {
-			float mod = equippedPieces.contains(Piece.FULL_SET) ? 0.1f : 0.05f;
+			float mod = piece == Piece.FULL_SET ? 0.1f : 0.05f;
 
 			PlayerUtil.getAdventPlayer(pl).getSkills().forEach(skill -> skill.applyXpModifier(mod));
 		}
@@ -28,7 +28,7 @@ public class UtopianArmour extends AdventArmour {
 	@Override
 	public void onUnequip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
 		if (entity instanceof ServerPlayer pl) {
-			float mod = equippedPieces.contains(Piece.FULL_SET) ? 0.1f : 0.05f;
+			float mod = piece == Piece.FULL_SET ? 0.1f : 0.05f;
 
 			PlayerUtil.getAdventPlayer(pl).getSkills().forEach(skill -> skill.removeXpModifier(mod));
 		}

@@ -2,7 +2,7 @@
   "type": "aoa3:tool_interaction",
   "ingredients": [
     {
-      "tag": "c:foods/raw_fishes"
+      "tag": "c:foods/raw_fish"
     },
     {
       "tag": "minecraft:swords"

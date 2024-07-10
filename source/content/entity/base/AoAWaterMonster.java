@@ -8,7 +8,6 @@ import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.ai.navigation.WaterBoundPathNavigation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -22,6 +21,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.misc.Idle;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.WalkOrRunToWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
+import net.tslat.smartbrainlib.api.core.navigation.SmoothWaterBoundPathNavigation;
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 
@@ -39,7 +39,7 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
 
     @Override
     protected PathNavigation createNavigation(Level level) {
-        return isAmphibious() ? new AmphibiousPathNavigation(this, level) : new WaterBoundPathNavigation(this, level);
+        return isAmphibious() ? new AmphibiousPathNavigation(this, level) : new SmoothWaterBoundPathNavigation(this, level);
     }
 
     @Override
@@ -72,6 +72,7 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
     public boolean checkSpawnObstruction(LevelReader level) {
         return level.isUnobstructed(this);
     }
+
 
     @Override
     public int getAmbientSoundInterval() {

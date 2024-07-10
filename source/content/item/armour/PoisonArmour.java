@@ -42,9 +42,8 @@ public class PoisonArmour extends AdventArmour {
 
 	@Override
 	public void handleIncomingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingIncomingDamageEvent ev) {
-		if (DamageUtil.isPoisonDamage(ev.getSource())) {
+		if (DamageUtil.isPoisonDamage(ev.getSource()))
 			ev.addReductionModifier(DamageContainer.Reduction.ARMOR, (container, reduction) -> DamageUtil.percentDamageReduction(container, reduction, perPieceValue(equippedPieces, 0.25f)));
-		}
 	}
 
 	@Override

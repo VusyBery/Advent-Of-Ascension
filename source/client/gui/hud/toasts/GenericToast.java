@@ -34,7 +34,7 @@ public class GenericToast implements Toast {
 
     @Override
     public Visibility render(GuiGraphics guiGraphics, ToastComponent toastComponent, long timeSinceLastVisible) {
-        if (!stillValid())
+        if (Minecraft.getInstance().level == null || !stillValid())
             return Visibility.HIDE;
 
         drawBackground(guiGraphics, toastComponent, timeSinceLastVisible);
