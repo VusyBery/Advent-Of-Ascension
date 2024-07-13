@@ -65,6 +65,8 @@ https://github.com/Tslat/Advent-Of-Ascension/issues
 2. 提交建议。前往issue页面，单击"New Issue"并选择你提交的建议类型：
 https://github.com/Tslat/Advent-Of-Ascension/issues
 
+如果你想为AoA的本地化/翻译做出贡献，请使用[官方Crowdin项目](https://crowdin.com/project/advent-of-ascension)。
+
 --
 
 Deutsch:
