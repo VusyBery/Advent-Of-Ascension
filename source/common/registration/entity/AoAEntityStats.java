@@ -3,6 +3,7 @@ package net.tslat.aoa3.common.registration.entity;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -61,15 +62,22 @@ public final class AoAEntityStats {
 		AttributeBuilder.createMonster(AoAMonsters.VELORAPTOR.get()).health(37).moveSpeed(0.35).meleeStrength(7.5f).knockbackResist(0.2f).aggroRange(16).followRange(32).extraAttributes(Attributes.ARMOR_TOUGHNESS, NeoForgeMod.SWIM_SPEED, NeoForgeMod.NAMETAG_DISTANCE, Attributes.GRAVITY, Attributes.ATTACK_KNOCKBACK).build(ev);
 	}
 
+	private static void doBarathosEntityStats(final EntityAttributeCreationEvent ev) {
+		AttributeBuilder.create(AoAAnimals.ARKBACK.get()).health(100).moveSpeed(0.2875f).build(ev);
+		AttributeBuilder.create(AoAAnimals.EMPEROR_BEAST.get()).health(100).moveSpeed(0.2875f).build(ev);
+	}
+
 	private static void doBossEntityStats(final EntityAttributeCreationEvent ev) {
-		AttributeBuilder.createMonster(AoAMonsters.SMASH.get()).health(275).moveSpeed(0.31).meleeStrength(15).knockbackResist(0.9).followRange(100).aggroRange(64).armour(10, 10).knockback(1f).stepHeight(1.25f).build(ev);
+		AttributeBuilder.createMonster(AoAMonsters.WOUNDED_TYROSAUR.get()).health(275).moveSpeed(0.2).meleeStrength(15).knockbackResist(0.9).followRange(100).aggroRange(64).armour(10, 10).knockback(1f).stepHeight(1.25f).build(ev);
+
+		AttributeBuilder.createMonster(AoAMonsters.SMASH.get()).health(635).moveSpeed(0.2875f).meleeStrength(15).knockbackResist(0.9).followRange(100).aggroRange(64).armour(10, 10).knockback(1f).stepHeight(1.25f).build(ev);
 		AttributeBuilder.createMonster(AoAMonsters.ELITE_SMASH.get()).health(600).moveSpeed(0.315).meleeStrength(30).knockbackResist(1).followRange(100).aggroRange(64).armour(15, 25).knockback(1f).stepHeight(1.25f).build(ev);
 		AttributeBuilder.createMonster(AoAMonsters.NETHENGEIC_WITHER.get()).health(420).moveSpeed(0.31).flyingSpeed(0.6).projectileDamage(6).knockbackResist(1).followRange(100).aggroRange(64).knockback(1f).build(ev);
 		AttributeBuilder.createMonster(AoAMonsters.ELITE_NETHENGEIC_WITHER.get()).health(950).moveSpeed(0.33).flyingSpeed(1.5f).projectileDamage(30).knockbackResist(1).followRange(100).aggroRange(64).knockback(1f).build(ev);
 		AttributeBuilder.createMonster(AoAMonsters.KING_BAMBAMBAM.get()).health(740).moveSpeed(0.2875f).projectileDamage(12).knockbackResist(1).followRange(100).aggroRange(64).armour(10, 30).build(ev);
 		AttributeBuilder.createMonster(AoAMonsters.ELITE_KING_BAMBAMBAM.get()).health(1510).moveSpeed(0.2875f).projectileDamage(25).knockbackResist(1).followRange(100).aggroRange(64).armour(15, 30).build(ev);
-		AttributeBuilder.createMonster(AoAMonsters.TYROSAUR.get()).health(275).moveSpeed(0.31).meleeStrength(15).knockbackResist(0.9).followRange(100).aggroRange(64).armour(10, 10).knockback(1f).stepHeight(1.25f).build(ev);
-		AttributeBuilder.createMonster(AoAMonsters.ELITE_TYROSAUR.get()).health(600).moveSpeed(0.315).meleeStrength(30).knockbackResist(1).followRange(100).aggroRange(64).armour(15, 25).knockback(1f).stepHeight(1.25f).build(ev);
+		AttributeBuilder.createMonster(AoAMonsters.TYROSAUR.get()).health(635).moveSpeed(0.2875f).meleeStrength(15).knockbackResist(0.9).followRange(100).aggroRange(64).armour(10, 15).knockback(1f).stepHeight(1.25f).build(ev);
+		AttributeBuilder.createMonster(AoAMonsters.ELITE_TYROSAUR.get()).health(600).moveSpeed(0.315).meleeStrength(30).knockbackResist(1).followRange(100).aggroRange(64).armour(15, 25).knockback(1f).build(ev);
 		AttributeBuilder.createMonster(AoAMonsters.SKELETRON.get()).health(275).moveSpeed(0.31).meleeStrength(15).knockbackResist(0.9).followRange(100).aggroRange(64).armour(10, 10).knockback(1f).stepHeight(1.25f).build(ev);
 		AttributeBuilder.createMonster(AoAMonsters.ELITE_SKELETRON.get()).health(600).moveSpeed(0.315).meleeStrength(30).knockbackResist(1).followRange(100).aggroRange(64).armour(15, 25).knockback(1f).stepHeight(1.25f).build(ev);
 	}
@@ -78,6 +86,7 @@ public final class AoAEntityStats {
 		doOverworldEntityStats(ev);
 		doNetherEntityStats(ev);
 		doPrecasiaEntityStats(ev);
+		doBarathosEntityStats(ev);
 		doBossEntityStats(ev);
 
 		//AttributeBuilder.create(AoAAnimals.ANGELICA.get()).health(15).flyingSpeed(0.1).knockbackResist(0.1).followRange(24).extraAttributes(Attributes.ATTACK_KNOCKBACK).build(ev);
@@ -402,7 +411,7 @@ public final class AoAEntityStats {
 
 	private record AttributeBuilder(EntityType<? extends LivingEntity> entityType, AttributeSupplier.Builder attributeMap) {
 		private static AttributeBuilder create(EntityType<? extends LivingEntity> entityType) {
-			return new AttributeBuilder(entityType, LivingEntity.createLivingAttributes());
+			return new AttributeBuilder(entityType, Mob.createMobAttributes());
 		}
 
 		private static AttributeBuilder createMonster(EntityType<? extends LivingEntity> entityType) {

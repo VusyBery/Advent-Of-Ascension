@@ -27,6 +27,15 @@
                 "min": 14.0
               },
               "function": "minecraft:set_count"
+            },
+            {
+              "function": "aoa3:grant_skill_xp",
+              "skill": "aoa3:dexterity",
+              "xp": {
+                "type": "minecraft:uniform",
+                "max_exclusive": 4500.0,
+                "min_inclusive": 3000.0
+              }
             }
           ],
           "name": "aoa3:archaic_token",

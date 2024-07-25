@@ -1,4 +1,12 @@
 {
+  "ambient.light_wind": {
+    "sounds": [
+      "aoa3:ambient/light_wind-01",
+      "aoa3:ambient/light_wind-02",
+      "aoa3:ambient/light_wind-03",
+      "aoa3:ambient/light_wind-04"
+    ]
+  },
   "biome.barren_grounds.music": {
     "sounds": [
       {
@@ -1599,18 +1607,6 @@
     ],
     "subtitle": "subtitles.aoa3.entity.generic.ice_wind"
   },
-  "entity.generic.large_creature_groan": {
-    "sounds": [
-      "aoa3:entity/generic/large_creature_groan"
-    ],
-    "subtitle": "subtitles.aoa3.entity.generic.large_creature_groan"
-  },
-  "entity.generic.large_creature_grunt": {
-    "sounds": [
-      "aoa3:entity/generic/large_creature_grunt"
-    ],
-    "subtitle": "subtitles.aoa3.entity.generic.large_creature_grunt"
-  },
   "entity.generic.large_lizard_hiss": {
     "sounds": [
       "aoa3:entity/generic/large_lizard_hiss"
@@ -2954,11 +2950,23 @@
     ],
     "subtitle": "subtitles.aoa3.entity.smash.belly_drum"
   },
+  "entity.smash.death": {
+    "sounds": [
+      "aoa3:entity/smash/death"
+    ],
+    "subtitle": "subtitles.aoa3.entity.smash.death"
+  },
   "entity.smash.enrage": {
     "sounds": [
       "aoa3:entity/smash/enrage"
     ],
     "subtitle": "subtitles.aoa3.entity.smash.enrage"
+  },
+  "entity.smash.hurt": {
+    "sounds": [
+      "aoa3:entity/smash/hurt"
+    ],
+    "subtitle": "subtitles.aoa3.entity.smash.hurt"
   },
   "entity.smash.music": {
     "sounds": [
@@ -3276,12 +3284,6 @@
     ],
     "subtitle": "subtitles.aoa3.entity.trotter.hurt"
   },
-  "entity.tyrosaur.ambient": {
-    "sounds": [
-      "aoa3:entity/tyrosaur/ambient"
-    ],
-    "subtitle": "subtitles.aoa3.entity.tyrosaur.ambient"
-  },
   "entity.tyrosaur.charge": {
     "sounds": [
       "aoa3:entity/tyrosaur/charge"
@@ -3303,7 +3305,7 @@
   "entity.tyrosaur.music": {
     "sounds": [
       {
-        "name": "aoa3:entity/tyrosaur/tyrosaur_music",
+        "name": "aoa3:entity/tyrosaur/music",
         "stream": true
       }
     ]
@@ -3313,6 +3315,22 @@
       "aoa3:entity/tyrosaur/ready_stomp"
     ],
     "subtitle": "subtitles.aoa3.entity.tyrosaur.ready_stomp"
+  },
+  "entity.tyrosaur.roar_loop": {
+    "sounds": [
+      "aoa3:entity/tyrosaur/roar_loop"
+    ]
+  },
+  "entity.tyrosaur.roar_start": {
+    "sounds": [
+      "aoa3:entity/tyrosaur/roar_start"
+    ],
+    "subtitle": "subtitles.aoa3.entity.tyrosaur.roar_start"
+  },
+  "entity.tyrosaur.roar_stop": {
+    "sounds": [
+      "aoa3:entity/tyrosaur/roar_stop"
+    ]
   },
   "entity.tyrosaur.step": {
     "sounds": [
@@ -3616,6 +3634,16 @@
       "aoa3:entity/zorp/hurt"
     ],
     "subtitle": "subtitles.aoa3.entity.zorp.hurt"
+  },
+  "fx.rubble": {
+    "sounds": [
+      "aoa3:fx/rubble-01"
+    ]
+  },
+  "fx.slam": {
+    "sounds": [
+      "aoa3:fx/slam-01"
+    ]
   },
   "item.amber_staff.cast": {
     "sounds": [

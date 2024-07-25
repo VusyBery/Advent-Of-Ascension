@@ -58,6 +58,7 @@ public class GoldTrophyRecipe extends CustomRecipe {
 	@Override
 	public boolean matches(CraftingInput inv, Level worldIn) {
 		String entityType = null;
+		int count = 0;
 
 		for (ItemStack stack : inv.items()) {
 			if (stack.getItem() != AoABlocks.TROPHY.get().asItem())
@@ -71,15 +72,18 @@ public class GoldTrophyRecipe extends CustomRecipe {
 
 			if (entityType == null) {
 				entityType = entityId;
+				count++;
 
 				continue;
 			}
 
 			if (!entityType.equals(entityId))
 				return false;
+
+			count++;
 		}
 
-		return true;
+		return count == 9;
 	}
 
 	@Override

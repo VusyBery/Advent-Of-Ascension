@@ -45,6 +45,9 @@ public class OpteryxNestTreeDecorator extends TreeDecorator {
 
     @Override
     public void place(Context context) {
+        if (context.logs().isEmpty())
+            return;
+
         final RandomSource random = context.random();
 
         if (random.nextFloat() >= this.probability)
@@ -70,7 +73,7 @@ public class OpteryxNestTreeDecorator extends TreeDecorator {
 
         final WorldGenLevel level = genLevel;
         final ConfiguredFeature nest = this.nestFeature.value();
-        final BlockPos trunkBase = context.logs().get(0);
+        final BlockPos trunkBase = context.logs().getFirst();
         final List<BlockPos> coreTrunkColumn = new ObjectArrayList<>();
         final BlockPos trunkTop = context.logs().stream()
                 .filter(pos -> pos.getX() == trunkBase.getX() && pos.getZ() == trunkBase.getZ())

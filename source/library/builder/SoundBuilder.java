@@ -42,6 +42,8 @@ public final class SoundBuilder {
 
 	private Entity followingEntity = null;
 
+	private Vec3 velocity = null;
+
 	private float pitch = 1f;
 	private float radius = 16f;
 
@@ -88,9 +90,17 @@ public final class SoundBuilder {
 	}
 
 	public SoundBuilder followEntity(Entity entity) {
-		this.level = entity.level();
-		this.followingEntity = entity;
-		this.location = entity.position();
+		if (entity != null) {
+			this.level = entity.level();
+			this.followingEntity = entity;
+			this.location = entity.position();
+		}
+
+		return this;
+	}
+
+	public SoundBuilder moving(Vec3 velocity) {
+		this.velocity = velocity;
 
 		return this;
 	}
@@ -235,6 +245,10 @@ public final class SoundBuilder {
 
 	public Entity getFollowingEntity() {
 		return this.followingEntity;
+	}
+
+	public Vec3 getVelocity() {
+		return this.velocity;
 	}
 
 	public float getPitch() {
@@ -382,6 +396,11 @@ public final class SoundBuilder {
 			buffer.writeVarInt(builder.followingEntity.getId());
 		}, (builder, buffer) -> {
 			builder.followEntity(ClientOperations.getLevel().getEntity(buffer.readVarInt()));
+		}),
+		MOVING(builder -> builder.velocity != null, (builder, buffer) -> {
+			buffer.writeVec3(builder.velocity);
+		}, (builder, buffer) -> {
+			builder.moving(buffer.readVec3());
 		}),
 		PITCH(builder -> builder.pitch != 1f, (builder, buffer) -> {
 			buffer.writeFloat(builder.pitch);

@@ -223,13 +223,6 @@ public final class AoATags {
 		public static final TagKey<Item> RODS_METAL = tag("rods/metal");
 		public static final TagKey<Item> AIRTIGHT = tag("armor/airtight");
 
-		public static final TagKey<Item> RAWBEEF = tag("rawbeef");
-		public static final TagKey<Item> RAWCHICKEN = tag("rawchicken");
-		public static final TagKey<Item> RAWFISH = tag("rawfish");
-		public static final TagKey<Item> COOKEDFISH = tag("cookedfish");
-		public static final TagKey<Item> COOKEDCHICKEN = tag("cookedchicken");
-		public static final TagKey<Item> COOKEDBEEF = tag("cookedbeef");
-
 		public static final TagKey<Item> COMPASS_RUNE_CATALYST = aoaTag("compass_rune_catalyst");
 		public static final TagKey<Item> DISTORTION_RUNE_CATALYST = aoaTag("distortion_rune_catalyst");
 		public static final TagKey<Item> ENERGY_RUNE_CATALYST = aoaTag("energy_rune_catalyst");

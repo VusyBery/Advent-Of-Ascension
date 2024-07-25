@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.entity.monster.precasia;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
@@ -10,7 +9,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.base.AoAWaterMeleeMob;
@@ -99,12 +97,6 @@ public class DunkleosteusEntity extends AoAWaterMeleeMob<DunkleosteusEntity> {
 	@Override
 	protected SoundEvent getDeathSound() {
 		return super.getDeathSound();
-	}
-
-	@Nullable
-	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return super.getStepSound(pos, blockState);
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -22,6 +23,7 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
+import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.content.entity.brain.task.custom.ChargeAttack;
 import net.tslat.aoa3.content.entity.brain.task.custom.GroundSlamAttack;
@@ -88,13 +90,13 @@ public class SmashEntity extends AoABoss {
 	@Nullable
 	@Override
 	protected SoundEvent getDeathSound() {
-		return AoASounds.LARGE_CREATURE_GROAN.get();
+		return AoASounds.ENTITY_SMASH_DEATH.get();
 	}
 
 	@Nullable
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return AoASounds.LARGE_CREATURE_GRUNT.get();
+		return AoASounds.ENTITY_SMASH_HURT.get();
 	}
 
 	@Nullable
@@ -162,6 +164,7 @@ public class SmashEntity extends AoABoss {
 	public List<ExtendedSensor<? extends AoABoss>> getSensors() {
 		return ObjectArrayList.of(
 				new AggroBasedNearbyPlayersSensor<>(),
+				new AggroBasedNearbyLivingEntitySensor<AoABoss>().setPredicate((target, entity) -> target instanceof OwnableEntity tamedEntity && tamedEntity.getOwnerUUID() != null).setScanRate(entity -> 40),
 				new HurtBySensor<>(),
 				new UnreachableTargetSensor<AoABoss>().afterScanning(entity -> {
 					if (!BrainUtils.hasMemory(entity, SBLMemoryTypes.TARGET_UNREACHABLE.get()) && !ATTACK_STATE.is(this, CHARGE_STATE))

@@ -29,7 +29,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.RawAnimation;
 
 
-public abstract class AoABoss extends AoAMonster<AoABoss>{
+public abstract class AoABoss extends AoAMonster<AoABoss> {
 	private final ServerBossEvent bossStatusTracker = (ServerBossEvent)new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.GREEN, BossEvent.BossBarOverlay.NOTCHED_20).setDarkenScreen(false).setCreateWorldFog(false);
 	private SwingData swingData;
 
@@ -39,6 +39,7 @@ public abstract class AoABoss extends AoAMonster<AoABoss>{
 		super(entityType, level);
 
 		this.bossStatusTracker.id = getUUID();
+		this.noCulling = true;
 	}
 
 	@Override

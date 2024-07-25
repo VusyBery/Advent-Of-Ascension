@@ -412,6 +412,13 @@
               "function": "minecraft:set_components"
             },
             {
+              "function": "minecraft:set_name",
+              "name": {
+                "translate": "item.aoa3.potion.unignitable"
+              },
+              "target": "item_name"
+            },
+            {
               "count": {
                 "type": "minecraft:uniform",
                 "max": 1.0,

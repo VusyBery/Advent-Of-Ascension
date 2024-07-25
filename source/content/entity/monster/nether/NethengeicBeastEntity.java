@@ -304,9 +304,7 @@ public class NethengeicBeastEntity extends AoARangedMob<NethengeicBeastEntity> {
     }
 
     @Override
-    protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-        return null;
-    }
+    protected void playStepSound(BlockPos pos, BlockState blockState) {}
 
     public boolean hasAura() {
         return getEntityData().get(FLAME_AURA);

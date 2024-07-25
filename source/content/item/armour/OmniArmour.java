@@ -29,7 +29,7 @@ public class OmniArmour extends AdventArmour {
 
 	@Override
 	public void afterTakingDamage(LivingEntity entity, EnumSet<Piece> equippedPieces, LivingDamageEvent.Post ev) {
-		if (ev.getNewDamage() > 0 && DamageUtil.isMeleeDamage(ev.getSource()))
+		if (ev.getNewDamage() > 0 && equippedPieces.contains(Piece.FULL_SET) && DamageUtil.isMeleeDamage(ev.getSource()))
 			WorldUtil.createExplosion(entity, entity.level(), entity.blockPosition(), 1.75f);
 	}
 

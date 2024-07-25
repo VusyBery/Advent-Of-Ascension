@@ -277,6 +277,51 @@
       },
       "conditions": [
         {
+          "chance": 0.02,
+          "condition": "minecraft:random_chance"
+        },
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "predicates": {
+                "minecraft:enchantments": [
+                  {
+                    "enchantments": "minecraft:silk_touch",
+                    "levels": {
+                      "min": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "damage": 0.32333332,
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "aoa3:bone_horn"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "conditions": [
+        {
           "condition": "minecraft:match_tool",
           "predicate": {
             "predicates": {

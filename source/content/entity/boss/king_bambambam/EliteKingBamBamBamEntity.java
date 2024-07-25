@@ -160,12 +160,6 @@ public class EliteKingBamBamBamEntity extends AoABoss implements AoARangedAttack
 
 	@Nullable
 	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return super.getStepSound(pos, blockState);
-	}
-
-	@Nullable
-	@Override
 	public SoundEvent getMusic() {
 		return AoASounds.KING_BAMBAMBAM_MUSIC.get();
 	}

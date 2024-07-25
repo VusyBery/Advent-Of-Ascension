@@ -6,14 +6,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoAConfigs;
-import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.content.block.blockentity.TrophyBlockEntity;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
-import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class TrophyRenderer implements BlockEntityRenderer<TrophyBlockEntity> {
 	public TrophyRenderer(BlockEntityRendererProvider.Context context) {}
@@ -30,6 +30,7 @@ public class TrophyRenderer implements BlockEntityRenderer<TrophyBlockEntity> {
 			float maxScale = Math.max(entity.getBbWidth(), entity.getBbHeight());
 			double hover = (Mth.sin((float)blockEntity.hoverStep + partialTick) / 30d);
 			blockEntity.hoverStep += hover * 0.01f;
+			RandomSource random = entity.level().getRandom();
 
 			if (maxScale > 1.0D)
 				scale /= maxScale;
@@ -38,14 +39,15 @@ public class TrophyRenderer implements BlockEntityRenderer<TrophyBlockEntity> {
 			matrix.scale(scale, scale, scale);
 			matrix.translate(0, (1 / scale), 0);
 
-			if (partialTick > 0.95f && blockEntity.getTrophyData().isOriginalTrophy()) {
-				float colourMod = entity.level().random.nextFloat() * 0.7f + 0.3f;
+			if (blockEntity.getTrophyData().isOriginalTrophy() && !Minecraft.getInstance().isPaused() && random.nextInt(5) == 0) {
+				float colourMod = random.nextFloat() * 0.7f + 0.3f;
+				Vec3 pos = Vec3.atBottomCenterOf(blockEntity.getBlockPos()).add(random.nextGaussian() * (entity.getBbWidth() / 2f) * scale * 0.75f, 0.9f + random.nextFloat() * entity.getBbHeight() * scale, random.nextGaussian() * (entity.getBbWidth() / 2f) * scale * 0.75f);
 
-				ParticleBuilder.forPosition(AoAParticleTypes.GENERIC_DUST.get(), blockEntity.getBlockPos().getX() + 0.5f, blockEntity.getBlockPos().getY() + 0.9 + ((entity.getBbHeight() / 2f) * scale), blockEntity.getBlockPos().getZ() + 0.5f)
-						.scaleMod(0.005f)
-						.lifespan(Mth.ceil(10 * (entity.level().random.nextFloat() * 0.8f + 0.2f)))
+				ParticleBuilder.forPositions(ParticleTypes.GLOW, pos)
+						.scaleMod(0.05f)
+						.lifespan(Mth.ceil(10 * (random.nextFloat() * 0.8f + 0.2f)))
 						.colourOverride(colourMod, colourMod * 200 / 255f, 0, 1f)
-						.power(new Vec3(RandomUtil.randomGaussianValue() * 0.5f, RandomUtil.randomGaussianValue() * 0.5f, RandomUtil.randomGaussianValue() * 0.5f))
+						.power(Vec3.ZERO)
 						.spawnParticles(entity.level());
 			}
 

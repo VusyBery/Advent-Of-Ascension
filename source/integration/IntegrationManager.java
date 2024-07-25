@@ -35,7 +35,7 @@ public class IntegrationManager {
 	}
 
 	public static boolean isTESActive() {
-		return INTEGRATIONS.get(JEI).enabled();
+		return INTEGRATIONS.get(TES).enabled();
 	}
 
 	public static void init() {

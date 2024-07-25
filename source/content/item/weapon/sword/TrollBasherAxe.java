@@ -17,14 +17,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.List;
 
 public class TrollBasherAxe extends BaseSword {
 	public TrollBasherAxe(Tier tier, Item.Properties properties) {
-		super(tier, properties, createToolProperties(tier, AoATags.Blocks.INCORRECT_FOR_TROLL_BASHER_TOOL));
+		super(tier, properties, createToolProperties(tier, BlockTags.MINEABLE_WITH_AXE));
 	}
 
 	public static Tool createToolProperties(Tier tier, TagKey<Block> toolMineableTag) {

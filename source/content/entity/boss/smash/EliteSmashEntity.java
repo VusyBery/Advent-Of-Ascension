@@ -89,13 +89,13 @@ public class EliteSmashEntity extends AoABoss {
 	@Nullable
 	@Override
 	protected SoundEvent getDeathSound() {
-		return AoASounds.LARGE_CREATURE_GROAN.get();
+		return AoASounds.ENTITY_SMASH_DEATH.get();
 	}
 
 	@Nullable
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
-		return AoASounds.LARGE_CREATURE_GRUNT.get();
+		return AoASounds.ENTITY_SMASH_HURT.get();
 	}
 
 	@Nullable

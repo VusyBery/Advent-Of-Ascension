@@ -355,6 +355,6 @@ public class AdventMainGui extends Screen {
 	public static void changeTheme() {
 		theme = AdventGuiThemeReloadListener.getNextTheme();
 
-		AoAConfigs.CLIENT.changeAdventGuiTheme(theme.name());
+		AoAConfigs.CLIENT.changeAdventGuiTheme(StringUtil.toTitleCase(theme.id()));
 	}
 }

@@ -22,9 +22,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.client.gui.adventgui.AdventGuiTabLore;
-import net.tslat.aoa3.client.gui.hud.RecoilRenderer;
+import net.tslat.aoa3.client.gui.hud.AoACameraModifications;
 import net.tslat.aoa3.client.gui.realmstone.BlankRealmstoneScreen;
 import net.tslat.aoa3.client.render.entity.misc.OccultBlockRenderer;
+import net.tslat.aoa3.client.sound.MovingSoundInstance;
 import net.tslat.aoa3.common.networking.packets.UpdateClientMovementPacket;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.item.misc.WornBook;
@@ -54,8 +55,12 @@ public final class ClientOperations {
 		Minecraft.getInstance().setScreen(new BlankRealmstoneScreen());
 	}
 
-	public static void addRecoil(final float recoil, final int firingTime) {
-		RecoilRenderer.addRecoil(recoil);
+	public static void addRecoil(final float vertical, final float horizontal) {
+		AoACameraModifications.addScreenRecoil(vertical, horizontal);
+	}
+
+	public static void addScreenShake(final double frequency, final float strength, final float dampening) {
+		AoACameraModifications.addScreenShake(frequency, strength, dampening);
 	}
 
 	public static void addOccultBlocks(int renderUntil, List<OccultPickaxe.LocatedBlock> blocks) {
@@ -124,7 +129,12 @@ public final class ClientOperations {
 		}
 		else {
 			if (soundBuilder.getLocation() != null) {
-				sound = new SimpleSoundInstance(soundBuilder.getSound().getLocation(), soundBuilder.getCategory(), soundBuilder.getRadius() / 16f, soundBuilder.getPitch(), RandomSource.create(soundBuilder.getSeed()), soundBuilder.getIsLooping(), (int)delay, soundBuilder.getIsInWorld() ? SoundInstance.Attenuation.LINEAR : SoundInstance.Attenuation.NONE, soundBuilder.getLocation().x(), soundBuilder.getLocation().y(), soundBuilder.getLocation().z(), false);
+				if (soundBuilder.getVelocity() != null) {
+					sound = new MovingSoundInstance(soundBuilder.getSound(), soundBuilder.getCategory(), soundBuilder.getVelocity(), soundBuilder.getRadius() / 16f, soundBuilder.getPitch(), RandomSource.create(soundBuilder.getSeed()), soundBuilder.getIsLooping(), (int)delay, soundBuilder.getIsInWorld() ? SoundInstance.Attenuation.LINEAR : SoundInstance.Attenuation.NONE, soundBuilder.getLocation().x(), soundBuilder.getLocation().y(), soundBuilder.getLocation().z(), false);
+				}
+				else {
+					sound = new SimpleSoundInstance(soundBuilder.getSound().getLocation(), soundBuilder.getCategory(), soundBuilder.getRadius() / 16f, soundBuilder.getPitch(), RandomSource.create(soundBuilder.getSeed()), soundBuilder.getIsLooping(), (int)delay, soundBuilder.getIsInWorld() ? SoundInstance.Attenuation.LINEAR : SoundInstance.Attenuation.NONE, soundBuilder.getLocation().x(), soundBuilder.getLocation().y(), soundBuilder.getLocation().z(), false);
+				}
 			}
 			else {
 				sound = new SimpleSoundInstance(soundBuilder.getSound().getLocation(), soundBuilder.getCategory(), soundBuilder.getRadius() / 16f, soundBuilder.getPitch(), RandomSource.create(soundBuilder.getSeed()), soundBuilder.getIsLooping(), (int)delay, soundBuilder.getIsInWorld() ? SoundInstance.Attenuation.LINEAR : SoundInstance.Attenuation.NONE, 0, 0, 0, true);

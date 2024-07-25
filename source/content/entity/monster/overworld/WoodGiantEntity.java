@@ -53,12 +53,9 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.DefaultAnimations;
 
 import java.util.List;
-import java.util.UUID;
 
 public class WoodGiantEntity extends AoAMeleeMob<WoodGiantEntity> {
 	public static final EntityDataHolder<Integer> STAGE = EntityDataHolder.register(WoodGiantEntity.class, EntityDataSerializers.INT, 0, WoodGiantEntity::getStage, WoodGiantEntity::setStage);
-	private static final UUID STAGE_ARMOR_MOD = UUID.fromString("076a790a-a765-4313-b517-527b758e839f");
-	private static final UUID STAGE_TOUGHNESS_MOD = UUID.fromString("3977cd08-2bbe-48ed-b66e-557ada8565b9");
 
 	private int lastMeleeHit = 0;
 	private int stage = 0;

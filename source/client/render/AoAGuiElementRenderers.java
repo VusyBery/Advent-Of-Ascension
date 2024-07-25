@@ -61,8 +61,12 @@ public final class AoAGuiElementRenderers {
 	}
 
 	private static void renderResources(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		Minecraft mc = Minecraft.getInstance();
+
+		if (mc.player == null || mc.player.isSpectator() || mc.options.hideGui)
+			return;
+
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		Window window = mc.getWindow();
 		int horizontalAdjuster = AoAConfigs.CLIENT.hudResourcesHorizontal.get() ? 1 : 0;
 		int verticalAdjuster = horizontalAdjuster == 1 ? 0 : 1;
@@ -70,9 +74,6 @@ public final class AoAGuiElementRenderers {
 		int x = 0;
 		int y = 0;
 		PoseStack poseStack = guiGraphics.pose();
-
-		if (mc.player == null || mc.player.isSpectator())
-			return;
 
 		if (AoAConfigs.CLIENT.hudResourcesPosition.get() == AoAResourceRenderer.HudResourcesPosition.Top_Right) {
 			horizontalAdjuster *= -1;
@@ -122,15 +123,16 @@ public final class AoAGuiElementRenderers {
 	}
 
 	private static void renderSkills(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		Minecraft mc = Minecraft.getInstance();
+
+		if (mc.player == null || mc.player.isSpectator() || mc.options.hideGui)
+			return;
+
+		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		Window window = mc.getWindow();
 		int x = 0;
 		int y = 0;
 		PoseStack poseStack = guiGraphics.pose();
-
-		if (mc.player == null || mc.player.isSpectator())
-			return;
 
 		poseStack.pushPose();
 		poseStack.translate(window.getGuiScaledWidth(), resourcesRenderHeightOffset, 0);

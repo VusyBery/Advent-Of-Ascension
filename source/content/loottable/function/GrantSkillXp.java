@@ -4,6 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.valueproviders.ConstantFloat;
+import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -22,13 +24,13 @@ import java.util.List;
 public class GrantSkillXp extends LootItemConditionalFunction {
 	public static final MapCodec<GrantSkillXp> CODEC = RecordCodecBuilder.mapCodec(builder -> commonFields(builder).and(builder.group(
 					Codec.lazyInitialized(AoARegistries.AOA_SKILLS::lookupCodec).fieldOf("skill").forGetter(GrantSkillXp::getSkill),
-					Codec.FLOAT.fieldOf("xp").forGetter(GrantSkillXp::getXp)))
+					FloatProvider.CODEC.fieldOf("xp").forGetter(GrantSkillXp::getXp)))
 			.apply(builder, GrantSkillXp::new));
 
 	private final AoASkill skill;
-	private final float xp;
+	private final FloatProvider xp;
 
-	protected GrantSkillXp(List<LootItemCondition> lootConditions, AoASkill skill, float xp) {
+	protected GrantSkillXp(List<LootItemCondition> lootConditions, AoASkill skill, FloatProvider xp) {
 		super(lootConditions);
 
 		this.skill = skill;
@@ -51,7 +53,7 @@ public class GrantSkillXp extends LootItemConditionalFunction {
 			entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
 
 		if (entity instanceof ServerPlayer pl)
-			PlayerUtil.giveXpToPlayer(pl, this.skill, xp, false);
+			PlayerUtil.giveXpToPlayer(pl, this.skill, xp.sample(context.getRandom()), false);
 
 		return stack;
 	}
@@ -60,11 +62,15 @@ public class GrantSkillXp extends LootItemConditionalFunction {
 		return this.skill;
 	}
 
-	public float getXp() {
+	public FloatProvider getXp() {
 		return this.xp;
 	}
 
 	public static Builder<?> builder(AoASkill skill, float xp) {
+		return builder(skill, ConstantFloat.of(xp));
+	}
+
+	public static Builder<?> builder(AoASkill skill, FloatProvider xp) {
 		return simpleBuilder((conditions) -> new GrantSkillXp(conditions, skill, xp));
 	}
 }

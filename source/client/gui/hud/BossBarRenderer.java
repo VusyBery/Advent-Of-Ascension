@@ -1,6 +1,7 @@
 package net.tslat.aoa3.client.gui.hud;
 
 import com.mojang.blaze3d.platform.Window;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -12,6 +13,8 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.content.entity.boss.ArmouredBoss;
 import net.tslat.aoa3.library.object.RenderContext;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.RegistryUtil;
@@ -22,6 +25,7 @@ import java.util.Map;
 public final class BossBarRenderer {
 	public static final int STANDARD_BAR_WIDTH = 196;
 	private static final Map<ResourceLocation, ResourceLocation> BAR_ID_CACHE = new Object2ObjectOpenHashMap<>();
+	private static final ResourceLocation ARMOUR_OVERLAY = AdventOfAscension.id("textures/gui/bossbars/armour.png");
 
 	public static void init() {
 		NeoForge.EVENT_BUS.addListener(EventPriority.NORMAL, false, CustomizeGuiOverlayEvent.BossEventProgress.class, BossBarRenderer::onBossInfoRender);
@@ -42,8 +46,10 @@ public final class BossBarRenderer {
 		if (entity == null)
 			return;
 
+		ResourceLocation barTexture = BAR_ID_CACHE.computeIfAbsent(RegistryUtil.getId(entity.getType()), key -> ResourceLocation.fromNamespaceAndPath(key.getNamespace(), "textures/gui/bossbars/" + key.getPath() + ".png"));
+
 		RenderUtil.resetShaderColour();
-		RenderUtil.prepRenderTexture(BAR_ID_CACHE.computeIfAbsent(RegistryUtil.getId(entity.getType()), key -> ResourceLocation.fromNamespaceAndPath(key.getNamespace(), "textures/gui/bossbars/" + key.getPath() + ".png")));
+		RenderUtil.prepRenderTexture(barTexture);
 
 		Window window = mc.getWindow();
 		PoseStack poseStack = ev.getGuiGraphics().pose();
@@ -59,10 +65,24 @@ public final class BossBarRenderer {
 		if (progressWidth > 0)
 			RenderUtil.renderCustomSizedTexture(poseStack, xPos + 2, yPos, 2, 0, progressWidth, 12, 200, 36);
 
+		if (entity instanceof ArmouredBoss boss) {
+			renderArmourOverlay(poseStack, xPos, yPos, boss.getArmourPercent());
+
+			RenderUtil.resetShaderColour();
+			RenderUtil.prepRenderTexture(barTexture);
+		}
+
 		RenderUtil.renderCustomSizedTexture(poseStack, xPos, yPos, 0, 24, 200, 12, 200, 36);
 		renderContext.renderText(displayName, window.getGuiScaledWidth() / 2 - mc.font.width(displayName) / 2, yPos - 9, ColourUtil.WHITE, RenderUtil.TextRenderType.DROP_SHADOW);
 
 		ev.setIncrement(ev.getIncrement() + 5);
 		ev.setCanceled(true);
+	}
+
+	private static void renderArmourOverlay(PoseStack poseStack, int xPos, int yPos, float armourPercent) {
+		RenderSystem.enableBlend();
+		RenderSystem.setShaderColor(1, 1, 1, 0.75f);
+		RenderUtil.prepRenderTexture(ARMOUR_OVERLAY);
+		RenderUtil.renderCustomSizedTexture(poseStack, xPos + 2, yPos, 2, 0, armourPercent * STANDARD_BAR_WIDTH, 12, 200, 12);
 	}
 }

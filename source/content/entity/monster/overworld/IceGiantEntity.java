@@ -7,7 +7,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -35,9 +37,8 @@ import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import net.tslat.smartbrainlib.util.RandomUtil;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 import java.util.List;
 
@@ -73,7 +74,7 @@ public class IceGiantEntity extends AoAMeleeMob<IceGiantEntity> implements AoARa
 				return getNavigation().createPath(target, 0) == null ? 1 : 0;
 			}, meleeGoal, rangedGoal));
 
-		goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 0.6f));
+		goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1f));
 		goalSelector.addGoal(8, new LookAtPlayerGoal(this, Player.class, 12f));
 		goalSelector.addGoal(8, new RandomLookAroundGoal(this));
 		targetSelector.addGoal(1, new HurtByTargetGoal(this));
@@ -89,10 +90,9 @@ public class IceGiantEntity extends AoAMeleeMob<IceGiantEntity> implements AoARa
 		return AoASounds.ICE_HIT.get();
 	}
 
-	@Nullable
 	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return AoASounds.ENTITY_GENERIC_HEAVY_STEP.get();
+	protected float getStepWeight() {
+		return 3f;
 	}
 
 	@Override

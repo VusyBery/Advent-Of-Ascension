@@ -43,11 +43,10 @@ import net.tslat.aoa3.client.render.entity.AnimatedProjectileRenderer;
 import net.tslat.aoa3.client.render.entity.AoAMobRenderer;
 import net.tslat.aoa3.client.render.entity.animal.*;
 import net.tslat.aoa3.client.render.entity.boss.KingBamBamBamRenderer;
+import net.tslat.aoa3.client.render.entity.boss.TyrosaurRenderer;
+import net.tslat.aoa3.client.render.entity.boss.WoundedTyrosaurRenderer;
 import net.tslat.aoa3.client.render.entity.layer.PlayerHaloRenderLayer;
-import net.tslat.aoa3.client.render.entity.misc.FishingCageRenderer;
-import net.tslat.aoa3.client.render.entity.misc.HaulingBobberRenderer;
-import net.tslat.aoa3.client.render.entity.misc.LottoTotemRenderer;
-import net.tslat.aoa3.client.render.entity.misc.PixonRenderer;
+import net.tslat.aoa3.client.render.entity.misc.*;
 import net.tslat.aoa3.client.render.entity.mob.AttercopusRenderer;
 import net.tslat.aoa3.client.render.entity.mob.DunkleosteusRenderer;
 import net.tslat.aoa3.client.render.entity.mob.GhostRenderer;
@@ -115,6 +114,9 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> DEINOTHERIUM = new GeckoLibRendererPackage<>(AoAAnimals.DEINOTHERIUM).model(new DeinotheriumModel());
 	public static final EntityRendererPackage<?> OPTERYX = new GeckoLibRendererPackage<>(AoAAnimals.OPTERYX).renderer(OpteryxRenderer::new);
 
+	public static final EntityRendererPackage<?> ARKBACK = new GeckoLibRendererPackage<>(AoAAnimals.ARKBACK).path("animal/barathos/arkback");
+	public static final EntityRendererPackage<?> EMPEROR_BEAST = new GeckoLibRendererPackage<>(AoAAnimals.EMPEROR_BEAST).path("animal/barathos/emperor_beast");
+
 	public static final EntityRendererPackage<?> ANCIENT_GOLEM = new GeckoLibRendererPackage<>(AoAMonsters.ANCIENT_GOLEM).path("mob/overworld/ancient_golem");
 	//public static final EntityRendererPackage<?> ANGLER = new GeckoLibRendererPackage<>(AoAMonsters.ANGLER).path("mob/lborean/angler");
 	//public static final EntityRendererPackage<?> ARCBEAST = new GeckoLibRendererPackage<>(AoAMonsters.ARCBEAST).path("mob/shyrelands/arcbeast");
@@ -175,7 +177,8 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> KING_BAMBAMBAM = new GeckoLibRendererPackage<>(AoAMonsters.KING_BAMBAMBAM).renderer(KingBamBamBamRenderer::new);
 	public static final EntityRendererPackage<?> ELITE_KING_BAMBAMBAM = new GeckoLibRendererPackage<>(AoAMonsters.ELITE_KING_BAMBAMBAM).path("boss/king_bambambam/elite_king_bambambam", true).emissive();
 
-	public static final EntityRendererPackage<?> TYROSAUR = new GeckoLibRendererPackage<>(AoAMonsters.TYROSAUR).path("boss/tyrosaur/tyrosaur");
+	public static final EntityRendererPackage<?> WOUNDED_TYROSAUR = new GeckoLibRendererPackage<>(AoAMonsters.WOUNDED_TYROSAUR).renderer(WoundedTyrosaurRenderer::new);
+	public static final EntityRendererPackage<?> TYROSAUR = new GeckoLibRendererPackage<>(AoAMonsters.TYROSAUR).path("boss/tyrosaur/tyrosaur").renderer(TyrosaurRenderer::new);
 	public static final EntityRendererPackage<?> ELITE_TYROSAUR = new GeckoLibRendererPackage<>(AoAMonsters.ELITE_TYROSAUR).path("boss/tyrosaur/elite_tyrosaur", true);
 
 	public static final EntityRendererPackage<?> SKELETRON = new GeckoLibRendererPackage<>(AoAMonsters.SKELETRON).path("boss/skeletron/skeletron");
@@ -220,6 +223,7 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> SAND_GIANT_SPIKE_TRAP = new GeckoLibRendererPackage<>(AoAMiscEntities.SAND_GIANT_SPIKE_TRAP).path("misc/sand_giant_spike_trap").nonLiving();
 
 	public static final EntityRendererPackage<?> LIGHTNING = new EntityRendererPackage<>(AoAMiscEntities.CUSTOMISABLE_LIGHTNING_BOLT).provider(LightningBoltRenderer::new);
+	public static final EntityRendererPackage<?> EARTHQUAKE_BLOCK = new EntityRendererPackage<>(AoAMiscEntities.EARTHQUAKE_BLOCK).provider(EarthquakeBlockRenderer::new);
 
 	public static final EntityRendererPackage<?> PIXON = new EntityRendererPackage<>(AoAMiscEntities.PIXON).provider(PixonRenderer::new);
 

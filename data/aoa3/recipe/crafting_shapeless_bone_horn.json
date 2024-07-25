@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "aoa3:ivory"
+    },
+    {
+      "item": "aoa3:footbone_fragment"
+    },
+    {
+      "item": "aoa3:legbone_fragment"
+    },
+    {
+      "item": "aoa3:chestbone_fragment"
+    },
+    {
+      "item": "aoa3:skullbone_fragment"
+    },
+    {
+      "type": "neoforge:components",
+      "components": {
+        "minecraft:attribute_modifiers": {
+          "modifiers": []
+        },
+        "minecraft:damage": 2,
+        "minecraft:enchantments": {
+          "levels": {}
+        },
+        "minecraft:lore": [],
+        "minecraft:max_damage": 3,
+        "minecraft:max_stack_size": 1,
+        "minecraft:rarity": "rare",
+        "minecraft:repair_cost": 0
+      },
+      "items": "aoa3:bone_horn",
+      "strict": true
+    }
+  ],
+  "result": {
+    "components": {
+      "minecraft:damage": 1
+    },
+    "count": 1,
+    "id": "aoa3:bone_horn"
+  }
+}

@@ -175,10 +175,14 @@ public class EmbrakeEntity extends AoAMeleeMob<EmbrakeEntity> implements AoARang
 		return AoASounds.ENTITY_EMBRAKE_HURT.get();
 	}
 
-	@Nullable
 	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return AoASounds.ENTITY_GENERIC_DINO_STEP.get();
+	protected float getStepWeight() {
+		return 2f;
+	}
+
+	@Override
+	protected boolean isQuadruped() {
+		return true;
 	}
 
 	@Override

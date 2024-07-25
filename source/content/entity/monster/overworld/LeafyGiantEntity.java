@@ -77,6 +77,11 @@ public class LeafyGiantEntity extends AoAMeleeMob<LeafyGiantEntity> {
 	}
 
 	@Override
+	protected float nextStep() {
+		return this.moveDist + 1.5f;
+	}
+
+	@Override
 	public boolean isPushable() {
 		return false;
 	}

@@ -155,12 +155,6 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 
 	@Nullable
 	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return super.getStepSound(pos, blockState);
-	}
-
-	@Nullable
-	@Override
 	public SoundEvent getMusic() {
 		return AoASounds.KING_BAMBAMBAM_MUSIC.get();
 	}

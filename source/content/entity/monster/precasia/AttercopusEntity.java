@@ -21,6 +21,7 @@ import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.DefaultAnimations;
 
@@ -38,11 +39,6 @@ public class AttercopusEntity extends AoAMeleeMob<AttercopusEntity> {
 		super.defineSynchedData(builder);
 
 		registerDataParams(builder, CLIMBING);
-	}
-
-	@Override
-	protected void playStepSound(BlockPos pos, BlockState block) {
-		playSound(SoundEvents.SPIDER_STEP, 0.15F, 1.0F);
 	}
 
 	@Override
@@ -68,6 +64,11 @@ public class AttercopusEntity extends AoAMeleeMob<AttercopusEntity> {
 	@Override
 	protected SoundEvent getDeathSound() {
 		return SoundEvents.SPIDER_DEATH;
+	}
+
+	@Override
+	protected @Nullable SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
+		return SoundEvents.SPIDER_STEP;
 	}
 
 	@Override

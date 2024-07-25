@@ -1,7 +1,6 @@
 package net.tslat.aoa3.content.entity.monster.overworld;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EntityDimensions;
@@ -12,7 +11,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -38,8 +36,8 @@ import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.NearbyLivingEntitySensor;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 import java.util.List;
 
@@ -122,12 +120,6 @@ public class ChomperEntity extends AoAMeleeMob<ChomperEntity> {
 	@Override
 	protected SoundEvent getAmbientSound() {
 		return EntityUtil.isEntityMoving(this) ? null : AoASounds.ENTITY_CHOMPER_AMBIENT.get();
-	}
-
-	@Nullable
-	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return AoASounds.ENTITY_GENERIC_HEAVY_STEP.get();
 	}
 
 	@Override

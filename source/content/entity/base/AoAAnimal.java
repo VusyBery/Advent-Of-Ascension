@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.base;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -207,6 +209,22 @@ public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implement
 
 	public int calculateKillXp() {
 		return (int)(getAttributeValue(Attributes.MAX_HEALTH) / 25f);
+	}
+
+	@Override
+	public boolean hurt(DamageSource source, float amount) {
+		if (this.parts.length > 0 && source.getDirectEntity() instanceof AbstractArrow arrow && arrow.getPierceLevel() > 0) {
+			if (arrow.piercingIgnoreEntityIds == null)
+				arrow.piercingIgnoreEntityIds = new IntOpenHashSet(5);
+
+			for (AoAEntityPart<?> part : this.parts) {
+				arrow.piercingIgnoreEntityIds.add(part.getId());
+			}
+
+			arrow.piercingIgnoreEntityIds.add(getId());
+		}
+
+		return super.hurt(source, amount);
 	}
 
 	@Override

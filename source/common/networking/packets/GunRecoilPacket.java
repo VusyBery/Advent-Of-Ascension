@@ -6,15 +6,18 @@ import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.ClientOperations;
+import net.tslat.smartbrainlib.util.RandomUtil;
 
-public record GunRecoilPacket(float recoilAmount, int firingTime) implements AoAPacket {
+public record GunRecoilPacket(float vertical, float lateral) implements AoAPacket {
 	public static final Type<GunRecoilPacket> TYPE = new Type<>(AdventOfAscension.id("gun_recoil"));
 	public static final StreamCodec<FriendlyByteBuf, GunRecoilPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.FLOAT,
-			GunRecoilPacket::recoilAmount,
-			ByteBufCodecs.VAR_INT,
-			GunRecoilPacket::firingTime,
-			GunRecoilPacket::new);
+			ByteBufCodecs.FLOAT, GunRecoilPacket::vertical,
+			ByteBufCodecs.FLOAT, GunRecoilPacket::lateral,
+            GunRecoilPacket::new);
+
+	public GunRecoilPacket(float vertical) {
+		this(vertical, (float)RandomUtil.randomScaledGaussianValue(0.08f) * vertical);
+	}
 
 	@Override
 	public Type<? extends GunRecoilPacket> type() {
@@ -23,6 +26,6 @@ public record GunRecoilPacket(float recoilAmount, int firingTime) implements AoA
 
 	@Override
 	public void receiveMessage(IPayloadContext context) {
-		ClientOperations.addRecoil(this.recoilAmount, this.firingTime);
+		ClientOperations.addRecoil(this.vertical, this.lateral);
 	}
 }

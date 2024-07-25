@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.client.render.AoAAnimations;
@@ -164,7 +165,21 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 
 				if (player != null) {
 					setLastHurtByPlayer(player);
-					dropAllDeathLoot((ServerLevel)level(), level().damageSources().playerAttack(player));
+
+					DamageSource damageSource = damageSources().playerAttack(player);
+
+					if (this.deathScore >= 0)
+						player.awardKillScore(this, this.deathScore, damageSource);
+
+					this.dead = true;
+
+					getCombatTracker().recheckStatus();
+
+					if (player.killedEntity((ServerLevel)level(), this)) {
+						gameEvent(GameEvent.ENTITY_DIE);
+						dropAllDeathLoot((ServerLevel)level(), damageSource);
+						createWitherRose(player);
+					}
 				}
 			});
 
@@ -183,6 +198,6 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 	}
 
 	public boolean isOwner(Entity entity) {
-		return OWNER.get(this).map(value -> value.equals(entity.getUUID())).orElse(false);
+		return OWNER.get(this).map(value -> value.equals(entity.getUUID())).orElse(true);
 	}
 }

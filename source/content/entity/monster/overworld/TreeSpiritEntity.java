@@ -69,11 +69,8 @@ public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 		return AoASounds.TREE_FALL.get();
 	}
 
-	@org.jetbrains.annotations.Nullable
 	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return null;
-	}
+	protected void playStepSound(BlockPos pos, BlockState blockState) {}
 
 	@Override
 	public List<ExtendedSensor<? extends TreeSpiritEntity>> getSensors() {

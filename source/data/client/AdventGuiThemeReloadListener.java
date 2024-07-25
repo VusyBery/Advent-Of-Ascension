@@ -6,6 +6,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Unit;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.StringUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -60,7 +61,7 @@ public class AdventGuiThemeReloadListener implements PreparableReloadListener {
 		for (Map.Entry<String, ResourceLocation[]> entry : textures.entrySet()) {
 			ResourceLocation[] paths = entry.getValue();
 
-			THEMES.add(new AdventGuiTheme(StringUtil.toTitleCase(entry.getKey()), paths[0], paths[1], paths[2]));
+			THEMES.add(new AdventGuiTheme(entry.getKey(), LocaleUtil.createGuiLocaleKey("adventGui.theme." + entry.getKey()), paths[0], paths[1], paths[2]));
 		}
 	}
 
@@ -75,7 +76,7 @@ public class AdventGuiThemeReloadListener implements PreparableReloadListener {
 		pointer = 0;
 
 		for (int i = 0; i < THEMES.size(); i++) {
-			if (THEMES.get(i).name().equals(name)) {
+			if (StringUtil.toTitleCase(THEMES.get(i).nameLocale()).equals(name)) {
 				pointer = i;
 
 				break;
@@ -85,9 +86,10 @@ public class AdventGuiThemeReloadListener implements PreparableReloadListener {
 		return THEMES.get(pointer);
 	}
 
-	public record AdventGuiTheme(String name, ResourceLocation backgroundTexture, ResourceLocation menuButtonTexture, @Nullable ResourceLocation overlayTexture) {
-		public AdventGuiTheme(String name, @Nullable ResourceLocation backgroundTexture, @Nullable ResourceLocation menuButtonTexture, @Nullable ResourceLocation overlayTexture) {
-			this.name = name;
+	public record AdventGuiTheme(String id, String nameLocale, ResourceLocation backgroundTexture, ResourceLocation menuButtonTexture, @Nullable ResourceLocation overlayTexture) {
+		public AdventGuiTheme(String id, String nameLocale, @Nullable ResourceLocation backgroundTexture, @Nullable ResourceLocation menuButtonTexture, @Nullable ResourceLocation overlayTexture) {
+			this.id = id;
+			this.nameLocale = nameLocale;
 			this.backgroundTexture = backgroundTexture == null ? AdventOfAscension.id("textures/gui/adventgui/themes/default/background.png") : backgroundTexture;
 			this.menuButtonTexture = menuButtonTexture == null ? AdventOfAscension.id("textures/gui/adventgui/themes/default/tab_buttons.png") : menuButtonTexture;
 			this.overlayTexture = overlayTexture;

@@ -162,9 +162,7 @@ public class NethengeicWitherEntity extends AoABoss implements AoARangedAttacker
 	}
 
 	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return null;
-	}
+	protected void playStepSound(BlockPos pos, BlockState blockState) {}
 
 	@Override
 	public boolean canSwimInFluidType(FluidType type) {

@@ -51,10 +51,10 @@ public final class XpParticlesRenderer {
 			if (lastParticleReceived.levelUp) {
 				CopyOnWriteArrayList<XPParticle> array = particlesMap.get(skill);
 
-				if (array.size() > 0)
-					array.remove(array.size() - 1);
+				if (!array.isEmpty())
+					array.removeLast();
 
-				array.add(0, lastParticleReceived);
+				array.addFirst(lastParticleReceived);
 			}
 
 			return;
@@ -63,7 +63,7 @@ public final class XpParticlesRenderer {
 		XPParticle particle;
 
 		if (isLevelUp) {
-			particlesMap.get(skill).add(0, particle = new XPParticle(xp, true));
+			particlesMap.get(skill).addFirst(particle = new XPParticle(xp, true));
 		}
 		else {
 			particlesMap.get(skill).add(particle = new XPParticle(xp, false));
@@ -74,34 +74,14 @@ public final class XpParticlesRenderer {
 		lastPacketReceivedTime = System.currentTimeMillis();
 	}
 
-	private static void purgeExpiredEntries() {
-		if (!AoAConfigs.CLIENT.showXpParticles.get()) {
-			particlesMap.clear();
-
-			return;
-		}
-
-		Iterator<Map.Entry<AoASkill, CopyOnWriteArrayList<XPParticle>>> particleEntries = particlesMap.entrySet().iterator();
-		long currentTime = System.currentTimeMillis();
-		long expiryTime = currentTime - 1800;
-
-		while (particleEntries.hasNext()) {
-			Map.Entry<AoASkill, CopyOnWriteArrayList<XPParticle>> entry = particleEntries.next();
-
-			entry.getValue().removeIf(particle -> particle.creationTime <= expiryTime);
-
-			if (entry.getValue().isEmpty())
-				particleEntries.remove();
-		}
-	}
-
 	private static void renderParticles(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-		if (particlesMap.isEmpty())
+		Minecraft mc = Minecraft.getInstance();
+
+		if (particlesMap.isEmpty() || mc.options.hideGui)
 			return;
 
 		float partialTick = deltaTracker.getGameTimeDeltaPartialTick(false);
 		long currentTime = System.currentTimeMillis();
-		Minecraft mc = Minecraft.getInstance();
 		Window window = mc.getWindow();
 		float scrollHeight = window.getGuiScaledHeight() / 3f;
 		int windowWidth = window.getGuiScaledWidth();
@@ -153,7 +133,7 @@ public final class XpParticlesRenderer {
 			poseStack.popPose();
 			skillRenderer.renderInHud(RenderContext.of(guiGraphics), skill, partialTick, AoASkillRenderer.ProgressRenderType.Ring, false);
 
-			if (particles.get(0).levelUp) {
+			if (particles.getFirst().levelUp) {
 				String level = String.valueOf(skill.getLevel(true));
 				float stringWidth = mc.font.width(level);
 				float scale = Math.min(1 / (stringWidth / (float)(renderWidth - 7)), 1 / (mc.font.lineHeight / (float)(renderHeight - 7)));
@@ -181,6 +161,27 @@ public final class XpParticlesRenderer {
 
 		if (hasExpiredParticles)
 			purgeExpiredEntries();
+	}
+
+	private static void purgeExpiredEntries() {
+		if (!AoAConfigs.CLIENT.showXpParticles.get()) {
+			particlesMap.clear();
+
+			return;
+		}
+
+		Iterator<Map.Entry<AoASkill, CopyOnWriteArrayList<XPParticle>>> particleEntries = particlesMap.entrySet().iterator();
+		long currentTime = System.currentTimeMillis();
+		long expiryTime = currentTime - 1800;
+
+		while (particleEntries.hasNext()) {
+			Map.Entry<AoASkill, CopyOnWriteArrayList<XPParticle>> entry = particleEntries.next();
+
+			entry.getValue().removeIf(particle -> particle.creationTime <= expiryTime);
+
+			if (entry.getValue().isEmpty())
+				particleEntries.remove();
+		}
 	}
 
 	static class XPParticle {

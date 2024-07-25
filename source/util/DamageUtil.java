@@ -23,6 +23,7 @@ import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
 import net.tslat.aoa3.content.item.armour.AdventArmour;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -30,22 +31,22 @@ import java.util.function.Function;
 
 public final class DamageUtil {
 	public static DamageSource miscDamage(ResourceKey<DamageType> damageType, Level level) {
-		return new DamageSource(RegistryUtil.getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType));
+		return new DamageSource(level.damageSources().damageTypes.getHolderOrThrow(damageType));
 	}
 
 	public static DamageSource miscPositionedDamage(ResourceKey<DamageType> damageType, Level level, Vec3 position) {
-		return new DamageSource(RegistryUtil.getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), position);
+		return new DamageSource(level.damageSources().damageTypes.getHolderOrThrow(damageType), position);
 	}
 
-	public static DamageSource entityDamage(ResourceKey<DamageType> damageType, Entity attacker) {
-		return new DamageSource(RegistryUtil.getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), attacker);
+	public static DamageSource entityDamage(ResourceKey<DamageType> damageType, @NotNull Entity attacker) {
+		return new DamageSource(attacker.level().damageSources().damageTypes.getHolderOrThrow(damageType), attacker);
 	}
 
-	public static DamageSource positionedEntityDamage(ResourceKey<DamageType> damageType, Entity attacker, Vec3 position) {
+	public static DamageSource positionedEntityDamage(ResourceKey<DamageType> damageType, @Nullable Entity attacker, Vec3 position) {
 		return new DamageSource(RegistryUtil.getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), attacker, attacker, position);
 	}
 
-	public static DamageSource indirectEntityDamage(ResourceKey<DamageType> damageType, Entity attacker, Entity projectile) {
+	public static DamageSource indirectEntityDamage(ResourceKey<DamageType> damageType, @Nullable Entity attacker, @Nullable Entity projectile) {
 		return new DamageSource(RegistryUtil.getDataDrivenRegistry(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), projectile, attacker);
 	}
 

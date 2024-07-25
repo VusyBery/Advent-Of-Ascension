@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.entity.base;
 
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -37,6 +39,7 @@ import net.tslat.aoa3.content.entity.ai.movehelper.MultiFluidSmoothGroundNavigat
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.library.object.EntityDataHolder;
+import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -121,14 +124,20 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 
 	@Nullable
 	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		if (!blockState.liquid()) {
-			BlockState state = level().getBlockState(pos.above());
-			SoundType blockSound = state.getBlock() == Blocks.SNOW ? state.getSoundType(level(), pos, this) : blockState.getSoundType(level(), pos, this);
-
-			return blockSound.getStepSound();
-		}
-
 		return null;
+	}
+
+	@Override
+	protected float nextStep() {
+		return this.moveDist + 1;
+	}
+
+	protected float getStepWeight() {
+		return 1f;
+	}
+
+	protected boolean isQuadruped() {
+		return false;
 	}
 
 	@Override
@@ -206,11 +215,27 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 	}
 
 	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn) {
-		SoundEvent stepSound = getStepSound(pos, blockIn);
+	protected void playStepSound(BlockPos pos, BlockState blockState) {
+		if (!blockState.liquid()) {
+			BlockState state = level().getBlockState(pos.above());
+			SoundType blockSound = state.getBlock() == Blocks.SNOW ? state.getSoundType(level(), pos, this) : blockState.getSoundType(level(), pos, this);
+			SoundEvent stepSound = blockSound.getStepSound();
+			SoundEvent stepSoundOverlay = getStepSound(pos, blockState);
 
-		if (stepSound != null)
-			playSound(stepSound, 0.15F, 1.0F);
+			playStepSounds(stepSound, stepSoundOverlay);
+
+			if (isQuadruped() && !level().isClientSide)
+				AoAScheduler.scheduleSyncronisedTask(() -> playStepSounds(stepSound, stepSoundOverlay), 6);
+		}
+	}
+
+	private void playStepSounds(SoundEvent stepSound, @Nullable SoundEvent stepSoundOverlay) {
+		float stepWeight = getStepWeight() - 1;
+
+		playSound(stepSound, 5 * 0.15f + stepWeight * 0.15f, 1 - stepWeight * 0.1f);
+
+		if (stepSoundOverlay != null)
+			playSound(stepSoundOverlay, 5 * 0.15f + stepWeight * 0.15f, 1 - stepWeight * 0.1f);
 	}
 
 	@Override
@@ -235,6 +260,22 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 	@Override
 	public LivingEntity getTarget() {
 		return BrainUtils.getTargetOfEntity(this, super.getTarget());
+	}
+
+	@Override
+	public boolean hurt(DamageSource source, float amount) {
+		if (this.parts.length > 0 && source.getDirectEntity() instanceof AbstractArrow arrow && arrow.getPierceLevel() > 0) {
+			if (arrow.piercingIgnoreEntityIds == null)
+				arrow.piercingIgnoreEntityIds = new IntOpenHashSet(5);
+
+			for (AoAEntityPart<?> part : this.parts) {
+				arrow.piercingIgnoreEntityIds.add(part.getId());
+			}
+
+			arrow.piercingIgnoreEntityIds.add(getId());
+		}
+
+		return super.hurt(source, amount);
 	}
 
 	@Override

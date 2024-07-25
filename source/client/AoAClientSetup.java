@@ -2,14 +2,24 @@ package net.tslat.aoa3.client;
 
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.neoforged.bus.api.EventPriority;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.client.clientextension.fluid.CandiedWaterClientExtension;
+import net.tslat.aoa3.client.clientextension.fluid.TarClientExtension;
+import net.tslat.aoa3.client.clientextension.fluid.ToxicWasteClientExtension;
+import net.tslat.aoa3.client.clientextension.item.AttuningBowlClientExtension;
+import net.tslat.aoa3.client.clientextension.item.NightVisionGogglesClientExtension;
+import net.tslat.aoa3.client.clientextension.item.SkillHelmetClientExtension;
 import net.tslat.aoa3.client.event.ClientEventHandler;
 import net.tslat.aoa3.client.gui.container.*;
+import net.tslat.aoa3.client.gui.hud.AoACameraModifications;
 import net.tslat.aoa3.client.gui.hud.BossBarRenderer;
 import net.tslat.aoa3.client.gui.hud.HealthStatusRenderer;
-import net.tslat.aoa3.client.gui.hud.RecoilRenderer;
 import net.tslat.aoa3.client.gui.hud.XpParticlesRenderer;
 import net.tslat.aoa3.client.gui.overlay.ScopeOverlayRenderer;
 import net.tslat.aoa3.client.gui.overlay.ScreenEffectRenderer;
@@ -31,13 +41,16 @@ import net.tslat.aoa3.common.menu.WhitewashingTableMenu;
 import net.tslat.aoa3.common.registration.AoAMenus;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
+import net.tslat.aoa3.common.registration.item.AoAArmour;
+import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.data.client.AoAResourceReloadListeners;
 import net.tslat.aoa3.integration.IntegrationManager;
 
 import java.util.function.Consumer;
 
 public final class AoAClientSetup {
-    public static void init() {
+    public static void init(ModContainer modContainer) {
         AoAEntityRendering.init();
         ClientEventHandler.init();
         AoAPostProcessing.init();
@@ -50,12 +63,14 @@ public final class AoAClientSetup {
         AoADimensionRenderEffects.init();
         AoATintHandling.init();
         BossBarRenderer.init();
-        RecoilRenderer.init();
+        AoACameraModifications.init();
         HealthStatusRenderer.init();
         OccultBlockRenderer.init();
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 
         AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterParticleProvidersEvent.class, AoAClientSetup::registerParticleFactories);
         AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterMenuScreensEvent.class, AoAClientSetup::registerMenuScreens);
+        AdventOfAscension.getModEventBus().addListener(EventPriority.NORMAL, false, RegisterClientExtensionsEvent.class, AoAClientSetup::registerClientExtensions);
     }
 
     public static void postInit(Consumer<Runnable> workQueue) {
@@ -87,5 +102,16 @@ public final class AoAClientSetup {
         ev.registerSpriteSet(AoAParticleTypes.SANDSTORM.get(), sprites -> new EntityAffectingParticle.Provider<>(sprites, SandstormParticle::new));
         ev.registerSprite(AoAParticleTypes.ORB.get(), new OrbParticle.Provider());
         ev.registerSpriteSet(AoAParticleTypes.FIRE_AURA.get(), EntityOrbitingParticle.Provider::new);
+    }
+
+    private static void registerClientExtensions(RegisterClientExtensionsEvent ev) {
+        ev.registerItem(new SkillHelmetClientExtension(), AoAArmour.HELM_OF_THE_DEXTROUS.get(), AoAArmour.HELM_OF_THE_DRYAD.get(), AoAArmour.HELM_OF_THE_RITUALIST.get(), AoAArmour.HELM_OF_THE_TRAWLER.get(), AoAArmour.HELM_OF_THE_TREASURER.get(), AoAArmour.HELM_OF_THE_WARRIOR.get());
+        ev.registerItem(new AttuningBowlClientExtension(), AoATools.ATTUNING_BOWL.get());
+        ev.registerItem(new NightVisionGogglesClientExtension(), AoAArmour.NIGHT_VISION_GOGGLES.get());
+        //ev.registerItem(new GunClientExtension(), AoAWeapons.SQUAD_GUN.get());
+
+        ev.registerFluidType(new ToxicWasteClientExtension(), AoAFluidTypes.TOXIC_WASTE.get());
+        ev.registerFluidType(new TarClientExtension(), AoAFluidTypes.TAR.get());
+        ev.registerFluidType(new CandiedWaterClientExtension(), AoAFluidTypes.CANDIED_WATER.get());
     }
 }

@@ -87,9 +87,6 @@ public class CustomArrowEntity extends Arrow {
 		return arrow;
 	}
 
-	protected static void duplicateArrowVelocity(AbstractArrow source, AbstractArrow target) {
-	}
-
 	@Override
 	public void tick() {
 		ItemStack weaponStack = getWeaponItem();

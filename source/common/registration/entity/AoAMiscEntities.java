@@ -25,6 +25,7 @@ public final class AoAMiscEntities {
 	public static final DeferredHolder<EntityType<?>, EntityType<PixonEntity>> PIXON = register("pixon", EntityTypeRegistrar.<PixonEntity>misc(PixonEntity::new).sized(0.25f, 0.25f).updateInterval(Integer.MAX_VALUE).clientTrackingRange(64).fireImmune().canSpawnFarFromPlayer());
 
 	public static final DeferredHolder<EntityType<?>, EntityType<CustomisableLightningBolt>> CUSTOMISABLE_LIGHTNING_BOLT = register("customisable_lightning_bolt", EntityTypeRegistrar.<CustomisableLightningBolt>misc(CustomisableLightningBolt::new).sized(0, 0).noSave().clientTrackingRange(16).updateInterval(Integer.MAX_VALUE));
+	public static final DeferredHolder<EntityType<?>, EntityType<EarthquakeBlockEntity>> EARTHQUAKE_BLOCK = register("earthquake_block", EntityTypeRegistrar.<EarthquakeBlockEntity>misc(EarthquakeBlockEntity::new).sized(0.98f, 0.98f).noSummon().noSave().clientTrackingRange(10).updateInterval(20));
 
 	private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> register(String registryName, EntityTypeRegistrar<T> builder) {
         return AoARegistries.ENTITIES.register(registryName, () -> builder.build(registryName));

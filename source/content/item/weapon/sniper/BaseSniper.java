@@ -68,7 +68,7 @@ public abstract class BaseSniper extends BaseGun {
 		if (!player.isShiftKeyDown() || !player.onGround())
 			recoilAmount *= 3.5f;
 
-		AoANetworking.sendToPlayer(player, new GunRecoilPacket(recoilAmount, getTicksBetweenShots(stack)));
+		AoANetworking.sendToPlayer(player, new GunRecoilPacket(recoilAmount));
 	}
 
 	@Override

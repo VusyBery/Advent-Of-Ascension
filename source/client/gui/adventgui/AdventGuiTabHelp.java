@@ -11,6 +11,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.tslat.aoa3.integration.IntegrationManager;
+import net.tslat.aoa3.library.object.Text;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.RenderUtil;
@@ -127,13 +128,13 @@ public class AdventGuiTabHelp extends Screen {
 
 	private static class ThemeButton extends Button {
 		public ThemeButton(int x, int y, int width, int height) {
-			super(x, y, width, height, Component.literal(AdventMainGui.theme.name()), button -> {}, DEFAULT_NARRATION);
+			super(x, y, width, height, Text.of(AdventMainGui.theme.nameLocale()), button -> {}, DEFAULT_NARRATION);
 		}
 
 		@Override
 		public void onClick(double mouseX, double mouseY) {
 			AdventMainGui.changeTheme();
-			setMessage(Component.literal(AdventMainGui.theme.name()));
+			setMessage(Text.of(AdventMainGui.theme.nameLocale()));
 			setFocused(false);
 		}
 

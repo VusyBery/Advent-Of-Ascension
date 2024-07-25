@@ -9,7 +9,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +55,9 @@ public abstract class BaseGun extends Item {
 	}
 
 	public GunStats getGunStats(ItemStack stack) {
-		return stack.get(AoADataComponents.GUN_STATS.get());
+		final GunStats stats = stack.get(AoADataComponents.GUN_STATS);
+
+		return stats != null ? stats : getGunStats();
 	}
 
 	public float getGunDamage(ItemStack stack) {
@@ -191,7 +196,7 @@ public abstract class BaseGun extends Item {
 	public void doRecoil(ServerPlayer player, ItemStack stack, InteractionHand hand) {
 		float recoilAmount = AoAEnchantments.modifyRecoil(player.serverLevel(), stack, getRecoilForShot(stack, player) * 2);
 
-		AoANetworking.sendToPlayer(player, new GunRecoilPacket(hand == InteractionHand.OFF_HAND ? recoilAmount * 1.25f : recoilAmount, getTicksBetweenShots(stack)));
+		AoANetworking.sendToPlayer(player, new GunRecoilPacket(hand == InteractionHand.OFF_HAND ? recoilAmount * 1.25f : recoilAmount));
 	}
 
 	protected void doFiringEffects(ServerLevel level, LivingEntity shooter, BaseBullet bullet, ItemStack stack, InteractionHand hand) {

@@ -7,6 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
@@ -36,6 +37,10 @@ public class TESIntegration {
 
 	public static void clientInit() {
 		TESAPI.registerParticleSourceHandler(TESIntegration::handleTypedDamage);
+	}
+
+	public static void sendParticle(LivingEntity targetedEntity, double value, int colour) {
+		TESConstants.NETWORKING.sendParticle(targetedEntity, value, colour);
 	}
 
 	private static boolean handleTypedDamage(EntityState entityState, float damageAmount, DamageSource damageSource, Consumer<TESParticle<?>> particleAdder) {

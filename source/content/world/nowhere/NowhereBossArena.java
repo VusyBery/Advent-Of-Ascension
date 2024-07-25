@@ -26,7 +26,10 @@ import net.tslat.aoa3.content.item.misc.summoning.BossTokenItem;
 import net.tslat.aoa3.event.dimension.NowhereEvents;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.scheduling.AoAScheduler;
-import net.tslat.aoa3.util.*;
+import net.tslat.aoa3.util.InventoryUtil;
+import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.ObjectUtil;
+import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
@@ -106,8 +109,16 @@ public class NowhereBossArena {
 	}
 
 	public boolean checkAndClear(ServerLevel level) {
-		List<Player> players = getPlayersInside(level);
-		List<Entity> entities = getEntitiesInside(level);
+		AABB bounds = getStructureBounds(level);
+
+		if (bounds == null)
+			return false;
+
+		if (!level.isLoaded(BlockPos.containing(bounds.getCenter())))
+			return true;
+
+		List<Player> players = getPlayersInside(level, bounds);
+		List<Entity> entities = getEntitiesInside(level, bounds);
 
 		if (!players.isEmpty()) {
 			boolean keepArena = false;
@@ -179,13 +190,22 @@ public class NowhereBossArena {
 			}
 
 			if (spawnBoss) {
+				AABB bounds = getStructureBounds(level);
+
+				AoAScheduler.scheduleSyncronisedTask(() -> {
+					getEntitiesInside(level, bounds).forEach(entity2 -> {
+						if (!(entity2 instanceof Player) && !(entity2 instanceof ItemEntity))
+							entity2.discard();
+					});
+				}, 1);
+
 				AoAScheduler.scheduleSyncronisedTask(() -> {
 					if (soundBuilder != null)
 						soundBuilder.execute();
 				}, 40);
 
 				AoAScheduler.scheduleSyncronisedTask(() -> {
-					if (!getPlayersInside(level).isEmpty())
+					if (!getPlayersInside(level, bounds).isEmpty())
 						bossFunction.spawn(level, getRandomBossSpawn(), stack);
 				}, 140);
 			}
@@ -242,6 +262,10 @@ public class NowhereBossArena {
 		if (bounds == null)
 			return List.of();
 
+		return getPlayersInside(level, bounds);
+	}
+
+	public List<Player> getPlayersInside(ServerLevel level, AABB bounds) {
 		return EntityRetrievalUtil.getPlayers(level, bounds);
 	}
 
@@ -251,6 +275,10 @@ public class NowhereBossArena {
 		if (bounds == null)
 			return List.of();
 
+		return getEntitiesInside(level, bounds);
+	}
+
+	public List<Entity> getEntitiesInside(ServerLevel level, AABB bounds) {
 		return EntityRetrievalUtil.getEntities(level, bounds, entity -> !(entity instanceof Player));
 	}
 

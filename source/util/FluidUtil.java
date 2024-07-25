@@ -1,6 +1,7 @@
 package net.tslat.aoa3.util;
 
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -18,9 +19,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.item.AoACreativeModeTabs;
 import net.tslat.aoa3.library.object.MutableSupplier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -147,6 +150,7 @@ public final class FluidUtil {
 			DeferredHolder<Item, BucketItem> bucket = itemRegistry.register(id + "_bucket", this.bucketCreationFunction.apply(sourceFluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
 			this.fluidProperties.bucket(bucket);
+			AoACreativeModeTabs.setItemCreativeTabs(bucket, List.of(CreativeModeTabs.TOOLS_AND_UTILITIES));
 
 			return bucket;
 		}

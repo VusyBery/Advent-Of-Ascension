@@ -2,12 +2,8 @@ package net.tslat.aoa3.content.fluid;
 
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.pathfinder.PathType;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.tslat.aoa3.client.fluid.renderproperties.ToxicWasteRenderProperties;
-
-import java.util.function.Consumer;
 
 public final class ToxicWaste extends FluidType {
 	public ToxicWaste() {
@@ -23,10 +19,5 @@ public final class ToxicWaste extends FluidType {
 				.viscosity(10000)
 				.density(5000)
 				.temperature(400));
-	}
-
-	@Override
-	public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
-		consumer.accept(new ToxicWasteRenderProperties());
 	}
 }

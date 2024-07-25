@@ -20,7 +20,7 @@ public final class ServerConfig {
 	public final ModConfigSpec.ConfigValue<String> databasePassword;
 
 	public ServerConfig(ModConfigSpec.Builder configBuilder) {
-		configBuilder.comment("AoA server-side configuration options").push("General Settings");
+		configBuilder.comment("AoA server-side configuration options").push("general_settings");
 
 		allowUnsafeInfusion = configBuilder
 				.comment("Set this to false to disable enchantments that breach level caps")
@@ -65,7 +65,7 @@ public final class ServerConfig {
 				.defineEnum("bossDropsScheme", BossDropsScheme.SPLIT_BETWEEN_PLAYERS);
 
 		configBuilder.pop();
-		configBuilder.comment("AoA Leaderboard configuration options").push("Leaderboard Settings");
+		configBuilder.comment("AoA Leaderboard configuration options").push("leaderboard_settings");
 
 		skillsLeaderboardEnabled = configBuilder
 				.comment("Set to false to disable the skills leaderboard entirely.", "NOTE: Disabling the leaderboard will prevent it from updating its data, and game data changes while the leaderboard is disabled will not be tracked if re-enabled.")

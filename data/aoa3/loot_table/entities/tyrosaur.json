@@ -1,0 +1,416 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 175
+        },
+        {
+          "type": "minecraft:loot_table",
+          "value": "aoa3:misc/rare_table"
+        }
+      ],
+      "name": "rare_table",
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:loot_table",
+          "value": "aoa3:worlds/nowhere_boss",
+          "weight": 100
+        }
+      ],
+      "name": "nowhere_table",
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 20.0,
+                "min": 12.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 2.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:kinetic_rune",
+          "weight": 45
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 16.0,
+                "min": 12.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 2.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:life_rune",
+          "weight": 45
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 16.0,
+                "min": 8.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "minecraft:leather",
+          "weight": 40
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:sharp_claw",
+          "weight": 14
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 1.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:magic_repair_dust",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:magic_mending_compound",
+          "weight": 6
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 5.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:silver_coin",
+          "weight": 20
+        },
+        {
+          "type": "minecraft:item",
+          "name": "aoa3:gold_coin",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:jungle_thorns",
+          "weight": 16
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:ashfern_seeds",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:medium_skill_crystal",
+          "weight": 10
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 0.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:large_skill_crystal",
+          "weight": 5
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            },
+            {
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "enchantment": "minecraft:fortune",
+              "function": "minecraft:enchanted_count_increase"
+            }
+          ],
+          "name": "aoa3:armour_plating",
+          "weight": 12
+        }
+      ],
+      "name": "loot",
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 3.0,
+        "min": 1.0
+      }
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "aoa3:primal_sword",
+          "weight": 3
+        },
+        {
+          "type": "aoa3:multi",
+          "entries": [
+            {
+              "type": "minecraft:item",
+              "name": "aoa3:predatious_helmet"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "aoa3:predatious_chestplate"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "aoa3:predatious_leggings"
+            },
+            {
+              "type": "minecraft:item",
+              "name": "aoa3:predatious_boots"
+            }
+          ]
+        }
+      ],
+      "name": "special_loot",
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "aoa3:trophy_data": {
+                  "entity_data": {
+                    "id": "aoa3:tyrosaur"
+                  },
+                  "is_original": true
+                }
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "aoa3:trophy"
+        }
+      ],
+      "name": "trophy",
+      "rolls": 1.0
+    }
+  ]
+}

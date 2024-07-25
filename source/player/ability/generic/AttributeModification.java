@@ -15,6 +15,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.PlayerLevelChangeEvent;
+import net.tslat.aoa3.library.object.Text;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.*;
@@ -72,7 +73,7 @@ public class AttributeModification extends ScalableModAbility {
 		}
 
 		super.updateDescription(Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey(),
-				StringUtil.toTitleCase(attribute.value().getDescriptionId().substring(attribute.value().getDescriptionId().lastIndexOf(".") + 1)),
+				Text.of(this.attribute.value().getDescriptionId()),
 				LocaleUtil.getAbilityValueDesc(baseValue != 0, perLevelMod != 0, modifier.operation() != AttributeModifier.Operation.ADD_VALUE, amount, perLevel, NumberUtil.roundToNthDecimalPlace((float)modifier.amount() * (modifier.operation() == AttributeModifier.Operation.ADD_VALUE ? 1 : 100), 3))));
 	}
 
@@ -130,6 +131,9 @@ public class AttributeModification extends ScalableModAbility {
 
 		if (attribute == Attributes.MAX_HEALTH) {
 			double health = getPlayer().getHealth();
+
+			if (health == 0 && !getPlayer().isAlive())
+				health = getPlayer().getMaxHealth();
 
 			if (health > 0)
 				data.putDouble("current_health", health);

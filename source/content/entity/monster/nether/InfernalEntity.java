@@ -88,10 +88,14 @@ public class InfernalEntity extends AoAMeleeMob<InfernalEntity> {
         return AoASounds.ENTITY_INFERNAL_HURT.get();
     }
 
-    @Nullable
     @Override
-    protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-        return AoASounds.ENTITY_GENERIC_HEAVY_STEP.get();
+    protected float getStepWeight() {
+        return 2f;
+    }
+
+    @Override
+    protected float nextStep() {
+        return this.moveDist + 0.6f;
     }
 
     @Override

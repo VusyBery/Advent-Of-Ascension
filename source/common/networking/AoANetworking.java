@@ -43,6 +43,7 @@ public class AoANetworking {
 		registrar.playToClient(ToastPopupPacket.TYPE, ToastPopupPacket.CODEC, ToastPopupPacket::receiveMessage);
 		registrar.playToClient(ScreenEffectPacket.TYPE, ScreenEffectPacket.CODEC, ScreenEffectPacket::receiveMessage);
 		registrar.playToClient(GunRecoilPacket.TYPE, GunRecoilPacket.CODEC, GunRecoilPacket::receiveMessage);
+		registrar.playToClient(ScreenShakePacket.TYPE, ScreenShakePacket.CODEC, ScreenShakePacket::receiveMessage);
 		registrar.playToClient(XpGainPacket.TYPE, XpGainPacket.CODEC, XpGainPacket::receiveMessage);
 		registrar.playToClient(SyncHaloDataPacket.TYPE, SyncHaloDataPacket.CODEC, SyncHaloDataPacket::receiveMessage);
 		registrar.playToClient(WikiSearchPacket.TYPE, WikiSearchPacket.CODEC, WikiSearchPacket::receiveMessage);

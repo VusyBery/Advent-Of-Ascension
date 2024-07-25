@@ -1,7 +1,11 @@
 {
   "values": [
+    "aoa3:raw_charger_shank",
     "aoa3:cooked_charger_shank",
+    "aoa3:raw_halycon_beef",
     "aoa3:cooked_halycon_beef",
+    "aoa3:raw_giant_lizard_meat",
+    "aoa3:cooked_giant_lizard_meat",
     "aoa3:fiery_chops",
     "aoa3:hot_rod"
   ]

@@ -27,13 +27,14 @@ public final class ClientConfig {
 	public final ModConfigSpec.BooleanValue disableHudPotionOffset;
 	public final ModConfigSpec.BooleanValue useToasts;
 	public final ModConfigSpec.BooleanValue rotatingTrophies;
+	public final ModConfigSpec.BooleanValue screenShake;
 	public final ModConfigSpec.BooleanValue partyDeaths;
 	public final ModConfigSpec.EnumValue<HealthStatusRenderer.HealthRenderType> healthRenderType;
 
 	public ClientConfig(ModConfigSpec.Builder specBuilder) {
 		AdventOfAscension.getModEventBus().addListener(ClientConfig::onConfigUpdate);
 
-		specBuilder.comment("AoA client-side configuration options").push("General Settings");
+		specBuilder.comment("AoA client-side configuration options").push("general_settings");
 
 		showXpParticles = specBuilder
 				.comment("Set this to false to disable the small scrolling popups that appear when you gain xp in a skill")
@@ -100,8 +101,13 @@ public final class ClientConfig {
 				.translation("config.aoa3.client.healthRenderType")
 				.defineEnum("healthRenderType", HealthStatusRenderer.HealthRenderType.BAR_NUMERIC);
 
+		screenShake = specBuilder
+				.comment("Whether AoA should do screen shaking effects where relevant")
+				.translation("config.aoa3.client.screenShake")
+				.define("screenShake", true);
+
 		specBuilder.pop();
-		specBuilder.comment("Just for fun :)").push("Fun Options");
+		specBuilder.comment("Just for fun :)").push("fun_options");
 
 		partyDeaths = specBuilder
 				.comment("Set this to true to enable party deaths")

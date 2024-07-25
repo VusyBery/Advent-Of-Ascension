@@ -160,8 +160,8 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> SHYRESTONE_ORE = register("shyrestone_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.TERRACOTTA_YELLOW));
 	public static final DeferredBlock<Block> VARSIUM_ORE = register("varsium_ore", registrar -> registrar.baseOre(ConstantInt.of(0)).mapColour(MapColor.TERRACOTTA_CYAN));
 
-	public static final StoneBlockGroup PRECASIAN_STONE_BRICKS = registerGroup("precasian_stone_bricks", StoneBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.COLOR_BROWN).stats(1.5f, 6));
-	public static final DeferredBlock<Block> CHISELLED_PRECASIAN_STONE_BRICKS = register("chiselled_precasian_stone_bricks", registrar -> registrar.baseBricks().sounds(SoundType.STONE).mapColour(MapColor.COLOR_BROWN).stats(1.5f, 6));
+	public static final StoneBlockGroup PRECASIAN_STONE_BRICKS = registerGroup("precasian_stone_bricks", StoneBlockGroup::new, registrar -> registrar.baseBricks().sounds(SoundType.STONE).mapColour(MapColor.COLOR_BROWN).stats(1.5f, 6));
+	public static final DeferredBlock<Block> CHISELED_PRECASIAN_STONE_BRICKS = register("chiseled_precasian_stone_bricks", registrar -> registrar.baseBricks().sounds(SoundType.STONE).mapColour(MapColor.COLOR_BROWN).stats(1.5f, 6));
 
 	public static final StoneBlockGroup ARCHAIC_TILE = registerGroup("archaic_tile", StoneBlockGroup::new, registrar -> registrar.baseStone().mapColour(MapColor.COLOR_RED).stats(2f, 10f));
 	public static final StoneBlockGroup ARCHAIC_TILE_NODE = registerGroup("archaic_tile_node", StoneBlockGroup::new, registrar -> registrar.baseStone().mapColour(MapColor.COLOR_RED).stats(2f, 10f));
@@ -188,7 +188,7 @@ public final class AoABlocks {
 	public static final BrickBlockGroup GREEN_MYSTERIUM_BRICKS = registerGroup("green_mysterium_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.PLANT).stats(10f, 15f));
 	public static final BrickBlockGroup ROSIDIAN_BRICKS = registerGroup("rosidian_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.COLOR_PURPLE).stats(10f, 15f));
 	public static final BrickBlockGroup RUNIC_STONE_BRICKS = registerGroup("runic_stone_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.GOLD).stats(10f, 15f));
-	public static final BrickBlockGroup CHISELLED_RUNIC_STONE_BRICKS = registerGroup("chiselled_runic_stone_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.WATER).stats(10f, 15f));
+	public static final BrickBlockGroup CHISELED_RUNIC_STONE_BRICKS = registerGroup("chiseled_runic_stone_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.WATER).stats(10f, 15f));
 	public static final BrickBlockGroup WHITE_SHYRE_BRICKS = registerGroup("white_shyre_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.METAL).stats(10f, 15f));
 	public static final BrickBlockGroup YELLOW_SHYRE_BRICKS = registerGroup("yellow_shyre_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.TERRACOTTA_YELLOW).stats(10f, 15f));
 	public static final BrickBlockGroup SKELETAL_BRICKS = registerGroup("skeletal_brick", BrickBlockGroup::new, registrar -> registrar.baseBricks().mapColour(MapColor.TERRACOTTA_LIGHT_GREEN).stats(10f, 15f));

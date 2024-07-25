@@ -19,6 +19,7 @@ import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.TyrosaurEntity;
+import net.tslat.aoa3.content.entity.boss.tyrosaur.WoundedTyrosaurEntity;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -29,7 +30,7 @@ import java.util.List;
 
 public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 	public BoneHorn() {
-		super(0, new Properties().rarity(Rarity.RARE).durability(2).setNoRepair());
+		super(0, new Properties().rarity(Rarity.RARE).durability(3).setNoRepair());
 	}
 
 	@Override
@@ -44,14 +45,10 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		if (player.getItemInHand(hand).isDamaged()) {
-			player.startUsingItem(hand);
-			new SoundBuilder(AoASounds.ITEM_BONE_HORN_CALL).followEntity(player).execute();
+		player.startUsingItem(hand);
+		new SoundBuilder(AoASounds.ITEM_BONE_HORN_CALL).followEntity(player).execute();
 
-			return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
-		}
-
-		return super.use(level, player, hand);
+		return InteractionResultHolder.sidedSuccess(player.getItemInHand(hand), level.isClientSide);
 	}
 
 	@Override
@@ -67,17 +64,17 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-		if (stack.isDamaged()) {
+		if (stack.isDamaged() && stack.getDamageValue() == 1) {
 			if (level.dimension() == AoADimensions.PRECASIA && level instanceof ServerLevel serverLevel) {
 				BlockPos spawnPos = RandomUtil.getRandomPositionWithinRange(entity.blockPosition(), 30, 10, 30, 10, 0, 10, true, level, 10, (state, pos) ->
-						level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), AoAMonsters.TYROSAUR.get()) && level.noCollision(AoAMonsters.TYROSAUR.get().getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d)));
+						level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), AoAMonsters.WOUNDED_TYROSAUR.get()) && level.noCollision(AoAMonsters.WOUNDED_TYROSAUR.get().getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d)));
 
 				if (spawnPos != entity.blockPosition()) {
-					TyrosaurEntity tyrosaur = EntitySpawningUtil.spawnEntity(serverLevel, AoAMonsters.TYROSAUR.get(), spawnPos, MobSpawnType.TRIGGERED, summon -> summon.setHealth(50));
+					WoundedTyrosaurEntity tyrosaur = EntitySpawningUtil.spawnEntity(serverLevel, AoAMonsters.WOUNDED_TYROSAUR.get(), spawnPos, MobSpawnType.TRIGGERED);
 
 					if (tyrosaur != null) {
 						BrainUtils.setTargetOfEntity(tyrosaur, entity);
-						new SoundBuilder(AoASounds.ENTITY_TYROSAUR_AMBIENT).followEntity(tyrosaur).execute();
+						new SoundBuilder(AoASounds.ENTITY_TYROSAUR_HURT).followEntity(tyrosaur).execute();
 					}
 				}
 			}
@@ -108,7 +105,7 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.UNIQUE, 2));
 		}
 		else {
-			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.NEUTRAL, 3));
+			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.NEUTRAL, 5 - stack.getDamageValue()));
 		}
 	}
 }

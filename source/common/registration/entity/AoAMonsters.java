@@ -18,6 +18,7 @@ import net.tslat.aoa3.content.entity.boss.smash.EliteSmashEntity;
 import net.tslat.aoa3.content.entity.boss.smash.SmashEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.EliteTyrosaurEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.TyrosaurEntity;
+import net.tslat.aoa3.content.entity.boss.tyrosaur.WoundedTyrosaurEntity;
 import net.tslat.aoa3.content.entity.monster.nether.*;
 import net.tslat.aoa3.content.entity.monster.overworld.*;
 import net.tslat.aoa3.content.entity.monster.precasia.*;
@@ -56,6 +57,8 @@ public final class AoAMonsters {
 	public static final DeferredHolder<EntityType<?>, EntityType<WoodGiantEntity>> WOOD_GIANT = register("wood_giant", EntityTypeRegistrar.monster(WoodGiantEntity::new).sized(1.5f, 3.375f, 2.875f).spawnEgg(0x291E12, 0x3E311E));
 	public static final DeferredHolder<EntityType<?>, EntityType<NethengeicBeastEntity>> NETHENGEIC_BEAST = register("nethengeic_beast", EntityTypeRegistrar.monster(NethengeicBeastEntity::new).sized(1.25f, 3.75f, 3.375f).fireImmune().spawnEgg(0x1A1513, 0xD43D10));
 	public static final DeferredHolder<EntityType<?>, EntityType<SkeletalAbominationEntity>> SKELETAL_ABOMINATION = register("skeletal_abomination", EntityTypeRegistrar.monster(SkeletalAbominationEntity::new).sized(0.7f, 1.3125f, 1.65625f).fireImmune().spawnEgg(0xCFCCBE, 0xA69E8C));
+
+	public static final DeferredHolder<EntityType<?>, EntityType<WoundedTyrosaurEntity>> WOUNDED_TYROSAUR = register("wounded_tyrosaur", EntityTypeRegistrar.monster(WoundedTyrosaurEntity::new).sized(1.375f, 1.6875f, 1));
 
 	public static final DeferredHolder<EntityType<?>, EntityType<SmashEntity>> SMASH = register("smash", EntityTypeRegistrar.monster(SmashEntity::new).sized(1.375f, 3.375f, 3.0625f).spawnEgg(0x644E31, 0x3C2E1E));
 	public static final DeferredHolder<EntityType<?>, EntityType<EliteSmashEntity>> ELITE_SMASH = register("elite_smash", EntityTypeRegistrar.monster(EliteSmashEntity::new).sized(1.375f, 3.375f, 3.0625f).spawnEgg(0x644E31, 0x3C2E1E));

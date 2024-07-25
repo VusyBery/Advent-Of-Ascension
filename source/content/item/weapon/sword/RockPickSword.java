@@ -17,14 +17,13 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.List;
 
 public class RockPickSword extends BaseSword {
 	public RockPickSword(Tier tier, Item.Properties properties) {
-		super(tier, properties, createToolProperties(tier, AoATags.Blocks.INCORRECT_FOR_ROCK_PICK_TOOL));
+		super(tier, properties, createToolProperties(tier, BlockTags.MINEABLE_WITH_PICKAXE));
 	}
 
 	public static Tool createToolProperties(Tier tier, TagKey<Block> toolMineableTag) {

@@ -19,7 +19,6 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.render.AoAAnimations;
@@ -169,8 +168,13 @@ public class SpinoledonEntity extends AoAMeleeMob<SpinoledonEntity> {
 	}
 
 	@Override
-	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		return AoASounds.ENTITY_GENERIC_DINO_STEP.get();
+	protected float getStepWeight() {
+		return 5f;
+	}
+
+	@Override
+	protected float nextStep() {
+		return this.moveDist + 1.4f;
 	}
 
 	@Override

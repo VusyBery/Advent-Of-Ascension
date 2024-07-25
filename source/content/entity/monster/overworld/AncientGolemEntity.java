@@ -74,6 +74,11 @@ public class AncientGolemEntity extends AoAMeleeMob<AncientGolemEntity> {
 	}
 
 	@Override
+	protected float nextStep() {
+		return this.moveDist + 0.225f;
+	}
+
+	@Override
 	public boolean canDrownInFluidType(FluidType type) {
 		return false;
 	}
