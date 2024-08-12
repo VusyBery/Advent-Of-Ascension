@@ -42,6 +42,7 @@ import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoAAnimals;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAAnimal;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.brain.task.temp.FixedFollowParent;
@@ -329,8 +330,9 @@ public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAni
 		getMoveControl();
 	}
 
+	@Nullable
 	@Override
-	public @Nullable AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
+	public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
 		return new OpteryxEntity(AoAAnimals.OPTERYX.get(), level);
 	}
 
@@ -509,5 +511,14 @@ public class OpteryxEntity extends AoAAnimal<OpteryxEntity> implements FlyingAni
 
 		if (this.dead && !level().isClientSide() && level().getGameRules().getBoolean(GameRules.RULE_SHOWDEATHMESSAGES) && getOwner() instanceof ServerPlayer)
 			getOwner().sendSystemMessage(deathMessage);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<OpteryxEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.create(entityType)
+				.health(34)
+				.moveSpeed(0.2875f)
+				.flyingSpeed(0.3f)
+				.followRange(32)
+				.knockbackResist(0.4f);
 	}
 }

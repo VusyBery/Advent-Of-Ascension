@@ -13,14 +13,10 @@ import java.util.OptionalDouble;
 public record UpdateClientMovementPacket(Operation operation, OptionalDouble x, OptionalDouble y, OptionalDouble z) implements AoAPacket {
 	public static final Type<UpdateClientMovementPacket> TYPE = new Type<>(AdventOfAscension.id("update_client_movement"));
 	public static final StreamCodec<FriendlyByteBuf, UpdateClientMovementPacket> CODEC = StreamCodec.composite(
-			NeoForgeStreamCodecs.enumCodec(Operation.class),
-			UpdateClientMovementPacket::operation,
-			StreamCodecUtil.OPTIONAL_DOUBLE,
-			UpdateClientMovementPacket::x,
-			StreamCodecUtil.OPTIONAL_DOUBLE,
-			UpdateClientMovementPacket::y,
-			StreamCodecUtil.OPTIONAL_DOUBLE,
-			UpdateClientMovementPacket::z,
+			NeoForgeStreamCodecs.enumCodec(Operation.class), UpdateClientMovementPacket::operation,
+			StreamCodecUtil.OPTIONAL_DOUBLE, UpdateClientMovementPacket::x,
+			StreamCodecUtil.OPTIONAL_DOUBLE, UpdateClientMovementPacket::y,
+			StreamCodecUtil.OPTIONAL_DOUBLE, UpdateClientMovementPacket::z,
 			UpdateClientMovementPacket::new);
 
 	public UpdateClientMovementPacket(Operation operation, double x, double y, double z) {

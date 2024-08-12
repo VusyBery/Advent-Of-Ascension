@@ -3,6 +3,10 @@
     {
       "id": "aoa3:suffocation",
       "required": false
+    },
+    {
+      "id": "aoa3:sandstorm",
+      "required": false
     }
   ]
 }

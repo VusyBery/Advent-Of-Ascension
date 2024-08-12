@@ -16,7 +16,7 @@ import net.tslat.aoa3.util.WorldUtil;
 
 import java.util.Optional;
 
-public class AshfernCookingRecipe extends CustomRecipe {
+public class AshfernCookingRecipe extends CustomRecipe implements RecipeBookRecipe<CraftingInput> {
 	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
 
 	public AshfernCookingRecipe(String group, CraftingBookCategory category, boolean showObtainNotification) {
@@ -29,14 +29,8 @@ public class AshfernCookingRecipe extends CustomRecipe {
 		this.recipeBookDetails = recipeBookDetails;
 	}
 
-	@Override
-	public String getGroup() {
-		return this.recipeBookDetails.group();
-	}
-
-	@Override
-	public boolean showNotification() {
-		return this.recipeBookDetails.showUnlockNotification();
+	public RecipeUtil.RecipeBookDetails recipeBookDetails() {
+		return this.recipeBookDetails;
 	}
 
 	@Override
@@ -127,10 +121,10 @@ public class AshfernCookingRecipe extends CustomRecipe {
 
 	public static class Factory implements RecipeSerializer<AshfernCookingRecipe> {
 		public static final MapCodec<AshfernCookingRecipe> CODEC = RecordCodecBuilder.mapCodec(builder ->
-				RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails)
+				RecipeUtil.RecipeBookDetails.codec(builder, AshfernCookingRecipe::recipeBookDetails)
 						.apply(builder, AshfernCookingRecipe::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, AshfernCookingRecipe> STREAM_CODEC = StreamCodec.composite(
-				RecipeUtil.RecipeBookDetails.STREAM_CODEC, recipe -> recipe.recipeBookDetails,
+				RecipeUtil.RecipeBookDetails.STREAM_CODEC, AshfernCookingRecipe::recipeBookDetails,
 				AshfernCookingRecipe::new);
 
 		@Override

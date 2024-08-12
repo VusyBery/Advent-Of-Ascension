@@ -150,16 +150,16 @@ public class JEIIntegration implements IModPlugin {
 	private ArrayList<FrameBenchRecipe> compileFrameBenchRecipes(RecipeManager recipeManager) {
 		ArrayList<FrameBenchRecipe> frameRecipes = new ArrayList<>(10);
 
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.CROSSBOW_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.BLASTER_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.CANNON_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.HELMET_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.CHESTPLATE_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.LEGGINGS_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.BOOTS_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.GUN_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.SHOTGUN_FRAME.get()));
-		frameRecipes.add(new FrameBenchRecipe(AoAItems.SNIPER_FRAME.get()));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.CROSSBOW_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.BLASTER_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.CANNON_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.HELMET_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.CHESTPLATE_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.LEGGINGS_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.BOOTS_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.GUN_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.SHOTGUN_FRAME));
+		frameRecipes.add(new FrameBenchRecipe(AoAItems.SNIPER_FRAME));
 
 		return frameRecipes;
 	}

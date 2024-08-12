@@ -1,0 +1,31 @@
+{
+  "parent": "aoa3:completionist/root",
+  "criteria": {
+    "tree_spirit_instakill": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.completionist.mightiest_tree_in_the_forest.description"
+    },
+    "frame": "challenge",
+    "hidden": true,
+    "icon": {
+      "count": 1,
+      "id": "minecraft:cod"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.completionist.mightiest_tree_in_the_forest.title"
+    }
+  },
+  "requirements": [
+    [
+      "tree_spirit_instakill"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

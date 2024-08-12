@@ -1,0 +1,496 @@
+{
+  "parent": "minecraft:nether/root",
+  "criteria": {
+    "obtain_chilli_chugger": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:chilli_chugger"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_destruction_shotgun": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:destruction_shotgun"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_ember_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:ember_staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_emberstone_axe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:emberstone_axe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_emberstone_hoe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:emberstone_hoe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_emberstone_pickaxe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:emberstone_pickaxe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_emberstone_shovel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:emberstone_shovel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_emberstone_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:emberstone_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_explosive_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:explosive_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_explosive_bow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:explosive_bow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_explosive_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:explosive_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_explosive_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:explosive_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_explosive_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:explosive_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_fireborne_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:fireborne_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_firestorm_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:firestorm_staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_hot_shot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:hot_shot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_infernal_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:infernal_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_infernal_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:infernal_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_infernal_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:infernal_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_infernal_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:infernal_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_lyndamyte_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:lyndamyte_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_lyndamyte_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:lyndamyte_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_lyndamyte_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:lyndamyte_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_lyndamyte_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:lyndamyte_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nethengeic_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nethengeic_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nethengeic_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nethengeic_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nethengeic_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nethengeic_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nethengeic_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nethengeic_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nethengeic_slugger": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nethengeic_slugger"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nethengeic_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nethengeic_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nether_upgrade_kit": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nether_upgrade_kit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_pyro_crossbow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:pyro_crossbow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_wart_gun": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:wart_gun"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_wither_bow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:wither_bow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_wither_cannon": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:wither_cannon"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_withers_wrath": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:withers_wrath"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.nether.nether_collector.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "aoa3:giant_skill_crystal"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.nether.nether_collector.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_nethengeic_boots"
+    ],
+    [
+      "obtain_chilli_chugger"
+    ],
+    [
+      "obtain_emberstone_shovel"
+    ],
+    [
+      "obtain_ember_staff"
+    ],
+    [
+      "obtain_emberstone_axe"
+    ],
+    [
+      "obtain_lyndamyte_leggings"
+    ],
+    [
+      "obtain_nethengeic_slugger"
+    ],
+    [
+      "obtain_lyndamyte_boots"
+    ],
+    [
+      "obtain_explosive_chestplate"
+    ],
+    [
+      "obtain_wither_cannon"
+    ],
+    [
+      "obtain_wart_gun"
+    ],
+    [
+      "obtain_nether_upgrade_kit"
+    ],
+    [
+      "obtain_firestorm_staff"
+    ],
+    [
+      "obtain_infernal_leggings"
+    ],
+    [
+      "obtain_lyndamyte_chestplate"
+    ],
+    [
+      "obtain_emberstone_pickaxe"
+    ],
+    [
+      "obtain_hot_shot"
+    ],
+    [
+      "obtain_infernal_chestplate"
+    ],
+    [
+      "obtain_wither_bow"
+    ],
+    [
+      "obtain_explosive_boots"
+    ],
+    [
+      "obtain_nethengeic_chestplate"
+    ],
+    [
+      "obtain_destruction_shotgun"
+    ],
+    [
+      "obtain_withers_wrath"
+    ],
+    [
+      "obtain_nethengeic_leggings"
+    ],
+    [
+      "obtain_infernal_helmet"
+    ],
+    [
+      "obtain_explosive_helmet"
+    ],
+    [
+      "obtain_nethengeic_helmet"
+    ],
+    [
+      "obtain_infernal_boots"
+    ],
+    [
+      "obtain_explosive_bow"
+    ],
+    [
+      "obtain_fireborne_sword"
+    ],
+    [
+      "obtain_lyndamyte_helmet"
+    ],
+    [
+      "obtain_emberstone_hoe"
+    ],
+    [
+      "obtain_pyro_crossbow"
+    ],
+    [
+      "obtain_emberstone_sword"
+    ],
+    [
+      "obtain_explosive_leggings"
+    ],
+    [
+      "obtain_nethengeic_sword"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "aoa3:advancements/collector"
+    ]
+  },
+  "sends_telemetry_event": true
+}

@@ -61,7 +61,6 @@ import net.tslat.aoa3.common.registration.block.AoABlockEntities;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
 import net.tslat.aoa3.common.registration.custom.*;
-import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.common.registration.entity.*;
 import net.tslat.aoa3.common.registration.entity.variant.*;
 import net.tslat.aoa3.common.registration.item.*;
@@ -71,6 +70,7 @@ import net.tslat.aoa3.common.registration.loot.AoALootFunctions;
 import net.tslat.aoa3.common.registration.loot.AoALootModifiers;
 import net.tslat.aoa3.common.registration.worldgen.*;
 import net.tslat.aoa3.common.toast.CustomToastData;
+import net.tslat.aoa3.content.world.event.AoAWorldEvent;
 import net.tslat.aoa3.content.world.nowhere.NowhereBossArena;
 import net.tslat.aoa3.content.world.nowhere.NowhereParkourCourse;
 import net.tslat.aoa3.content.world.spawner.AoACustomSpawner;
@@ -90,11 +90,13 @@ public final class AoARegistries {
 	public static final ResourceKey<Registry<AoAResource>> RESOURCES_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("resources"));
 	public static final ResourceKey<Registry<AoAAbility>> ABILITIES_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("abilities"));
 	public static final ResourceKey<Registry<AoAAspectFocus>> ASPECT_FOCI_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("aspect_focus"));
+	public static final ResourceKey<Registry<AoAWorldEvent.Type<?>>> WORLD_EVENT_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("world_event_type"));
 	public static final ResourceKey<Registry<CustomToastData.Type<?>>> CUSTOM_TOAST_DATA_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("custom_toasts"));
 	public static final ResourceKey<Registry<AoACustomSpawner.Type<?>>> CUSTOM_SPAWNER_TYPE_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("custom_spawner_type"));
 	public static final ResourceKey<Registry<AoACustomSpawner<?>>> CUSTOM_SPAWNERS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("custom_spawner"));
 	public static final ResourceKey<Registry<NowhereBossArena>> NOWHERE_BOSS_ARENAS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("nowhere_boss_arena"));
 	public static final ResourceKey<Registry<NowhereParkourCourse>> NOWHERE_PARKOUR_COURSES_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("nowhere_parkour_course"));
+	public static final ResourceKey<Registry<AoAWorldEvent>> WORLD_EVENTS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("world_event"));
 
 	public static final ResourceKey<Registry<ChargerVariant>> CHARGER_VARIANTS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("charger_variant"));
 	public static final ResourceKey<Registry<VeloraptorVariant>> VELORAPTOR_VARIANTS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("veloraptor_variant"));
@@ -160,6 +162,7 @@ public final class AoARegistries {
 
 	public static final RegistryHelper<CustomToastData.Type<?>> CUSTOM_TOAST_TYPES = new RegistryHelper<>(CUSTOM_TOAST_DATA_REGISTRY_KEY, AoAToastTypes::init);
 	public static final RegistryHelper<AoACustomSpawner.Type<?>> CUSTOM_SPAWNER_TYPES = new RegistryHelper<>(CUSTOM_SPAWNER_TYPE_REGISTRY_KEY, AoACustomSpawners::init);
+	public static final RegistryHelper<AoAWorldEvent.Type<?>> WORLD_EVENT_TYPES = new RegistryHelper<AoAWorldEvent.Type<?>>(WORLD_EVENT_TYPE_REGISTRY_KEY, AoAWorldEvents::init);
 
 	public static void init() {
 		RegistryHelper.REGISTRY_INIT_TASKS.forEach(Runnable::run);
@@ -174,6 +177,7 @@ public final class AoARegistries {
 		ev.create(new RegistryBuilder<>(RESOURCES_REGISTRY_KEY).maxId(Integer.MAX_VALUE - 1).sync(true));
 		ev.create(new RegistryBuilder<>(SKILLS_REGISTRY_KEY).maxId(Integer.MAX_VALUE - 1).sync(true));
 		ev.create(new RegistryBuilder<>(ASPECT_FOCI_REGISTRY_KEY).maxId(Integer.MAX_VALUE - 1).sync(true));
+		ev.create(new RegistryBuilder<>(WORLD_EVENT_TYPE_REGISTRY_KEY).maxId(Integer.MAX_VALUE - 1).sync(true));
 		ev.create(new RegistryBuilder<>(CUSTOM_TOAST_DATA_REGISTRY_KEY).maxId(Integer.MAX_VALUE - 1).sync(true));
 		ev.create(new RegistryBuilder<>(CHARGER_VARIANTS_REGISTRY_KEY).maxId(Integer.MAX_VALUE - 1).sync(true));
 		ev.create(new RegistryBuilder<>(VELORAPTOR_VARIANTS_REGISTRY_KEY).maxId(Integer.MAX_VALUE - 1).sync(true));
@@ -187,6 +191,7 @@ public final class AoARegistries {
 		ev.dataPackRegistry(CUSTOM_SPAWNERS_REGISTRY_KEY, AoACustomSpawners.CODEC, AoACustomSpawners.CODEC);
 		ev.dataPackRegistry(NOWHERE_BOSS_ARENAS_REGISTRY_KEY, NowhereBossArena.CODEC, NowhereBossArena.CODEC);
 		ev.dataPackRegistry(NOWHERE_PARKOUR_COURSES_REGISTRY_KEY, NowhereParkourCourse.CODEC, NowhereParkourCourse.CODEC);
+		ev.dataPackRegistry(WORLD_EVENTS_REGISTRY_KEY, AoAWorldEvents.CODEC, AoAWorldEvents.CODEC);
 	}
 
 	public record RegistryHelper<T>(Supplier<Registry<T>> registry, DeferredRegister<T> deferredRegister, Runnable registrationTasks) implements IdMap<T>, Keyable {

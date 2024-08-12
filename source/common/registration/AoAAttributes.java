@@ -9,8 +9,9 @@ import net.tslat.aoa3.advent.AdventOfAscension;
 public final class AoAAttributes {
 	public static void init() {}
 
-	public static final DeferredHolder<Attribute, Attribute> RANGED_ATTACK_DAMAGE = register("ranged_attack_damage", "aoa3.rangedAttackDamage", 0, 0, Double.MAX_VALUE, false);
-	public static final DeferredHolder<Attribute, Attribute> AGGRO_RANGE = register("aggro_range", "aoa3.aggroRange", 8, 0, Double.MAX_VALUE, false);
+	public static final DeferredHolder<Attribute, Attribute> AGGRO_RANGE = register("aggro_range", "attribute.name.aoa3.aggroRange", 8, 0, Double.MAX_VALUE, false);
+	public static final DeferredHolder<Attribute, Attribute> RANGED_ATTACK_DAMAGE = register("ranged_attack_damage", "attribute.name.aoa3.rangedAttackDamage", 0, 0, Double.MAX_VALUE, false);
+	public static final DeferredHolder<Attribute, Attribute> CRITICAL_HIT_MULTIPLIER = register("critical_hit_multiplier", "attribute.name.aoa3.criticalHitMultiplier", 1, 0, Double.MAX_VALUE, true);
 
 	public static final AttributeModifier NIGHT_AGGRO_MODIFIER = new AttributeModifier(AdventOfAscension.id("night_time_pacification"), -0.6d, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
 

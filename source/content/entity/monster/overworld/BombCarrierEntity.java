@@ -5,9 +5,13 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoARangedMob;
 import net.tslat.aoa3.content.entity.projectile.mob.BaseMobProjectile;
 import net.tslat.aoa3.content.entity.projectile.mob.BombCarrierDynamiteEntity;
@@ -71,6 +75,19 @@ public class BombCarrierEntity extends AoARangedMob<BombCarrierEntity> {
 		PositionAndMotionUtil.faceTowardsMotion(projectile);
 
 		level().addFreshEntity(projectile);
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 5f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<BombCarrierEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(23)
+				.moveSpeed(0.3)
+				.projectileDamage(2)
+				.followRange(12)
+				.aggroRange(8);
 	}
 
 	@Override

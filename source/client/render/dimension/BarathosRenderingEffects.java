@@ -17,14 +17,18 @@ import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
+import net.tslat.aoa3.common.registration.custom.AoAWorldEvents;
+import net.tslat.aoa3.content.world.event.AoAWorldEventManager;
+import net.tslat.aoa3.content.world.event.BarathosSandstormEvent;
+import net.tslat.aoa3.library.object.ExtendedBulkSectionAccess;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
     public static final ResourceLocation ID = AdventOfAscension.id("barathos");
 
     private float currentLight = 15;
+    private BarathosSandstormEvent sandstorm = null;
 
     BarathosRenderingEffects() {
         super(192, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
@@ -56,19 +60,29 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
     }
 
     @Override
-    public void spawnAmbientParticle(ClientLevel level, BlockPos pos, Biome biome) {
+    public void doFXTick(ClientLevel level, int playerX, int playerY, int playerZ) {
+        this.sandstorm = AoAWorldEventManager.getEventById(level, AoAWorldEvents.BARATHOS_SANDSTORM.getId()) instanceof BarathosSandstormEvent event && event.isActive() ? event : null;
+
+        super.doFXTick(level, playerX, playerY, playerZ);
+    }
+
+    @Override
+    public boolean spawnAmbientParticle(ClientLevel level, ExtendedBulkSectionAccess sectionAccess, BlockPos pos, Biome biome) {
         if (pos.getY() <= 125 && 0.98572f >= level.random.nextFloat()) {
             if (pos.getY() >= 90) {
-                if (level.getBrightness(LightLayer.SKY, pos) == 15) {
-                    float rotProgress = ((level.getGameTime() / 60f) % 360) * Mth.DEG_TO_RAD;
-                    Vec3 angle = new Vec3(Math.cos(rotProgress), 0, Math.sin(rotProgress)).scale(Mth.sin(((level.getGameTime() / (level.getGameTime() % 1000 > 250 ? 20f : 1f)) % 360) * Mth.DEG_TO_RAD) * 0.4f + 0.6f);
+                if (this.sandstorm != null) {
+                    if (level.getBrightness(LightLayer.SKY, pos) == 15) {
+                        float intensity = this.sandstorm.getIntensity(level.getGameTime());
+                        float rotProgress = ((level.getGameTime() / 60f) % 360) * Mth.DEG_TO_RAD;
+                        Vec3 angle = new Vec3(Math.cos(rotProgress), 0, Math.sin(rotProgress)).scale(Mth.sin(((level.getGameTime() / (level.getGameTime() % 1000 > 250 ? 20f : 1f)) % 360) * Mth.DEG_TO_RAD) * 0.3f * intensity + 0.9f);
 
-                    ParticleBuilder.forPositions(EntityTrackingParticleOptions.ambient(AoAParticleTypes.SANDSTORM), Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
-                            .scaleMod(0.1f)
-                            .lifespan(Mth.ceil(5 / (level.random.nextFloat() * 0.8f + 0.2f)))
-                            .colourOverride(0xC4C0A1)
-                            .velocity(angle)
-                            .spawnParticles(level);
+                        ParticleBuilder.forPositions(EntityTrackingParticleOptions.ambient(AoAParticleTypes.SANDSTORM), Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
+                                .scaleMod(0.3f * intensity)
+                                .lifespan(Mth.ceil(5 / (level.random.nextFloat() * 0.8f + 0.2f)))
+                                .colourOverride(0xC4C0A1)
+                                .velocity(angle)
+                                .spawnParticles(level);
+                    }
                 }
             }
             else if (0.1f >= level.random.nextFloat()) {
@@ -79,6 +93,8 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
                         .spawnParticles(level);
             }
         }
+
+        return true;
     }
 
     @Override
@@ -86,14 +102,10 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
         return posY > 85 && posY < 105;
     }
 
+    @Nullable
     @Override
-    public @Nullable float[] getSunriseColor(float timeOfDay, float partialTick) {
+    public float[] getSunriseColor(float timeOfDay, float partialTick) {
         return super.getSunriseColor(timeOfDay, partialTick);
-    }
-
-    @Override
-    public void adjustLightmapColors(ClientLevel level, float partialTicks, float skyDarken, float blockLightRedFlicker, float skyLight, int pixelX, int pixelY, Vector3f colors) {
-
     }
 
     @Override

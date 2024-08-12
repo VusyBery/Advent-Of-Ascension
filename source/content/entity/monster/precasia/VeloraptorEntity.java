@@ -34,6 +34,8 @@ import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
 import net.tslat.aoa3.common.registration.entity.AoAEntityDataSerializers;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.common.registration.entity.variant.VeloraptorVariant;
 import net.tslat.aoa3.content.entity.animal.precasia.OpteryxEntity;
@@ -222,6 +224,20 @@ public class VeloraptorEntity extends AoAMeleeMob<VeloraptorEntity> {
 	@Override
 	protected ResourceKey<LootTable> getDefaultLootTable() {
 		return getVariant().lootTable().orElseGet(super::getDefaultLootTable);
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<VeloraptorEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(37)
+				.moveSpeed(0.35)
+				.meleeStrength(7.5f)
+				.knockbackResist(0.2f)
+				.aggroRange(16)
+				.followRange(32);
 	}
 
 	@Override

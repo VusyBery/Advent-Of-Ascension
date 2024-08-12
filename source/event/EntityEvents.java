@@ -16,6 +16,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.event.entity.living.FinalizeSpawnEvent;
 import net.neoforged.neoforge.event.entity.living.MobSplitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -37,6 +38,7 @@ public final class EntityEvents {
 		forgeBus.addListener(EventPriority.NORMAL, false, EntityJoinLevelEvent.class, EntityEvents::onEntityJoinWorld);
 		forgeBus.addListener(EventPriority.LOWEST, false, FinalizeSpawnEvent.class, EntityEvents::onEntitySpawn);
 		forgeBus.addListener(EventPriority.LOWEST, false, MobSplitEvent.class, EntityEvents::onEntitySplit);
+		forgeBus.addListener(EventPriority.LOWEST, false, ArmorHurtEvent.class, EntityEvents::onArmourDamage);
 		forgeBus.addListener(EventPriority.NORMAL, false, ExplosionEvent.Detonate.class, EntityEvents::onEntityExploded);
 		forgeBus.addListener(EventPriority.NORMAL, false, PlayerInteractEvent.EntityInteractSpecific.class, EntityEvents::onEntityInteract);
 	}
@@ -78,6 +80,12 @@ public final class EntityEvents {
 				}
 			}
 		}
+	}
+
+	private static void onArmourDamage(final ArmorHurtEvent ev) {
+		// Waiting on NeoForge patch
+		/*if (ev.getSource().is(AoATags.DamageTypes.NO_ARMOUR_DAMAGE))
+			ev.setCanceled(true);*/
 	}
 
 	private static void onEntitySpawn(final FinalizeSpawnEvent ev) {

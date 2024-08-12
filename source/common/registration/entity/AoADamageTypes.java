@@ -13,6 +13,7 @@ public final class AoADamageTypes {
 	public static final ResourceKey<DamageType> SUFFOCATION = create("suffocation");
 	public static final ResourceKey<DamageType> BLEED = create("bleed");
 	public static final ResourceKey<DamageType> ACID = create("acid");
+	public static final ResourceKey<DamageType> SANDSTORM = create("sandstorm");
 
 	public static final ResourceKey<DamageType> RANGED_ATTACK = create("ranged_attack");
 

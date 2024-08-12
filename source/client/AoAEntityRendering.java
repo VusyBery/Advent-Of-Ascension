@@ -41,7 +41,13 @@ import net.tslat.aoa3.client.render.blockentity.*;
 import net.tslat.aoa3.client.render.entity.AnimatedMobRenderer;
 import net.tslat.aoa3.client.render.entity.AnimatedProjectileRenderer;
 import net.tslat.aoa3.client.render.entity.AoAMobRenderer;
-import net.tslat.aoa3.client.render.entity.animal.*;
+import net.tslat.aoa3.client.render.entity.animal.barathos.ArkbackModel;
+import net.tslat.aoa3.client.render.entity.animal.generic.BasicLavaFishRenderer;
+import net.tslat.aoa3.client.render.entity.animal.generic.BasicWaterFishRenderer;
+import net.tslat.aoa3.client.render.entity.animal.generic.ShinySquidRenderer;
+import net.tslat.aoa3.client.render.entity.animal.precasia.DeinotheriumModel;
+import net.tslat.aoa3.client.render.entity.animal.precasia.HorndronModel;
+import net.tslat.aoa3.client.render.entity.animal.precasia.OpteryxRenderer;
 import net.tslat.aoa3.client.render.entity.boss.KingBamBamBamRenderer;
 import net.tslat.aoa3.client.render.entity.boss.TyrosaurRenderer;
 import net.tslat.aoa3.client.render.entity.boss.WoundedTyrosaurRenderer;
@@ -114,8 +120,8 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> DEINOTHERIUM = new GeckoLibRendererPackage<>(AoAAnimals.DEINOTHERIUM).model(new DeinotheriumModel());
 	public static final EntityRendererPackage<?> OPTERYX = new GeckoLibRendererPackage<>(AoAAnimals.OPTERYX).renderer(OpteryxRenderer::new);
 
-	public static final EntityRendererPackage<?> ARKBACK = new GeckoLibRendererPackage<>(AoAAnimals.ARKBACK).path("animal/barathos/arkback");
-	public static final EntityRendererPackage<?> EMPEROR_BEAST = new GeckoLibRendererPackage<>(AoAAnimals.EMPEROR_BEAST).path("animal/barathos/emperor_beast");
+	public static final EntityRendererPackage<?> ARKBACK = new GeckoLibRendererPackage<>(AoAAnimals.ARKBACK).model(new ArkbackModel()).scale(2);
+	public static final EntityRendererPackage<?> EMPEROR_BEAST = new GeckoLibRendererPackage<>(AoAAnimals.EMPEROR_BEAST).path("animal/barathos/emperor_beast", true).scale(2);
 
 	public static final EntityRendererPackage<?> ANCIENT_GOLEM = new GeckoLibRendererPackage<>(AoAMonsters.ANCIENT_GOLEM).path("mob/overworld/ancient_golem");
 	//public static final EntityRendererPackage<?> ANGLER = new GeckoLibRendererPackage<>(AoAMonsters.ANGLER).path("mob/lborean/angler");
@@ -142,6 +148,7 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> LEAFY_GIANT = new GeckoLibRendererPackage<>(AoAMonsters.LEAFY_GIANT).path("mob/overworld/leafy_giant");
 	public static final EntityRendererPackage<?> LITTLE_BAM = new GeckoLibRendererPackage<>(AoAMonsters.LITTLE_BAM).path("mob/nether/little_bam").emissive();
 	public static final EntityRendererPackage<?> MEGANEUROPSIS = new GeckoLibRendererPackage<>(AoAMonsters.MEGANEUROPSIS).model(new MeganeuropsisModel()).transparent();
+	public static final EntityRendererPackage<?> SCOLOPENDIS = new GeckoLibRendererPackage<>(AoAMonsters.SCOLOPENDIS).path("mob/precasia/scolopendis");
 	//public static final EntityRendererPackage<?> MUNCHER = new GeckoLibRendererPackage<>(AoAMonsters.MUNCHER).path("mob/lborean/muncher");
 	//public static final EntityRendererPackage<?> NEPTUNO = new GeckoLibRendererPackage<>(AoAMonsters.NEPTUNO).path("mob/lborean/neptuno");
 	public static final EntityRendererPackage<?> NETHENGEIC_BEAST = new GeckoLibRendererPackage<>(AoAMonsters.NETHENGEIC_BEAST).path("mob/nether/nethengeic_beast", true).emissive();
@@ -472,7 +479,6 @@ public final class AoAEntityRendering {
 	//public static final EntityRendererPackage<?> DUSTON = new EntityRendererPackage<>(AoAMonsters.DUSTON).provider(JankyJankTempRendererToPreventCrashesWhileInDev::new);
 	//public static final EntityRendererPackage<?> DWELLER = new EntityRendererPackage<>(AoAMonsters.DWELLER).provider(JankyJankTempRendererToPreventCrashesWhileInDev::new);
 	//public static final EntityRendererPackage<?> ECHODAR = new EntityRendererPackage<>(AoAMonsters.ECHODAR).provider(JankyJankTempRendererToPreventCrashesWhileInDev::new);
-	//public static final EntityRendererPackage<?> EMPEROR_BEAST = new EntityRendererPackage<>(AoAMonsters.EMPEROR_BEAST).provider(JankyJankTempRendererToPreventCrashesWhileInDev::new);
 	//public static final EntityRendererPackage<?> ENFORCER = new EntityRendererPackage<>(AoAMonsters.ENFORCER).provider(JankyJankTempRendererToPreventCrashesWhileInDev::new);
 	//public static final EntityRendererPackage<?> EXOHEAD = new EntityRendererPackage<>(AoAMonsters.EXOHEAD).provider(JankyJankTempRendererToPreventCrashesWhileInDev::new);
 	//public static final EntityRendererPackage<?> EXPLODOT = new EntityRendererPackage<>(AoAMonsters.EXPLODOT).provider(JankyJankTempRendererToPreventCrashesWhileInDev::new);
@@ -649,6 +655,7 @@ public final class AoAEntityRendering {
 		private GeoModel<T> model = null;
 		private boolean emissive = false;
 		private boolean transparent = false;
+		private float scale = 1f;
 		private Type type = Type.LIVING;
 		private EntityRendererProvider<T> provider;
 
@@ -683,6 +690,12 @@ public final class AoAEntityRendering {
 			return this;
 		}
 
+		private GeckoLibRendererPackage<T> scale(float scale) {
+			this.scale = scale;
+
+			return this;
+		}
+
 		private GeckoLibRendererPackage<T> emissive() {
 			this.emissive = true;
 
@@ -711,7 +724,7 @@ public final class AoAEntityRendering {
 			if (transparent) {
 				return new AnimatedMobRenderer<E>(context, model, shadowSize) {
 					@Override
-					public RenderType getRenderType(E animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
+					public RenderType getRenderType(E animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
 						return RenderType.entityTranslucent(texture);
 					}
 				};
@@ -736,7 +749,7 @@ public final class AoAEntityRendering {
 						if (this.transparent) {
 							yield new AnimatedProjectileRenderer<>(context, this.model) {
 								@Override
-								public RenderType getRenderType(T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
+								public RenderType getRenderType(T animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
 									return RenderType.entityTranslucent(texture);
 								}
 							};
@@ -749,7 +762,7 @@ public final class AoAEntityRendering {
 						if (this.transparent) {
 							yield new GeoEntityRenderer<>(context, this.model) {
 								@Override
-								public RenderType getRenderType(T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
+								public RenderType getRenderType(T animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
 									return RenderType.entityTranslucent(texture);
 								}
 							};
@@ -762,6 +775,8 @@ public final class AoAEntityRendering {
 
 				if (this.emissive)
 					renderer.addRenderLayer(new AutoGlowingGeoLayer(renderer));
+
+				renderer.withScale(this.scale);
 
 				return renderer;
 			};

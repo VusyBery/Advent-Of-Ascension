@@ -20,6 +20,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.ai.mob.TelegraphedMeleeAttackGoal;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
@@ -31,8 +33,8 @@ import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 import java.util.List;
 
@@ -167,6 +169,20 @@ public class LeafyGiantEntity extends AoAMeleeMob<LeafyGiantEntity> {
 	protected void onAttack(Entity target) {
 		if (isOnFire())
 			target.igniteForSeconds(getRemainingFireTicks() / 20);
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<LeafyGiantEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(135)
+				.moveSpeed(0.32)
+				.meleeStrength(9)
+				.knockbackResist(1)
+				.followRange(40)
+				.stepHeight(1.5f);
 	}
 
 	@Override

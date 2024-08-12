@@ -7,19 +7,24 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.*;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.client.render.AoAAnimations;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.item.AoAArmour;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
+import net.tslat.aoa3.content.entity.ai.trader.TraderFaceCustomerGoal;
+import net.tslat.aoa3.content.entity.ai.trader.TraderPlayerTradeGoal;
+import net.tslat.aoa3.content.entity.ai.trader.TraderRestockGoal;
 import net.tslat.aoa3.content.entity.base.AoATrader;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
-
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 public class SkillMasterEntity extends AoATrader {
 	private static final EntityDataAccessor<Boolean> TRADING = SynchedEntityData.defineId(SkillMasterEntity.class, EntityDataSerializers.BOOLEAN);
@@ -41,6 +46,29 @@ public class SkillMasterEntity extends AoATrader {
 
 	public SkillMasterEntity(EntityType<? extends AoATrader> entityType, Level world) {
 		super(entityType, world);
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Monster.class, 8f, 0.8d, 1.2d) {
+			@Override
+			public boolean canUse() {
+				return !WorldUtil.isWorld(level(), AoADimensions.NOWHERE) && super.canUse();
+			}
+		});
+		this.goalSelector.addGoal(1, new TraderPlayerTradeGoal(this));
+		this.goalSelector.addGoal(1, new TraderFaceCustomerGoal(this));
+		this.goalSelector.addGoal(2, new OpenDoorGoal(this, true));
+		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f, 1f));
+		this.goalSelector.addGoal(3, new TraderRestockGoal(this));
+		this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5f) {
+			@Override
+			public boolean canUse() {
+				return !WorldUtil.isWorld(level(), AoADimensions.NOWHERE) && super.canUse();
+			}
+		});
+		this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 	}
 
 	@Override
@@ -91,6 +119,15 @@ public class SkillMasterEntity extends AoATrader {
 	@Override
 	public boolean isPushable() {
 		return !WorldUtil.isWorld(level(), AoADimensions.NOWHERE) && super.isPushable();
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<SkillMasterEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.create(entityType)
+				.health(34)
+				.moveSpeed(0.2875f)
+				.flyingSpeed(0.3f)
+				.followRange(32)
+				.knockbackResist(0.4f);
 	}
 
 	@Override

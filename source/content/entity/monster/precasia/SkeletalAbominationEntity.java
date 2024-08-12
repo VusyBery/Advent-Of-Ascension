@@ -14,6 +14,7 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.library.object.EntityDataHolder;
@@ -160,6 +161,21 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
     }
 
     @Override
+    protected double getAttackReach() {
+        return 1.5625;
+    }
+
+    public static AoAEntityStats.AttributeBuilder entityStats(EntityType<SkeletalAbominationEntity> entityType) {
+        return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+                .health(64)
+                .meleeStrength(9.5f)
+                .moveSpeed(0.35f)
+                .aggroRange(32)
+                .followRange(48)
+                .knockbackResist(0.15f);
+    }
+
+    @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<GeoAnimatable>(this, "Pose", 0, state -> {
             if (isStanding()) {
@@ -182,10 +198,5 @@ public class SkeletalAbominationEntity extends AoAMeleeMob<SkeletalAbominationEn
 
             return PlayState.STOP;
         }));
-    }
-
-    @Override
-    protected double getAttackReach() {
-        return 1.5625;
     }
 }

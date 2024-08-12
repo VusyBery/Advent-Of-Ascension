@@ -16,6 +16,7 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
@@ -66,7 +67,7 @@ public class WoundedTyrosaurEntity extends AoAMeleeMob<WoundedTyrosaurEntity> {
     public @Nullable SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnGroupData) {
         spawnGroupData = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
 
-        setHealth((float)RandomUtil.randomValueBetween(0.15f, 0.2f) * getMaxHealth());
+        setHealth((float)RandomUtil.randomValueBetween(0.06f, 0.08f) * getMaxHealth());
 
         return spawnGroupData;
     }
@@ -107,6 +108,19 @@ public class WoundedTyrosaurEntity extends AoAMeleeMob<WoundedTyrosaurEntity> {
     @Override
     public int getCurrentSwingDuration() {
         return 11;
+    }
+
+    public static AoAEntityStats.AttributeBuilder entityStats(EntityType<WoundedTyrosaurEntity> entityType) {
+        return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+                .health(635)
+                .moveSpeed(0.2)
+                .meleeStrength(15)
+                .knockbackResist(0.9)
+                .followRange(100)
+                .aggroRange(64)
+                .armour(10, 10)
+                .knockback(1f)
+                .stepHeight(1.25f);
     }
 
     @Override

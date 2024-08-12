@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.entity.boss.skeletron;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,19 @@ public class EliteSkeletronEntity extends AoABoss {
     @Override
     public @Nullable SoundEvent getMusic() {
         return null;
+    }
+
+    public static AoAEntityStats.AttributeBuilder entityStats(EntityType<EliteSkeletronEntity> entityType) {
+        return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+                .health(600)
+                .moveSpeed(0.315)
+                .meleeStrength(30)
+                .knockbackResist(1)
+                .followRange(100)
+                .aggroRange(64)
+                .armour(15, 25)
+                .knockback(1f)
+                .stepHeight(1.25f);
     }
 
     @Override

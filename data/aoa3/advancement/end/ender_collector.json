@@ -1,0 +1,54 @@
+{
+  "parent": "minecraft:end/root",
+  "criteria": {
+    "obtain_flaming_fury": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:flaming_fury"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nightmare_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nightmare_staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.end.ender_collector.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "aoa3:giant_skill_crystal"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.end.ender_collector.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_flaming_fury"
+    ],
+    [
+      "obtain_nightmare_staff"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "aoa3:advancements/collector"
+    ]
+  },
+  "sends_telemetry_event": true
+}

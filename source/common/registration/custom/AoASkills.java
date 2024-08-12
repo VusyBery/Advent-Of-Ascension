@@ -7,7 +7,7 @@ import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.player.skill.*;
 import org.jetbrains.annotations.Nullable;
 
-public class AoASkills {
+public final class AoASkills {
 	public static void init() {}
 
 	public static final DeferredHolder<AoASkill, AoASkill> ALCHEMY = AoARegistries.AOA_SKILLS.register("alchemy", () -> new AoASkill(AlchemySkill::new, AlchemySkill::new));

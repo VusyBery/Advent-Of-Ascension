@@ -19,6 +19,8 @@ import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.animal.precasia.HorndronEntity;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
@@ -42,8 +44,8 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliat
 import net.tslat.smartbrainlib.api.core.sensor.ExtendedSensor;
 import net.tslat.smartbrainlib.api.core.sensor.vanilla.HurtBySensor;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 import java.util.List;
 
@@ -162,6 +164,20 @@ public class SmilodonEntity extends AoAMeleeMob<SmilodonEntity> {
 	@Override
 	protected SoundEvent getDeathSound() {
 		return AoASounds.ENTITY_SMILODON_DEATH.get();
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<SmilodonEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(46)
+				.meleeStrength(8)
+				.moveSpeed(0.25f)
+				.aggroRange(16)
+				.followRange(32)
+				.knockbackResist(0.3f);
 	}
 
 	@Override

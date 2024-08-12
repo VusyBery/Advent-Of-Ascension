@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -30,6 +31,7 @@ import net.neoforged.neoforge.common.CommonHooks;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.content.entity.brain.task.temp.FixedFollowParent;
 import net.tslat.aoa3.library.object.EntityDataHolder;
+import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -61,10 +63,13 @@ import java.util.Map;
 
 public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implements GeoEntity, SmartBrainOwner<T>, AoAMultipartEntity {
 	protected static final AttributeModifier BABY_HEALTH_MOD = new AttributeModifier(AdventOfAscension.id("baby_health_mod"), -0.5f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+	public static final EntityDataHolder<Boolean> IMMOBILE = EntityDataHolder.register(AoAAnimal.class, EntityDataSerializers.BOOLEAN, false, animal -> animal.immobile, (animal, value) -> animal.immobile = value);
 
 	private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
 	protected AoAEntityPart<?>[] parts = new AoAEntityPart[0];
 	private EntityDataHolder<?>[] dataParams;
+
+	private boolean immobile = false;
 
 	public AoAAnimal(EntityType<? extends Animal> entityType, Level world) {
 		super(entityType, world);
@@ -76,7 +81,11 @@ public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implement
 	protected void defineSynchedData(SynchedEntityData.Builder builder) {
 		super.defineSynchedData(builder);
 
-		this.dataParams = new EntityDataHolder<?>[0];
+		this.dataParams = new EntityDataHolder<?>[] {IMMOBILE};
+
+		for (EntityDataHolder<?> dataHolder : this.dataParams) {
+			dataHolder.defineDefault(builder);
+		}
 	}
 
 	protected final void registerDataParams(SynchedEntityData.Builder builder, EntityDataHolder<?>... params) {
@@ -106,22 +115,44 @@ public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implement
 
 	@Nullable
 	protected SoundEvent getStepSound(BlockPos pos, BlockState blockState) {
-		if (!blockState.liquid()) {
-			BlockState state = level().getBlockState(pos.above());
-			SoundType blockSound = state.getBlock() == Blocks.SNOW ? state.getSoundType(level(), pos, this) : blockState.getSoundType(level(), pos, this);
-
-			return blockSound.getStepSound();
-		}
-
 		return null;
 	}
 
 	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn) {
-		SoundEvent stepSound = getStepSound(pos, blockIn);
+	protected void playStepSound(BlockPos pos, BlockState blockState) {
+		if (!blockState.liquid()) {
+			BlockState state = level().getBlockState(pos.above());
+			SoundType blockSound = state.getBlock() == Blocks.SNOW ? state.getSoundType(level(), pos, this) : blockState.getSoundType(level(), pos, this);
+			SoundEvent stepSound = blockSound.getStepSound();
+			SoundEvent stepSoundOverlay = getStepSound(pos, blockState);
 
-		if (stepSound != null)
-			playSound(stepSound, 0.15F, 1.0F);
+			playStepSounds(stepSound, stepSoundOverlay);
+
+			if (isQuadruped() && !level().isClientSide)
+				AoAScheduler.scheduleSyncronisedTask(() -> playStepSounds(stepSound, stepSoundOverlay), 6);
+		}
+	}
+
+	private void playStepSounds(SoundEvent stepSound, @Nullable SoundEvent stepSoundOverlay) {
+		float stepWeight = getStepWeight() - 1;
+
+		playSound(stepSound, 5 * 0.15f + stepWeight * 0.15f, 1 - stepWeight * 0.1f);
+
+		if (stepSoundOverlay != null)
+			playSound(stepSoundOverlay, 5 * 0.15f + stepWeight * 0.15f, 1 - stepWeight * 0.1f);
+	}
+
+	@Override
+	protected float nextStep() {
+		return this.moveDist + 1;
+	}
+
+	protected float getStepWeight() {
+		return 1f;
+	}
+
+	protected boolean isQuadruped() {
+		return false;
 	}
 
 	@Override
@@ -151,7 +182,7 @@ public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implement
 	public BrainActivityGroup<? extends T> getCoreTasks() {
 		return BrainActivityGroup.coreTasks(
 				new LookAtTarget<>(),
-				new WalkOrRunToWalkTarget<>(),
+				new WalkOrRunToWalkTarget<>().startCondition(entity -> !isDoingStationaryActivity()),
 				new FloatToSurfaceOfFluid<>());
 	}
 
@@ -209,6 +240,17 @@ public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implement
 
 	public int calculateKillXp() {
 		return (int)(getAttributeValue(Attributes.MAX_HEALTH) / 25f);
+	}
+
+	public void setImmobile(boolean immobile) {
+		IMMOBILE.set(this, immobile);
+
+		if (this.immobile)
+			getNavigation().stop();
+	}
+
+	public boolean isDoingStationaryActivity() {
+		return this.immobile;
 	}
 
 	@Override

@@ -13,9 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -27,6 +25,7 @@ import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntityDataSerializers;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.common.registration.entity.variant.PixonVariant;
 import net.tslat.aoa3.common.registration.item.AoATools;
@@ -255,5 +254,9 @@ public class PixonEntity extends Entity {
     protected void addAdditionalSaveData(CompoundTag data) {
         data.putString("Variant", AoARegistries.PIXON_VARIANTS.getKey(this.variant).toString());
         data.putFloat("Magnitude", this.magnitude);
+    }
+
+    public static SpawnPlacements.SpawnPredicate<Entity> spawnRules() {
+        return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT;
     }
 }

@@ -3,7 +3,9 @@ package net.tslat.aoa3.player.ability.imbuing;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.EnchantmentTags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.GrindstoneResultEvent;
 import net.tslat.aoa3.player.ability.AoAAbility;
@@ -27,6 +29,9 @@ public class GrindstoneCursesRemoval extends AoAAbility.Instance {
 
 	@Override
 	public void handleGrindstoneModifying(GrindstoneResultEvent ev) {
-		EnchantmentHelper.updateEnchantments(ev.getOutputStack(), enchants -> enchants.removeIf(enchantmentIntegerEntry -> enchantmentIntegerEntry.is(EnchantmentTags.CURSE)));
+		ItemEnchantments remainingEnchants = EnchantmentHelper.updateEnchantments(ev.getOriginalOutput(), enchants -> enchants.removeIf(enchantmentIntegerEntry -> enchantmentIntegerEntry.is(EnchantmentTags.CURSE)));
+
+		if (ev.getOutput().is(Items.ENCHANTED_BOOK) && remainingEnchants.isEmpty())
+			ev.setNewOutput(ev.getOutput().transmuteCopy(Items.BOOK));
 	}
 }

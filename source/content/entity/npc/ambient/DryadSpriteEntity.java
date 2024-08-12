@@ -23,6 +23,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntityDataSerializers;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.variant.DryadSpriteVariant;
 import net.tslat.aoa3.content.entity.base.AoAAmbientNPC;
 import net.tslat.aoa3.library.object.EntityDataHolder;
@@ -187,6 +188,17 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 		}
 	}
 
+	public boolean isOwner(Entity entity) {
+		return OWNER.get(this).map(value -> value.equals(entity.getUUID())).orElse(true);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<DryadSpriteEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(5)
+				.moveSpeed(0.329)
+				.followRange(16);
+	}
+
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, state -> {
@@ -195,9 +207,5 @@ public class DryadSpriteEntity extends AoAAmbientNPC {
 
 			return state.setAndContinue(state.isMoving() ? DefaultAnimations.WALK : DefaultAnimations.IDLE);
 		}));
-	}
-
-	public boolean isOwner(Entity entity) {
-		return OWNER.get(this).map(value -> value.equals(entity.getUUID())).orElse(true);
 	}
 }

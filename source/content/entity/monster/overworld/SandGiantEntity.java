@@ -25,6 +25,8 @@ import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.ai.ExtendedGoal;
 import net.tslat.aoa3.content.entity.ai.mob.ExtendedMeleeAttackGoal;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
@@ -101,14 +103,6 @@ public class SandGiantEntity extends AoAMeleeMob<SandGiantEntity> {
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(
-				DefaultAnimations.genericWalkController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SLAM),
-				AoAAnimations.genericHeldPoseController(this, AoAAnimations.ATTACK_CHARGE, AoAAnimations.ATTACK_CHARGE_END, entity -> ATTACK_STATE.is(entity, 1)));
-	}
-
-	@Override
 	protected void customServerAiStep() {
 		super.customServerAiStep();
 
@@ -133,6 +127,28 @@ public class SandGiantEntity extends AoAMeleeMob<SandGiantEntity> {
 
 			level().addFreshEntity(RandomUtil.fiftyFifty() ? new SandGiantPitTrapEntity(level(), Vec3.atBottomCenterOf(pos.move(Direction.UP))) : new SandGiantSpikeTrapEntity(level(), Vec3.atBottomCenterOf(pos.move(Direction.UP))));
 		}
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<SandGiantEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(145)
+				.moveSpeed(0.31)
+				.meleeStrength(10.5)
+				.knockbackResist(1)
+				.followRange(40)
+				.stepHeight(1.5f);
+	}
+
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(
+				DefaultAnimations.genericWalkController(this),
+				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SLAM),
+				AoAAnimations.genericHeldPoseController(this, AoAAnimations.ATTACK_CHARGE, AoAAnimations.ATTACK_CHARGE_END, entity -> ATTACK_STATE.is(entity, 1)));
 	}
 
 	private static class TrapChaseGoal<T extends Mob> extends ExtendedGoal<T> {

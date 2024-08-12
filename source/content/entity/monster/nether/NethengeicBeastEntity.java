@@ -12,7 +12,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
@@ -20,7 +19,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,9 +32,7 @@ import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
-import net.tslat.aoa3.common.registration.entity.AoAMobEffects;
-import net.tslat.aoa3.common.registration.entity.AoAMonsters;
+import net.tslat.aoa3.common.registration.entity.*;
 import net.tslat.aoa3.content.entity.base.AoARangedMob;
 import net.tslat.aoa3.content.entity.projectile.mob.BaseMobProjectile;
 import net.tslat.aoa3.content.entity.projectile.mob.FireballEntity;
@@ -87,7 +83,7 @@ public class NethengeicBeastEntity extends AoARangedMob<NethengeicBeastEntity> {
     public BrainActivityGroup<NethengeicBeastEntity> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new LookAtTarget<>(),
-                new WalkOrRunToWalkTarget<>().startCondition(entity -> !IMMOBILE.get(this)),
+                new WalkOrRunToWalkTarget<>().startCondition(entity -> !isDoingStationaryActivity()),
                 new FloatToSurfaceOfFluid<>());
     }
 
@@ -412,13 +408,24 @@ public class NethengeicBeastEntity extends AoARangedMob<NethengeicBeastEntity> {
         return super.hurt(source, amount);
     }
 
-    public static boolean checkSpawnConditions(EntityType<?> entityType, LevelAccessor levelAccessor, MobSpawnType spawnReason, BlockPos blockPos, RandomSource rand) {
-        if (!(levelAccessor instanceof Level level) || (spawnReason != MobSpawnType.STRUCTURE && spawnReason != MobSpawnType.NATURAL))
-            return true;
+    public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+        return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT.noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock().and((entityType, levelAccessor, spawnReason, blockPos, rand) -> {
+            if (!(levelAccessor instanceof Level level) || (spawnReason != MobSpawnType.STRUCTURE && spawnReason != MobSpawnType.NATURAL))
+                return true;
 
-        return EntityRetrievalUtil.getEntities(level,
-                new AABB(blockPos.getX() - 15, blockPos.getY() - 2, blockPos.getZ() - 15, blockPos.getX() + 15, blockPos.getY() + 2, blockPos.getZ() + 15),
-                entity -> entity.getType() == AoAMonsters.NETHENGEIC_BEAST.get()).isEmpty();
+            return EntityRetrievalUtil.getEntities(level,
+                    new AABB(blockPos.getX() - 15, blockPos.getY() - 2, blockPos.getZ() - 15, blockPos.getX() + 15, blockPos.getY() + 2, blockPos.getZ() + 15),
+                    entity -> entity.getType() == AoAMonsters.NETHENGEIC_BEAST.get()).isEmpty();
+        });
+    }
+
+    public static AoAEntityStats.AttributeBuilder entityStats(EntityType<NethengeicBeastEntity> entityType) {
+        return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+                .health(120)
+                .moveSpeed(0.25)
+                .projectileDamage(10)
+                .aggroRange(16)
+                .followRange(24);
     }
 
     @Override

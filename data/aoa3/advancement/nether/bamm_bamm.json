@@ -43,7 +43,6 @@
       "color": "white",
       "translate": "advancements.aoa3.nether.bamm_bamm.description"
     },
-    "hidden": true,
     "icon": {
       "count": 1,
       "id": "aoa3:ornate_trophy"

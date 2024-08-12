@@ -250,6 +250,10 @@ public abstract class PortalBlock extends Block implements AoAPortal {
 			targetLevel = server.overworld();
 		}
 
-		return AoAPortal.getTransitionForLevel(targetLevel, entity, Optional.of(pos), AoAPortal.makeSafeCoords(level, targetLevel, entity.position()), this, existingLink);
+		return getTransitionForPortalLink(targetLevel, entity, Optional.of(pos), AoAPortal.makeSafeCoords(level, targetLevel, entity.position()), existingLink);
+	}
+
+	public DimensionTransition getTransitionForPortalLink(ServerLevel targetLevel, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, Optional<PortalCoordinatesContainer> existingLink) {
+		return AoAPortal.getTransitionForLevel(targetLevel, entity, fromPortal, safeCoords, this, existingLink);
 	}
 }

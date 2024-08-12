@@ -1,12 +1,10 @@
 package net.tslat.aoa3.common.registration.item;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.content.item.datacomponent.*;
 import net.tslat.aoa3.content.item.weapon.blaster.*;
 import net.tslat.aoa3.content.item.weapon.bow.*;
@@ -51,7 +49,7 @@ public final class AoAWeapons {
 	public static final DeferredItem<Item> LIMONITE_SWORD = registerWeapon("limonite_sword", () -> new BaseSword(AoATiers.LIMONITE, BaseSword.baseProperties(AoATiers.LIMONITE, AttackSpeed.SWORD)), AoACreativeModeTabs.SWORDS.getKey());
 	public static final DeferredItem<Item> NETHENGEIC_SWORD = registerWeapon("nethengeic_sword", () -> new NethengeicSword(AoATiers.NETHENGEIC, BaseSword.baseProperties(AoATiers.NETHENGEIC)), AoACreativeModeTabs.SWORDS.getKey());
 	public static final DeferredItem<Item> PRIMAL_SWORD = registerWeapon("primal_sword", () -> new PrimalSword(AoATiers.PRIMAL, BaseSword.baseProperties(AoATiers.PRIMAL)), AoACreativeModeTabs.SWORDS.getKey());
-	public static final DeferredItem<Item> ROCKBASHER_SWORD = registerWeapon("rockbasher_sword", () -> new RockbasherSword(AoATiers.PRIMAL, BaseSword.baseProperties(AoATiers.PRIMAL)), AoACreativeModeTabs.SWORDS.getKey());
+	public static final DeferredItem<Item> ROCKBASHER_SWORD = registerWeapon("rockbasher_sword", () -> new RockbasherSword(AoATiers.ROCKBASHER, BaseSword.baseProperties(AoATiers.ROCKBASHER)), AoACreativeModeTabs.SWORDS.getKey());
 	public static final DeferredItem<Item> ROCK_PICK_SWORD = registerWeapon("rock_pick_sword", () -> new RockPickSword(AoATiers.ROCK_PICK, BaseSword.baseProperties(AoATiers.ROCK_PICK)), AoACreativeModeTabs.SWORDS.getKey());
 	public static final DeferredItem<Item> ROSIDIAN_SWORD = registerWeapon("rosidian_sword", () -> new RosidianSword(AoATiers.ROSIDIAN, BaseSword.baseProperties(AoATiers.ROSIDIAN)), AoACreativeModeTabs.SWORDS.getKey());
 	public static final DeferredItem<Item> RUNIC_SWORD = registerWeapon("runic_sword", () -> new RunicSword(AoATiers.RUNIC, BaseSword.baseProperties(AoATiers.RUNIC)), AoACreativeModeTabs.SWORDS.getKey());

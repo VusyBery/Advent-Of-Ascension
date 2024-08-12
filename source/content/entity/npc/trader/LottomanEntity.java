@@ -2,13 +2,17 @@ package net.tslat.aoa3.content.entity.npc.trader;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.level.Level;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.base.AoATrader;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 
 public class LottomanEntity extends AoATrader {
@@ -37,6 +41,17 @@ public class LottomanEntity extends AoATrader {
 	@Override
 	public Int2ObjectMap<VillagerTrades.ItemListing[]> getTradesMap() {
 		return TRADES;
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT.ifValidSpawnBlock();
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<LottomanEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.create(entityType)
+				.health(20)
+				.moveSpeed(0.329)
+				.followRange(16);
 	}
 
 	@Override

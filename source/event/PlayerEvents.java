@@ -32,14 +32,12 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
 import net.neoforged.neoforge.event.entity.living.*;
-import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.advent.Logging;
+import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
@@ -47,6 +45,7 @@ import net.tslat.aoa3.content.block.functional.misc.CheckpointBlock;
 import net.tslat.aoa3.content.item.misc.ReservedItem;
 import net.tslat.aoa3.content.item.tool.misc.ExpFlask;
 import net.tslat.aoa3.content.item.weapon.sword.BaseSword;
+import net.tslat.aoa3.content.world.event.AoAWorldEventManager;
 import net.tslat.aoa3.event.dimension.LelyetiaEvents;
 import net.tslat.aoa3.event.dimension.LunalusEvents;
 import net.tslat.aoa3.event.dimension.NowhereEvents;
@@ -68,6 +67,7 @@ public class PlayerEvents {
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingIncomingDamageEvent.class, PlayerEvents::onPlayerDamage);
 		forgeBus.addListener(EventPriority.LOWEST, false, LivingDamageEvent.Pre.class, PlayerEvents::onPlayerDamagedPre);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingDamageEvent.Post.class, PlayerEvents::onPlayerDamagedPost);
+		forgeBus.addListener(EventPriority.NORMAL, false, CriticalHitEvent.class, PlayerEvents::onCriticalHit);
 		forgeBus.addListener(EventPriority.LOWEST, false, LivingDeathEvent.class, PlayerEvents::onEntityDeath);
 		forgeBus.addListener(EventPriority.NORMAL, false, LivingFallEvent.class, PlayerEvents::onPlayerFall);
 		forgeBus.addListener(EventPriority.NORMAL, false, BlockEvent.BreakEvent.class, PlayerEvents::onBlockBreak);
@@ -103,6 +103,11 @@ public class PlayerEvents {
 	private static void onPlayerJump(final LivingEvent.LivingJumpEvent ev) {
 		if (WorldUtil.isWorld(ev.getEntity().level(), AoADimensions.LUNALUS) && ev.getEntity() instanceof Player)
 			LunalusEvents.doPlayerJump((Player)ev.getEntity());
+	}
+
+	private static void onCriticalHit(final CriticalHitEvent ev) {
+		if (ev.isCriticalHit())
+			ev.setDamageMultiplier(ev.getDamageMultiplier() * (float)ev.getEntity().getAttributeValue(AoAAttributes.CRITICAL_HIT_MULTIPLIER));
 	}
 
 	private static void onPlayerDamagedPost(final LivingDamageEvent.Post ev) {
@@ -231,6 +236,7 @@ public class PlayerEvents {
 			}
 
 			ServerPlayerDataManager.syncNewPlayer(player);
+			AoAWorldEventManager.syncToPlayer(player);
 
 			final PlayerAdvancements plAdvancements = player.getAdvancements();
 
@@ -290,7 +296,9 @@ public class PlayerEvents {
 		if (ev.getFrom() == AoADimensions.NOWHERE)
 			NowhereEvents.doDimensionChange(ev);
 
-		if (ev.getEntity() instanceof ServerPlayer pl)
+		if (ev.getEntity() instanceof ServerPlayer pl) {
 			PlayerUtil.getAdventPlayer(pl).clearCheckpoint();
+			AoAWorldEventManager.syncToPlayer(pl);
+		}
 	}
 }

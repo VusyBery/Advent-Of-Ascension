@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.menu.container.ListenableResultContainer;
 import net.tslat.aoa3.common.menu.generic.ExtensibleRecipeMenu;
-import net.tslat.aoa3.common.menu.generic.GenericRecipeInput;
 import net.tslat.aoa3.common.menu.slot.CraftableResultSlot;
 import net.tslat.aoa3.common.menu.slot.PredicatedSlot;
 import net.tslat.aoa3.common.registration.AoAMenus;

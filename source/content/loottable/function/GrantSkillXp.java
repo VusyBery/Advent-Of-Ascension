@@ -4,8 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.valueproviders.ConstantFloat;
-import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -14,6 +12,9 @@ import net.minecraft.world.level.storage.loot.functions.LootItemConditionalFunct
 import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProviders;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.loot.AoALootFunctions;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -24,13 +25,13 @@ import java.util.List;
 public class GrantSkillXp extends LootItemConditionalFunction {
 	public static final MapCodec<GrantSkillXp> CODEC = RecordCodecBuilder.mapCodec(builder -> commonFields(builder).and(builder.group(
 					Codec.lazyInitialized(AoARegistries.AOA_SKILLS::lookupCodec).fieldOf("skill").forGetter(GrantSkillXp::getSkill),
-					FloatProvider.CODEC.fieldOf("xp").forGetter(GrantSkillXp::getXp)))
+					NumberProviders.CODEC.fieldOf("xp").forGetter(GrantSkillXp::getXp)))
 			.apply(builder, GrantSkillXp::new));
 
 	private final AoASkill skill;
-	private final FloatProvider xp;
+	private final NumberProvider xp;
 
-	protected GrantSkillXp(List<LootItemCondition> lootConditions, AoASkill skill, FloatProvider xp) {
+	protected GrantSkillXp(List<LootItemCondition> lootConditions, AoASkill skill, NumberProvider xp) {
 		super(lootConditions);
 
 		this.skill = skill;
@@ -53,7 +54,7 @@ public class GrantSkillXp extends LootItemConditionalFunction {
 			entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
 
 		if (entity instanceof ServerPlayer pl)
-			PlayerUtil.giveXpToPlayer(pl, this.skill, xp.sample(context.getRandom()), false);
+			PlayerUtil.giveXpToPlayer(pl, this.skill, xp.getFloat(context), false);
 
 		return stack;
 	}
@@ -62,15 +63,15 @@ public class GrantSkillXp extends LootItemConditionalFunction {
 		return this.skill;
 	}
 
-	public FloatProvider getXp() {
+	public NumberProvider getXp() {
 		return this.xp;
 	}
 
 	public static Builder<?> builder(AoASkill skill, float xp) {
-		return builder(skill, ConstantFloat.of(xp));
+		return builder(skill, ConstantValue.exactly(xp));
 	}
 
-	public static Builder<?> builder(AoASkill skill, FloatProvider xp) {
+	public static Builder<?> builder(AoASkill skill, NumberProvider xp) {
 		return simpleBuilder((conditions) -> new GrantSkillXp(conditions, skill, xp));
 	}
 }

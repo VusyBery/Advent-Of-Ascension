@@ -10,6 +10,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -193,8 +194,8 @@ public class ExtendedExplosion extends Explosion {
 			return EventHooks.canEntityGrief(this.level, this.indirectExploder);
 		}
 		else if (this.source != null) {
-			if (this.source instanceof Player)
-				return AoAGameRules.checkDestructiveWeaponPhysics(this.level);;
+			if (this.source instanceof Player || !(this.source instanceof LivingEntity))
+				return AoAGameRules.checkDestructiveWeaponPhysics(this.level);
 
 			if (this.source instanceof OwnableEntity ownable && ownable.getOwner() instanceof Player)
 				return AoAGameRules.checkDestructiveWeaponPhysics(this.level);

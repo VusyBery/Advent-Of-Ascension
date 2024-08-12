@@ -18,7 +18,10 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -42,6 +45,7 @@ import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAExplosions;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.base.AoARangedAttacker;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
@@ -306,6 +310,17 @@ public class EliteKingBamBamBamEntity extends AoABoss implements AoARangedAttack
 
 	public void consumeEnergy(int amount) {
 		ENERGY_LEVEL.set(this, Math.max(ENERGY_LEVEL.get(this) - amount, 0));
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<EliteKingBamBamBamEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(1510)
+				.moveSpeed(0.2875f)
+				.projectileDamage(25)
+				.knockbackResist(1)
+				.followRange(100)
+				.aggroRange(64)
+				.armour(15, 30);
 	}
 
 	@Override

@@ -15,32 +15,9 @@ import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.util.RecipeUtil;
 import org.jetbrains.annotations.Nullable;
 
-public class WhitewashingRecipe implements Recipe<GenericRecipeInput> {
-	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
-
-	private final Ingredient input;
-	private final Ingredient washingMaterial;
-	private final ItemStack output;
-
+public record WhitewashingRecipe(RecipeUtil.RecipeBookDetails recipeBookDetails, Ingredient input, Ingredient washingMaterial, ItemStack output) implements RecipeBookRecipe<GenericRecipeInput> {
 	public WhitewashingRecipe(String group, @Nullable CraftingBookCategory category, boolean showObtainNotification, Ingredient input, Ingredient washingMaterial, ItemStack output) {
 		this(new RecipeUtil.RecipeBookDetails(group, category, showObtainNotification), input, washingMaterial, output);
-	}
-
-	public WhitewashingRecipe(RecipeUtil.RecipeBookDetails recipeBookDetails, Ingredient input, Ingredient washingMaterial, ItemStack output) {
-		this.recipeBookDetails = recipeBookDetails;
-		this.input = input;
-		this.washingMaterial = washingMaterial;
-		this.output = output;
-	}
-
-	@Override
-	public String getGroup() {
-		return this.recipeBookDetails.group();
-	}
-
-	@Override
-	public boolean showNotification() {
-		return this.recipeBookDetails.showUnlockNotification();
 	}
 
 	@Override

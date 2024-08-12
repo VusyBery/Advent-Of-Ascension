@@ -9,13 +9,21 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.common.registration.worldgen.AoABiomes;
-import net.tslat.aoa3.content.entity.monster.nether.NethengeicBeastEntity;
+import net.tslat.aoa3.content.entity.animal.ShinySquidEntity;
+import net.tslat.aoa3.content.entity.animal.fish.BasicFishEntity;
+import net.tslat.aoa3.content.entity.animal.fish.BasicLavaFishEntity;
+import net.tslat.aoa3.content.entity.animal.precasia.DeinotheriumEntity;
+import net.tslat.aoa3.content.entity.animal.precasia.HorndronEntity;
+import net.tslat.aoa3.content.entity.misc.PixonEntity;
+import net.tslat.aoa3.content.entity.monster.nether.*;
+import net.tslat.aoa3.content.entity.monster.overworld.*;
+import net.tslat.aoa3.content.entity.monster.precasia.*;
+import net.tslat.aoa3.content.entity.npc.trader.LottomanEntity;
+import net.tslat.aoa3.content.entity.npc.trader.UndeadHeraldEntity;
 import net.tslat.aoa3.util.WorldUtil;
 
 import static net.minecraft.world.entity.SpawnPlacementTypes.*;
@@ -37,78 +45,79 @@ public final class AoAEntitySpawnPlacements {
     }
 
     private static void setOverworldSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
-        register(ev, AoAMonsters.ANCIENT_GOLEM.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
-        register(ev, AoAMonsters.BOMB_CARRIER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 5f));
-        register(ev, AoAMonsters.BUSH_BABY.get(), ON_GROUND, MOTION_BLOCKING, SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65));
-        register(ev, AoAMonsters.CHARGER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER);
-        register(ev, AoAMonsters.CHOMPER.get(), AMPHIBIOUS, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.difficultyBasedSpawnChance(0.1f));
-        register(ev, AoAMonsters.CYCLOPS.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55));
-        register(ev, AoAMonsters.GHOST.get(), SpawnBuilder.DEFAULT_MONSTER.noHigherThanY(0).spawnChance(1 / 2f));
-        register(ev, AoAMonsters.GOBLIN.get(), SpawnBuilder.DEFAULT_DAY_MONSTER);
-        register(ev, AoAMonsters.ICE_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMonsters.KING_CHARGER.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 16f));
-        register(ev, AoAMonsters.LEAFY_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMonsters.SAND_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMonsters.SASQUATCH.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55));
-        register(ev, AoAMonsters.STONE_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMonsters.TREE_SPIRIT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 10f));
-        register(ev, AoAMonsters.VOID_WALKER.get(), SpawnBuilder.DEFAULT_MONSTER.noHigherThanY(0));
-        register(ev, AoAMonsters.WOOD_GIANT.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f));
-        register(ev, AoAMonsters.YETI.get(), SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(45).spawnChance(1 / 2f));
+        register(ev, AoAMonsters.ANCIENT_GOLEM.get(), AncientGolemEntity.spawnRules());
+        register(ev, AoAMonsters.BOMB_CARRIER.get(), BombCarrierEntity.spawnRules());
+        register(ev, AoAMonsters.BUSH_BABY.get(), ON_GROUND, MOTION_BLOCKING, BushBabyEntity.spawnRules());
+        register(ev, AoAMonsters.CHARGER.get(), ChargerEntity.spawnRules());
+        register(ev, AoAMonsters.CHOMPER.get(), AMPHIBIOUS, MOTION_BLOCKING_NO_LEAVES, ChomperEntity.spawnRules());
+        register(ev, AoAMonsters.CYCLOPS.get(), CyclopsEntity.spawnRules());
+        register(ev, AoAMonsters.GHOST.get(), GhostEntity.spawnRules());
+        register(ev, AoAMonsters.GOBLIN.get(), GoblinEntity.spawnRules());
+        register(ev, AoAMonsters.ICE_GIANT.get(), IceGiantEntity.spawnRules());
+        register(ev, AoAMonsters.KING_CHARGER.get(), KingChargerEntity.spawnRules());
+        register(ev, AoAMonsters.LEAFY_GIANT.get(), LeafyGiantEntity.spawnRules());
+        register(ev, AoAMonsters.SAND_GIANT.get(), SandGiantEntity.spawnRules());
+        register(ev, AoAMonsters.SASQUATCH.get(), SasquatchEntity.spawnRules());
+        register(ev, AoAMonsters.STONE_GIANT.get(), StoneGiantEntity.spawnRules());
+        register(ev, AoAMonsters.TREE_SPIRIT.get(), TreeSpiritEntity.spawnRules());
+        register(ev, AoAMonsters.VOID_WALKER.get(), VoidWalkerEntity.spawnRules());
+        register(ev, AoAMonsters.WOOD_GIANT.get(), WoodGiantEntity.spawnRules());
+        register(ev, AoAMonsters.YETI.get(), YetiEntity.spawnRules());
     }
 
     private static void setNetherSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
-        register(ev, AoAMonsters.EMBRAKE.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMonsters.FLAMEWALKER.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMonsters.INFERNAL.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 10f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMonsters.LITTLE_BAM.get(), new SpawnBuilder<>().noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock());
-        register(ev, AoAMonsters.NETHENGEIC_BEAST.get(), new SpawnBuilder<>().noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock().and(NethengeicBeastEntity::checkSpawnConditions));
+        register(ev, AoAMonsters.EMBRAKE.get(), EmbrakeEntity.spawnRules());
+        register(ev, AoAMonsters.FLAMEWALKER.get(), FlamewalkerEntity.spawnRules());
+        register(ev, AoAMonsters.INFERNAL.get(), InfernalEntity.spawnRules());
+        register(ev, AoAMonsters.LITTLE_BAM.get(), LittleBamEntity.spawnRules());
+        register(ev, AoAMonsters.NETHENGEIC_BEAST.get(), NethengeicBeastEntity.spawnRules());
     }
 
     private static void setPrecasiaSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
-        register(ev, AoAMonsters.SPINOLEDON.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, random) -> pos.getY() >= 60 || pos.getY() <= -13).difficultyBasedSpawnChance(0.05f));
-        register(ev, AoAAnimals.HORNDRON.get(), SpawnBuilder.DEFAULT_ANIMAL);
-        register(ev, AoAAnimals.DEINOTHERIUM.get(), SpawnBuilder.DEFAULT_ANIMAL);
-        register(ev, AoAMonsters.MEGANEUROPSIS.get(), NO_RESTRICTIONS, MOTION_BLOCKING, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(65).difficultyBasedSpawnChance(0.05f));
-        register(ev, AoAMonsters.SMILODON.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f));
-        register(ev, AoAMonsters.ATTERCOPUS.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, rand) -> (level.getBiome(pos).is(AoABiomes.PRECASIAN_DESERT) && level.getSkyDarken() >= 4 && rand.nextFloat() < 0.05f * level.getCurrentDifficultyAt(pos).getEffectiveDifficulty()) || pos.getY() <= 50));
-        register(ev, AoAMonsters.VELORAPTOR.get(), SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noLowerThanY(60).difficultyBasedSpawnChance(0.1f));
-        register(ev, AoAMonsters.DUNKLEOSTEUS.get(), IN_WATER, OCEAN_FLOOR, SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.noHigherThanY(55).difficultyBasedSpawnChance(0.05f));
+        register(ev, AoAMonsters.SPINOLEDON.get(), SpinoledonEntity.spawnRules());
+        register(ev, AoAAnimals.HORNDRON.get(), HorndronEntity.spawnRules());
+        register(ev, AoAAnimals.DEINOTHERIUM.get(), DeinotheriumEntity.spawnRules());
+        register(ev, AoAMonsters.MEGANEUROPSIS.get(), NO_RESTRICTIONS, MOTION_BLOCKING, MeganeuropsisEntity.spawnRules());
+        register(ev, AoAMonsters.SCOLOPENDIS.get(), ScolopendisEntity.spawnRules());
+        register(ev, AoAMonsters.SMILODON.get(), SmilodonEntity.spawnRules());
+        register(ev, AoAMonsters.ATTERCOPUS.get(), AttercopusEntity.spawnRules());
+        register(ev, AoAMonsters.VELORAPTOR.get(), VeloraptorEntity.spawnRules());
+        register(ev, AoAMonsters.DUNKLEOSTEUS.get(), IN_WATER, OCEAN_FLOOR, DunkleosteusEntity.spawnRules());
     }
 
     private static void setMiscSpawnPlacements(final RegisterSpawnPlacementsEvent ev) {
-        register(ev, AoAAnimals.SHINY_SQUID.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, new SpawnBuilder<>(GlowSquid::checkGlowSquidSpawnRules).spawnChance(1 / 1000f));
+        register(ev, AoAAnimals.SHINY_SQUID.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, ShinySquidEntity.spawnRules());
         register(ev, EntityType.SNIFFER, SpawnBuilder.DEFAULT_ANIMAL);
-        register(ev, AoANpcs.LOTTOMAN.get(), new SpawnBuilder<>().ifValidSpawnBlock());
-        register(ev, AoANpcs.UNDEAD_HERALD.get(), new SpawnBuilder<>().ifValidSpawnBlock());
-        register(ev, AoAMiscEntities.PIXON.get(), new SpawnBuilder<>());
+        register(ev, AoANpcs.LOTTOMAN.get(), LottomanEntity.spawnRules());
+        register(ev, AoANpcs.UNDEAD_HERALD.get(), UndeadHeraldEntity.spawnRules());
+        register(ev, AoAMiscEntities.PIXON.get(), PixonEntity.spawnRules());
 
-        register(ev, AoAAnimals.BLUE_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.CANDLEFISH.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_LAVA_FISH);
-        register(ev, AoAAnimals.CHARRED_CHAR.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_LAVA_FISH);
-        register(ev, AoAAnimals.CHOCAW.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.CRIMSON_SKIPPER.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_LAVA_FISH);
-        register(ev, AoAAnimals.CRIMSON_STRIPEFISH.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_LAVA_FISH);
-        register(ev, AoAAnimals.DARK_HATCHETFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.GREEN_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.HYDRONE.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.IRONBACK.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.JAMFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.PARAPIRANHA.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.PEARL_STRIPEFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.PURPLE_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.RAINBOWFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.RAZORFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.RED_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.REEFTOOTH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.ROCKETFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.SAILBACK.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.SAPPHIRE_STRIDER.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.SKELECANTH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.WHITE_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.YELLOW_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.TURQUOISE_STRIPEFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
-        register(ev, AoAAnimals.VIOLET_SKIPPER.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, SpawnBuilder.DEFAULT_FISH);
+        register(ev, AoAAnimals.BLUE_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.CANDLEFISH.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, BasicLavaFishEntity.spawnRules());
+        register(ev, AoAAnimals.CHARRED_CHAR.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, BasicLavaFishEntity.spawnRules());
+        register(ev, AoAAnimals.CHOCAW.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.CRIMSON_SKIPPER.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, BasicLavaFishEntity.spawnRules());
+        register(ev, AoAAnimals.CRIMSON_STRIPEFISH.get(), IN_LAVA, MOTION_BLOCKING_NO_LEAVES, BasicLavaFishEntity.spawnRules());
+        register(ev, AoAAnimals.DARK_HATCHETFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.GREEN_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.HYDRONE.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.IRONBACK.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.JAMFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.PARAPIRANHA.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.PEARL_STRIPEFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.PURPLE_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.RAINBOWFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.RAZORFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.RED_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.REEFTOOTH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.ROCKETFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.SAILBACK.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.SAPPHIRE_STRIDER.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.SKELECANTH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.WHITE_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.YELLOW_GEMTRAP.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.TURQUOISE_STRIPEFISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
+        register(ev, AoAAnimals.VIOLET_SKIPPER.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, BasicFishEntity.spawnRules());
     }
 
     private static <T extends Entity> void register(RegisterSpawnPlacementsEvent ev, EntityType<T> entityType, SpawnPlacements.SpawnPredicate<?> predicate) {
@@ -119,13 +128,12 @@ public final class AoAEntitySpawnPlacements {
         ev.register(entityType, type, heightmap, (SpawnPlacements.SpawnPredicate<T>)predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 
-    private static final class SpawnBuilder<T extends Entity> implements SpawnPlacements.SpawnPredicate<T> {
-        static final SpawnBuilder<Entity> DEFAULT_FISH = new SpawnBuilder<>().onlySpawnIn(Blocks.WATER).onlySpawnUnder(Blocks.WATER);
-        static final SpawnBuilder<Entity> DEFAULT_LAVA_FISH = new SpawnBuilder<>().onlySpawnIn(Blocks.LAVA).onlySpawnUnder(Blocks.LAVA);
-        static final SpawnBuilder<Mob> DEFAULT_MONSTER = new SpawnBuilder<>().noPeacefulSpawn().defaultMonsterLightLevels().ifValidSpawnBlock();
-        static final SpawnBuilder<Mob> DEFAULT_DAY_NIGHT_MONSTER = new SpawnBuilder<>().noPeacefulSpawn().defaultMonsterBlockLightLevels().ifValidSpawnBlock();
-        static final SpawnBuilder<Mob> DEFAULT_DAY_MONSTER = DEFAULT_DAY_NIGHT_MONSTER.onlyDuringDay().difficultyBasedSpawnChance(0.12f);
-        static final SpawnBuilder<Entity> DEFAULT_ANIMAL = new SpawnBuilder<>().animalSpawnRules();
+    public static final class SpawnBuilder<T extends Entity> implements SpawnPlacements.SpawnPredicate<T> {
+        public static final SpawnBuilder<Entity> DEFAULT = new SpawnBuilder<>();
+        public static final SpawnBuilder<Mob> DEFAULT_MONSTER = DEFAULT.noPeacefulSpawn().defaultMonsterLightLevels().ifValidSpawnBlock();
+        public static final SpawnBuilder<Mob> DEFAULT_DAY_NIGHT_MONSTER = DEFAULT.noPeacefulSpawn().defaultMonsterBlockLightLevels().ifValidSpawnBlock();
+        public static final SpawnBuilder<Mob> DEFAULT_DAY_MONSTER = DEFAULT_DAY_NIGHT_MONSTER.onlyDuringDay().difficultyBasedSpawnChance(0.12f);
+        public static final SpawnBuilder<Entity> DEFAULT_ANIMAL = DEFAULT.animalSpawnRules();
 
         private final SpawnPlacements.SpawnPredicate<T> predicate;
 
@@ -133,7 +141,7 @@ public final class AoAEntitySpawnPlacements {
             this((entityType, world, spawnType, pos, rand) -> true);
         }
 
-        SpawnBuilder(SpawnPlacements.SpawnPredicate<T> predicate) {
+        public SpawnBuilder(SpawnPlacements.SpawnPredicate<T> predicate) {
             this.predicate = predicate;
         }
 
@@ -142,92 +150,92 @@ public final class AoAEntitySpawnPlacements {
             return this.predicate.test(entityType, level, spawnType, pos, rand);
         }
 
-        SpawnBuilder<T> animalSpawnRules() {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getBlockState(pos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && level.getRawBrightness(pos, 0) > 8);
-        }
-
-        SpawnBuilder<T> noPeacefulSpawn() {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getDifficulty() != Difficulty.PEACEFUL);
-        }
-
-        <M extends Mob> SpawnBuilder<M> ifValidSpawnBlock() {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test((EntityType)entityType, level, spawnType, pos, rand) && Mob.checkMobSpawnRules(entityType, level, spawnType, pos, rand));
-        }
-
-        SpawnBuilder<T> noLowerThanY(int minY) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && pos.getY() >= minY);
-        }
-
-        SpawnBuilder<T> noHigherThanY(int maxY) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && pos.getY() <= maxY);
-        }
-
-        SpawnBuilder<T> betweenYLevels(int minY, int maxY) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && pos.getY() >= minY && pos.getY() <= maxY);
-        }
-
-        SpawnBuilder<T> spawnChance(float chance) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) ->  this.predicate.test(entityType, level, spawnType, pos, rand) && rand.nextFloat() < chance);
-        }
-
-        SpawnBuilder<T> difficultyBasedSpawnChance(float chance) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && rand.nextFloat() < chance * level.getCurrentDifficultyAt(pos).getEffectiveDifficulty());
-        }
-
-        SpawnBuilder<T> noSpawnOn(TagKey<Block> blockTag) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && !level.getBlockState(pos.below()).is(blockTag));
-        }
-
-        SpawnBuilder<T> noSpawnOn(Block block) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && !level.getBlockState(pos.below()).is(block));
-        }
-
-        SpawnBuilder<T> onlySpawnOn(TagKey<Block> blockTag) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getBlockState(pos.below()).is(blockTag));
-        }
-
-        SpawnBuilder<T> onlySpawnOn(Block block) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getBlockState(pos.below()).is(block));
-        }
-
-        SpawnBuilder<T> onlySpawnIn(TagKey<Block> blockTag) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getBlockState(pos).is(blockTag));
-        }
-
-        SpawnBuilder<T> onlySpawnIn(Block block) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getBlockState(pos).is(block));
-        }
-
-        SpawnBuilder<T> onlySpawnUnder(TagKey<Block> blockTag) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getBlockState(pos.above()).is(blockTag));
-        }
-
-        SpawnBuilder<T> onlySpawnUnder(Block block) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getBlockState(pos.above()).is(block));
-        }
-
-        SpawnBuilder<T> minLightLevel(int lightLevel) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && WorldUtil.getLightLevel(level, pos, false, false) >= lightLevel);
-        }
-
-        SpawnBuilder<T> maxLightLevel(int lightLevel) {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && WorldUtil.getLightLevel(level, pos, false, false) <= lightLevel);
-        }
-
-        SpawnBuilder<T> defaultMonsterLightLevels() {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && Monster.isDarkEnoughToSpawn(level, pos, rand));
-        }
-
-        SpawnBuilder<T> defaultMonsterBlockLightLevels() {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && WorldUtil.getLightLevel(level, pos, true, false) <= level.dimensionType().monsterSpawnBlockLightLimit());
-        }
-
-        SpawnBuilder<T> onlyDuringDay() {
-            return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && level.getLevel().isDay());
-        }
-
-        SpawnBuilder<T> and(SpawnPlacements.SpawnPredicate<T> predicate) {
+        public SpawnBuilder<T> and(SpawnPlacements.SpawnPredicate<T> predicate) {
             return new SpawnBuilder<>((entityType, level, spawnType, pos, rand) -> this.predicate.test(entityType, level, spawnType, pos, rand) && predicate.test(entityType, level, spawnType, pos, rand));
+        }
+
+        public SpawnBuilder<T> animalSpawnRules() {
+            return and((entityType, level, spawnType, pos, rand) -> level.getBlockState(pos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && (MobSpawnType.ignoresLightRequirements(spawnType) || level.getRawBrightness(pos, 0) > 8));
+        }
+
+        public SpawnBuilder<T> noPeacefulSpawn() {
+            return and((entityType, level, spawnType, pos, rand) -> level.getDifficulty() != Difficulty.PEACEFUL);
+        }
+
+        public <M extends Mob> SpawnBuilder<M> ifValidSpawnBlock() {
+            return and((SpawnPlacements.SpawnPredicate)(entityType, level, spawnType, pos, rand) -> Mob.checkMobSpawnRules((EntityType<M>)entityType, level, spawnType, pos, rand));
+        }
+
+        public SpawnBuilder<T> noLowerThanY(int minY) {
+            return and((entityType, level, spawnType, pos, rand) -> pos.getY() >= minY);
+        }
+
+        public SpawnBuilder<T> noHigherThanY(int maxY) {
+            return and((entityType, level, spawnType, pos, rand) -> pos.getY() <= maxY);
+        }
+
+        public SpawnBuilder<T> betweenYLevels(int minY, int maxY) {
+            return and((entityType, level, spawnType, pos, rand) -> pos.getY() >= minY && pos.getY() <= maxY);
+        }
+
+        public SpawnBuilder<T> spawnChance(float chance) {
+            return and((entityType, level, spawnType, pos, rand) -> rand.nextFloat() < chance);
+        }
+
+        public SpawnBuilder<T> difficultyBasedSpawnChance(float chance) {
+            return and((entityType, level, spawnType, pos, rand) -> rand.nextFloat() < chance * level.getCurrentDifficultyAt(pos).getEffectiveDifficulty());
+        }
+
+        public SpawnBuilder<T> noSpawnOn(TagKey<Block> blockTag) {
+            return and((entityType, level, spawnType, pos, rand) -> !level.getBlockState(pos.below()).is(blockTag));
+        }
+
+        public SpawnBuilder<T> noSpawnOn(Block block) {
+            return and((entityType, level, spawnType, pos, rand) -> !level.getBlockState(pos.below()).is(block));
+        }
+
+        public SpawnBuilder<T> onlySpawnOn(TagKey<Block> blockTag) {
+            return and((entityType, level, spawnType, pos, rand) -> level.getBlockState(pos.below()).is(blockTag));
+        }
+
+        public SpawnBuilder<T> onlySpawnOn(Block block) {
+            return and((entityType, level, spawnType, pos, rand) -> level.getBlockState(pos.below()).is(block));
+        }
+
+        public SpawnBuilder<T> onlySpawnIn(TagKey<Block> blockTag) {
+            return and((entityType, level, spawnType, pos, rand) -> level.getBlockState(pos).is(blockTag));
+        }
+
+        public SpawnBuilder<T> onlySpawnIn(Block block) {
+            return and((entityType, level, spawnType, pos, rand) -> level.getBlockState(pos).is(block));
+        }
+
+        public SpawnBuilder<T> onlySpawnUnder(TagKey<Block> blockTag) {
+            return and((entityType, level, spawnType, pos, rand) -> level.getBlockState(pos.above()).is(blockTag));
+        }
+
+        public SpawnBuilder<T> onlySpawnUnder(Block block) {
+            return and((entityType, level, spawnType, pos, rand) -> level.getBlockState(pos.above()).is(block));
+        }
+
+        public SpawnBuilder<T> minLightLevel(int lightLevel) {
+            return and((entityType, level, spawnType, pos, rand) -> WorldUtil.getLightLevel(level, pos, false, false) >= lightLevel);
+        }
+
+        public SpawnBuilder<T> maxLightLevel(int lightLevel) {
+            return and((entityType, level, spawnType, pos, rand) -> WorldUtil.getLightLevel(level, pos, false, false) <= lightLevel);
+        }
+
+        public SpawnBuilder<T> defaultMonsterLightLevels() {
+            return and((entityType, level, spawnType, pos, rand) -> Monster.isDarkEnoughToSpawn(level, pos, rand));
+        }
+
+        public SpawnBuilder<T> defaultMonsterBlockLightLevels() {
+            return and((entityType, level, spawnType, pos, rand) -> WorldUtil.getLightLevel(level, pos, true, false) <= level.dimensionType().monsterSpawnBlockLightLimit());
+        }
+
+        public SpawnBuilder<T> onlyDuringDay() {
+            return and((entityType, level, spawnType, pos, rand) -> level.getLevel().isDay());
         }
     }
 }

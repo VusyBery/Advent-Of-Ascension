@@ -3,10 +3,7 @@ package net.tslat.aoa3.content.entity.monster.overworld;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.OwnableEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +11,8 @@ import net.minecraft.world.level.Level;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.ai.movehelper.UnderwaterWalkingMovementController;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
@@ -130,6 +129,20 @@ public class ChomperEntity extends AoAMeleeMob<ChomperEntity> {
 	@Override
 	protected int getPreAttackTime() {
 		return 5;
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.difficultyBasedSpawnChance(0.1f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<ChomperEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(30)
+				.moveSpeed(0.3)
+				.meleeStrength(7)
+				.knockbackResist(0.3)
+				.followRange(14)
+				.aggroRange(8);
 	}
 
 	@Override

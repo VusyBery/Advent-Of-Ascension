@@ -35,10 +35,7 @@ import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAExplosions;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
-import net.tslat.aoa3.common.registration.entity.AoABrainActivities;
-import net.tslat.aoa3.common.registration.entity.AoABrainMemories;
-import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
-import net.tslat.aoa3.common.registration.entity.AoAMobEffects;
+import net.tslat.aoa3.common.registration.entity.*;
 import net.tslat.aoa3.content.entity.ai.movehelper.AirborneMoveControl;
 import net.tslat.aoa3.content.entity.base.AoARangedAttacker;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
@@ -442,6 +439,18 @@ public class NethengeicWitherEntity extends AoABoss implements AoARangedAttacker
 		else if (hasAura() && BrainUtils.getTargetOfEntity(this) == null) {
 			toggleAura();
 		}
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<NethengeicWitherEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(420)
+				.moveSpeed(0.31)
+				.flyingSpeed(0.6)
+				.projectileDamage(6)
+				.knockbackResist(1)
+				.followRange(100)
+				.aggroRange(64)
+				.knockback(1f);
 	}
 
 	@Override

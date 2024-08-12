@@ -56,8 +56,8 @@ public final class AoAAnimals {
 	public static final DeferredHolder<EntityType<?>, EntityType<DeinotheriumEntity>> DEINOTHERIUM = register("deinotherium", EntityTypeRegistrar.creature(DeinotheriumEntity::new).sized(1.5f, 3.125f, 2.5f).spawnEgg(0x797168, 0x595149));
 	public static final DeferredHolder<EntityType<?>, EntityType<OpteryxEntity>> OPTERYX = register("opteryx", EntityTypeRegistrar.creature(OpteryxEntity::new).sized(0.5f, 1.25f, 1.125f).spawnEgg(0xBA912C, 0x785205));
 
-	public static final DeferredHolder<EntityType<?>, EntityType<ArkbackEntity>> ARKBACK = register("arkback", EntityTypeRegistrar.creature(ArkbackEntity::new).sized(0.5f, 1.25f, 1.125f).spawnEgg(0xBA912C, 0x785205));
-	public static final DeferredHolder<EntityType<?>, EntityType<EmperorBeastEntity>> EMPEROR_BEAST = register("emperor_beast", EntityTypeRegistrar.creature(EmperorBeastEntity::new).sized(0.5f, 1.25f, 1.125f).spawnEgg(0xBA912C, 0x785205));
+	public static final DeferredHolder<EntityType<?>, EntityType<ArkbackEntity>> ARKBACK = register("arkback", EntityTypeRegistrar.creature(ArkbackEntity::new).sized(5f, 4f, 3f).spawnEgg(0x63514B, 0x3C2923));
+	public static final DeferredHolder<EntityType<?>, EntityType<EmperorBeastEntity>> EMPEROR_BEAST = register("emperor_beast", EntityTypeRegistrar.creature(EmperorBeastEntity::new).sized(5f, 8.5f, 13f).spawnEgg(0x4F4444, 0xC9B5A2));
 
 	//public static final DeferredHolder<EntityType<?>, EntityType<Animal>> ANGELICA = registerAnimal("angelica", AngelicaEntity::new, 0.6f, 2f, 0x146262, 0xB4B4B4);
 	//public static final DeferredHolder<EntityType<?>, EntityType<Animal>> DAWNLIGHT = registerAnimal("dawnlight", DawnlightEntity::new, 0.6875f, 1.375f, 0xD8DAD2, 0xEBEBEA);

@@ -1,0 +1,41 @@
+{
+  "parent": "aoa3:precasia/root",
+  "criteria": {
+    "hatch_opteryx": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "aoa3:opteryx"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.precasia.bird_tamer.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "aoa3:opteryx_spawn_egg"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.precasia.bird_tamer.title"
+    }
+  },
+  "requirements": [
+    [
+      "hatch_opteryx"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

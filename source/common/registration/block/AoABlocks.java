@@ -100,6 +100,7 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> WEIGHTLESS_DIRT = register("weightless_dirt", registrar -> registrar.baseDirt().mapColour(MapColor.COLOR_MAGENTA));
 
 	public static final DeferredBlock<Block> BARON_SAND = register("baron_sand", registrar -> registrar.baseSand(0x71494A).mapColour(MapColor.CRIMSON_HYPHAE));
+	public static final DeferredBlock<Block> BARON_LOOSE_SAND = register("baron_loose_sand", registrar -> registrar.baseSand(0x71494A).factory(BaronLooseSand::new).dynamicShape().mapColour(MapColor.CRIMSON_HYPHAE));
 
 	public static final DeferredBlock<Block> ABYSSAL_GRASS = register("abyssal_grass", registrar -> registrar.baseGrass().sounds(SoundType.NYLIUM).mapColour(MapColor.CRIMSON_HYPHAE).factory(properties -> new AoAGrassBlock(properties, ABYSSAL_STONE.stone)));
 	public static final DeferredBlock<Block> AROMATIC_GRASS = register("aromatic_grass", registrar -> registrar.baseGrass().sounds(SoundType.NYLIUM).mapColour(MapColor.COLOR_LIGHT_GREEN).factory(properties -> new AoAGrassBlock(properties, AROMATIC_DIRT)));
@@ -380,20 +381,21 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> LAPIS_LAMP = register("lapis_lamp", registrar -> registrar.factory(LampBlock::new).light(state -> state.getValue(RedstoneLampBlock.LIT) ? 15 : 0).sounds(SoundType.GLASS).decorationBlocksTab());
 	public static final DeferredBlock<Block> SKELETAL_LAMP = register("skeletal_lamp", registrar -> registrar.factory(LampBlock::new).light(state -> state.getValue(RedstoneLampBlock.LIT) ? 15 : 0).sounds(SoundType.GLASS).decorationBlocksTab());
 
-	public static final DeferredBlock<Block> ABYSSAL_GLASS = register("abyssal_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> AQUATIC_GLASS = register("aquatic_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> ARCHAIC_GLASS = register("archaic_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> BARON_GLASS = register("baron_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> DECAYED_GLASS = register("decayed_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> GARDENCIAN_GLASS = register("gardencian_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> HAVEN_GLASS = register("haven_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> IRO_GLASS = register("iro_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> LELYETIAN_GLASS = register("lelyetian_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> LUNAR_GLASS = register("lunar_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> RUNIC_GLASS = register("runic_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> SHYRE_GLASS = register("shyre_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> VOX_GLASS = register("vox_glass", registrar -> registrar.baseGlass());
-	public static final DeferredBlock<Block> ZHINX_GLASS = register("zhinx_glass", registrar -> registrar.baseGlass());
+	public static final DeferredBlock<Block> ABYSSAL_GLASS = register("abyssal_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> AQUATIC_GLASS = register("aquatic_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> ARCHAIC_GLASS = register("archaic_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> BARON_GLASS = register("baron_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> CAE_GLASS = register("cae_glass", registrar -> registrar.baseGlass().stats(20, 300));
+	public static final DeferredBlock<Block> DECAYED_GLASS = register("decayed_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> GARDENCIAN_GLASS = register("gardencian_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> HAVEN_GLASS = register("haven_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> IRO_GLASS = register("iro_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> LELYETIAN_GLASS = register("lelyetian_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> LUNAR_GLASS = register("lunar_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> RUNIC_GLASS = register("runic_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> SHYRE_GLASS = register("shyre_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> VOX_GLASS = register("vox_glass", BlockRegistrar::baseGlass);
+	public static final DeferredBlock<Block> ZHINX_GLASS = register("zhinx_glass", BlockRegistrar::baseGlass);
 
 	public static final DeferredBlock<Block> TWINKLESTONE_FENCE = register("twinklestone_fence", registrar -> registrar.baseFence(TWINKLESTONE));
 
@@ -611,7 +613,7 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> YELLOW_CRYSTAL_CREATOR = register("yellow_crystal_creator", registrar -> registrar.utilityBlocksTab().sounds(SoundType.GLASS).stats(10, 15).mapColour(MapColor.COLOR_YELLOW).needsTool().instrument(NoteBlockInstrument.CHIME).factory(properties -> new CrystalCreator(properties, AoAItems.YELLOW_GEMSTONES, AoAItems.YELLOW_GEMTRAP, AoAItems.YELLOW_CRYSTAL)));
 	public static final DeferredBlock<Block> CRYSTAL_EXTENSION_SHRINE = register("crystal_extension_shrine", registrar -> registrar.utilityBlocksTab().sounds(SoundType.GLASS).stats(10, 15).mapColour(MapColor.COLOR_YELLOW).needsTool().instrument(NoteBlockInstrument.CHIME).factory(CrystalExtensionShrine::new));
 	public static final DeferredBlock<Block> DEEP_CASE = register("deep_case", registrar -> registrar.mapColour(MapColor.TERRACOTTA_LIGHT_GRAY).stats(5, 3).instrument(NoteBlockInstrument.BASS).utilityBlocksTab());
-	public static final DeferredBlock<Block> COCOON = register("cocoon", registrar -> registrar.factory(CocoonBlock::new).mapColour(MapColor.WOOL).itemFactory(CocoonItem::new).stats(2).pistonBreaks().noOcclusion().randomTicks().utilityBlocksTab());
+	public static final DeferredBlock<Block> COCOON = register("cocoon", registrar -> registrar.factory(CocoonBlock::new).mapColour(MapColor.WOOL).itemFactory(CocoonItem::new).stats(2).pistonBreaks().sounds(SoundType.COBWEB).noOcclusion().randomTicks().utilityBlocksTab());
 	public static final DeferredBlock<Block> DIVINE_STATION = register("divine_station", registrar -> registrar.factory(DivineStation::new).stats(5, 10).mapColour(MapColor.COLOR_CYAN).sounds(SoundType.GLASS).utilityBlocksTab().needsTool());
 	public static final DeferredBlock<Block> FRAME_BENCH = register("frame_bench", registrar -> registrar.factory(FrameBench::new).mapColour(MapColor.WOOD).sounds(SoundType.WOOD).flammable().stats(2.5f, 0f).instrument(NoteBlockInstrument.BASS).utilityBlocksTab());
 	public static final DeferredBlock<Block> HAUNTING_TABLE = register("haunting_table", registrar -> registrar.factory(HauntingTable::new).mapColour(MapColor.TERRACOTTA_PURPLE).stats(10, 15).instrument(NoteBlockInstrument.BASS).utilityBlocksTab().needsTool());

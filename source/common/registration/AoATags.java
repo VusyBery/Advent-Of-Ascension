@@ -93,8 +93,6 @@ public final class AoATags {
 		public static final TagKey<Block> BASE_STONE_CREEPONIA = aoaTag("base_stone_creeponia");
 		public static final TagKey<Block> NOWHERE_SAFE_GUI_BLOCK = aoaTag("nowhere_safe_gui_block");
 
-		public static final TagKey<Block> NEEDS_NETHERITE_TOOL = tag("needs_netherite_tool");
-
 		public static final TagKey<Block> BASE_STONE_PRECASIA = tag("base_stone_precasia");
 
 		public static final TagKey<Block> EXTRACTION_TRAINABLE = tag("extraction_trainable");
@@ -287,6 +285,8 @@ public final class AoATags {
 
 	public static class Entities {
 		public static final TagKey<EntityType<?>> FLYING = tag("flying");
+		public static final TagKey<EntityType<?>> IMMUNE_TO_SANDSTORM = aoaTag("immune_to_sandstorm");
+		public static final TagKey<EntityType<?>> LOOSE_SAND_WALKABLE_MOBS = aoaTag("loose_sand_walkable_mobs");
 
 		private static TagKey<EntityType<?>> aoaTag(String id) {
 			return create(AdventOfAscension.id(id));
@@ -351,6 +351,7 @@ public final class AoATags {
 		public static final TagKey<DamageType> ENERGY = aoaTag("energy");
 		public static final TagKey<DamageType> NO_SPIRIT_REGEN = aoaTag("no_spirit_regen");
 		public static final TagKey<DamageType> REDUCED_FLINCH = tag("reduced_flinch");
+		public static final TagKey<DamageType> NO_ARMOUR_DAMAGE = tag("no_armour_damage");
 
 		private static TagKey<DamageType> aoaTag(String id) {
 			return create(AdventOfAscension.id(id));

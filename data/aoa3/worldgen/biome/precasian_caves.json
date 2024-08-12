@@ -86,9 +86,15 @@
     "monster": [
       {
         "type": "aoa3:attercopus",
-        "maxCount": 2,
+        "maxCount": 1,
         "minCount": 1,
-        "weight": 100
+        "weight": 10
+      },
+      {
+        "type": "aoa3:scolopendis",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 7
       },
       {
         "type": "aoa3:spinoledon",

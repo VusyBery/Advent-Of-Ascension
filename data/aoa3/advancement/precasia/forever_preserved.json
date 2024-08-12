@@ -1,0 +1,62 @@
+{
+  "parent": "aoa3:precasia/not_quite_a_fossil",
+  "criteria": {
+    "obtain_ornate_elite_tyrosaur_trophy": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "aoa3:trophy_data": {
+                "entity_data": {
+                  "id": "aoa3:elite_tyrosaur"
+                },
+                "is_original": true
+              }
+            },
+            "items": "aoa3:ornate_trophy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_ornate_tyrosaur_trophy": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "aoa3:trophy_data": {
+                "entity_data": {
+                  "id": "aoa3:tyrosaur"
+                },
+                "is_original": true
+              }
+            },
+            "items": "aoa3:ornate_trophy"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.precasia.forever_preserved.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "aoa3:ornate_trophy"
+    },
+    "title": {
+      "color": "dark_green",
+      "translate": "advancements.aoa3.precasia.forever_preserved.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_ornate_elite_tyrosaur_trophy",
+      "obtain_ornate_tyrosaur_trophy"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

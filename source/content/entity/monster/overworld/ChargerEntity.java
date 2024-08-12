@@ -19,6 +19,8 @@ import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntityDataSerializers;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.variant.ChargerVariant;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.library.object.EntityDataHolder;
@@ -96,12 +98,6 @@ public class ChargerEntity extends AoAMeleeMob<ChargerEntity> {
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(AoAAnimations.genericWalkRunSwimIdleController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_BITE));
-	}
-
-	@Override
 	public void addAdditionalSaveData(CompoundTag tag) {
 		super.addAdditionalSaveData(tag);
 
@@ -116,9 +112,27 @@ public class ChargerEntity extends AoAMeleeMob<ChargerEntity> {
 			VARIANT.set(this, AoARegistries.CHARGER_VARIANTS.getEntry(ResourceLocation.tryParse(compound.getString("Variant"))));
 	}
 
-
 	@Override
 	protected ResourceKey<LootTable> getDefaultLootTable() {
 		return getVariant().lootTable().orElseGet(super::getDefaultLootTable);
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER;
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<ChargerEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(16)
+				.moveSpeed(0.31)
+				.meleeStrength(6)
+				.followRange(30)
+				.aggroRange(12);
+	}
+
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(AoAAnimations.genericWalkRunSwimIdleController(this),
+				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_BITE));
 	}
 }

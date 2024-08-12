@@ -11,9 +11,7 @@ import net.tslat.aoa3.player.resource.SpiritResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
-
-public class AoAResources {
+public final class AoAResources {
 	public static void init() {}
 
 	public static final DeferredHolder<AoAResource, AoAResource> SPIRIT = AoARegistries.AOA_RESOURCES.register("spirit", () -> new AoAResource(SpiritResource::new, SpiritResource::new));

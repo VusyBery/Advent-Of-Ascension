@@ -6,7 +6,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.Monster;
@@ -17,6 +20,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.library.builder.EntityPredicate;
@@ -141,6 +145,15 @@ public class ThornyPlantSproutEntity extends AoAMeleeMob<ThornyPlantSproutEntity
 
 		if (level().getBlockState(blockPosition().above()).getBlock() == AoABlocks.THORNY_PLANT_CROP.get() && EntityRetrievalUtil.getEntities(this.level(), getBoundingBox(), new EntityPredicate<>(this).is(getType())).isEmpty())
 			level().destroyBlock(blockPosition().above(), true);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<ThornyPlantSproutEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(50)
+				.moveSpeed(0)
+				.meleeStrength(8)
+				.knockbackResist(1)
+				.followRange(8);
 	}
 
 	@Override

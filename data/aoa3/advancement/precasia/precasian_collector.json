@@ -1,0 +1,366 @@
+{
+  "parent": "aoa3:precasia/root",
+  "criteria": {
+    "obtain_amber_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:amber_staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_ashfern_seeds": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:ashfern_seeds"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_bayonette_rifle": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:bayonette_rifle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_bone_blaster": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:bone_blaster"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_camo_rifle": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:camo_rifle"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_gas_blaster": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:gas_blaster"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_krilinator": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:krilinator"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_legbone_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:legbone_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_miasma": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:miasma"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_mini_cannon": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:mini_cannon"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_nature_staff": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:nature_staff"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_precasian_upgrade_kit": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:precasian_upgrade_kit"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_predatious_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:predatious_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_predatious_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:predatious_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_predatious_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:predatious_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_predatious_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:predatious_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_primal_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:primal_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_axe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_axe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_boots": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_boots"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_bow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_bow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_chestplate": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_chestplate"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_helmet": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_helmet"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_leggings": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_leggings"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_pickaxe": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_pickaxe"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_skeletal_shovel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:skeletal_shovel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_viper_1": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:viper_1"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.precasia.precasian_collector.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "aoa3:giant_skill_crystal"
+    },
+    "title": {
+      "color": "light_purple",
+      "translate": "advancements.aoa3.precasia.precasian_collector.title"
+    }
+  },
+  "requirements": [
+    [
+      "obtain_precasian_upgrade_kit"
+    ],
+    [
+      "obtain_miasma"
+    ],
+    [
+      "obtain_ashfern_seeds"
+    ],
+    [
+      "obtain_legbone_sword"
+    ],
+    [
+      "obtain_predatious_leggings"
+    ],
+    [
+      "obtain_predatious_chestplate"
+    ],
+    [
+      "obtain_nature_staff"
+    ],
+    [
+      "obtain_viper_1"
+    ],
+    [
+      "obtain_skeletal_bow"
+    ],
+    [
+      "obtain_predatious_helmet"
+    ],
+    [
+      "obtain_skeletal_boots"
+    ],
+    [
+      "obtain_predatious_boots"
+    ],
+    [
+      "obtain_bayonette_rifle"
+    ],
+    [
+      "obtain_skeletal_helmet"
+    ],
+    [
+      "obtain_bone_blaster"
+    ],
+    [
+      "obtain_camo_rifle"
+    ],
+    [
+      "obtain_primal_sword"
+    ],
+    [
+      "obtain_skeletal_axe"
+    ],
+    [
+      "obtain_krilinator"
+    ],
+    [
+      "obtain_mini_cannon"
+    ],
+    [
+      "obtain_skeletal_leggings"
+    ],
+    [
+      "obtain_gas_blaster"
+    ],
+    [
+      "obtain_amber_staff"
+    ],
+    [
+      "obtain_skeletal_pickaxe"
+    ],
+    [
+      "obtain_skeletal_chestplate"
+    ],
+    [
+      "obtain_skeletal_shovel"
+    ]
+  ],
+  "rewards": {
+    "loot": [
+      "aoa3:advancements/collector"
+    ]
+  },
+  "sends_telemetry_event": true
+}

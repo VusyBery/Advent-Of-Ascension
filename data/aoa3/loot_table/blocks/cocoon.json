@@ -11,6 +11,15 @@
         {
           "condition": "minecraft:inverted",
           "term": {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "biomes": "aoa3:precasian_desert"
+            }
+          }
+        },
+        {
+          "condition": "minecraft:inverted",
+          "term": {
             "condition": "minecraft:match_tool",
             "predicate": {
               "predicates": {
@@ -245,6 +254,15 @@
         {
           "condition": "minecraft:inverted",
           "term": {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "biomes": "aoa3:precasian_desert"
+            }
+          }
+        },
+        {
+          "condition": "minecraft:inverted",
+          "term": {
             "condition": "minecraft:match_tool",
             "predicate": {
               "predicates": {
@@ -277,8 +295,17 @@
       },
       "conditions": [
         {
-          "chance": 0.02,
+          "chance": 0.01,
           "condition": "minecraft:random_chance"
+        },
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "biomes": "aoa3:precasian_desert"
+            }
+          }
         },
         {
           "condition": "minecraft:inverted",
@@ -341,6 +368,133 @@
         {
           "type": "minecraft:item",
           "name": "aoa3:cocoon"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "conditions": [
+        {
+          "condition": "minecraft:location_check",
+          "predicate": {
+            "biomes": "aoa3:precasian_desert"
+          }
+        },
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "predicates": {
+                "minecraft:enchantments": [
+                  {
+                    "enchantments": "minecraft:silk_touch",
+                    "levels": {
+                      "min": 1
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 7.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:string",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 10.0,
+                "min": 6.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:rotten_flesh",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:spider_eye",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "aoa3:torn_cloth",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "aoa3:chitin",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "damage": 0.32333332,
+              "function": "minecraft:set_damage"
+            }
+          ],
+          "name": "aoa3:bone_horn"
         }
       ],
       "rolls": 1.0

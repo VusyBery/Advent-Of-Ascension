@@ -1,0 +1,20 @@
+{
+  "base_settings": {
+    "dimensions": [
+      "aoa3:barathos"
+    ],
+    "id": "aoa3:barathos_sandstorm"
+  },
+  "damage": 0.5,
+  "duration": {
+    "type": "minecraft:uniform",
+    "max_inclusive": 20000,
+    "min_inclusive": 10000
+  },
+  "interval": {
+    "type": "minecraft:uniform",
+    "max_inclusive": 35000,
+    "min_inclusive": 15000
+  },
+  "world_event": "aoa3:barathos_sandstorm"
+}

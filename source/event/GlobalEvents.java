@@ -1,26 +1,25 @@
 package net.tslat.aoa3.event;
 
-import com.google.common.collect.ImmutableList;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.CustomSpawner;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.TagsUpdatedEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.level.ModifyCustomSpawnersEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.tslat.aoa3.advent.AoAResourceCaching;
 import net.tslat.aoa3.common.registration.AoARegistries;
+import net.tslat.aoa3.content.world.event.AoAWorldEventManager;
 import net.tslat.aoa3.content.world.spawner.AoACustomSpawner;
 import net.tslat.aoa3.leaderboard.SkillsLeaderboard;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.scheduling.async.UpdateHalosMapTask;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public final class GlobalEvents {
@@ -30,7 +29,9 @@ public final class GlobalEvents {
 		final IEventBus forgeBus = NeoForge.EVENT_BUS;
 
 		forgeBus.addListener(EventPriority.NORMAL, false, ServerTickEvent.Post.class, GlobalEvents::serverTick);
-		forgeBus.addListener(EventPriority.NORMAL, false, LevelEvent.Load.class, GlobalEvents::worldLoad);
+		forgeBus.addListener(EventPriority.NORMAL, false, ModifyCustomSpawnersEvent.class, GlobalEvents::addCustomSpawners);
+		forgeBus.addListener(EventPriority.NORMAL, false, LevelEvent.Load.class, GlobalEvents::levelLoad);
+		forgeBus.addListener(EventPriority.NORMAL, false, LevelTickEvent.Pre.class, GlobalEvents::levelTick);
 		forgeBus.addListener(EventPriority.NORMAL, false, ServerStartingEvent.class, GlobalEvents::serverStarting);
 		forgeBus.addListener(EventPriority.NORMAL, false, ServerStartedEvent.class, GlobalEvents::serverStarted);
 		forgeBus.addListener(EventPriority.NORMAL, false, ServerStoppingEvent.class, GlobalEvents::serverStopping);
@@ -43,17 +44,20 @@ public final class GlobalEvents {
 		AoAScheduler.handleSyncScheduledTasks(tick);
 	}
 
-	private static void worldLoad(final LevelEvent.Load ev) {
-		if (ev.getLevel() instanceof ServerLevel level) {
-			List<CustomSpawner> spawnersToAdd = new ObjectArrayList<>(level.customSpawners);
+	private static void addCustomSpawners(final ModifyCustomSpawnersEvent ev) {
+		ev.getLevel().getServer().registryAccess().registryOrThrow(AoARegistries.CUSTOM_SPAWNERS_REGISTRY_KEY).stream()
+				.filter(spawner -> spawner.shouldAddToDimension(ev.getLevel()))
+				.map(AoACustomSpawner::copy)
+				.forEach(ev::addCustomSpawner);
+	}
 
-			level.getServer().registryAccess().registryOrThrow(AoARegistries.CUSTOM_SPAWNERS_REGISTRY_KEY).stream()
-					.filter(spawner -> spawner.shouldAddToDimension(level))
-					.map(AoACustomSpawner::copy)
-					.forEach(spawnersToAdd::add);
+	private static void levelLoad(final LevelEvent.Load ev) {
+		if (ev.getLevel() instanceof ServerLevel level)
+			AoAWorldEventManager.load(level);
+	}
 
-			level.customSpawners = ImmutableList.copyOf(spawnersToAdd);
-		}
+	private static void levelTick(final LevelTickEvent.Pre ev) {
+		AoAWorldEventManager.tick(ev.getLevel());
 	}
 
 	private static void serverStarting(final ServerStartingEvent ev) {

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:replace_single_block",
+  "config": {
+    "targets": [
+      {
+        "state": {
+          "Name": "aoa3:cocoon",
+          "Properties": {
+            "webbed": "false"
+          }
+        },
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:sand"
+        }
+      }
+    ]
+  }
+}

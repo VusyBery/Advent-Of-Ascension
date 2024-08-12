@@ -298,14 +298,14 @@ public final class AoAItems {
 	public static final DeferredItem<Item> SHYRELANDS_REALMSTONE = registerItem("shyrelands_realmstone", () -> new Realmstone(null/*AoABlocks.SHYRELANDS_PORTAL*/, "shyrelands"));
 	public static final DeferredItem<Item> VOX_PONDS_REALMSTONE = registerItem("vox_ponds_realmstone", () -> new Realmstone(null/*AoABlocks.VOX_PONDS_PORTAL*/, "vox_ponds"));
 
-	public static final DeferredItem<Item> AMBIENT_POWER_STONE = registerItem("ambient_power_stone", () -> new PowerStone(10, 27500, PixonVariant.AMBIENT));
-	public static final DeferredItem<Item> GLISTENING_POWER_STONE = registerItem("glistening_power_stone", () -> new PowerStone(12, 30000, PixonVariant.GLISTENING));
-	public static final DeferredItem<Item> BLOOMING_POWER_STONE = registerItem("blooming_power_stone", () -> new PowerStone(15, 32500, PixonVariant.BLOOMING));
-	public static final DeferredItem<Item> SHINING_POWER_STONE = registerItem("shining_power_stone", () -> new PowerStone(18, 35000, PixonVariant.SHINING));
-	public static final DeferredItem<Item> GLEAMING_POWER_STONE = registerItem("gleaming_power_stone", () -> new PowerStone(21, 37500, PixonVariant.GLEAMING));
-	public static final DeferredItem<Item> GLOWING_POWER_STONE = registerItem("glowing_power_stone", () -> new PowerStone(24, 40000, PixonVariant.GLOWING));
-	public static final DeferredItem<Item> GLARING_POWER_STONE = registerItem("glaring_power_stone", () -> new PowerStone(27, 42500, PixonVariant.GLARING));
-	public static final DeferredItem<Item> RADIANT_POWER_STONE = registerItem("radiant_power_stone", () -> new PowerStone(30, 45000, PixonVariant.RADIANT));
+	public static final DeferredItem<Item> AMBIENT_POWER_STONE = registerItem("ambient_power_stone", () -> new PowerStone(10, PixonVariant.AMBIENT));
+	public static final DeferredItem<Item> GLISTENING_POWER_STONE = registerItem("glistening_power_stone", () -> new PowerStone(12, PixonVariant.GLISTENING));
+	public static final DeferredItem<Item> BLOOMING_POWER_STONE = registerItem("blooming_power_stone", () -> new PowerStone(15, PixonVariant.BLOOMING));
+	public static final DeferredItem<Item> SHINING_POWER_STONE = registerItem("shining_power_stone", () -> new PowerStone(18, PixonVariant.SHINING));
+	public static final DeferredItem<Item> GLEAMING_POWER_STONE = registerItem("gleaming_power_stone", () -> new PowerStone(21, PixonVariant.GLEAMING));
+	public static final DeferredItem<Item> GLOWING_POWER_STONE = registerItem("glowing_power_stone", () -> new PowerStone(24, PixonVariant.GLOWING));
+	public static final DeferredItem<Item> GLARING_POWER_STONE = registerItem("glaring_power_stone", () -> new PowerStone(27, PixonVariant.GLARING));
+	public static final DeferredItem<Item> RADIANT_POWER_STONE = registerItem("radiant_power_stone", () -> new PowerStone(30, PixonVariant.RADIANT));
 
 	public static final DeferredItem<Item> AMBIENT_ENERGY_STONE = registerItem("ambient_energy_stone", () -> new EnergyStone(1 / 200f, AMBIENT_POWER_STONE));
 	public static final DeferredItem<Item> GLISTENING_ENERGY_STONE = registerItem("glistening_energy_stone", () -> new EnergyStone(1 / 175f, GLISTENING_POWER_STONE));
@@ -343,7 +343,7 @@ public final class AoAItems {
 
 	public static final DeferredItem<Item> BLUE_GEMTRAP = registerItem("blue_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.BLUE_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> CANDLEFISH = registerItem("candlefish", () -> new Item(new Item.Properties().food(AoAFood.CANDLEFISH)), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> CHARRED_CHAR = registerItem("charred_char", CharredChar::new);
+	public static final DeferredItem<Item> CHARRED_CHAR = registerItem("charred_char", () -> new Item(new Item.Properties().food(AoAFood.CHARRED_CHAR)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> CHOCAW = registerItem("chocaw", () -> new Item(new Item.Properties().food(AoAFood.CHOCAW)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> CRIMSON_SKIPPER = registerItem("crimson_skipper", () -> new Item(new Item.Properties().food(AoAFood.CRIMSON_SKIPPER)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> CRIMSON_STRIPEFISH = registerItem("crimson_stripefish", () -> new Item(new Item.Properties().food(AoAFood.CRIMSON_STRIPEFISH)), AoACreativeModeTabs.FOOD.getKey());

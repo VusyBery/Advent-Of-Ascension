@@ -12,7 +12,6 @@ import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.player.skill.AoASkill;
 
 public record XpGainPacket(ResourceLocation skill, float xp, boolean levelUp) implements AoAPacket {
-	public static final ResourceLocation ID = AdventOfAscension.id("xp_gain");
 	public static final Type<XpGainPacket> TYPE = new Type<>(AdventOfAscension.id("xp_gain"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, XpGainPacket> CODEC = StreamCodec.composite(
 			ResourceLocation.STREAM_CODEC,

@@ -45,6 +45,9 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+		if (player.getItemInHand(hand).getDamageValue() > 1)
+			return InteractionResultHolder.pass(player.getItemInHand(hand));
+
 		player.startUsingItem(hand);
 		new SoundBuilder(AoASounds.ITEM_BONE_HORN_CALL).followEntity(player).execute();
 
@@ -64,23 +67,25 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
-		if (stack.isDamaged() && stack.getDamageValue() == 1) {
-			if (level.dimension() == AoADimensions.PRECASIA && level instanceof ServerLevel serverLevel) {
-				BlockPos spawnPos = RandomUtil.getRandomPositionWithinRange(entity.blockPosition(), 30, 10, 30, 10, 0, 10, true, level, 10, (state, pos) ->
-						level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), AoAMonsters.WOUNDED_TYROSAUR.get()) && level.noCollision(AoAMonsters.WOUNDED_TYROSAUR.get().getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d)));
+		if (stack.isDamaged()) {
+			if (stack.getDamageValue() == 1) {
+				if (level.dimension() == AoADimensions.PRECASIA && level instanceof ServerLevel serverLevel) {
+					BlockPos spawnPos = RandomUtil.getRandomPositionWithinRange(entity.blockPosition(), 30, 10, 30, 10, 0, 10, true, level, 10, (state, pos) ->
+							level.getBlockState(pos.below()).isValidSpawn(level, pos.below(), AoAMonsters.WOUNDED_TYROSAUR.get()) && level.noCollision(AoAMonsters.WOUNDED_TYROSAUR.get().getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d)));
 
-				if (spawnPos != entity.blockPosition()) {
-					WoundedTyrosaurEntity tyrosaur = EntitySpawningUtil.spawnEntity(serverLevel, AoAMonsters.WOUNDED_TYROSAUR.get(), spawnPos, MobSpawnType.TRIGGERED);
+					if (spawnPos != entity.blockPosition()) {
+						WoundedTyrosaurEntity tyrosaur = EntitySpawningUtil.spawnEntity(serverLevel, AoAMonsters.WOUNDED_TYROSAUR.get(), spawnPos, MobSpawnType.TRIGGERED);
 
-					if (tyrosaur != null) {
-						BrainUtils.setTargetOfEntity(tyrosaur, entity);
-						new SoundBuilder(AoASounds.ENTITY_TYROSAUR_HURT).followEntity(tyrosaur).execute();
+						if (tyrosaur != null) {
+							BrainUtils.setTargetOfEntity(tyrosaur, entity);
+							new SoundBuilder(AoASounds.ENTITY_TYROSAUR_HURT).followEntity(tyrosaur).execute();
+						}
 					}
 				}
-			}
 
-			if (entity instanceof Player pl)
-				pl.getCooldowns().addCooldown(this, 20);
+				if (entity instanceof Player pl)
+					pl.getCooldowns().addCooldown(this, 20);
+			}
 
 			return stack;
 		}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:advancement_reward",
+  "pools": [
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "aoa3:giant_skill_crystal",
+          "weight": 3
+        }
+      ],
+      "name": "main",
+      "rolls": 1.0
+    }
+  ]
+}

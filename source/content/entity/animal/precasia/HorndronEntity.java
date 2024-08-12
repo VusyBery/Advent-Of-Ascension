@@ -18,6 +18,8 @@ import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
 import net.tslat.aoa3.common.registration.entity.AoAAnimals;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.base.AoAAnimal;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
@@ -138,12 +140,6 @@ public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 		return this.age >= 0 && super.isMultipartEntity();
 	}
 
-	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(DefaultAnimations.genericWalkRunIdleController(this)
-				.triggerableAnim("Charge", STRUT_ANIM));
-	}
-
 	@Nullable
 	@Override
 	public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
@@ -154,5 +150,23 @@ public class HorndronEntity extends AoAAnimal<HorndronEntity> {
 	@Override
 	protected TagKey<Item> getFoodTag() {
 		return AoATags.Items.HORNDRON_FOOD;
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Entity> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_ANIMAL;
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<HorndronEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.create(entityType)
+				.health(58)
+				.moveSpeed(0.25f)
+				.followRange(16)
+				.knockbackResist(0.75f);
+	}
+
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(DefaultAnimations.genericWalkRunIdleController(this)
+				.triggerableAnim("Charge", STRUT_ANIM));
 	}
 }

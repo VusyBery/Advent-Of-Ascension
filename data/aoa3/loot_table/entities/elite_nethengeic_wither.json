@@ -56,6 +56,18 @@
                 }
               },
               "function": "minecraft:set_components"
+            },
+            {
+              "function": "minecraft:set_name",
+              "name": {
+                "translate": "block.aoa3.ornate_trophy.desc",
+                "with": [
+                  {
+                    "translate": "entity.aoa3.nethengeic_wither"
+                  }
+                ]
+              },
+              "target": "item_name"
             }
           ],
           "name": "aoa3:ornate_trophy"

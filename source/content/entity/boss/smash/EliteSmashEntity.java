@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.content.entity.brain.task.custom.ChargeAttack;
@@ -272,6 +273,19 @@ public class EliteSmashEntity extends AoABoss {
 										})
 										.cooldownFor(entity -> 150)
 						)));
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<EliteSmashEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(600)
+				.moveSpeed(0.315)
+				.meleeStrength(30)
+				.knockbackResist(1)
+				.followRange(100)
+				.aggroRange(64)
+				.armour(15, 25)
+				.knockback(1f)
+				.stepHeight(1.25f);
 	}
 
 	private static final RawAnimation WALK_BOTTOM_HALF = RawAnimation.begin().thenPlay("move.walk.bottom_half");

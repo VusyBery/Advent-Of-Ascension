@@ -3,11 +3,11 @@
     "biomes": "#c:is_dead",
     "chance_per_player": 1.0,
     "dimensions": [
-      "minecraft:the_nether",
+      "aoa3:creeponia",
+      "aoa3:barathos",
       "aoa3:precasia",
       "aoa3:lelyetia",
-      "aoa3:creeponia",
-      "aoa3:barathos"
+      "minecraft:the_nether"
     ],
     "extra_delay_per_spawn": {
       "type": "minecraft:uniform",

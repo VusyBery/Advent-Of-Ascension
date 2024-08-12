@@ -1,6 +1,5 @@
 package net.tslat.aoa3.common.registration.worldgen;
 
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.registries.DeferredHolder;

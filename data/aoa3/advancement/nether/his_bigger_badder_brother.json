@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:nether/root",
+  "parent": "aoa3:nether/demonic_visitor",
   "criteria": {
     "obtain_nethengeic_callstone": {
       "conditions": {

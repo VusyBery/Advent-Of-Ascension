@@ -101,15 +101,19 @@ public final class AoASounds {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_GOBLIN_DEATH = registerSound("entity.goblin.death");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_GOBLIN_HURT = registerSound("entity.goblin.hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_OPTERYX_HURT = registerSound("entity.opteryx.hurt");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SCOLOPENDIS_AMBIENT = registerSound("entity.scolopendis.ambient");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SCOLOPENDIS_DEATH = registerSound("entity.scolopendis.death");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SCOLOPENDIS_HURT = registerSound("entity.scolopendis.hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SMASH_BELLY_DRUM = registerSound("entity.smash.belly_drum");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SMASH_DEATH = registerSound("entity.smash.death");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SMASH_ENRAGE = registerSound("entity.smash.enrage");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SMASH_HURT = registerSound("entity.smash.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_SMASH_DEATH = registerSound("entity.smash.death");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TREE_SPIRIT_SHOOT = registerSound("entity.tree_spirit.shoot");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TREE_SPIRIT_SPRITE_IMPACT = registerSound("entity.tree_spirit_sprite.impact");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TYROSAUR_ROAR_START = registerSound("entity.tyrosaur.roar_start");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TYROSAUR_ROAR_LOOP = registerSound("entity.tyrosaur.roar_loop");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TYROSAUR_ROAR_START = registerSound("entity.tyrosaur.roar_start");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TYROSAUR_ROAR_STOP = registerSound("entity.tyrosaur.roar_stop");
+	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARKBACK_AMBIENT = registerSound("entity.arkback.ambient");
 
 	public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK_PRECASIA_PORTAL_AMBIENT = registerSound("block.precasia_portal.ambient");
 	public static final DeferredHolder<SoundEvent, SoundEvent> BLOCK_NOWHERE_PORTAL_AMBIENT = registerSound("block.nowhere_portal.ambient");
@@ -172,9 +176,6 @@ public final class AoASounds {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARIEL_AMBIENT = registerSound("entity.ariel.ambient");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARIEL_DEATH = registerSound("entity.ariel.death");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARIEL_HURT = registerSound("entity.ariel.hurt");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARKBACK_AMBIENT = registerSound("entity.arkback.ambient");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARKBACK_DEATH = registerSound("entity.arkback.death");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARKBACK_HURT = registerSound("entity.arkback.hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARKZYNE_AMBIENT = registerSound("entity.arkzyne.ambient");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARKZYNE_DEATH = registerSound("entity.arkzyne.death");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_ARKZYNE_HURT = registerSound("entity.arkzyne.hurt");
@@ -581,7 +582,6 @@ public final class AoASounds {
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_GENERIC_SNAIL_STEP = registerSound("entity.generic.snail_step");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_GENERIC_VERY_HEAVY_STEP = registerSound("entity.generic.very_heavy_step");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_GOLEM_STEP = registerSound("entity.golem.step");
-	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_TYROSAUR_STEP = registerSound("entity.tyrosaur.step");
 
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_GENERIC_CANDY_HURT = registerSound("entity.generic.candy_hurt");
 	public static final DeferredHolder<SoundEvent, SoundEvent> ENTITY_GENERIC_PLANT_HURT = registerSound("entity.generic.plant_hurt");

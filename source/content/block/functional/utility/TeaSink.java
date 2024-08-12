@@ -79,8 +79,10 @@ public class TeaSink extends HorizontalDirectionalBlock {
 						tea = AoAItems.NATURE_MELON_SLICE;
 					}
 
-					if (!pl.getAbilities().instabuild)
+					if (!pl.getAbilities().instabuild) {
 						shreddings.right().shrink(1);
+						stack.shrink(1);
+					}
 
 					InventoryUtil.giveItemTo(pl, tea);
 					level.playSound(null, pos.getX(), pos.getY(), pos.getZ(), AoASounds.BLOCK_TEA_SINK_USE.get(), SoundSource.BLOCKS, 1.0f, 1.0f);

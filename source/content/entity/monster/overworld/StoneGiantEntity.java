@@ -23,6 +23,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
 import net.tslat.aoa3.content.entity.ai.mob.MultiTypeAttackGoal;
 import net.tslat.aoa3.content.entity.ai.mob.TelegraphedMeleeAttackGoal;
@@ -36,8 +38,8 @@ import net.tslat.aoa3.util.PositionAndMotionUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 import java.util.List;
 
@@ -136,13 +138,6 @@ public class StoneGiantEntity extends AoAMeleeMob<StoneGiantEntity> implements R
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(
-				DefaultAnimations.genericWalkController(this),
-				AoAAnimations.dynamicAttackController(this, state -> ATTACK_STATE.is(this, 0) ? DefaultAnimations.ATTACK_SLAM : DefaultAnimations.ATTACK_THROW));
-	}
-
-	@Override
 	public void performRangedAttack(LivingEntity target, float distanceFactor) {
 		BaseMobProjectile projectile = new StoneGiantRockEntity(AoAProjectiles.STONE_GIANT_ROCK.get(), level(), this, BaseMobProjectile.Type.PHYSICAL);
 
@@ -201,5 +196,28 @@ public class StoneGiantEntity extends AoAMeleeMob<StoneGiantEntity> implements R
 			silverfish.setTarget((LivingEntity)target);
 
 		return silverfish;
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<StoneGiantEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(150)
+				.moveSpeed(0.31)
+				.meleeStrength(11.5)
+				.projectileDamage(10f)
+				.knockbackResist(1)
+				.armour(13, 12)
+				.followRange(40)
+				.stepHeight(1.5f);
+	}
+
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(
+				DefaultAnimations.genericWalkController(this),
+				AoAAnimations.dynamicAttackController(this, state -> ATTACK_STATE.is(this, 0) ? DefaultAnimations.ATTACK_SLAM : DefaultAnimations.ATTACK_THROW));
 	}
 }

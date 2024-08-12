@@ -22,6 +22,7 @@ public class AoACommand {
 				.then(PlayerCommand.register(dispatcher, buildContext))
 				.then(WikiCommand.register(dispatcher, buildContext))
 				.then(ScreenEffectCommand.register(dispatcher, buildContext))
+				.then(WorldEventCommand.register(dispatcher, buildContext))
 				.then(VersionCommand.register(dispatcher, buildContext));
 
 		dispatcher.register(cmd);

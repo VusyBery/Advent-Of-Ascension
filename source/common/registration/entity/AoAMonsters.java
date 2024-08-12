@@ -43,6 +43,7 @@ public final class AoAMonsters {
 	public static final DeferredHolder<EntityType<?>, EntityType<LittleBamEntity>> LITTLE_BAM = register("little_bam", EntityTypeRegistrar.monster(LittleBamEntity::new).sized(0.75f, 1.65625f, 1.4375f).fireImmune().spawnEgg(0x2F180E, 0xDB8702));
 	public static final DeferredHolder<EntityType<?>, EntityType<MeganeuropsisEntity>> MEGANEUROPSIS = register("meganeuropsis", EntityTypeRegistrar.monster(MeganeuropsisEntity::new).sized(0.5f, 0.4375f, 0.3125f).spawnEgg(0x715C0D, 0xE2E2E2));
 	public static final DeferredHolder<EntityType<?>, EntityType<SasquatchEntity>> SASQUATCH = register("sasquatch", EntityTypeRegistrar.monster(SasquatchEntity::new).sized(0.5625f, 1.8125f, 1.59375f).spawnEgg(0x80605C, 0x45293E));
+	public static final DeferredHolder<EntityType<?>, EntityType<ScolopendisEntity>> SCOLOPENDIS = register("scolopendis", EntityTypeRegistrar.monster(ScolopendisEntity::new).sized(1.0625f, 0.75f, 0.6875f).spawnEgg(0xA83319, 0x0A0F16));
 	public static final DeferredHolder<EntityType<?>, EntityType<SmilodonEntity>> SMILODON = register("smilodon", EntityTypeRegistrar.monster(SmilodonEntity::new).sized(0.7f, 1.375f, 1.0625f).spawnEgg(0x86552C, 0x372516));
 	public static final DeferredHolder<EntityType<?>, EntityType<SpinoledonEntity>> SPINOLEDON = register("spinoledon", EntityTypeRegistrar.monster(SpinoledonEntity::new).sized(0.75f, 1.9375f, 1.9f).spawnEgg(0x3E5234, 0x3B3A38));
 	public static final DeferredHolder<EntityType<?>, EntityType<TreeSpiritEntity>> TREE_SPIRIT = register("tree_spirit", EntityTypeRegistrar.monster(TreeSpiritEntity::new).sized(1f, 3f, 2.4f).spawnEgg(0x60502C, 0x9A8448));
@@ -67,7 +68,7 @@ public final class AoAMonsters {
 	public static final DeferredHolder<EntityType<?>, EntityType<KingBamBamBamEntity>> KING_BAMBAMBAM = register("king_bambambam", EntityTypeRegistrar.monster(KingBamBamBamEntity::new).sized(1.125f, 2.75f, 2.15625f).fireImmune().spawnEgg(0x211C1A, 0x4D352B));
 	public static final DeferredHolder<EntityType<?>, EntityType<EliteKingBamBamBamEntity>> ELITE_KING_BAMBAMBAM = register("elite_king_bambambam", EntityTypeRegistrar.monster(EliteKingBamBamBamEntity::new).sized(1.125f, 2.75f, 2.15625f).fireImmune().spawnEgg(0x211C1A, 0x4D352B));
 	public static final DeferredHolder<EntityType<?>, EntityType<TyrosaurEntity>> TYROSAUR = register("tyrosaur", EntityTypeRegistrar.monster(TyrosaurEntity::new).sized(1.375f, 1.6875f, 1).spawnEgg(0x5A4536, 0x252323));
-	public static final DeferredHolder<EntityType<?>, EntityType<EliteTyrosaurEntity>> ELITE_TYROSAUR = register("elite_tyrosaur", EntityTypeRegistrar.monster(EliteTyrosaurEntity::new).sized(1.6875f, 3.375f, 1).spawnEgg(0x5A4536, 0x252323));
+	public static final DeferredHolder<EntityType<?>, EntityType<EliteTyrosaurEntity>> ELITE_TYROSAUR = register("elite_tyrosaur", EntityTypeRegistrar.monster(EliteTyrosaurEntity::new).sized(1.375f, 1.6875f, 1).spawnEgg(0x5A4536, 0x252323));
 	public static final DeferredHolder<EntityType<?>, EntityType<SkeletronEntity>> SKELETRON = register("skeletron", EntityTypeRegistrar.monster(SkeletronEntity::new).sized(1.375f, 1.6875f, 1.0625f).spawnEgg(0x5A4536, 0x252323));
 	public static final DeferredHolder<EntityType<?>, EntityType<EliteSkeletronEntity>> ELITE_SKELETRON = register("elite_skeletron", EntityTypeRegistrar.monster(EliteSkeletronEntity::new).sized(1.375f, 1.6875f, 1.0625f).spawnEgg(0x5A4536, 0x252323));
 
@@ -319,7 +320,6 @@ public final class AoAMonsters {
 	//public static final DeferredHolder<EntityType<?>, EntityType<MechbotEntity>> MECHBOT = registerMob("mechbot", MechbotEntity::new, 0.9f, 2.4375f, 13882126, 1644815);
 	//public static final DeferredHolder<EntityType<?>, EntityType<MirageEntity>> MIRAGE = registerMob("mirage", MirageEntity::new, 0.8f, 2f, 13552553, 1447439);
 	//public static final DeferredHolder<EntityType<?>, EntityType<MiskelEntity>> MISKEL = registerMob("miskel", MiskelEntity::new, 0.7f, 2.375f, 10197910, 7021604);
-	//public static final DeferredHolder<EntityType<?>, EntityType<MuckopedeEntity>> MUCKOPEDE = registerMob("muckopede", MuckopedeEntity::new, 1.0625f, 0.75f, 0xB45A33, 0xE37F5F);
 	//public static final DeferredHolder<EntityType<?>, EntityType<NightReaperEntity>> NIGHT_REAPER = registerMob("night_reaper", NightReaperEntity::new, 0.6875f, 2f, 0x2C3137, 0xE7E0D2);
 	//public static final DeferredHolder<EntityType<?>, EntityType<NightflyEntity>> NIGHTFLY = registerMob("nightfly", NightflyEntity::new, 0.8125f, 0.8125f, 0x251E2C, 0x64534F);
 	//public static final DeferredHolder<EntityType<?>, EntityType<OkazorEntity>> OKAZOR = registerMob("okazor", OkazorEntity::new, 0.7f, 2.375f, 5195591, 4982535);

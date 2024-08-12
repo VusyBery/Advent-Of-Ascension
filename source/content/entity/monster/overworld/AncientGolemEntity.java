@@ -6,6 +6,8 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -13,6 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
@@ -22,8 +26,8 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.move.WalkOrRunToWalkTar
 import net.tslat.smartbrainlib.api.core.behaviour.custom.path.SetRandomWalkTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.TargetOrRetaliate;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 
 public class AncientGolemEntity extends AoAMeleeMob<AncientGolemEntity> {
@@ -91,6 +95,22 @@ public class AncientGolemEntity extends AoAMeleeMob<AncientGolemEntity> {
 	@Override
 	protected int getPreAttackTime() {
 		return 1;
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(65);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<AncientGolemEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(50)
+				.moveSpeed(0.15)
+				.meleeStrength(15)
+				.knockbackResist(1)
+				.knockback(5)
+				.armour(20, 40)
+				.followRange(40)
+				.aggroRange(16);
 	}
 
 	@Override

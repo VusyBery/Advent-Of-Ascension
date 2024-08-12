@@ -8,15 +8,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.ai.navigation.WallClimberNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
+import net.tslat.aoa3.common.registration.worldgen.AoABiomes;
+import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.util.EntityUtil;
@@ -114,6 +116,27 @@ public class AttercopusEntity extends AoAMeleeMob<AttercopusEntity> {
 	protected void onAttack(Entity target) {
 		if (target instanceof LivingEntity livingTarget)
 			EntityUtil.applyPotions(livingTarget, new EffectBuilder(MobEffects.POISON, level().getDifficulty().getId() * 8 * 20));
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_NIGHT_MONSTER.and((entityType, level, spawnType, pos, rand) -> {
+			if (level.getLevel().dimension() != AoADimensions.PRECASIA)
+				return true;
+
+			if (pos.getY() <= 50)
+				return spawnType != MobSpawnType.NATURAL || rand.nextFloat() < 0.05f;
+
+			return level.getBiome(pos).is(AoABiomes.PRECASIAN_DESERT) && level.getSkyDarken() >= 4 && rand.nextFloat() < 0.05f * level.getCurrentDifficultyAt(pos).getEffectiveDifficulty();
+		});
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<AttercopusEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(29)
+				.moveSpeed(0.3)
+				.meleeStrength(5.5f)
+				.aggroRange(16)
+				.followRange(32);
 	}
 
 	@Override

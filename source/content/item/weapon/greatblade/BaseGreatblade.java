@@ -1,11 +1,8 @@
 package net.tslat.aoa3.content.item.weapon.greatblade;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlotGroup;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
@@ -15,7 +12,6 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.advent.AdventOfAscension;
-import net.tslat.aoa3.common.registration.item.AoAEnchantments;
 import net.tslat.aoa3.content.item.weapon.sword.BaseSword;
 import net.tslat.aoa3.library.constant.AttackSpeed;
 
@@ -24,7 +20,7 @@ public class BaseGreatblade extends BaseSword {
 
 	public BaseGreatblade(Tier tier, Item.Properties properties) {
 		super(tier, properties);
-	}
+	}/*
 
 	@Override
 	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack greatblade, DamageSource source, float baseDamage) {
@@ -32,7 +28,7 @@ public class BaseGreatblade extends BaseSword {
 			baseDamage = AoAEnchantments.modifyCritDamage(level, greatblade, target, source, baseDamage);
 
 		return baseDamage;
-	}
+	}*/
 
 	@Override
 	public float getDestroySpeed(ItemStack stack, BlockState state) {

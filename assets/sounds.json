@@ -408,18 +408,6 @@
     ],
     "subtitle": "subtitles.aoa3.entity.arkback.ambient"
   },
-  "entity.arkback.death": {
-    "sounds": [
-      "aoa3:entity/arkback/death"
-    ],
-    "subtitle": "subtitles.aoa3.entity.arkback.death"
-  },
-  "entity.arkback.hurt": {
-    "sounds": [
-      "aoa3:entity/arkback/hurt"
-    ],
-    "subtitle": "subtitles.aoa3.entity.arkback.hurt"
-  },
   "entity.arkzyne.ambient": {
     "sounds": [
       "aoa3:entity/arkzyne/ambient"
@@ -2807,6 +2795,24 @@
     ],
     "subtitle": "subtitles.aoa3.entity.runic_golem.hurt"
   },
+  "entity.scolopendis.ambient": {
+    "sounds": [
+      "aoa3:entity/scolopendis/ambient"
+    ],
+    "subtitle": "subtitles.aoa3.entity.scolopendis.ambient"
+  },
+  "entity.scolopendis.death": {
+    "sounds": [
+      "aoa3:entity/scolopendis/death"
+    ],
+    "subtitle": "subtitles.aoa3.entity.scolopendis.death"
+  },
+  "entity.scolopendis.hurt": {
+    "sounds": [
+      "aoa3:entity/scolopendis/hurt"
+    ],
+    "subtitle": "subtitles.aoa3.entity.scolopendis.hurt"
+  },
   "entity.sea_viper.ambient": {
     "sounds": [
       "aoa3:entity/sea_viper/ambient"
@@ -3331,12 +3337,6 @@
     "sounds": [
       "aoa3:entity/tyrosaur/roar_stop"
     ]
-  },
-  "entity.tyrosaur.step": {
-    "sounds": [
-      "aoa3:entity/tyrosaur/step"
-    ],
-    "subtitle": "subtitles.aoa3.entity.tyrosaur.step"
   },
   "entity.tyrosaur.stomp": {
     "sounds": [

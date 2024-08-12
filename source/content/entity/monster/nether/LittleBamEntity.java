@@ -6,13 +6,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -22,6 +21,8 @@ import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.AoAExplosions;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.library.builder.SoundBuilder;
@@ -99,8 +100,7 @@ public class LittleBamEntity extends AoAMeleeMob<LittleBamEntity> {
 							return target != null && entity.getSensing().hasLineOfSight(target) && entity.isWithinMeleeAttackRange(target);
 						})
 						.whenStarting(entity -> {
-							getNavigation().stop();
-							IMMOBILE.set(entity, true);
+							setImmobile(true);
 
 							TELParticlePacket packet = new TELParticlePacket();
 							double targetX = getX(0.5f);
@@ -135,6 +135,18 @@ public class LittleBamEntity extends AoAMeleeMob<LittleBamEntity> {
 	@Override
 	protected int getAttackSwingDuration() {
 		return 61;
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT.noPeacefulSpawn().spawnChance(1 / 2f).noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock();
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<LittleBamEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(10)
+				.moveSpeed(0.32)
+				.followRange(14)
+				.aggroRange(8);
 	}
 
 	@Override

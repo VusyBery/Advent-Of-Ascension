@@ -1,0 +1,40 @@
+{
+  "parent": "aoa3:precasia/a_prehistoric_sound",
+  "criteria": {
+    "kill_tyrosaur": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "aoa3:tyrosaur"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "description": {
+      "color": "white",
+      "translate": "advancements.aoa3.precasia.jungle_rumble.description"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "aoa3:trophy"
+    },
+    "title": {
+      "color": "dark_green",
+      "translate": "advancements.aoa3.precasia.jungle_rumble.title"
+    }
+  },
+  "requirements": [
+    [
+      "kill_tyrosaur"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

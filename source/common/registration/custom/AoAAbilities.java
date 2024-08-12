@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
-public class AoAAbilities {
+public final class AoAAbilities {
 	public static void init() {}
 
 	public static final DeferredHolder<AoAAbility, AoAAbility> ATTRIBUTE_MODIFICATION = register("attribute_modification", () -> new AoAAbility(AttributeModification::new, AttributeModification::new));

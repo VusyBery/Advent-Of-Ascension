@@ -1,14 +1,18 @@
 {
   "biomes": [
-    "aoa3:precasian_desert",
-    "aoa3:precasian_forest",
-    "aoa3:precasian_jungle",
-    "aoa3:precasian_ocean",
     "aoa3:precasian_plains",
-    "aoa3:precasian_river",
     "aoa3:precasian_savannah",
+    "aoa3:precasian_ocean",
     "aoa3:precasian_shore",
-    "aoa3:precasian_tall_forest"
+    "aoa3:precasian_volcano",
+    "aoa3:precasian_deadlands",
+    "aoa3:precasian_tar_pits",
+    "aoa3:precasian_jungle",
+    "aoa3:precasian_desert",
+    "aoa3:precasian_river",
+    "aoa3:precasian_forest",
+    "aoa3:precasian_tall_forest",
+    "aoa3:precasian_caves"
   ],
   "entities": [
     {
@@ -90,6 +94,11 @@
       "level": 30,
       "weight": 35,
       "weight_mod": 5.0
+    },
+    {
+      "item": "aoa3:tidal_greatblade",
+      "level": 75,
+      "weight_mod": 3.0
     }
   ]
 }

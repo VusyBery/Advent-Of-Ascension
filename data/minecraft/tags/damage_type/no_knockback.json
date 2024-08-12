@@ -29,6 +29,10 @@
       "required": false
     },
     {
+      "id": "aoa3:sandstorm",
+      "required": false
+    },
+    {
       "id": "aoa3:mob_flamethrower",
       "required": false
     },

@@ -5,12 +5,16 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.variant.UndeadHeraldTrade;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.base.AoATrader;
@@ -90,6 +94,17 @@ public class UndeadHeraldEntity extends AoATrader {
 	@Override
 	public Int2ObjectMap<VillagerTrades.ItemListing[]> getTradesMap() {
 		return TRADES;
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT.ifValidSpawnBlock();
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<UndeadHeraldEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.create(entityType)
+				.health(16)
+				.moveSpeed(0.14375f)
+				.followRange(16);
 	}
 
 	@Override

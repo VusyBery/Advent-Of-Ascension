@@ -6,11 +6,10 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
@@ -22,6 +21,8 @@ import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMobEffects;
 import net.tslat.aoa3.content.entity.base.AoARangedMob;
 import net.tslat.aoa3.content.entity.projectile.mob.BaseMobProjectile;
@@ -126,6 +127,19 @@ public class FlamewalkerEntity extends AoARangedMob<FlamewalkerEntity> {
     @Override
     public boolean isSensitiveToWater() {
         return true;
+    }
+
+    public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+        return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT.noPeacefulSpawn().noSpawnOn(Blocks.NETHER_WART_BLOCK).ifValidSpawnBlock();
+    }
+
+    public static AoAEntityStats.AttributeBuilder entityStats(EntityType<FlamewalkerEntity> entityType) {
+        return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+                .health(45)
+                .moveSpeed(0.3)
+                .projectileDamage(7)
+                .followRange(10)
+                .aggroRange(16);
     }
 
     @Override

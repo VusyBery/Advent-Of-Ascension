@@ -39,6 +39,7 @@ import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -217,12 +218,15 @@ public class FishingCageEntity extends Entity {
 			FluidState fluid = level().getFluidState(blockPosition());
 
 			if (!(fluid.getType() instanceof FlowingFluid flowingFluid)) {
-				if (!RandomUtil.oneInNChance(3))
+				if (!RandomUtil.oneInNChance(10))
 					return;
 			}
 			else if (flowingFluid.getFlow(level(), blockPosition(), fluid).lengthSqr() == 0 && !RandomUtil.fiftyFifty()) {
 				return;
 			}
+
+			if (!RandomUtil.oneInNChance(Math.max(1, EntityRetrievalUtil.getEntities(this, 5, entity -> entity instanceof FishingCageEntity).size())))
+				return;
 
 			Player owner = level().getPlayerByUUID(this.ownerUUID);
 

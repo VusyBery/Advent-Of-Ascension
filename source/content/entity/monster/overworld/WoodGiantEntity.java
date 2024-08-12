@@ -13,10 +13,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -36,6 +33,8 @@ import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMobEffects;
 import net.tslat.aoa3.content.entity.ai.mob.TelegraphedMeleeAttackGoal;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
@@ -219,6 +218,21 @@ public class WoodGiantEntity extends AoAMeleeMob<WoodGiantEntity> {
 
 	private static AttributeModifier getToughnessMod(int stage) {
 		return new AttributeModifier(AdventOfAscension.id("wood_giant_stage"), 50 - (Math.max(0, stage + 1) * 15), AttributeModifier.Operation.ADD_VALUE);
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<WoodGiantEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(140)
+				.moveSpeed(0.32)
+				.meleeStrength(11)
+				.knockbackResist(1)
+				.armour(10, 5)
+				.followRange(40)
+				.stepHeight(1.5f);
 	}
 
 	@Override

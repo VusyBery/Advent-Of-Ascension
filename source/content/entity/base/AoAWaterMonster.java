@@ -54,7 +54,7 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
     public BrainActivityGroup<? extends T> getCoreTasks() {
         return BrainActivityGroup.coreTasks(
                 new LookAtTarget<>(),
-                new WalkOrRunToWalkTarget<>().startCondition(entity -> !IMMOBILE.get(this)));
+                new WalkOrRunToWalkTarget<>().startCondition(entity -> !isDoingStationaryActivity()));
     }
 
     @Override

@@ -117,6 +117,10 @@ public class TrophyBlock extends WaterloggableBlock implements EntityBlock {
 		return stack;
 	}
 
+	public static Component getDefaultNameWithEntity(Block block, EntityType<?> entityType) {
+		return LocaleUtil.getLocaleMessage("block.aoa3." + RegistryUtil.getId(block).getPath() + ".desc", entityType.getDescription());
+	}
+
 	public static Component getDefaultNameWithEntity(TrophyData trophyData, String trophyId) {
 		return LocaleUtil.getLocaleMessage("block.aoa3." + trophyId + ".desc", trophyData.getEntity().getName());
 	}

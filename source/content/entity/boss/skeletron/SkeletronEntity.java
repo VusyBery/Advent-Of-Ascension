@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.boss.AoABoss;
@@ -66,6 +67,19 @@ public class SkeletronEntity extends AoABoss {
 
         if (WOUNDED.is(this, true))
             spawnAtLocation(AoAItems.WARPED_HORN.get());
+    }
+
+    public static AoAEntityStats.AttributeBuilder entityStats(EntityType<SkeletronEntity> entityType) {
+        return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+                .health(275)
+                .moveSpeed(0.31)
+                .meleeStrength(15)
+                .knockbackResist(0.9)
+                .followRange(100)
+                .aggroRange(64)
+                .armour(10, 10)
+                .knockback(1f)
+                .stepHeight(1.25f);
     }
 
     @Override

@@ -8,46 +8,36 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.item.AoAItems;
+import net.tslat.aoa3.util.RecipeUtil;
 
 /**
  * Just a dummy recipe for JEI
  */
-public class FrameBenchRecipe implements Recipe<SingleRecipeInput> {
-	private final RecipeType<FrameBenchRecipe> RECIPE_TYPE = new RecipeType<FrameBenchRecipe>() {
+public record FrameBenchRecipe(RecipeUtil.RecipeBookDetails recipeBookDetails, Ingredient input, ItemStack output) implements RecipeBookRecipe<SingleRecipeInput> {
+	private static final RecipeType<FrameBenchRecipe> RECIPE_TYPE = new RecipeType<>() {
 		@Override
 		public String toString() {
 			return "frame_bench";
 		}
 	};
 
-	private final String group;
-
-	private final ItemStack input;
-	private final ItemStack output;
-
 	public FrameBenchRecipe(ItemLike output) {
-		this("", output);
-	}
-
-	public FrameBenchRecipe(String group, ItemLike output) {
-		this.group = group;
-		this.input = new ItemStack(AoAItems.SCRAP_METAL.get());
-		this.output = new ItemStack(output);
+		this(new RecipeUtil.RecipeBookDetails("", CraftingBookCategory.EQUIPMENT, false), Ingredient.of(AoAItems.SCRAP_METAL), output.asItem().getDefaultInstance());
 	}
 
 	@Override
 	public ItemStack getToastSymbol() {
-		return new ItemStack(AoABlocks.FRAME_BENCH.get());
+		return AoABlocks.FRAME_BENCH.toStack();
 	}
 
 	@Override
 	public boolean matches(SingleRecipeInput inv, Level world) {
-		return inv.getItem(0).getItem() == input.getItem();
+		return this.input.test(inv.getItem(0));
 	}
 
 	@Override
 	public ItemStack assemble(SingleRecipeInput inv, HolderLookup.Provider holderLookup) {
-		return output.copy();
+		return this.output.copy();
 	}
 
 	@Override
@@ -57,7 +47,7 @@ public class FrameBenchRecipe implements Recipe<SingleRecipeInput> {
 
 	@Override
 	public ItemStack getResultItem(HolderLookup.Provider holderLookup) {
-		return output.copy();
+		return this.output.copy();
 	}
 
 	@Override
@@ -77,15 +67,10 @@ public class FrameBenchRecipe implements Recipe<SingleRecipeInput> {
 
 	@Override
 	public NonNullList<Ingredient> getIngredients() {
-		NonNullList<Ingredient> ingredients = NonNullList.<Ingredient>create();
+		NonNullList<Ingredient> ingredients = NonNullList.create();
 
-		ingredients.add(Ingredient.of(input));
+		ingredients.add(this.input);
 
 		return ingredients;
-	}
-
-	@Override
-	public String getGroup() {
-		return group;
 	}
 }

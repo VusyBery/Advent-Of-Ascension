@@ -96,6 +96,11 @@
       "weight_mod": 5.0
     },
     {
+      "item": "aoa3:tidal_greatblade",
+      "level": 75,
+      "weight_mod": 3.0
+    },
+    {
       "item": "minecraft:water_bucket"
     }
   ]

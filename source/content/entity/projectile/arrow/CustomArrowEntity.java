@@ -147,11 +147,11 @@ public class CustomArrowEntity extends Arrow {
 		DamageSource damageSource = damageSources().arrow(this, owner != null ? owner : this);
 		ArrowFiringWeapon arrowFiringWeapon = weaponStack != null && weaponStack.getItem() instanceof ArrowFiringWeapon weapon ? weapon : null;
 
-		if (arrowFiringWeapon != null)
-			damage = arrowFiringWeapon.getArrowDamage(this, owner, hitResult, weaponStack, damage, velocity, isCritArrow());
-
 		if (weaponStack != null && level() instanceof ServerLevel level)
 			damage = EnchantmentHelper.modifyDamage(level, weaponStack, target, damageSource, damage);
+
+		if (arrowFiringWeapon != null)
+			damage = arrowFiringWeapon.getArrowDamage(this, owner, hitResult, weaponStack, damage, velocity, isCritArrow());
 
 		damage = Math.max(damage, 0);
 

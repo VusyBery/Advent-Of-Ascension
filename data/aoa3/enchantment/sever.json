@@ -4,16 +4,16 @@
     "translate": "enchantment.aoa3.sever"
   },
   "effects": {
-    "aoa3:crit_damage": [
+    "minecraft:attributes": [
       {
-        "effect": {
-          "type": "minecraft:add",
-          "value": {
-            "type": "minecraft:linear",
-            "base": 1.15,
-            "per_level_above_first": 1.15
-          }
-        }
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 0.035,
+          "per_level_above_first": 0.035
+        },
+        "attribute": "aoa3:critical_hit_multiplier",
+        "id": "aoa3:enchantment.sever",
+        "operation": "add_value"
       }
     ]
   },

@@ -57,15 +57,15 @@ public abstract class AoATrader extends Villager implements GeoEntity {
 
 	@Override
 	protected void registerGoals() {
-		goalSelector.addGoal(0, new FloatGoal(this));
-		goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Monster.class, 8f, 0.8d, 1.2d));
-		goalSelector.addGoal(1, new TraderPlayerTradeGoal(this));
-		goalSelector.addGoal(1, new TraderFaceCustomerGoal(this));
-		goalSelector.addGoal(2, new OpenDoorGoal(this, true));
-		goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f, 1f));
-		goalSelector.addGoal(3, new TraderRestockGoal(this));
-		goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5f));
-		goalSelector.addGoal(5, new RandomLookAroundGoal(this));
+		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Monster.class, 8f, 0.8d, 1.2d));
+		this.goalSelector.addGoal(1, new TraderPlayerTradeGoal(this));
+		this.goalSelector.addGoal(1, new TraderFaceCustomerGoal(this));
+		this.goalSelector.addGoal(2, new OpenDoorGoal(this, true));
+		this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 3f, 1f));
+		this.goalSelector.addGoal(3, new TraderRestockGoal(this));
+		this.goalSelector.addGoal(4, new RandomStrollGoal(this, 0.5f));
+		this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
 	}
 
 	@Nullable

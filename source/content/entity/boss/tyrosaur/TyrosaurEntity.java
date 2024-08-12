@@ -42,6 +42,7 @@ import net.tslat.aoa3.common.networking.packets.ScreenShakePacket;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.common.registration.entity.AoAMobEffects;
 import net.tslat.aoa3.content.entity.ai.mob.AnimatableMeleeAttack;
@@ -91,6 +92,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
+    private static final float ARMOUR_MODIFIER = 60;
     private static final float MAX_ARMOUR = 600f;
     public static final EntityDataHolder<Float> ARMOUR = EntityDataHolder.register(TyrosaurEntity.class, EntityDataSerializers.FLOAT, MAX_ARMOUR, tyrosaur -> tyrosaur.armour, (tyrosaur, value) -> tyrosaur.armour = value);
     private static final RawAnimation ROAR_START_ANIM = RawAnimation.begin().thenPlay("misc.roar.start");
@@ -222,7 +224,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
                                 Pair.of(new AnimatableMeleeAttack<>(getSwingWarmupTicks(HORN))
                                         .attackEffect((entity, target) -> {
                                             target.setDeltaMovement(MathUtil.getEyelineForward(entity).scale(-0.75f).add(0, 1.5f, 0));
-                                            EntityUtil.applyPotions(target, new EffectBuilder(AoAMobEffects.BLEEDING, 60));
+                                            EntityUtil.applyPotions(target, new EffectBuilder(AoAMobEffects.BLEEDING, 200));
                                         })
                                         .attackInterval(entity -> getSwingDurationTicks(HORN) + 2)
                                         .whenStarting(entity -> ATTACK_STATE.set(entity, HORN)), 5),
@@ -330,6 +332,19 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
         return boundingBox.inflate(1.65f, 0, 1.65f);
     }
 
+    public static AoAEntityStats.AttributeBuilder entityStats(EntityType<TyrosaurEntity> entityType) {
+        return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+                .health(635)
+                .moveSpeed(0.2875f)
+                .meleeStrength(15)
+                .knockbackResist(0.9)
+                .followRange(100)
+                .aggroRange(64)
+                .armour(10, 15)
+                .knockback(1f)
+                .stepHeight(1.25f);
+    }
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "Main", 0, state -> {
@@ -356,11 +371,11 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
 
 
     private static AttributeModifier getArmourMod(float percent) {
-        return new AttributeModifier(AdventOfAscension.id("tyrosaur_armour"), 60 * percent, AttributeModifier.Operation.ADD_VALUE);
+        return new AttributeModifier(AdventOfAscension.id("tyrosaur_armour"), ARMOUR_MODIFIER * percent, AttributeModifier.Operation.ADD_VALUE);
     }
 
     private static AttributeModifier getArmourToughnessMod(float percent) {
-        return new AttributeModifier(AdventOfAscension.id("tyrosaur_armour_toughness"), 60 * percent, AttributeModifier.Operation.ADD_VALUE);
+        return new AttributeModifier(AdventOfAscension.id("tyrosaur_armour_toughness"), ARMOUR_MODIFIER * percent, AttributeModifier.Operation.ADD_VALUE);
     }
 
     private static class Earthquake extends DelayedBehaviour<TyrosaurEntity> {
@@ -379,8 +394,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
         protected void start(TyrosaurEntity entity) {
             ATTACK_STATE.set(entity, SLAM);
             entity.triggerAnim("Main", "slam");
-            IMMOBILE.set(entity, true);
-            entity.getNavigation().stop();
+            entity.setImmobile(true);
         }
 
         @Override
@@ -523,7 +537,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
         @Override
         protected void stop(TyrosaurEntity entity) {
             ATTACK_STATE.set(entity, BITE);
-            IMMOBILE.set(entity, false);
+            entity.setImmobile(false);
         }
     }
 
@@ -542,8 +556,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
             new SoundBuilder(AoASounds.ENTITY_TYROSAUR_ROAR_START).followEntity(entity.getParts()[4]).execute();
             this.roarSoundDelay = entity.random.nextInt(4, 8);
             ATTACK_STATE.set(entity, ROAR);
-            IMMOBILE.set(entity, true);
-            entity.getNavigation().stop();
+            entity.setImmobile(true);
             entity.triggerAnim("Main", "roar_start");
         }
 
@@ -602,7 +615,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
                             if (hearingMod > 0.5f) {
                                 EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.DIG_SLOWDOWN, 200).isAmbient());
 
-                                if (hearingMod > 0.8f && !target.hasEffect(MobEffects.CONFUSION))
+                                if (hearingMod > 0.8f && !target.hasEffect(MobEffects.WEAKNESS))
                                     EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.WEAKNESS, 200).isAmbient());
                             }
 
@@ -619,7 +632,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
         protected void stop(TyrosaurEntity entity) {
             AoAScheduler.scheduleSyncronisedTask(() -> new SoundBuilder(AoASounds.ENTITY_TYROSAUR_ROAR_STOP).followEntity(entity).execute(), 3);
             ATTACK_STATE.set(entity, BITE);
-            IMMOBILE.set(entity, false);
+            entity.setImmobile(false);
             entity.triggerAnim("Main", "roar_stop");
         }
     }

@@ -15,33 +15,9 @@ import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.util.RecipeUtil;
 import org.jetbrains.annotations.Nullable;
 
-
-public class UpgradeKitRecipe implements Recipe<GenericRecipeInput> {
-	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
-
-	private final Ingredient input;
-	private final Ingredient upgradeKit;
-	private final ItemStack output;
-
+public record UpgradeKitRecipe(RecipeUtil.RecipeBookDetails recipeBookDetails, Ingredient input, Ingredient upgradeKit, ItemStack output) implements RecipeBookRecipe<GenericRecipeInput> {
 	public UpgradeKitRecipe(String group, @Nullable CraftingBookCategory category, boolean showObtainNotification, Ingredient input, Ingredient upgradeKit, ItemStack output) {
 		this(new RecipeUtil.RecipeBookDetails(group, category, showObtainNotification), input, upgradeKit, output);
-	}
-
-	public UpgradeKitRecipe(RecipeUtil.RecipeBookDetails recipeBookDetails, Ingredient input, Ingredient upgradeKit, ItemStack output) {
-		this.recipeBookDetails = recipeBookDetails;
-		this.input = input;
-		this.upgradeKit = upgradeKit;
-		this.output = output;
-	}
-
-	@Override
-	public String getGroup() {
-		return this.recipeBookDetails.group();
-	}
-
-	@Override
-	public boolean showNotification() {
-		return this.recipeBookDetails.showUnlockNotification();
 	}
 
 	@Override
@@ -56,7 +32,7 @@ public class UpgradeKitRecipe implements Recipe<GenericRecipeInput> {
 
 	@Override
 	public ItemStack getToastSymbol() {
-		return new ItemStack(AoABlocks.DIVINE_STATION.get());
+		return AoABlocks.DIVINE_STATION.toStack();
 	}
 
 	@Override
@@ -86,16 +62,16 @@ public class UpgradeKitRecipe implements Recipe<GenericRecipeInput> {
 
 	public static class Factory implements RecipeSerializer<UpgradeKitRecipe> {
 		public static final MapCodec<UpgradeKitRecipe> CODEC = RecordCodecBuilder.mapCodec(builder ->
-				RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails).and(builder.group(
-								Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(instance -> instance.input),
-								Ingredient.CODEC_NONEMPTY.fieldOf("upgrade_kit").forGetter(instance -> instance.upgradeKit),
-								ItemStack.STRICT_CODEC.fieldOf("result").forGetter(instance -> instance.output)))
+				RecipeUtil.RecipeBookDetails.codec(builder, UpgradeKitRecipe::recipeBookDetails).and(builder.group(
+								Ingredient.CODEC_NONEMPTY.fieldOf("input").forGetter(UpgradeKitRecipe::input),
+								Ingredient.CODEC_NONEMPTY.fieldOf("upgrade_kit").forGetter(UpgradeKitRecipe::upgradeKit),
+								ItemStack.STRICT_CODEC.fieldOf("result").forGetter(UpgradeKitRecipe::output)))
 						.apply(builder, UpgradeKitRecipe::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, UpgradeKitRecipe> STREAM_CODEC = StreamCodec.composite(
-				RecipeUtil.RecipeBookDetails.STREAM_CODEC, recipe -> recipe.recipeBookDetails,
-				Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.input,
-				Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.upgradeKit,
-				ItemStack.STREAM_CODEC, recipe -> recipe.output,
+				RecipeUtil.RecipeBookDetails.STREAM_CODEC, UpgradeKitRecipe::recipeBookDetails,
+				Ingredient.CONTENTS_STREAM_CODEC, UpgradeKitRecipe::input,
+				Ingredient.CONTENTS_STREAM_CODEC, UpgradeKitRecipe::upgradeKit,
+				ItemStack.STREAM_CODEC, UpgradeKitRecipe::output,
 				UpgradeKitRecipe::new);
 
 		@Override

@@ -34,9 +34,9 @@ public class GrindstoneMenuMixin {
 
         ItemStack output = original.call(instance, inputItem, additionalItem);
 
-        if (player == null || !AoAEvents.firePlayerGrindstoneEvent(player, output, this.repairSlots))
+        if (player == null)
             return output;
 
-        return ItemStack.EMPTY;
+        return AoAEvents.firePlayerGrindstoneEvent(player, output, this.repairSlots);
     }
 }

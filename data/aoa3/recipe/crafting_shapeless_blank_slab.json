@@ -3,72 +3,16 @@
   "category": "misc",
   "ingredients": [
     {
-      "type": "neoforge:components",
-      "components": {
-        "minecraft:attribute_modifiers": {
-          "modifiers": []
-        },
-        "minecraft:enchantments": {
-          "levels": {}
-        },
-        "minecraft:lore": [],
-        "minecraft:max_stack_size": 64,
-        "minecraft:rarity": "common",
-        "minecraft:repair_cost": 0
-      },
-      "items": "minecraft:stone",
-      "strict": true
+      "item": "minecraft:stone"
     },
     {
-      "type": "neoforge:components",
-      "components": {
-        "minecraft:attribute_modifiers": {
-          "modifiers": []
-        },
-        "minecraft:enchantments": {
-          "levels": {}
-        },
-        "minecraft:lore": [],
-        "minecraft:max_stack_size": 64,
-        "minecraft:rarity": "common",
-        "minecraft:repair_cost": 0
-      },
-      "items": "minecraft:stone",
-      "strict": true
+      "item": "minecraft:stone"
     },
     {
-      "type": "neoforge:components",
-      "components": {
-        "minecraft:attribute_modifiers": {
-          "modifiers": []
-        },
-        "minecraft:enchantments": {
-          "levels": {}
-        },
-        "minecraft:lore": [],
-        "minecraft:max_stack_size": 64,
-        "minecraft:rarity": "common",
-        "minecraft:repair_cost": 0
-      },
-      "items": "minecraft:stone",
-      "strict": true
+      "item": "minecraft:stone"
     },
     {
-      "type": "neoforge:components",
-      "components": {
-        "minecraft:attribute_modifiers": {
-          "modifiers": []
-        },
-        "minecraft:enchantments": {
-          "levels": {}
-        },
-        "minecraft:lore": [],
-        "minecraft:max_stack_size": 64,
-        "minecraft:rarity": "common",
-        "minecraft:repair_cost": 0
-      },
-      "items": "minecraft:stone",
-      "strict": true
+      "item": "minecraft:stone"
     },
     {
       "item": "aoa3:runium_chunk"

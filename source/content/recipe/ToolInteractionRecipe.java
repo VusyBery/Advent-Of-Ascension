@@ -1,6 +1,5 @@
 package net.tslat.aoa3.content.recipe;
 
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.HolderLookup;
@@ -16,7 +15,7 @@ import net.tslat.aoa3.util.RecipeUtil;
 import net.tslat.aoa3.util.StreamCodecUtil;
 import org.jetbrains.annotations.Nullable;
 
-public class ToolInteractionRecipe extends CustomRecipe {
+public class ToolInteractionRecipe extends CustomRecipe implements RecipeBookRecipe<CraftingInput> {
 	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
 
 	private final NonNullList<Ingredient> ingredients;
@@ -37,13 +36,8 @@ public class ToolInteractionRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public String getGroup() {
-		return this.recipeBookDetails.group();
-	}
-
-	@Override
-	public boolean showNotification() {
-		return this.recipeBookDetails.showUnlockNotification();
+	public RecipeUtil.RecipeBookDetails recipeBookDetails() {
+		return this.recipeBookDetails;
 	}
 
 	@Override
@@ -123,22 +117,7 @@ public class ToolInteractionRecipe extends CustomRecipe {
 	public static class Factory implements RecipeSerializer<ToolInteractionRecipe> {
 		public static final MapCodec<ToolInteractionRecipe> CODEC = RecordCodecBuilder.mapCodec(builder ->
 				RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails).and(builder.group(
-								Ingredient.CODEC_NONEMPTY
-										.listOf()
-										.fieldOf("ingredients")
-										.flatXmap(
-												ingredients -> {
-													final Ingredient[] ingredientArray = ingredients.toArray(Ingredient[]::new);
-
-													if (ingredientArray.length == 0)
-														return DataResult.error(() -> "No ingredients for ToolInteractionRecipe");
-
-													return ingredientArray.length > 3 * 3 - 1
-															? DataResult.error(() -> "Too many ingredients for ToolInteractionRecipe recipe. The maximum is: %s".formatted(3 * 3 - 1))
-															: DataResult.success(NonNullList.of(Ingredient.EMPTY, ingredientArray));
-												},
-												DataResult::success)
-										.forGetter(instance -> instance.ingredients),
+								RecipeUtil.shapelessIngredientCodec("ToolInteractionRecipe", "ingredients", ShapedRecipePattern.getMaxWidth() * ShapedRecipePattern.getMaxHeight() - 1, ToolInteractionRecipe::getIngredients),
 								Ingredient.CODEC_NONEMPTY.fieldOf("tool").forGetter(instance -> instance.toolItem),
 								ItemStack.STRICT_CODEC.fieldOf("result").forGetter(instance -> instance.output)))
 						.apply(builder, ToolInteractionRecipe::new));

@@ -1,6 +1,8 @@
 package net.tslat.aoa3.content.block.functional.portal;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -10,14 +12,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.portal.DimensionTransition;
+import net.minecraft.world.phys.Vec3;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
+import net.tslat.aoa3.content.world.teleporter.AoAPortal;
 import net.tslat.aoa3.content.world.teleporter.PortalCoordinatesContainer;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 public class NowherePortalBlock extends PortalBlock {
 	public NowherePortalBlock(BlockBehaviour.Properties properties) {
@@ -62,5 +71,18 @@ public class NowherePortalBlock extends PortalBlock {
 			return level.getSharedSpawnPos();
 
 		return super.findSuitablePortalLocation(level, entity, originPos);
+	}
+
+	@Override
+	public DimensionTransition getTransitionForPortalLink(ServerLevel targetLevel, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, Optional<PortalCoordinatesContainer> existingLink) {
+		final ServerLevel fromLevel = (ServerLevel)entity.level();
+		final BlockPos portalPos = AoAPortal.getOrCreatePortalLocation(targetLevel, fromLevel, entity, safeCoords, this, existingLink);
+
+		fromPortal.ifPresent(portalBlock -> {
+			if (entity instanceof ServerPlayer pl && (!WorldUtil.isWorld((Level)fromLevel, AoADimensions.NOWHERE) || fromLevel.structureManager().getStructureAt(portalBlock, fromLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getOrThrow(ResourceKey.create(Registries.STRUCTURE, AdventOfAscension.id("nowhere_disabled_boss_lobby")))) == StructureStart.INVALID_START))
+				AoAPortal.updatePlayerLink(pl, portalBlock, fromLevel.dimension(), targetLevel.dimension());
+		});
+
+		return new DimensionTransition(targetLevel, Vec3.atCenterOf(portalPos), entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), this.playTransitSound(entity).then(DimensionTransition.PLACE_PORTAL_TICKET));
 	}
 }

@@ -161,7 +161,6 @@ public final class NowhereEvents {
 			InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
 			pl.gameMode.getGameModeForPlayer().updatePlayerAbilities(pl.getAbilities());
 		}
-
 	}
 
 	public static void doDeathPrevention(final LivingDamageEvent.Pre ev, ServerPlayerDataManager plData) {

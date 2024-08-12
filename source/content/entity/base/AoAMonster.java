@@ -18,7 +18,6 @@ import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
@@ -34,7 +33,6 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.neoforged.neoforge.common.CommonHooks;
-import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.content.entity.ai.movehelper.MultiFluidSmoothGroundNavigation;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
@@ -166,7 +164,7 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 	public BrainActivityGroup<? extends T> getCoreTasks() {
 		return BrainActivityGroup.coreTasks(
 				new LookAtTarget<>(),
-				new WalkOrRunToWalkTarget<>().startCondition(entity -> !IMMOBILE.get(this)),
+				new WalkOrRunToWalkTarget<>().startCondition(entity -> !isDoingStationaryActivity()),
 				new FloatToSurfaceOfFluid<>());
 	}
 
@@ -187,10 +185,6 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 
 	protected int getPreAttackTime() {
 		return 0;
-	}
-
-	public static AttributeSupplier.Builder getDefaultAttributes() {
-		return Mob.createMobAttributes().add(Attributes.ATTACK_DAMAGE).add(Attributes.ATTACK_KNOCKBACK).add(AoAAttributes.AGGRO_RANGE);
 	}
 
 	@Override
@@ -260,6 +254,17 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 	@Override
 	public LivingEntity getTarget() {
 		return BrainUtils.getTargetOfEntity(this, super.getTarget());
+	}
+
+	public void setImmobile(boolean immobile) {
+		IMMOBILE.set(this, immobile);
+
+		if (this.immobile)
+			getNavigation().stop();
+	}
+
+	public boolean isDoingStationaryActivity() {
+		return this.immobile;
 	}
 
 	@Override

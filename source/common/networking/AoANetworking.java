@@ -52,6 +52,8 @@ public class AoANetworking {
 		registrar.playToClient(AoASoundBuilderPacket.TYPE, AoASoundBuilderPacket.CODEC, AoASoundBuilderPacket::receiveMessage);
 		registrar.playToClient(MultipartTogglePacket.TYPE, MultipartTogglePacket.CODEC, MultipartTogglePacket::receiveMessage);
 		registrar.playToClient(HaloChangePacket.TYPE, HaloChangePacket.CODEC, HaloChangePacket::receiveMessage);
+		registrar.playToClient(WorldEventSyncPacket.TYPE, WorldEventSyncPacket.CODEC, WorldEventSyncPacket::receiveMessage);
+		registrar.playToClient(WorldEventUpdatePacket.TYPE, WorldEventUpdatePacket.CODEC, WorldEventUpdatePacket::receiveMessage);
 	}
 
 	public static void sendToAllNearbyPlayers(AoAPacket packet, ServerLevel level, Vec3 origin, double radius) {
@@ -69,6 +71,10 @@ public class AoANetworking {
 
 	public static void sendToServer(AoAPacket packet) {
 		PacketDistributor.sendToServer(packet);
+	}
+
+	public static void sendToAllInLevel(ServerLevel level, AoAPacket packet) {
+		PacketDistributor.sendToPlayersInDimension(level, packet);
 	}
 
 	public static void sendToAllPlayersTrackingBlock(ServerLevel level, BlockPos pos, AoAPacket packet) {

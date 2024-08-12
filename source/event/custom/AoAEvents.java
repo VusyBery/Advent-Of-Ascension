@@ -50,10 +50,12 @@ public final class AoAEvents {
 	}
 
 	/**
-	 * Returns true if cancelled
+	 * Returns the modified output stack, or {@link ItemStack#EMPTY} if cancelled
 	 */
-	public static boolean firePlayerGrindstoneEvent(Player player, ItemStack result, Container inputSlots) {
-		return NeoForge.EVENT_BUS.post(new GrindstoneResultEvent(player, result, inputSlots)).isCanceled();
+	public static ItemStack firePlayerGrindstoneEvent(Player player, ItemStack result, Container inputSlots) {
+		GrindstoneResultEvent event = NeoForge.EVENT_BUS.post(new GrindstoneResultEvent(player, result, inputSlots));
+
+		return event.isCanceled() ? ItemStack.EMPTY : event.getOutput();
 	}
 
 	public static void firePlayerRetrieveSmeltedEvent(Player player, ItemStack smelting, Container outputInventory) {

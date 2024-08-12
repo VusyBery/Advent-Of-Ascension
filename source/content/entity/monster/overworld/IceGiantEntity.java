@@ -7,9 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -27,6 +25,8 @@ import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.ai.mob.MultiTypeAttackGoal;
 import net.tslat.aoa3.content.entity.ai.mob.TelegraphedMeleeAttackGoal;
 import net.tslat.aoa3.content.entity.ai.mob.TelegraphedRangedAttackGoal;
@@ -193,13 +193,6 @@ public class IceGiantEntity extends AoAMeleeMob<IceGiantEntity> implements AoARa
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(
-				DefaultAnimations.genericWalkController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SLAM));
-	}
-
-	@Override
 	public void doRangedAttackEntity(@org.jetbrains.annotations.Nullable BaseMobProjectile projectile, Entity target) {
 		if (projectile == null) {
 			if (DamageUtil.safelyDealDamage(DamageUtil.positionedEntityDamage(AoADamageTypes.MOB_ICEBEAM, this, target.position()), target, (float)getAttributeValue(AoAAttributes.RANGED_ATTACK_DAMAGE)) && target.getTicksFrozen() <= target.getTicksRequiredToFreeze() * 2.5f)
@@ -209,4 +202,26 @@ public class IceGiantEntity extends AoAMeleeMob<IceGiantEntity> implements AoARa
 
 	@Override
 	public void doRangedAttackBlock(@org.jetbrains.annotations.Nullable BaseMobProjectile projectile, BlockState blockHit, BlockPos pos, Direction sideHit) {}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 15f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<IceGiantEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(150)
+				.moveSpeed(0.31)
+				.meleeStrength(10)
+				.projectileDamage(1)
+				.knockbackResist(1)
+				.followRange(40)
+				.stepHeight(1.5f);
+	}
+
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(
+				DefaultAnimations.genericWalkController(this),
+				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SLAM));
+	}
 }

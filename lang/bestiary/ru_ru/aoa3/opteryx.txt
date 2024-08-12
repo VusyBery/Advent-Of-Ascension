@@ -1,0 +1,6 @@
+Крупное птичье существо, которое имеет характеристики как птиц, так и рептилий.
+It sports large primary claws and talons, but they seem to be used mostly for gripping tall structures as they're a particularly timid animal.
+
+Несмотря на свою робость, они в основном плотоядны и питаются почти исключительно мясом добычи.
+
+Его обманчиво сильные крылья позволяют ему взлетать по желанию, даже если он несет значительный вес.

@@ -22,6 +22,8 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoARangedMob;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
@@ -48,22 +50,21 @@ import java.util.List;
 
 public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 	private static final RawAnimation ACTIVATE = RawAnimation.begin().thenPlay("misc.activate").thenLoop("misc.active_idle");
-	private static final RawAnimation ACTIVE_IDLE = RawAnimation.begin().thenLoop("misc.active_idle");
 	private static final RawAnimation DEACTIVATE = RawAnimation.begin().thenPlay("misc.deactivate");
 
 	public TreeSpiritEntity(EntityType<? extends TreeSpiritEntity> entityType, Level world) {
 		super(entityType, world);
 
-		IMMOBILE.set(this, true);
+		setImmobile(true);
 	}
 
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	@Override
 	protected SoundEvent getHurtSound(DamageSource source) {
 		return SoundEvents.WOOD_HIT;
 	}
 
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	@Override
 	protected SoundEvent getDeathSound() {
 		return AoASounds.TREE_FALL.get();
@@ -140,7 +141,7 @@ public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 		if (super.hurt(source, amount)) {
 			if (!level().isClientSide && wasMaxHealth && PlayerUtil.getPlayerOrOwnerIfApplicable(source.getEntity()) instanceof ServerPlayer pl) {
 				if (getHealth() <= 0)
-					AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("overworld/mightiest_tree_in_the_forest"), "tree_spirit_instakill");
+					AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("completionist/mightiest_tree_in_the_forest"), "tree_spirit_instakill");
 			}
 
 			return true;
@@ -173,19 +174,6 @@ public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 	@Override
 	protected boolean shouldDespawnInPeaceful() {
 		return false;
-	}
-
-	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "Living", 0, state -> {
-			if (ATTACK_STATE.is(this, 1))
-				return state.setAndContinue(ACTIVATE);
-
-			if (state.getController().getCurrentRawAnimation() != null)
-				return state.setAndContinue(DEACTIVATE);
-
-			return PlayState.STOP;
-		}));
 	}
 
 	@Nullable
@@ -221,5 +209,32 @@ public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 	@Override
 	protected BaseMobProjectile getNewProjectileInstance() {
 		return new TreeSpiritSpriteEntity(this, getTarget());
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.noLowerThanY(55).spawnChance(1 / 10f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<TreeSpiritEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(35)
+				.moveSpeed(0)
+				.projectileDamage(6)
+				.knockbackResist(1)
+				.aggroRange(16)
+				.followRange(32);
+	}
+
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "Living", 0, state -> {
+			if (ATTACK_STATE.is(this, 1))
+				return state.setAndContinue(ACTIVATE);
+
+			if (state.getController().getCurrentRawAnimation() != null)
+				return state.setAndContinue(DEACTIVATE);
+
+			return PlayState.STOP;
+		}));
 	}
 }

@@ -1,6 +1,10 @@
 {
   "values": [
     {
+      "id": "aoa3:sandstorm",
+      "required": false
+    },
+    {
       "id": "aoa3:energy_effect",
       "required": false
     }

@@ -15,9 +15,8 @@ import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.content.block.functional.misc.TrophyBlock;
 import net.tslat.aoa3.util.RecipeUtil;
 
-public class GoldTrophyRecipe extends CustomRecipe {
+public class GoldTrophyRecipe extends CustomRecipe implements RecipeBookRecipe<CraftingInput> {
 	private final RecipeUtil.RecipeBookDetails recipeBookDetails;
-
 	private final NonNullList<Ingredient> ingredients = NonNullList.withSize(9, Ingredient.of(AoABlocks.TROPHY.get()));
 
 	public GoldTrophyRecipe(String group, CraftingBookCategory category, boolean showObtainNotification) {
@@ -31,13 +30,8 @@ public class GoldTrophyRecipe extends CustomRecipe {
 	}
 
 	@Override
-	public String getGroup() {
-		return this.recipeBookDetails.group();
-	}
-
-	@Override
-	public boolean showNotification() {
-		return this.recipeBookDetails.showUnlockNotification();
+	public RecipeUtil.RecipeBookDetails recipeBookDetails() {
+		return this.recipeBookDetails;
 	}
 
 	@Override
@@ -103,10 +97,10 @@ public class GoldTrophyRecipe extends CustomRecipe {
 
 	public static class Factory implements RecipeSerializer<GoldTrophyRecipe> {
 		public static final MapCodec<GoldTrophyRecipe> CODEC = RecordCodecBuilder.mapCodec(builder ->
-				RecipeUtil.RecipeBookDetails.codec(builder, instance -> instance.recipeBookDetails)
+				RecipeUtil.RecipeBookDetails.codec(builder, GoldTrophyRecipe::recipeBookDetails)
 						.apply(builder, GoldTrophyRecipe::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, GoldTrophyRecipe> STREAM_CODEC = StreamCodec.composite(
-				RecipeUtil.RecipeBookDetails.STREAM_CODEC, recipe -> recipe.recipeBookDetails,
+				RecipeUtil.RecipeBookDetails.STREAM_CODEC, GoldTrophyRecipe::recipeBookDetails,
 				GoldTrophyRecipe::new);
 
 		@Override

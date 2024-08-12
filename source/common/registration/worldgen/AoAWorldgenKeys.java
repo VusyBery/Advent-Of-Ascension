@@ -85,6 +85,7 @@ public final class AoAWorldgenKeys {
 			public static final ResourceKey<ConfiguredFeature<?, ?>> PRECASIAN_CAVE_CEILING_VINES = key("precasian_cave_ceiling_vines");
 			public static final ResourceKey<ConfiguredFeature<?, ?>> PRECASIAN_SUSPICIOUS_CAVE_GRAVEL = key("precasian_suspicious_cave_gravel");
 			public static final ResourceKey<ConfiguredFeature<?, ?>> OPTERYX_NEST = key("opteryx_nest");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> DESERT_COCOON = key("desert_cocoon");
 
 			// Barathos
 			public static final ResourceKey<ConfiguredFeature<?, ?>> FIRE_PATCH = key("fire_patch");
@@ -176,6 +177,7 @@ public final class AoAWorldgenKeys {
 			public static final ResourceKey<PlacedFeature> PRECASIAN_CAVE_FLOOR_VEGETATION = key("precasian_cave_floor_vegetation");
 			public static final ResourceKey<PlacedFeature> PRECASIAN_CAVE_CEILING_VEGETATION = key("precasian_cave_ceiling_vegetation");
 			public static final ResourceKey<PlacedFeature> PRECASIAN_SUSPICIOUS_CAVE_GRAVEL = key("precasian_suspicious_cave_gravel");
+			public static final ResourceKey<PlacedFeature> DESERT_COCOONS = key("desert_cocoons");
 
 			// Barathos
 			public static final ResourceKey<PlacedFeature> FIRE_PATCH = key("fire_patch");

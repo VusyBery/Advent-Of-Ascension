@@ -404,6 +404,18 @@
                 }
               },
               "function": "minecraft:set_components"
+            },
+            {
+              "function": "minecraft:set_name",
+              "name": {
+                "translate": "block.aoa3.trophy.desc",
+                "with": [
+                  {
+                    "translate": "entity.aoa3.tyrosaur"
+                  }
+                ]
+              },
+              "target": "item_name"
             }
           ],
           "name": "aoa3:trophy"

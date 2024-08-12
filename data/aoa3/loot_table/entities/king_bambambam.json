@@ -401,8 +401,8 @@
                       "duration": 72000,
                       "id": "minecraft:fire_resistance",
                       "neoforge:cures": [
-                        "protected_by_totem",
-                        "milk"
+                        "milk",
+                        "protected_by_totem"
                       ],
                       "show_icon": true
                     }
@@ -496,6 +496,18 @@
                 }
               },
               "function": "minecraft:set_components"
+            },
+            {
+              "function": "minecraft:set_name",
+              "name": {
+                "translate": "block.aoa3.trophy.desc",
+                "with": [
+                  {
+                    "translate": "entity.aoa3.king_bambambam"
+                  }
+                ]
+              },
+              "target": "item_name"
             }
           ],
           "name": "aoa3:trophy"

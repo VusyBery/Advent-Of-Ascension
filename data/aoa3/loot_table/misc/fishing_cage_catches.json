@@ -125,6 +125,13 @@
         },
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "aoa3:player_has_level",
+              "level": 75,
+              "skill": "aoa3:hauling"
+            }
+          ],
           "name": "aoa3:tidal_greatblade",
           "quality": 3
         }

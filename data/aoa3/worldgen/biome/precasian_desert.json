@@ -73,6 +73,9 @@
       "minecraft:patch_dead_bush_2",
       "minecraft:patch_sugar_cane_desert",
       "aoa3:tall_cactus_patch"
+    ],
+    [
+      "aoa3:desert_cocoons"
     ]
   ],
   "has_precipitation": false,

@@ -7,10 +7,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.AgeableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.behavior.BlockPosTracker;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.schedule.Activity;
@@ -18,9 +15,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.entity.AoAAnimals;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAAnimal;
 import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.brain.task.temp.FixedFollowParent;
@@ -193,6 +193,27 @@ public class DeinotheriumEntity extends AoAAnimal<DeinotheriumEntity> {
 	@Override
 	public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
 		return new DeinotheriumEntity(AoAAnimals.DEINOTHERIUM.get(), level);
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Entity> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT.and((entityType, level, spawnType, pos, rand) -> {
+			if (!MobSpawnType.ignoresLightRequirements(spawnType) && level.getRawBrightness(pos, 0) <= 8)
+				return false;
+
+			BlockState block = level.getBlockState(pos.below());
+
+			return block.is(BlockTags.ANIMALS_SPAWNABLE_ON) || block.is(Tags.Blocks.SANDS);
+		});
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<DeinotheriumEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.create(entityType)
+				.health(95)
+				.moveSpeed(0.2f)
+				.followRange(16)
+				.meleeStrength(8)
+				.knockback(1)
+				.knockbackResist(0.9f);
 	}
 
 	@Override

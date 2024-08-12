@@ -3,9 +3,7 @@ package net.tslat.aoa3.content.entity.monster.overworld;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
@@ -14,6 +12,8 @@ import net.minecraft.world.level.Level;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
+import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.util.EntitySpawningUtil;
@@ -100,6 +100,20 @@ public class KingChargerEntity extends AoAMeleeMob<KingChargerEntity> {
 
 			this.nextChargerSpawn = this.tickCount + RandomUtil.randomNumberBetween(80, 140);
 		}
+	}
+
+	public static SpawnPlacements.SpawnPredicate<Mob> spawnRules() {
+		return AoAEntitySpawnPlacements.SpawnBuilder.DEFAULT_DAY_MONSTER.spawnChance(1 / 16f);
+	}
+
+	public static AoAEntityStats.AttributeBuilder entityStats(EntityType<KingChargerEntity> entityType) {
+		return AoAEntityStats.AttributeBuilder.createMonster(entityType)
+				.health(75)
+				.moveSpeed(0.32)
+				.meleeStrength(9)
+				.knockbackResist(0.2)
+				.followRange(40)
+				.aggroRange(16);
 	}
 
 	@Override

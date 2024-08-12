@@ -219,8 +219,8 @@
                       "duration": 18000,
                       "id": "minecraft:strength",
                       "neoforge:cures": [
-                        "protected_by_totem",
-                        "milk"
+                        "milk",
+                        "protected_by_totem"
                       ],
                       "show_icon": true
                     }
@@ -296,6 +296,18 @@
                 }
               },
               "function": "minecraft:set_components"
+            },
+            {
+              "function": "minecraft:set_name",
+              "name": {
+                "translate": "block.aoa3.trophy.desc",
+                "with": [
+                  {
+                    "translate": "entity.aoa3.smash"
+                  }
+                ]
+              },
+              "target": "item_name"
             }
           ],
           "name": "aoa3:trophy"

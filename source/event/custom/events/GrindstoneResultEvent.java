@@ -12,16 +12,28 @@ public class GrindstoneResultEvent extends PlayerEvent implements ICancellableEv
 	private final ItemStack outputStack;
 	private final Container inputs;
 
+	private ItemStack newOutputStack;
+
 	public GrindstoneResultEvent(Player player, ItemStack result, Container inputs) {
 		super(player);
 
 		this.outputStack = result;
+		this.newOutputStack = outputStack;
 		this.inputs = inputs;
 	}
 
 	@NotNull
-	public ItemStack getOutputStack() {
+	public ItemStack getOriginalOutput() {
 		return this.outputStack;
+	}
+
+	@NotNull
+	public ItemStack getOutput() {
+		return this.newOutputStack;
+	}
+
+	public void setNewOutput(@NotNull ItemStack stack) {
+		this.newOutputStack = stack;
 	}
 
 	public Container getInputs() {

@@ -25,6 +25,10 @@
       "required": false
     },
     {
+      "id": "aoa3:sandstorm",
+      "required": false
+    },
+    {
       "id": "aoa3:vulcane",
       "required": false
     }
