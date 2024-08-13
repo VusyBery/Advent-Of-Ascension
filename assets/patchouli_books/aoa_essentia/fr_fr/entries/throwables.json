@@ -1,0 +1,31 @@
+{
+  "category": "aoa3:weapons",
+  "icon": "aoa3:slice_star",
+  "name": "Armes jetables",
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "anchor": "throwables",
+      "text": "Parfois tu n'as pas envie d'utiliser des armes stylées, tu veux juste balancer des trucs sur tes adversaires.$(br)C'est ce dilemme que les $(thing)armes jetables$() visent à résoudre.$(br2)Les $(thing)armes jetables$() sont le type le plus simple d'arme à distance. Il suffit de la tenir, et de faire clic droit pour la lancer sur ta cible de choix.",
+      "title": "Armes jetables"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Chaque $(thing)arme jetable$() dispose de ses caractéristiques uniques, permettant d'accéder à certains avantages que les autres armes n'ont pas.$(br2)En tout cas, elles sont une source rapide de dégâts, et sont généralement assez faciles à obtenir.$(br)Besoin de t'occuper d'une situation périlleuse en vitesse? Les $(thing)armes jetables$() sont tes amies."
+    },
+    {
+      "type": "patchouli:spotlight",
+      "item": "aoa3:grenade",
+      "text": "Sable de poche! Hyaa!",
+      "title": "Une arme jetable"
+    },
+    {
+      "type": "patchouli:link",
+      "link_text": "AoA Wiki",
+      "text": "Trouve des infos sur toutes les $(thing)armes jetables$() d'$(aoa) sur le $(thing)wiki officiel$().",
+      "title": "En savoir plus",
+      "url": "https://adventofascension.fandom.com/wiki/Thrown_Weapons"
+    }
+  ],
+  "sortnum": 10
+}
