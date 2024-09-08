@@ -58,12 +58,10 @@ https://github.com/Tslat/Advent-Of-Ascension/issues
 因此，对这个代码仓库所有的非翻译代码的提交将会被立即删除。您可以在Issues里提交漏洞报告，也可以为Mod的更改提供建议。
 
 ## 这里能干什么？
-你可以做以下三件事之一：
-1. 提交漏洞报告。前往issue页面，并单击"New Issue"：
-https://github.com/Tslat/Advent-Of-Ascension/issues
+你可以做以下两件事：
+1. 提交漏洞报告。前往[issue页面](https://github.com/Tslat/Advent-Of-Ascension/issues)，并单击“New Issue”。
 
-2. 提交建议。前往issue页面，单击"New Issue"并选择你提交的建议类型：
-https://github.com/Tslat/Advent-Of-Ascension/issues
+2. 提交建议。前往[issue页面](https://github.com/Tslat/Advent-Of-Ascension/issues)，单击“New Issue”并选择你提交的建议类型。
 
 如果你想为AoA的本地化/翻译做出贡献，请使用[官方Crowdin项目](https://crowdin.com/project/advent-of-ascension)。
 
