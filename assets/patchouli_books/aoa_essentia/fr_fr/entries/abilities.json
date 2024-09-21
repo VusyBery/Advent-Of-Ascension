@@ -10,7 +10,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Chaque $(thing)capacité$() peut être désactivée ou ré-activée dans le $(l:aoa3:advent_gui_base#advent_gui)menu d'Advent$(/l), alors si il y a une capacité qui ne te plaît pas ou que tu ne comptes pas utiliser, tu peux la retirer."
+      "text": "Chaque $(thing)capacité$() peut être désactivée ou ré-activée dans le $(l:aoa3:advent_gui_base#advent_gui)menu d'Advent$(/l), alors s'il y a une capacité qui ne te plaît pas ou que tu ne comptes pas utiliser, tu peux la retirer."
     }
   ],
   "sortnum": 1
