@@ -1,4 +1,4 @@
-{
+oi{
   "category": "aoa3:advent_gui",
   "icon": "minecraft:filled_map",
   "name": "Fenêtre principale",
@@ -6,7 +6,7 @@
     {
       "type": "patchouli:text",
       "anchor": "advent_gui",
-      "text": "Étant le menu principal d'$(aoa), le $(thing)menu d'Advent$() est là où la plupart des informations disponibles sur le mod sont rassemblées.",
+      "text": "Étant le menu principal d'$(aoa), le $(thing)menu d'Advent$() est l'endroit où la plupart des informations disponibles sur le mod sont rassemblées.",
       "title": "Fenêtre principale"
     },
     {
