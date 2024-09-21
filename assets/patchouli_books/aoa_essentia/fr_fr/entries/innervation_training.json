@@ -10,7 +10,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Tu peux également gagner de l'expérience en utilisant les capacités débloquées par la $(thing)Létalité$(), alors familiarise-toi avec ces nouveaux pouvoirs et fais-en bon usage!"
+      "text": "Tu peux également gagner de l'expérience en utilisant les capacités débloquées par la $(thing)Létalité$(), alors familiarise-toi avec ces nouveaux pouvoirs et fais-en bon usage !"
     }
   ],
   "sortnum": 0
