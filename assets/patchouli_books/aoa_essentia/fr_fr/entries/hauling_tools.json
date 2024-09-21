@@ -14,7 +14,7 @@
     {
       "type": "patchouli:spotlight",
       "item": "minecraft:fishing_rod",
-      "text": "la canne à pêche standard. Elle fonctionne de la même manière qu'elle a toujours fonctionné."
+      "text": "La canne à pêche standard. Plus besoin de la présenter."
     },
     {
       "type": "patchouli:text",
@@ -32,7 +32,7 @@
     {
       "type": "patchouli:spotlight",
       "item": "aoa3:thermally_insulated_rod",
-      "text": "Une canne à pêche avancée évoluée!"
+      "text": "Une canne à pêche avancée évoluée !"
     },
     {
       "type": "patchouli:text",
@@ -55,7 +55,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "La $(thing)cage de pêcheur$() est un outil pour pêcher de manière passive. Elle ne peut pas attraper les objets les plus rares, mais puisqu'il suffit de la jeter dans l'eau et de revenir plus tard, c'est un outil bien pratique.$(br)Elle fonctionne encore mieux dans l'eau qui coule!"
+      "text": "La $(thing)cage de pêcheur$() est un outil pour pêcher de manière passive. Elle ne peut pas attraper les objets les plus rares, mais puisqu'il suffit de la jeter dans l'eau et de revenir plus tard, c'est un outil bien pratique.$(br)Elle fonctionne encore mieux dans l'eau qui coule !"
     }
   ],
   "sortnum": 1
