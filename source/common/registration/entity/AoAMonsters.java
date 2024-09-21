@@ -19,6 +19,7 @@ import net.tslat.aoa3.content.entity.boss.smash.SmashEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.EliteTyrosaurEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.TyrosaurEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.WoundedTyrosaurEntity;
+import net.tslat.aoa3.content.entity.monster.barathos.NospikeEntity;
 import net.tslat.aoa3.content.entity.monster.nether.*;
 import net.tslat.aoa3.content.entity.monster.overworld.*;
 import net.tslat.aoa3.content.entity.monster.precasia.*;
@@ -50,6 +51,7 @@ public final class AoAMonsters {
 	public static final DeferredHolder<EntityType<?>, EntityType<VeloraptorEntity>> VELORAPTOR = register("veloraptor", EntityTypeRegistrar.monster(VeloraptorEntity::new).sized(0.55f, 1.3125f, 1.299375f).spawnEgg(0x514641, 0x8E8975));
 	public static final DeferredHolder<EntityType<?>, EntityType<VoidWalkerEntity>> VOID_WALKER = register("void_walker", EntityTypeRegistrar.monster(VoidWalkerEntity::new).sized(0.875f, 1.375f, 1.15625f).spawnEgg(0x171717, 0x332B31));
 	public static final DeferredHolder<EntityType<?>, EntityType<YetiEntity>> YETI = register("yeti", EntityTypeRegistrar.monster(YetiEntity::new).sized(0.6875f, 2.25f, 1.9375f).spawnEgg(0xE0E2E2, 0x393D3D));
+	public static final DeferredHolder<EntityType<?>, EntityType<NospikeEntity>> NOSPIKE = register("nospike", EntityTypeRegistrar.monster(NospikeEntity::new).sized(0.8f, 2.25f, 3.0625f).spawnEgg(0x8C6B58, 0x312D2C));
 
 	public static final DeferredHolder<EntityType<?>, EntityType<IceGiantEntity>> ICE_GIANT = register("ice_giant", EntityTypeRegistrar.monster(IceGiantEntity::new).sized(1.25f, 3.59375f, 2.65625f).spawnEgg(0x8AB5C7, 0x54819A));
 	public static final DeferredHolder<EntityType<?>, EntityType<LeafyGiantEntity>> LEAFY_GIANT = register("leafy_giant", EntityTypeRegistrar.monster(LeafyGiantEntity::new).sized(1.25f, 3.75f, 3f).spawnEgg(0x12680D, 0x392513));

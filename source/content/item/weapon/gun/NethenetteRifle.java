@@ -43,17 +43,21 @@ public class NethenetteRifle extends BaseGun {
 		return new FireBulletEntity(shooter, this, hand, 120, 0);
 	}
 
-	public static ItemAttributeModifiers createAttributes() {
-		return ItemAttributeModifiers.builder()
-				.add(
-						Attributes.ATTACK_DAMAGE,
-						new AttributeModifier(
-								BASE_ATTACK_DAMAGE_ID,
-								9,
-								AttributeModifier.Operation.ADD_VALUE
-						),
-						EquipmentSlotGroup.MAINHAND
-				)
-				.build();
+	public static ItemAttributeModifiers createAttributes(float unholsterTimeModifier) {
+		ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+
+		builder.add(
+				Attributes.ATTACK_DAMAGE,
+				new AttributeModifier(
+						BASE_ATTACK_DAMAGE_ID,
+						9,
+						AttributeModifier.Operation.ADD_VALUE),
+				EquipmentSlotGroup.MAINHAND);
+
+		for (ItemAttributeModifiers.Entry entry : BaseGun.createGunAttributeModifiers(unholsterTimeModifier).modifiers()) {
+			builder.add(entry.attribute(), entry.modifier(), entry.slot());
+		}
+
+		return builder.build();
 	}
 }

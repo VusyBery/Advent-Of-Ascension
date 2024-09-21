@@ -1,5 +1,7 @@
 {
   "values": [
-    "#minecraft:powder_snow_walkable_mobs"
+    "#minecraft:powder_snow_walkable_mobs",
+    "aoa3:emperor_beast",
+    "aoa3:arkback"
   ]
 }

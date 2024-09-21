@@ -1,0 +1,34 @@
+{
+  "type": "aoa3:big_lake",
+  "config": {
+    "barrier": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "aoa3:baron_sand"
+      }
+    },
+    "fluid": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "aoa3:baron_loose_sand"
+      }
+    },
+    "max_fluid_depth": 7,
+    "max_width": 16,
+    "sample_blob_count": {
+      "type": "minecraft:uniform",
+      "max_inclusive": 8,
+      "min_inclusive": 4
+    },
+    "sample_blob_height": {
+      "type": "minecraft:uniform",
+      "max_exclusive": 7.0,
+      "min_inclusive": 3.0
+    },
+    "sample_blob_width": {
+      "type": "minecraft:uniform",
+      "max_exclusive": 6.0,
+      "min_inclusive": 3.0
+    }
+  }
+}

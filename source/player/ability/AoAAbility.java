@@ -105,16 +105,14 @@ public class AoAAbility {
 
 		@Override
 		public final void reenable(boolean isInit) {
-			if (skill.hasLevel(getLevelReq())) {
+			if (this.skill.hasLevel(getLevelReq())) {
 				this.state = ListenerState.ACTIVE;
 
 				markForClientSync();
-				skill.getPlayerDataManager().markListenerDirty(this);
+				this.skill.getPlayerDataManager().markListenerDirty(this);
 
-				if (!isInit) {
-					applyAttributeModifiers(skill.getPlayerDataManager());
+				if (!isInit)
 					onReenable();
-				}
 			}
 		}
 
@@ -123,17 +121,19 @@ public class AoAAbility {
 			this.state = reason;
 
 			markForClientSync();
-			skill.getPlayerDataManager().markListenerDirty(this);
+			this.skill.getPlayerDataManager().markListenerDirty(this);
 
-			if (!isInit) {
-				removeAttributeModifiers(skill.getPlayerDataManager());
+			if (!isInit)
 				onDisable();
-			}
 		}
 
-		protected void onReenable() {}
+		protected void onReenable() {
+			applyAttributeModifiers(skill.getPlayerDataManager());
+		}
 
-		protected void onDisable() {}
+		protected void onDisable() {
+			removeAttributeModifiers(skill.getPlayerDataManager());
+		}
 
 		protected void markForClientSync() {
 			this.needsSync = true;

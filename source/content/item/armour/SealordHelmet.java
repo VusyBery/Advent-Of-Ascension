@@ -42,6 +42,11 @@ public class SealordHelmet extends AdventArmour {
 	}
 
 	@Override
+	public void onUnequip(LivingEntity entity, Piece piece, EnumSet<Piece> equippedPieces) {
+		AttributeUtil.removeModifier(entity, Attributes.ATTACK_SPEED, SEALORD_ATTACK_BUFF);
+	}
+
+	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ARMOUR_AIRTIGHT, LocaleUtil.ItemDescriptionType.ITEM_TYPE_INFO));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));

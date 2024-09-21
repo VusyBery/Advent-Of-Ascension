@@ -32,10 +32,15 @@ public class InfusionTable extends Block implements EntityBlock {
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
 			if (level.getBlockEntity(pos) instanceof InfusionTableBlockEntity blockEntity)
-				blockEntity.dropContents(level, pos);
+				blockEntity.dropContents();
 
 			super.onRemove(state, level, pos, newState, isMoving);
 		}
+	}
+
+	@Override
+	protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+		super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -47,7 +48,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public class FishingCageEntity extends Entity {
+public class FishingCageEntity extends Entity implements OwnableEntity {
 	public static final EntityDataHolder<ItemStack> CAUGHT_STACK_1 = EntityDataHolder.register(FishingCageEntity.class, EntityDataSerializers.ITEM_STACK, ItemStack.EMPTY, cage -> cage.loot[0], (cage, stack) -> cage.loot[0] = stack);
 	public static final EntityDataHolder<ItemStack> CAUGHT_STACK_2 = EntityDataHolder.register(FishingCageEntity.class, EntityDataSerializers.ITEM_STACK, ItemStack.EMPTY, cage -> cage.loot[1], (cage, stack) -> cage.loot[1] = stack);
 	public static final EntityDataHolder<ItemStack> CAUGHT_STACK_3 = EntityDataHolder.register(FishingCageEntity.class, EntityDataSerializers.ITEM_STACK, ItemStack.EMPTY, cage -> cage.loot[2], (cage, stack) -> cage.loot[2] = stack);
@@ -74,6 +75,12 @@ public class FishingCageEntity extends Entity {
 		super(entityType, world);
 
 		this.blocksBuilding = true;
+	}
+
+	@Nullable
+	@Override
+	public UUID getOwnerUUID() {
+		return this.ownerUUID;
 	}
 
 	@Override

@@ -4,6 +4,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
@@ -12,6 +13,8 @@ import net.tslat.aoa3.library.object.explosion.ExplosionInfo;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
+
+import java.util.function.Function;
 
 public final class AoAExplosions {
 	public static final ExplosionInfo BOMB_CARRIER_DYNAMITE = new ExplosionInfo()
@@ -49,12 +52,6 @@ public final class AoAExplosions {
 
 				packet.sendToAllNearbyPlayers((ServerLevel)explosion.level, pos, 64);
 			});
-	public static final ExplosionInfo RPG = new ExplosionInfo()
-			.radius(4)
-			.penetration(20)
-			.blocksDropChance(0.55f)
-			.baseDamage(12)
-			.baseKnockbackStrength(2.5f);
 	public static final ExplosionInfo GRENADE = new ExplosionInfo()
 			.radius(3f)
 			.penetration(7)
@@ -78,4 +75,14 @@ public final class AoAExplosions {
 			.penetration(5)
 			.knockbackMod((explosion, entity) -> 1.2f)
 			.blocksDropChance(0.1f);
+
+	public static ExplosionInfo rpg(Function<LivingEntity, Float> damageFunction) {
+		return new ExplosionInfo()
+				.radius(4)
+				.penetration(20)
+				.blocksDropChance(0.55f)
+				.baseDamage(12)
+				.damageMod((explosion, entity) -> entity instanceof LivingEntity target ? damageFunction.apply(target) : 1)
+				.baseKnockbackStrength(2.5f);
+	}
 }

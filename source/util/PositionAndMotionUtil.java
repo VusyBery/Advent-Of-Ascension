@@ -11,6 +11,8 @@ import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.*;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.neoforged.neoforge.entity.PartEntity;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -125,7 +127,7 @@ public final class PositionAndMotionUtil {
 	}
 
 	public static HitResult rayTrace(Entity entity, double distance, boolean doEntities, @Nullable Predicate<Entity> entityFilter) {
-		return rayTrace(entity.level(), entity.getEyePosition(), entity.getEyePosition().add(entity.getLookAngle().scale(distance)), ClipContext.Block.COLLIDER, false, doEntities, entityFilter);
+		return rayTrace(entity.level(), entity.getEyePosition(), entity.getEyePosition().add(entity.getLookAngle().scale(distance)), ClipContext.Block.COLLIDER, false, doEntities, ((Predicate<Entity>)target -> target != entity).and(entityFilter == null ? target -> true : entityFilter));
 	}
 
 	public static HitResult rayTrace(Level level, Vec3 start, Vec3 end, ClipContext.Block blockhitType, boolean includeFluids, boolean doEntities, @Nullable Predicate<Entity> entityFilter) {
@@ -142,29 +144,42 @@ public final class PositionAndMotionUtil {
 		Entity closestTarget = null;
 		Vec3 clipPos = null;
 
-		for (Entity entity : level.getEntities((Entity)null, new AABB(start, end).inflate(1), entityFilter == null ? entity -> true : entityFilter)) {
+		for (Entity entity : EntityRetrievalUtil.getEntities(level, new AABB(start, end).inflate(1), entityFilter == null ? entity -> true : entityFilter)) {
+			PartEntity<?>[] parts = entity.getParts();
 			AABB entityPickBounds = entity.getBoundingBox().inflate(entity.getPickRadius());
+			int partIndex = 0;
 
-			if (entityPickBounds.contains(start)) {
-				if (distance > 0) {
-					closestTarget = entity;
-					distance = 0;
-					clipPos = entityPickBounds.clip(start, end).orElse(start);
-				}
-			}
-			else {
-				Optional<Vec3> entityClip = entityPickBounds.clip(start, end);
-
-				if (entityClip.isPresent()) {
-					Vec3 clipPoint = entityClip.get();
-					double entityDist = start.distanceToSqr(clipPoint);
-
-					if (entityDist < distance || distance == 0) {
+			while (true) {
+				if (entityPickBounds.contains(start)) {
+					if (distance > 0) {
 						closestTarget = entity;
-						clipPos = clipPoint;
-						distance = entityDist;
+						distance = 0;
+						clipPos = entityPickBounds.clip(start, end).orElse(start);
+
+						break;
 					}
 				}
+				else {
+					Optional<Vec3> entityClip = entityPickBounds.clip(start, end);
+
+					if (entityClip.isPresent()) {
+						Vec3 clipPoint = entityClip.get();
+						double entityDist = start.distanceToSqr(clipPoint);
+
+						if (entityDist < distance || distance == 0) {
+							closestTarget = entity;
+							clipPos = clipPoint;
+							distance = entityDist;
+
+							break;
+						}
+					}
+				}
+
+				if (parts == null || ++partIndex >= parts.length)
+					break;
+
+				entityPickBounds = parts[partIndex].getBoundingBox().inflate(entity.getPickRadius());
 			}
 		}
 

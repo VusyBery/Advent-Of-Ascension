@@ -22,7 +22,7 @@ public class LunarCreationTableRenderer implements BlockEntityRenderer<LunarCrea
 
 	@Override
 	public void render(LunarCreationTableBlockEntity blockEntity, float partialTicks, PoseStack matrix, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-		NonNullList<ItemStack> contents = blockEntity.getContents();
+		NonNullList<ItemStack> contents = blockEntity.getItems();
 		ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
 		Level world = blockEntity.getLevel();
 		BlockPos abovePos = blockEntity.getBlockPos().above();

@@ -26,7 +26,7 @@ public class SkeletalAxe extends BaseAxe implements LootModifyingItem {
 		if (block == Blocks.AIR || existingLoot.isEmpty() || getDestroySpeed(getToolStack(lootContext), harvestedBlock) <= 1)
 			return;
 
-		if (RandomUtil.oneInNChance(3)) {
+		if (RandomUtil.oneInNChance(10)) {
 			int dropChoice = RandomUtil.randomNumberUpTo(50);
 			ItemStack drop;
 

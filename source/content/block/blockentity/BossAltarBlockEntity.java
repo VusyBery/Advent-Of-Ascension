@@ -26,11 +26,27 @@ public class BossAltarBlockEntity extends BlockEntity {
 		super(AoABlockEntities.BOSS_ALTAR.get(), pos, blockState);
 	}
 
+	@Nullable
+	public EntityType<?> getCurrentEntity() {
+		return this.entityType;
+	}
+
+	@Nullable
+	public Entity getCachedEntity() {
+		return this.cachedEntity;
+	}
+
+	@Nullable
+	@Override
+	public Packet<ClientGamePacketListener> getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
 	public void updateEntity(@Nullable EntityType<?> entityType) {
 		this.entityType = entityType;
 
-		if (level != null)
-			level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
+		if (this.level != null)
+			this.level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
 	}
 
 	@Override
@@ -61,21 +77,5 @@ public class BossAltarBlockEntity extends BlockEntity {
 
 			this.cachedEntity = this.entityType == null || this.level == null ? null : this.entityType.create(this.level);
 		}
-	}
-
-	@Nullable
-	public EntityType<?> getCurrentEntity() {
-		return this.entityType;
-	}
-
-	@Nullable
-	public Entity getCachedEntity() {
-		return this.cachedEntity;
-	}
-
-	@Nullable
-	@Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
 	}
 }

@@ -3,9 +3,9 @@
     "biomes": "#c:is_dead",
     "chance_per_player": 1.0,
     "dimensions": [
-      "aoa3:dustopia",
-      "aoa3:greckon",
       "aoa3:lborean",
+      "aoa3:greckon",
+      "aoa3:dustopia",
       "aoa3:runandor"
     ],
     "extra_delay_per_spawn": {

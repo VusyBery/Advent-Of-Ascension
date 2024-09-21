@@ -10,6 +10,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.UpdateClientMovementPacket;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
@@ -18,7 +19,7 @@ import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
 public class JumpBoost extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_JUMP, ListenerType.LEVEL_CHANGE};
+	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_JUMP, ListenerType.PLAYER_FALL, ListenerType.LEVEL_CHANGE};
 	private final boolean sprintJumpBoost;
 
 	private double baseBoostMultiplier;
@@ -76,6 +77,12 @@ public class JumpBoost extends ScalableModAbility {
 		}
 
 		entity.setDeltaMovement(newMotion);
+	}
+
+	@Override
+	public void handlePlayerFall(LivingFallEvent ev) {
+		if (ev.getDistance() - (this.launchMultiplier * 0.75f) < 3)
+			ev.setCanceled(true);
 	}
 
 	@Override

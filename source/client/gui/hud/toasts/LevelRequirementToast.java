@@ -8,6 +8,7 @@ import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
 import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
 import net.tslat.aoa3.client.render.custom.AoASkillRenderer;
+import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.library.object.RenderContext;
 import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -25,7 +26,7 @@ public class LevelRequirementToast extends GenericToast {
 
 	@Override
 	protected boolean stillValid() {
-		return RegistryUtil.getId(this.skill) != null;
+		return ClientPlayerDataManager.get().getSkill(this.skill) != AoASkills.DEFAULT && RegistryUtil.getId(this.skill) != null;
 	}
 
 	@Override

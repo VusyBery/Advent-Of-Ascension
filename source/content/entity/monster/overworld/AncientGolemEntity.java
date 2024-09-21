@@ -79,7 +79,7 @@ public class AncientGolemEntity extends AoAMeleeMob<AncientGolemEntity> {
 
 	@Override
 	protected float nextStep() {
-		return this.moveDist + 0.225f;
+		return this.moveDist + 0.25f * getSpeed() / 0.15f;
 	}
 
 	@Override

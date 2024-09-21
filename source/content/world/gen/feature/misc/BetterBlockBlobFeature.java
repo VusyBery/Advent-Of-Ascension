@@ -59,25 +59,13 @@ public class BetterBlockBlobFeature extends Feature<BetterBlockBlobFeature.Confi
       return true;
    }
    
-   public static class Configuration implements FeatureConfiguration {
+   public record Configuration(BlockStateProvider states, List<RuleTest> placingIn, IntProvider blocks, IntProvider size) implements FeatureConfiguration {
       public static final Codec<Configuration> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                       BlockStateProvider.CODEC.fieldOf("states").forGetter(Configuration::states),
                       RuleTest.CODEC.listOf().fieldOf("placing_in").forGetter(Configuration::targetBlockPredicate),
                       IntProvider.CODEC.optionalFieldOf("blocks", ConstantInt.of(3)).forGetter(Configuration::blocks),
                       IntProvider.CODEC.optionalFieldOf("size", ConstantInt.of(2)).forGetter(Configuration::size))
               .apply(builder, Configuration::new));
-
-      private final BlockStateProvider states;
-      private final List<RuleTest> placingIn;
-      private final IntProvider blocks;
-      private final IntProvider size;
-
-      public Configuration(BlockStateProvider stateProvider, List<RuleTest> placingIn, IntProvider blocks, IntProvider size) {
-         this.states = stateProvider;
-         this.placingIn = placingIn;
-         this.blocks = blocks;
-         this.size = size;
-      }
 
       public BlockStateProvider states() {
          return this.states;

@@ -1,0 +1,31 @@
+{
+  "type": "aoa3:block_tower",
+  "config": {
+    "base_radius": {
+      "type": "minecraft:uniform",
+      "max_inclusive": 7,
+      "min_inclusive": 5
+    },
+    "block": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "aoa3:baron_stone"
+      }
+    },
+    "height": {
+      "type": "minecraft:uniform",
+      "max_inclusive": 35,
+      "min_inclusive": 25
+    },
+    "pitting": {
+      "type": "minecraft:uniform",
+      "max_exclusive": 0.1,
+      "min_inclusive": 0.0
+    },
+    "tip_radius": {
+      "type": "minecraft:uniform",
+      "max_inclusive": 3,
+      "min_inclusive": 1
+    }
+  }
+}

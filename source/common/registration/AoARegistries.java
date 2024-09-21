@@ -38,6 +38,7 @@ import net.minecraft.world.item.enchantment.effects.EnchantmentValueEffect;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicateType;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
@@ -148,6 +149,7 @@ public final class AoARegistries {
 	public static final RegistryHelper<TrunkPlacerType<?>> TRUNK_PLACERS = new RegistryHelper<>(Registries.TRUNK_PLACER_TYPE, AoATrees::init);
 	public static final RegistryHelper<FoliagePlacerType<?>> FOLIAGE_PLACERS = new RegistryHelper<>(Registries.FOLIAGE_PLACER_TYPE, AoATrees::init);
 	public static final RegistryHelper<TreeDecoratorType<?>> TREE_DECORATORS = new RegistryHelper<>(Registries.TREE_DECORATOR_TYPE, AoATrees::init);
+	public static final RegistryHelper<BlockPredicateType<?>> BLOCK_PREDICATE_TYPE = new RegistryHelper<>(Registries.BLOCK_PREDICATE_TYPE, AoABlockPredicateTypes::init);
 
 	public static final RegistryHelper<ChargerVariant> CHARGER_VARIANTS = new RegistryHelper<>(CHARGER_VARIANTS_REGISTRY_KEY, ChargerVariant::init);
 	public static final RegistryHelper<VeloraptorVariant> VELORAPTOR_VARIANTS = new RegistryHelper<>(VELORAPTOR_VARIANTS_REGISTRY_KEY, VeloraptorVariant::init);

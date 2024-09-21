@@ -36,7 +36,7 @@ public class NethengeicCallstone extends BossSpawningItem<NethengeicWitherEntity
 	@Override
 	@Nullable
 	public EntityType<NethengeicWitherEntity> getEntityType(ItemStack stack) {
-		return AoAMonsters.NETHENGEIC_WITHER.get();
+		return stack.isDamaged() ? null : AoAMonsters.NETHENGEIC_WITHER.get();
 	}
 
 	@Override

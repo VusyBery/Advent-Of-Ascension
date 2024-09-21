@@ -24,6 +24,7 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.content.recipe.*;
 import net.tslat.aoa3.integration.IntegrationManager;
+import net.tslat.aoa3.integration.jei.ingredient.subtype.TornPagesSubtypeInterpreter;
 import net.tslat.aoa3.integration.jei.ingredient.subtype.TrophySubtypeInterpreter;
 import net.tslat.aoa3.integration.jei.ingredient.type.imbuing.ImbuingIngredientHelper;
 import net.tslat.aoa3.integration.jei.ingredient.type.imbuing.ImbuingIngredientRenderer;
@@ -40,6 +41,7 @@ import net.tslat.aoa3.integration.jei.recipe.upgradekit.UpgradeKitRecipeCategory
 import net.tslat.aoa3.integration.jei.recipe.upgradekit.UpgradeKitRecipeTransferInfo;
 import net.tslat.aoa3.integration.jei.recipe.whitewashing.WhitewashingRecipeCategory;
 import net.tslat.aoa3.integration.jei.recipe.whitewashing.WhitewashingRecipeTransferInfo;
+import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.ArrayList;
@@ -109,6 +111,9 @@ public class JEIIntegration implements IModPlugin {
 	@Override
 	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
 		jeiRuntime.getIngredientManager().addIngredientsAtRuntime(ImbuingIngredientType.INSTANCE, jeiRuntime.getRecipeManager().createRecipeLookup(ImbuingRecipeCategory.RECIPE_TYPE).get().map(recipe -> new EnchantmentInstance(recipe.getEnchant().left(), recipe.getEnchant().rightInt())).toList());
+
+		if (IntegrationManager.isPatchouliActive())
+			jeiRuntime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, PatchouliIntegration.getAoAPatchouliBooks());
 	}
 
 	@Override
@@ -137,6 +142,7 @@ public class JEIIntegration implements IModPlugin {
 		registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, AoABlocks.TROPHY.get().asItem(), TrophySubtypeInterpreter.INSTANCE);
 		registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, AoABlocks.GOLD_TROPHY.get().asItem(), TrophySubtypeInterpreter.INSTANCE);
 		registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, AoABlocks.ORNATE_TROPHY.get().asItem(), TrophySubtypeInterpreter.INSTANCE);
+		registration.registerSubtypeInterpreter(VanillaTypes.ITEM_STACK, AoAItems.TORN_PAGES.asItem(), TornPagesSubtypeInterpreter.INSTANCE);
 	}
 
 	private List<UpgradeKitRecipe> compileUpgradeKitRecipes(RecipeManager recipeManager) {
@@ -188,7 +194,7 @@ public class JEIIntegration implements IModPlugin {
 		infoRecipes.accept(AoABlocks.CARVED_RUNE_OF_DIRECTION.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("portal_frame_block"))});
 		infoRecipes.accept(AoABlocks.TEA_SINK.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("tea_sink"))});
 		infoRecipes.accept(AoABlocks.RUNE_RANDOMIZER.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("rune_randomizer"))});
-		infoRecipes.accept(AoABlocks.MINERALIZATION_STATION.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("mineralization_station"))});
+		infoRecipes.accept(AoABlocks.INFUSED_PRESS.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("infused_press"))});
 		infoRecipes.accept(AoABlocks.LUNAR_CREATION_TABLE.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("lunar_creation_table"))});
 		infoRecipes.accept(AoABlocks.MENDING_TABLE.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("mending_table"))});
 		infoRecipes.accept(AoAItems.MAGIC_REPAIR_DUST, new Component[] {Component.translatable(jeiInfoLocaleKey("magic_repair_dust"))});

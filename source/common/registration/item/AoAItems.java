@@ -218,6 +218,7 @@ public final class AoAItems {
 	public static final DeferredItem<Item> BONE_HORN = registerItem("bone_horn", BoneHorn::new);
 	public static final DeferredItem<Item> WARPED_HORN = registerItem("warped_horn", WarpedHorn::new);
 
+	public static final DeferredItem<Item> COMPRESSED_ITEM = registerItem("compressed_item", CompressedItem::new); // TODO
 	public static final DeferredItem<Item> AMPHIBIYTE_LUNG = registerItem("amphibiyte_lung", miscItem()); // TODO
 	public static final DeferredItem<Item> ANCIENT_RING = registerItem("ancient_ring", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));
 	public static final DeferredItem<Item> BOOK_OF_SHADOWS = registerItem("book_of_shadows", () -> new Item(new Item.Properties().rarity(Rarity.UNCOMMON)));

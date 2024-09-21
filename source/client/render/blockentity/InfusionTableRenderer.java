@@ -30,7 +30,7 @@ InfusionTableRenderer implements BlockEntityRenderer<InfusionTableBlockEntity> {
 
 	@Override
 	public void render(InfusionTableBlockEntity blockEntity, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
-		final NonNullList<ItemStack> contents = blockEntity.getContents();
+		final NonNullList<ItemStack> contents = blockEntity.getItems();
 		final ItemRenderer renderer = Minecraft.getInstance().getItemRenderer();
 		final Level level = blockEntity.getLevel();
 		final BlockPos pos = blockEntity.getBlockPos();

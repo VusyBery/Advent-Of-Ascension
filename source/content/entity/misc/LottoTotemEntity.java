@@ -12,6 +12,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class LottoTotemEntity extends Entity {
+public class LottoTotemEntity extends Entity implements OwnableEntity {
 	private UUID winnerUUID = null;
 	private UUID ownerUUID = null;
 
@@ -49,6 +50,12 @@ public class LottoTotemEntity extends Entity {
 		super(entityType, world);
 
 		blocksBuilding = true;
+	}
+
+	@Nullable
+	@Override
+	public UUID getOwnerUUID() {
+		return this.ownerUUID;
 	}
 
 	@Override
@@ -72,7 +79,7 @@ public class LottoTotemEntity extends Entity {
 						if (drop != null)
 							drop.setThrower(serverPlayer);
 
-						AdvancementUtil.grantCriterion(serverPlayer, AdventOfAscension.id("overworld/winner_winner"), "lotto_win");
+						AdvancementUtil.grantCriterion(serverPlayer, AdventOfAscension.id("completionist/winner_winner"), "lotto_win");
 					}
 
 					ItemEntity drop = spawnAtLocation(new ItemStack(AoABlocks.LOTTO_BANNER.base()), 0);

@@ -34,11 +34,6 @@ public class BaseSword extends SwordItem {
 	}
 
 	@Override
-	public boolean onEntitySwing(ItemStack stack, LivingEntity entity) {
-		return super.onEntitySwing(stack, entity);
-	}
-
-	@Override
 	public boolean onLeftClickEntity(ItemStack stack, Player player, Entity entity) {
 		stack.set(AoADataComponents.MELEE_SWING_STRENGTH, player.getAttackStrengthScale(0));
 

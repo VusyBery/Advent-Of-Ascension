@@ -131,7 +131,8 @@ public class VeloraptorEntity extends AoAMeleeMob<VeloraptorEntity> {
 						Pair.of(new AnimatableMeleeAttack<>(7).attackInterval(entity -> 8)
 								.whenStarting(entity -> ATTACK_STATE.set(entity, ATTACK_BITE))
 								.whenStopping(entity -> BrainUtils.setSpecialCooldown(this, 8)), 5),
-						Pair.of(new LungeMeleeAttack(15), 1)
+						Pair.of(new LungeMeleeAttack(15)
+								.startCondition(Entity::onGround), 1)
 				).startCondition(entity -> !BrainUtils.isOnSpecialCooldown(this))
 		);
 	}

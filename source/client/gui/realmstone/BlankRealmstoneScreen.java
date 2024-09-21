@@ -8,6 +8,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,7 +26,7 @@ import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.RenderUtil;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -40,7 +41,7 @@ public class BlankRealmstoneScreen extends Screen {
 	private static final int viewSpaceHeight = 166;
 	private static float scale = 0.5f;
 
-	private final HashMap<String, RealmstoneWorldInsert> worldInserts = new HashMap<>(23);
+	private final Map<String, RealmstoneWorldInsert> worldInserts = new Object2ObjectOpenHashMap<>(23);
 
 	private static RealmstoneWorldInsert currentlyHoveredInsert = null;
 	private boolean isPanning = false;
@@ -189,7 +190,7 @@ public class BlankRealmstoneScreen extends Screen {
 			return new RealmstoneWorldInsert(jsonObject.get("id").getAsString(), jsonObject.get("gui_x").getAsInt(), jsonObject.get("gui_y").getAsInt(), parentNodes);
 		}
 
-		private void render(PoseStack matrix, Minecraft mc, HashMap<String, RealmstoneWorldInsert> worldInserts, int baseX, int baseY, int scrollX, int scrollY, int mouseX, int mouseY) {
+		private void render(PoseStack matrix, Minecraft mc, Map<String, RealmstoneWorldInsert> worldInserts, int baseX, int baseY, int scrollX, int scrollY, int mouseX, int mouseY) {
 			int renderX = baseX + posX - scrollX;
 			int renderY = baseY + posY - scrollY;
 			int overlapLeft = Mth.clamp(baseX - renderX, 0, iconSize);
@@ -227,7 +228,7 @@ public class BlankRealmstoneScreen extends Screen {
 			renderLinks(matrix, mc, worldInserts, baseX, baseY, scrollX, scrollY);
 		}
 
-		private void renderLinks(PoseStack matrix, Minecraft mc, HashMap<String, RealmstoneWorldInsert> nodes, int baseX, int baseY, int scrollX, int scrollY) {
+		private void renderLinks(PoseStack matrix, Minecraft mc, Map<String, RealmstoneWorldInsert> nodes, int baseX, int baseY, int scrollX, int scrollY) {
 			rand.setSeed(0);
 			RenderSystem.enableBlend();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);

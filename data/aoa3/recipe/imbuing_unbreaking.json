@@ -2,7 +2,7 @@
   "type": "aoa3:imbuing",
   "aspect_foci": [
     "aoa3:durability",
-    "aoa3:power"
+    "aoa3:resource"
   ],
   "enchantment": "minecraft:unbreaking",
   "enchantment_level": 1,

@@ -25,6 +25,7 @@ import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootParams;
@@ -40,6 +41,7 @@ import net.tslat.aoa3.common.registration.custom.AoAWorldEvents;
 import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAAnimal;
 import net.tslat.aoa3.content.world.event.AoAWorldEventManager;
+import net.tslat.aoa3.content.world.event.BarathosSandstormEvent;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.util.InventoryUtil;
@@ -74,7 +76,7 @@ public class ArkbackEntity extends AoAAnimal<ArkbackEntity> {
     private static final RawAnimation REST_STOP_ANIM = RawAnimation.begin().thenPlay("misc.shake").thenPlay("misc.rest.stop");
     public static final int MAX_SAND = 29;
     public static final EntityDataHolder<Boolean> RESTING = EntityDataHolder.register(ArkbackEntity.class, EntityDataSerializers.BOOLEAN, false, entity -> entity.resting, (entity, value) -> entity.resting = value);
-    public static final EntityDataHolder<Integer> SAND_LEVEL = EntityDataHolder.register(ArkbackEntity.class, EntityDataSerializers.INT, 0, entity -> entity.sandLevel, (entity, value) -> entity.sandLevel = Math.min(MAX_SAND, value));
+    public static final EntityDataHolder<Integer> SAND_LEVEL = EntityDataHolder.register(ArkbackEntity.class, EntityDataSerializers.INT, 0, entity -> entity.sandLevel, (entity, value) -> entity.sandLevel = value);
 
     private boolean resting = false;
     private int sandLevel = 0;
@@ -159,7 +161,7 @@ public class ArkbackEntity extends AoAAnimal<ArkbackEntity> {
         super.readAdditionalSaveData(compound);
 
         if (compound.contains("SandLevel", Tag.TAG_INT))
-            SAND_LEVEL.set(this, compound.getInt("SandLevel"));
+            setSandLevel(compound.getInt("SandLevel"));
     }
 
     @Override
@@ -176,6 +178,9 @@ public class ArkbackEntity extends AoAAnimal<ArkbackEntity> {
         if (player instanceof ServerPlayer pl)
             InventoryUtil.giveItemsTo(pl, LootUtil.generateLoot(AdventOfAscension.id("misc/arkback_harvest"), new LootParams.Builder(pl.serverLevel()).withParameter(LootContextParams.ORIGIN, pos).withOptionalParameter(LootContextParams.THIS_ENTITY, pl).create(LootContextParamSets.ARCHAEOLOGY)));
 
+        if (!level().isClientSide)
+            setSandLevel(getSandLevel() - 5);
+
         return InteractionResult.SUCCESS;
     }
 
@@ -184,7 +189,7 @@ public class ArkbackEntity extends AoAAnimal<ArkbackEntity> {
         super.tick();
 
         if (!this.resting) {
-            for (Entity entity : EntityRetrievalUtil.<Entity>getEntities(level(), AABB.ofSize(position().add(0, getBbHeight(), 0), getBbWidth(), 1.5f * getScale(), getBbWidth()), entity -> entity != this && entity.onGround())) {
+            for (Entity entity : EntityRetrievalUtil.<Entity>getEntities(level(), AABB.ofSize(position().add(0, getBbHeight(), 0), getBbWidth(), 1.5f * getScale(), getBbWidth()), entity -> entity != this && entity.onGround() && entity.getY() >= getY() + getBbHeight())) {
                 entity.setDeltaMovement(MathUtil.getBodyForward(this).scale(-0.4f));
                 entity.hurtMarked = true;
             }
@@ -195,14 +200,18 @@ public class ArkbackEntity extends AoAAnimal<ArkbackEntity> {
     protected void customServerAiStep() {
         super.customServerAiStep();
 
-        if (getSandLevel() < MAX_SAND && AoAWorldEventManager.isEventActive(level(), AoAWorldEvents.BARATHOS_SANDSTORM.getId()) && RandomUtil.oneInNChance(210))
-            SAND_LEVEL.set(this, getSandLevel() + 1);
+        if (getSandLevel() < MAX_SAND && RandomUtil.oneInNChance(210) && AoAWorldEventManager.getEventById(level(), AoAWorldEvents.BARATHOS_SANDSTORM.getId()) instanceof BarathosSandstormEvent sandstorm && sandstorm.isActive() && getY() >= 90 && level().getBrightness(LightLayer.SKY, blockPosition()) == 15)
+            setSandLevel(getSandLevel() + 1);
 
         if (onGround() && getDeltaMovement().horizontalDistanceSqr() > 0) {
-            for (LivingEntity entity : EntityRetrievalUtil.<LivingEntity>getEntities(level(), getBoundingBox().inflate(0.5f).move(getDeltaMovement()), entity -> entity != this && entity instanceof LivingEntity)) {
+            for (LivingEntity entity : EntityRetrievalUtil.<LivingEntity>getEntities(level(), getBoundingBox().inflate(0.5f).move(getDeltaMovement()), entity -> entity != this && entity instanceof LivingEntity && entity.getBbHeight() < getBbHeight() && entity.getBbWidth() < getBbWidth())) {
                 entity.hurt(damageSources().cramming(), 3 * level().getDifficulty().getId());
             }
         }
+    }
+
+    public void setSandLevel(int sandLevel) {
+        SAND_LEVEL.set(this, Mth.clamp(sandLevel, 0, MAX_SAND));
     }
 
     public int getSandLevel() {
@@ -300,7 +309,7 @@ public class ArkbackEntity extends AoAAnimal<ArkbackEntity> {
                             }
 
                             packet.sendToAllPlayersTrackingEntity((ServerLevel)entity.level(), entity);
-                            SAND_LEVEL.set(entity, entity.getSandLevel() - 10);
+                            entity.setSandLevel(entity.getSandLevel() - 10);
                         }
                     }
                 }
@@ -324,6 +333,11 @@ public class ArkbackEntity extends AoAAnimal<ArkbackEntity> {
         @Override
         protected List<Pair<MemoryModuleType<?>, MemoryStatus>> getMemoryRequirements() {
             return MEMORY_REQUIREMENTS;
+        }
+
+        @Override
+        protected boolean checkExtraStartConditions(ServerLevel level, ArkbackEntity entity) {
+            return !entity.resting && level.getBlockState(BlockPos.containing(entity.position().add(MathUtil.getBodyForward(entity).scale(entity.getBbWidth())).subtract(0, 1, 0))).isSolid();
         }
 
         @Override

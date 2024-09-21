@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.item.misc.summoning;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
@@ -13,6 +14,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -41,6 +44,11 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 	@Override
 	public int getUseDuration(ItemStack stack, LivingEntity user) {
 		return 63;
+	}
+
+	@Override
+	public boolean supportsEnchantment(ItemStack stack, Holder<Enchantment> enchantment) {
+		return !enchantment.is(Enchantments.MENDING) && super.supportsEnchantment(stack, enchantment);
 	}
 
 	@Override

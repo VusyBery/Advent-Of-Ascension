@@ -133,7 +133,7 @@ public class TrophyBlock extends WaterloggableBlock implements EntityBlock {
 			trophyData = new TrophyData(false, new NBTUtil.NBTBuilder<>(new CompoundTag()).putString("id", RegistryUtil.getId(EntityType.ITEM).toString()).build());
 
 		cloneStack.set(AoADataComponents.TROPHY_DATA, trophyData);
-		cloneStack.set(DataComponents.CUSTOM_NAME, getDefaultNameWithEntity(trophyData, RegistryUtil.getId(cloneStack).getPath()));
+		cloneStack.set(DataComponents.ITEM_NAME, getDefaultNameWithEntity(trophyData, RegistryUtil.getId(cloneStack).getPath()));
 
 		return cloneStack;
 	}

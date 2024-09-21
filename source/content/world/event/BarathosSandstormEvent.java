@@ -130,10 +130,10 @@ public class BarathosSandstormEvent implements AoAWorldEvent {
     }
 
     public float getIntensity(long gameTime) {
-        return Math.min(1f, (gameTime - this.sandstormStartTime) / 600f);
+        return Math.min(1f, Math.min((gameTime - this.sandstormStartTime) / 600f, (this.sandstormEndTime - gameTime) / 100f));
     }
 
-    private boolean isEntityAffected(LivingEntity entity) {
+    public boolean isEntityAffected(LivingEntity entity) {
         return entity.getY() >= 90 && entity.level().getBrightness(LightLayer.SKY, entity.blockPosition()) == 15 && !entity.getType().is(AoATags.Entities.IMMUNE_TO_SANDSTORM) && (!(entity instanceof Player) || entity.tickCount > 60);
     }
 

@@ -3,6 +3,7 @@ package net.tslat.aoa3.common.registration.entity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.content.entity.misc.PixonEntity;
@@ -15,7 +16,7 @@ public final class AoACustomSpawners {
 
     public static void init() {}
 
-    public static final DeferredHolder<AoACustomSpawner.Type<?>, AoACustomSpawner.Type<Entity>> ROAMING_TRADER = register("roaming_trader", RoamingTraderSpawner.CODEC);
+    public static final DeferredHolder<AoACustomSpawner.Type<?>, AoACustomSpawner.Type<Mob>> ROAMING_TRADER = register("roaming_trader", RoamingTraderSpawner.CODEC);
     public static final DeferredHolder<AoACustomSpawner.Type<?>, AoACustomSpawner.Type<PixonEntity>> PIXONS = register("pixons", PixonSpawner.CODEC);
 
     private static <E extends Entity, S extends AoACustomSpawner<E>> DeferredHolder<AoACustomSpawner.Type<?>, AoACustomSpawner.Type<E>> register(String id, MapCodec<S> codec) {

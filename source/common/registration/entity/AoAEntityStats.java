@@ -32,6 +32,7 @@ import net.tslat.aoa3.content.entity.boss.smash.SmashEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.EliteTyrosaurEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.TyrosaurEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.WoundedTyrosaurEntity;
+import net.tslat.aoa3.content.entity.monster.barathos.NospikeEntity;
 import net.tslat.aoa3.content.entity.monster.misc.ThornyPlantSproutEntity;
 import net.tslat.aoa3.content.entity.monster.nether.*;
 import net.tslat.aoa3.content.entity.monster.overworld.*;
@@ -107,6 +108,7 @@ public final class AoAEntityStats {
 	}
 
 	private static void doBarathosEntityStats(final EntityAttributeCreationEvent ev) {
+		NospikeEntity.entityStats(AoAMonsters.NOSPIKE.get()).build(ev);
 		ArkbackEntity.entityStats(AoAAnimals.ARKBACK.get()).build(ev);
 		EmperorBeastEntity.entityStats(AoAAnimals.EMPEROR_BEAST.get()).build(ev);
 	}

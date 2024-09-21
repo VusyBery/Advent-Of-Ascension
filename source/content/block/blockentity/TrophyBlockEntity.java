@@ -139,7 +139,7 @@ public class TrophyBlockEntity extends BlockEntity implements Nameable {
 		super.applyImplicitComponents(components);
 
 		this.trophyData = components.get(AoADataComponents.TROPHY_DATA);
-		setCustomName(components.get(DataComponents.CUSTOM_NAME));
+		setCustomName(components.get(DataComponents.ITEM_NAME));
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class TrophyBlockEntity extends BlockEntity implements Nameable {
 		super.collectImplicitComponents(builder);
 
 		builder.set(AoADataComponents.TROPHY_DATA, this.trophyData);
-		builder.set(DataComponents.CUSTOM_NAME, this.customName);
+		builder.set(DataComponents.ITEM_NAME, this.customName);
 	}
 
 	@Override

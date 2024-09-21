@@ -297,6 +297,22 @@ public final class EntityUtil {
 		return entity instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity livingEntity ? livingEntity : null;
 	}
 
+	public static boolean isAllyOf(Entity entity1, Entity entity2) {
+		if (entity1 == entity2)
+			return true;
+
+		if (entity1.isAlliedTo(entity2))
+			return true;
+
+		if (entity1 instanceof OwnableEntity ownable && entity2.getUUID().equals(ownable.getOwnerUUID()))
+			return true;
+
+		if (entity2 instanceof OwnableEntity ownable && entity1.getUUID().equals(ownable.getOwnerUUID()))
+			return true;
+
+		return false;
+	}
+
 	public static EquipmentSlot handToEquipmentSlotType(InteractionHand hand) {
 		return hand == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
 	}

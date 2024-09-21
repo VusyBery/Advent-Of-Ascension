@@ -8,13 +8,14 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.tslat.aoa3.client.AoAArmPoses;
 import org.jetbrains.annotations.Nullable;
 
 public class GunClientExtension implements IClientItemExtensions {
     @Nullable
     @Override
     public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack) {
-        return HumanoidModel.ArmPose.CROSSBOW_HOLD;
+        return AoAArmPoses.SMALL_GUN.getValue();
     }
 
     @Override

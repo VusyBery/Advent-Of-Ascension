@@ -10,6 +10,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.tslat.aoa3.common.registration.AoASounds;
+import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import org.jetbrains.annotations.Nullable;
 
 public class BayonetteSR extends BaseSniper {
@@ -30,17 +31,21 @@ public class BayonetteSR extends BaseSniper {
 		return true;
 	}
 
-	public static ItemAttributeModifiers createAttributes() {
-		return ItemAttributeModifiers.builder()
-				.add(
-						Attributes.ATTACK_DAMAGE,
-						new AttributeModifier(
-								BASE_ATTACK_DAMAGE_ID,
-								9,
-								AttributeModifier.Operation.ADD_VALUE
-						),
-						EquipmentSlotGroup.MAINHAND
-				)
-				.build();
+	public static ItemAttributeModifiers createAttributes(float unholsterTimeModifier) {
+		ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+
+		builder.add(
+				Attributes.ATTACK_DAMAGE,
+				new AttributeModifier(
+						BASE_ATTACK_DAMAGE_ID,
+						9,
+						AttributeModifier.Operation.ADD_VALUE),
+				EquipmentSlotGroup.MAINHAND);
+
+		for (ItemAttributeModifiers.Entry entry : BaseGun.createGunAttributeModifiers(unholsterTimeModifier).modifiers()) {
+			builder.add(entry.attribute(), entry.modifier(), entry.slot());
+		}
+
+		return builder.build();
 	}
 }

@@ -76,7 +76,7 @@ public class AdventGuiThemeReloadListener implements PreparableReloadListener {
 		pointer = 0;
 
 		for (int i = 0; i < THEMES.size(); i++) {
-			if (StringUtil.toTitleCase(THEMES.get(i).nameLocale()).equals(name)) {
+			if (StringUtil.toTitleCase(THEMES.get(i).id).equals(name)) {
 				pointer = i;
 
 				break;

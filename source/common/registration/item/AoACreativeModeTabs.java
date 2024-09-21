@@ -8,18 +8,23 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.advent.UnobtainableItems;
+import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.WorldUtil;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public final class AoACreativeModeTabs {
@@ -81,6 +86,14 @@ public final class AoACreativeModeTabs {
 	}
 
 	public static List<ItemStack> getItemsForTab(final CreativeModeTab tab) {
-		return BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab).map(key -> ITEM_CREATIVE_TABS.get(key).stream().map(Supplier::get).toList()).orElse(List.of());
+		Set<ItemLike> unobtainableItems = WorldUtil.getServer() != null || AoAConfigs.CLIENT.hideSurvivalUnobtainableItems.getAsBoolean() ? UnobtainableItems.CURRENT_SET.get() : Set.of();
+
+		return BuiltInRegistries.CREATIVE_MODE_TAB.getResourceKey(tab)
+				.map(key -> ITEM_CREATIVE_TABS.get(key)
+						.stream()
+						.map(Supplier::get)
+						.filter(stack -> !unobtainableItems.contains(stack.getItem()))
+						.toList())
+				.orElse(List.of());
 	}
 }

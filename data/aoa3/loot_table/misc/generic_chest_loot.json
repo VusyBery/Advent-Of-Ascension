@@ -208,6 +208,90 @@
       ],
       "name": "misc_aoa_loot",
       "rolls": 2.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 300
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "patchouli:book": "aoa3:lessons"
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "aoa3:torn_pages",
+          "quality": 2
+        }
+      ],
+      "name": "lessons_torn_page",
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 300
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "patchouli:book": "aoa3:the_portal"
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "aoa3:torn_pages",
+          "quality": 2
+        }
+      ],
+      "name": "the_portal_torn_page",
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 300
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "patchouli:book": "aoa3:discovery"
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "aoa3:torn_pages",
+          "quality": 2
+        }
+      ],
+      "name": "discovery_torn_page",
+      "rolls": 1.0
     }
   ]
 }

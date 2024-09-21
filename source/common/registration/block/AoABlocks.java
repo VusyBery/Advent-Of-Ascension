@@ -39,10 +39,7 @@ import net.tslat.aoa3.content.block.generation.grass.UpsideDownGrassBlock;
 import net.tslat.aoa3.content.block.generation.grass.WaterGrassBlock;
 import net.tslat.aoa3.content.block.generation.leaves.AoALeavesBlock;
 import net.tslat.aoa3.content.block.generation.leaves.AoALeavesBlockOld;
-import net.tslat.aoa3.content.block.generation.log.LogBlock;
-import net.tslat.aoa3.content.block.generation.log.StranglewoodBark;
-import net.tslat.aoa3.content.block.generation.log.StranglewoodLog;
-import net.tslat.aoa3.content.block.generation.log.VoxLog;
+import net.tslat.aoa3.content.block.generation.log.*;
 import net.tslat.aoa3.content.block.generation.misc.*;
 import net.tslat.aoa3.content.block.generation.plants.*;
 import net.tslat.aoa3.content.block.generation.stone.DenseStone;
@@ -307,6 +304,8 @@ public final class AoABlocks {
 	public static final DeferredBlock<LogBlock> STRIPPED_STRANGLEWOOD_LOG = register("stripped_stranglewood_log", registrar -> registrar.basedOn(STRANGLEWOOD_LOG).mapColour(MapColor.COLOR_BROWN).factory(properties -> new LogBlock(properties, null)).generationBlocksTab());
 	public static final DeferredBlock<LogBlock> STRIPPED_STRANGLEWOOD = register("stripped_stranglewood", registrar -> registrar.basedOn(STRANGLEWOOD_LOG).mapColour(MapColor.COLOR_BROWN).factory(properties -> new LogBlock(properties, null)).generationBlocksTab());
 	public static final LogBlockGroup TOXIC_LOG = registerGroup("toxic", (id, registry, registrar) -> new LogBlockGroup(id, registry, MapColor.COLOR_BROWN, MapColor.TERRACOTTA_BROWN, (registrar2, strippedLog, endColour, sideColour) -> registrar2.baseLog(endColour, sideColour, strippedLog)), registrar -> {});
+	public static final DeferredBlock<RotatedPillarBlock> DEAD_LOG = register("dead_log", registrar -> registrar.basedOn(Blocks.OAK_LOG).factory(DeadLogBlock::new).generationBlocksTab());
+	public static final DeferredBlock<RotatedPillarBlock> DEAD_WOOD = register("dead_wood", registrar -> registrar.basedOn(DEAD_LOG).factory(DeadLogBlock::new).mapColour(MapColor.WOOD).generationBlocksTab());
 
 	public static final PlanksBlockGroup ACHONY_PLANKS = registerGroup("achony", (id, factory, baseRegistrar) -> new PlanksBlockGroup(id, false, factory, baseRegistrar, AoABlockCollections.ACHONY_SET.woodType(), AoABlockCollections.ACHONY_SET.blockSetType()), BlockRegistrar::basePlanks);
 	public static final PlanksBlockGroup BAOBAB_PLANKS = registerGroup("baobab", (id, factory, baseRegistrar) -> new PlanksBlockGroup(id, true, factory, baseRegistrar, AoABlockCollections.BAOBAB_SET.woodType(), AoABlockCollections.BAOBAB_SET.blockSetType()), BlockRegistrar::basePlanks);
@@ -438,14 +437,8 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> IROSTONE_BUTTON = register("irostone_button", registrar -> registrar.baseButton(IROSTONE.stone).factory(properties -> new ButtonBlock(AoABlockCollections.IROSTONE_SET.blockSetType(), 20, properties)));
 	public static final DeferredBlock<Block> RUNIC_STONE_BUTTON = register("runic_stone_button", registrar -> registrar.baseButton(RUNIC_STONE.stone).factory(properties -> new ButtonBlock(AoABlockCollections.RUNIC_STONE_SET.blockSetType(), 20, properties)));
 
+	public static final DeferredBlock<Block> DEAD_BRANCH = register("dead_branch", registrar -> registrar.factory(DeadBranchBlock::new).instabreak().replaceable().noOcclusion().sounds(SoundType.BAMBOO_WOOD).generationBlocksTab().flammable().noClip());
 	public static final DeferredBlock<Block> NEST = register("nest", registrar -> registrar.baseFlammable(30, 60).noOcclusion().sounds(SoundType.GRASS).mapColour(MapColor.COLOR_BROWN).stats(1, 0.5f).decorationBlocksTab().flammable());
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_BLOCK_FACE = register("kaiyu_temple_block_face", registrar -> registrar.mapColour(MapColor.TERRACOTTA_ORANGE).stats(10, 15).decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_BLOCK_FLOW = register("kaiyu_temple_block_flow", registrar -> registrar.mapColour(MapColor.TERRACOTTA_ORANGE).stats(10, 15).decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_BLOCK_MAZE = register("kaiyu_temple_block_maze", registrar -> registrar.mapColour(MapColor.TERRACOTTA_ORANGE).stats(10, 15).decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_BLOCK_PASS = register("kaiyu_temple_block_pass", registrar -> registrar.mapColour(MapColor.TERRACOTTA_ORANGE).stats(10, 15).decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_BLOCK_PLAIN = register("kaiyu_temple_block_plain", registrar -> registrar.mapColour(MapColor.TERRACOTTA_ORANGE).stats(10, 15).decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_BLOCK_SQUARES = register("kaiyu_temple_block_squares", registrar -> registrar.mapColour(MapColor.TERRACOTTA_ORANGE).stats(10, 15).decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_BLOCK_TRACK = register("kaiyu_temple_block_track", registrar -> registrar.mapColour(MapColor.TERRACOTTA_ORANGE).stats(10, 15).decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
 	public static final DeferredBlock<Block> BLACK_PETALS = register("black_petals", registrar -> registrar.mapColour(MapColor.COLOR_RED).pistonBreaks().stats(1.5f, 10f).generationBlocksTab().instrument(NoteBlockInstrument.DIDGERIDOO));
 	public static final DeferredBlock<Block> BLUE_PETALS = register("blue_petals", registrar -> registrar.mapColour(MapColor.COLOR_BLUE).pistonBreaks().stats(1.5f, 10f).generationBlocksTab().instrument(NoteBlockInstrument.DIDGERIDOO));
 	public static final DeferredBlock<Block> LIGHT_BLUE_PETALS = register("light_blue_petals", registrar -> registrar.mapColour(MapColor.COLOR_BLUE).pistonBreaks().stats(1.5f, 10f).generationBlocksTab().instrument(NoteBlockInstrument.DIDGERIDOO));
@@ -461,7 +454,6 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> ANCIENT_TILE_SHRINE = register("ancient_tile_shrine", registrar -> registrar.stats(10, 15).needsTool().decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
 	public static final DeferredBlock<Block> WHITE_ANCIENT_TILE = register("white_ancient_tile", registrar -> registrar.stats(10, 15).needsTool().decorationBlocksTab().instrument(NoteBlockInstrument.BASS));
 	public static final DeferredBlock<Block> ANCIENT_ROCK = register("ancient_rock", registrar -> registrar.mapColour(MapColor.TERRACOTTA_BLACK).needsTool().stats(1.5f, 10f).generationBlocksTab().instrument(NoteBlockInstrument.BASEDRUM));
-	public static final DeferredBlock<Block> BARON_GROUND = register("baron_ground", registrar -> registrar.mapColour(MapColor.COLOR_RED).stats(1.5f, 10f).instrument(NoteBlockInstrument.FLUTE).sounds(SoundType.GRAVEL).generationBlocksTab());
 	public static final DeferredBlock<Block> GREEN_CANDY = register("green_candy", registrar -> registrar.mapColour(MapColor.COLOR_RED).stats(1.5f, 10f).instrument(NoteBlockInstrument.BASS).generationBlocksTab());
 	public static final DeferredBlock<Block> RED_CANDY = register("red_candy", registrar -> registrar.mapColour(MapColor.COLOR_RED).stats(1.5f, 10f).instrument(NoteBlockInstrument.BASS).generationBlocksTab());
 	public static final DeferredBlock<Block> WHITE_CANDY = register("white_candy", registrar -> registrar.mapColour(MapColor.COLOR_RED).stats(1.5f, 10f).instrument(NoteBlockInstrument.BASS).generationBlocksTab());
@@ -527,10 +519,6 @@ public final class AoABlocks {
 	public static final FluidUtil.RegisteredFluidHolder TOXIC_WASTE = new FluidUtil.Builder("toxic_waste", AoAFluidTypes.TOXIC_WASTE).tickRate(50).customBlock((fluid, properties) -> () -> new ToxicWaste(fluid, properties)).defaultRegisterAll();
 	public static final FluidUtil.RegisteredFluidHolder TAR = new FluidUtil.Builder("tar", AoAFluidTypes.TAR).tickRate(50).customBlock((fluid, properties) -> () -> new Tar(fluid, properties)).defaultRegisterAll();
 
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_TRAP_WITHER = register("kaiyu_temple_trap_wither", registrar -> registrar.utilityBlocksTab().mapColour(MapColor.TERRACOTTA_ORANGE).stats(12, 15).factory(KaiyuTempleTrapWither::new));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_TRAP_DAMAGE = register("kaiyu_temple_trap_damage", registrar -> registrar.utilityBlocksTab().mapColour(MapColor.TERRACOTTA_ORANGE).stats(12, 15).factory(KaiyuTempleTrapDamage::new));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_TRAP_POISON = register("kaiyu_temple_trap_poison", registrar -> registrar.utilityBlocksTab().mapColour(MapColor.TERRACOTTA_ORANGE).stats(12, 15).factory(KaiyuTempleTrapPoison::new));
-	public static final DeferredBlock<Block> KAIYU_TEMPLE_TRAP_FIRE = register("kaiyu_temple_trap_fire", registrar -> registrar.utilityBlocksTab().mapColour(MapColor.TERRACOTTA_ORANGE).stats(12, 15).factory(KaiyuTempleTrapFire::new));
 	public static final DeferredBlock<Block> LUNAR_PAD = register("lunar_pad", registrar -> registrar.decorationBlocksTab().mapColour(MapColor.COLOR_BLACK).stats(1.5f, 10f));
 	public static final DeferredBlock<Block> COMPASS_RUNE_POST = register("compass_rune_post", registrar -> registrar.utilityBlocksTab().mapColour(MapColor.COLOR_BLACK).stats(10, 15).factory(properties -> new RunePostBlock(properties, AoAItems.COMPASS_RUNE)));
 	public static final DeferredBlock<Block> DISTORTION_RUNE_POST = register("distortion_rune_post", registrar -> registrar.utilityBlocksTab().mapColour(MapColor.COLOR_BLACK).stats(10, 15).factory(properties -> new RunePostBlock(properties, AoAItems.DISTORTION_RUNE)));
@@ -622,7 +610,7 @@ public final class AoABlocks {
 	public static final DeferredBlock<Block> IRO_CRATE = register("iro_crate", registrar -> registrar.mapColour(MapColor.TERRACOTTA_LIGHT_GRAY).stats(5, 10).sounds(SoundType.METAL).instrument(NoteBlockInstrument.BASS).needsTool());
 	public static final DeferredBlock<Block> LUNAR_CREATION_TABLE = register("lunar_creation_table", registrar -> registrar.factory(LunarCreationTable::new).mapColour(MapColor.COLOR_PURPLE).stats(10, 15).instrument(NoteBlockInstrument.BASS).utilityBlocksTab().needsTool());
 	public static final DeferredBlock<Block> MENDING_TABLE = register("mending_table", registrar -> registrar.factory(MendingTable::new).stats(5, 10).mapColour(MapColor.COLOR_LIGHT_BLUE).instrument(NoteBlockInstrument.BASS).utilityBlocksTab().needsTool());
-	public static final DeferredBlock<Block> MINERALIZATION_STATION = register("mineralization_station", registrar -> registrar.factory(MineralizationStation::new).mapColour(MapColor.COLOR_BROWN).stats(5, 10).utilityBlocksTab().instrument(NoteBlockInstrument.BASS).needsTool());
+	public static final DeferredBlock<Block> INFUSED_PRESS = register("infused_press", registrar -> registrar.factory(InfusedPress::new).mapColour(MapColor.COLOR_BLACK).stats(30, 500).stopsPistons().utilityBlocksTab().instrument(NoteBlockInstrument.BASS).needsTool());
 	public static final DeferredBlock<Block> PETAL_CRAFTING_STATION = register("petal_crafting_station", registrar -> registrar.factory(PetalCraftingStation::new).mapColour(MapColor.COLOR_PURPLE).instrument(NoteBlockInstrument.BASS).stats(5, 10).needsTool().utilityBlocksTab());
 	public static final DeferredBlock<Block> RUNE_RANDOMIZER = register("rune_randomizer", registrar -> registrar.factory(RuneRandomizer::new).mapColour(MapColor.COLOR_CYAN).instrument(NoteBlockInstrument.BASS).stats(10, 15).utilityBlocksTab().needsTool());
 	public static final DeferredBlock<Block> RUNIC_BLOCK = register("runic_block", registrar -> registrar.factory(RunicBlock::new).mapColour(MapColor.TERRACOTTA_BLUE).stats(10, 15).sounds(SoundType.STONE).utilityBlocksTab().needsTool().instrument(NoteBlockInstrument.BASS));

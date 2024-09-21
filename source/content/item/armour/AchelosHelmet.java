@@ -25,8 +25,8 @@ public class AchelosHelmet extends AdventArmour {
 
 	@Override
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
-		entity.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 1, 1, true, false));
-		entity.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 1, 0, true, false));
+		entity.addEffect(new MobEffectInstance(MobEffects.CONDUIT_POWER, 2, 1, true, false));
+		entity.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 2, 0, true, false));
 	}
 
 	@Override

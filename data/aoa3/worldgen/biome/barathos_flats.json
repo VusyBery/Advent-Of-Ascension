@@ -20,7 +20,12 @@
     "water_color": 5210338,
     "water_fog_color": 329011
   },
-  "features": [],
+  "features": [
+    [],
+    [
+      "aoa3:loose_sand_patch"
+    ]
+  ],
   "has_precipitation": false,
   "spawn_costs": {},
   "spawners": {

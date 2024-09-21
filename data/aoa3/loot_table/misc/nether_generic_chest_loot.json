@@ -129,6 +129,34 @@
       ],
       "name": "misc_aoa_loot",
       "rolls": 5.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 300
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "patchouli:book": "aoa3:expedition"
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "aoa3:torn_pages",
+          "quality": 2
+        }
+      ],
+      "name": "expedition_torn_page",
+      "rolls": 1.0
     }
   ]
 }

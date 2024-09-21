@@ -24,7 +24,7 @@ public class MillenniumGreatblade extends BaseGreatblade {
 
 	@Override
 	public float getDamageForAttack(LivingEntity target, LivingEntity attacker, ItemStack greatblade, DamageSource source, float baseDamage) {
-		return super.getDamageForAttack(target, attacker, greatblade, source, baseDamage + (float)RandomUtil.randomValueUpTo(this.maxDmg - Math.min(baseDamage, this.maxDmg)));
+		return super.getDamageForAttack(target, attacker, greatblade, source, baseDamage + (float)RandomUtil.randomValueUpTo(this.maxDmg - Math.min(baseDamage, this.maxDmg)) * getSwingEffectiveness(greatblade));
 	}
 
 	@Override

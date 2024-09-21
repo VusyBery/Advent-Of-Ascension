@@ -8,7 +8,7 @@ import java.util.List;
 public record GenericRecipeInput(List<ItemStack> inputs) implements RecipeInput {
     @Override
     public ItemStack getItem(int index) {
-        return inputs.get(index);
+        return this.inputs.get(index);
     }
 
     @Override
@@ -29,6 +29,6 @@ public record GenericRecipeInput(List<ItemStack> inputs) implements RecipeInput 
 
     @Override
     public int size() {
-        return inputs.size();
+        return this.inputs.size();
     }
 }

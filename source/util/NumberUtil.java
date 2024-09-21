@@ -3,26 +3,26 @@ package net.tslat.aoa3.util;
 import java.text.DecimalFormat;
 
 public final class NumberUtil {
-	public static String floorAndAppendSuffix(float value, boolean strictDigitCount) {
+	public static String floorAndAppendSuffix(double value, boolean strictDigitCount) {
 		String suffix = "";
 
 		if (value >= 10000) {
-			if (value < 1000000) {
-				suffix = "k";
-				value = value / 1000f;
-			}
-			else if (value < 1000000000) {
-				suffix = "m";
-				value = value / 1000000f;
-			}
-			else {
-				suffix = "b";
-				value = value / 1000000000f;
+			String[] suffixes = new String[] {"k", "m", "b", "t", "q", "Q"};
+
+			for (int i = 0; i < suffixes.length; i++) {
+				double divisor = Math.pow(10, (i + 1) * 3);
+
+				if (value < 1000L * divisor) {
+					suffix = suffixes[i];
+					value = value / divisor;
+
+					break;
+				}
 			}
 		}
 
 		if (strictDigitCount && value >= 10)
-			value = (int)Math.floor(value);
+			value = (long)Math.floor(value);
 
 		return new DecimalFormat(strictDigitCount ? "#.#" : "#.##").format(value) + suffix;
 	}

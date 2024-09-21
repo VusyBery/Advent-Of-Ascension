@@ -73,7 +73,6 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
         return level.isUnobstructed(this);
     }
 
-
     @Override
     public int getAmbientSoundInterval() {
         return 280;

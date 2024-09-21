@@ -174,6 +174,7 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> VOID_WALKER = new GeckoLibRendererPackage<>(AoAMonsters.VOID_WALKER).path("mob/overworld/void_walker");
 	public static final EntityRendererPackage<?> WOOD_GIANT = new GeckoLibRendererPackage<>(AoAMonsters.WOOD_GIANT).model(new WoodGiantModel());
 	public static final EntityRendererPackage<?> YETI = new GeckoLibRendererPackage<>(AoAMonsters.YETI).path("mob/overworld/yeti");
+	public static final EntityRendererPackage<?> NOSPIKE = new GeckoLibRendererPackage<>(AoAMonsters.NOSPIKE).path("mob/barathos/nospike");
 
 	public static final EntityRendererPackage<?> SMASH = new GeckoLibRendererPackage<>(AoAMonsters.SMASH).model(new SmashModel());
 	public static final EntityRendererPackage<?> ELITE_SMASH = new GeckoLibRendererPackage<>(AoAMonsters.ELITE_SMASH).model(new EliteSmashModel());
@@ -626,6 +627,7 @@ public final class AoAEntityRendering {
 
 		ev.registerBlockEntityRenderer(AoABlockEntities.TROPHY.get(), TrophyRenderer::new);
 		ev.registerBlockEntityRenderer(AoABlockEntities.LUNAR_CREATION_TABLE.get(), LunarCreationTableRenderer::new);
+		ev.registerBlockEntityRenderer(AoABlockEntities.INFUSED_PRESS.get(), InfusedPressRenderer::new);
 		ev.registerBlockEntityRenderer(AoABlockEntities.INFUSION_TABLE.get(), InfusionTableRenderer::new);
 		ev.registerBlockEntityRenderer(AoABlockEntities.IMBUING_CHAMBER.get(), ImbuingChamberRenderer::new);
 		ev.registerBlockEntityRenderer(AoABlockEntities.BOSS_ALTAR.get(), BossAltarRenderer::new);

@@ -553,7 +553,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
 
         @Override
         protected void start(TyrosaurEntity entity) {
-            new SoundBuilder(AoASounds.ENTITY_TYROSAUR_ROAR_START).followEntity(entity.getParts()[4]).execute();
+            new SoundBuilder(AoASounds.ENTITY_TYROSAUR_ROAR_START).radius(32).followEntity(entity.getParts()[4]).execute();
             this.roarSoundDelay = entity.random.nextInt(4, 8);
             ATTACK_STATE.set(entity, ROAR);
             entity.setImmobile(true);
@@ -569,7 +569,7 @@ public class TyrosaurEntity extends AoABoss implements ArmouredBoss {
         protected void tick(TyrosaurEntity entity) {
             if (this.runningTime > 30 && this.runningTime % this.roarSoundDelay == 0) {
                 this.roarSoundDelay = entity.random.nextInt(5, 7);
-                new SoundBuilder(AoASounds.ENTITY_TYROSAUR_ROAR_LOOP).followEntity(entity.getParts()[4]).execute();
+                new SoundBuilder(AoASounds.ENTITY_TYROSAUR_ROAR_LOOP).radius(32).followEntity(entity.getParts()[4]).execute();
             }
 
             if (this.runningTime > 33 && entity.tickCount % 2 == 0) {

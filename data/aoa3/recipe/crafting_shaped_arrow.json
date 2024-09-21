@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": {
+      "item": "aoa3:sharp_claw"
+    },
+    "F": {
+      "tag": "c:feathers"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "C",
+    "S",
+    "F"
+  ],
+  "result": {
+    "count": 8,
+    "id": "minecraft:arrow"
+  }
+}

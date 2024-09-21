@@ -35,17 +35,21 @@ public class BayonetteRifle extends BaseGun {
 		return true;
 	}
 
-	public static ItemAttributeModifiers createAttributes() {
-		return ItemAttributeModifiers.builder()
-				.add(
-						Attributes.ATTACK_DAMAGE,
-						new AttributeModifier(
-								BASE_ATTACK_DAMAGE_ID,
-								8,
-								AttributeModifier.Operation.ADD_VALUE
-						),
-						EquipmentSlotGroup.MAINHAND
-				)
-				.build();
+	public static ItemAttributeModifiers createAttributes(float unholsterTimeModifier) {
+		ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
+
+		builder.add(
+				Attributes.ATTACK_DAMAGE,
+				new AttributeModifier(
+						BASE_ATTACK_DAMAGE_ID,
+						8,
+						AttributeModifier.Operation.ADD_VALUE),
+				EquipmentSlotGroup.MAINHAND);
+
+		for (ItemAttributeModifiers.Entry entry : BaseGun.createGunAttributeModifiers(unholsterTimeModifier).modifiers()) {
+			builder.add(entry.attribute(), entry.modifier(), entry.slot());
+		}
+
+		return builder.build();
 	}
 }

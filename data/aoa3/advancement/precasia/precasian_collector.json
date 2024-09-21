@@ -131,6 +131,16 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "obtain_predatious_bow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:predatious_bow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "obtain_predatious_chestplate": {
       "conditions": {
         "items": [
@@ -355,6 +365,9 @@
     ],
     [
       "obtain_skeletal_shovel"
+    ],
+    [
+      "obtain_predatious_bow"
     ]
   ],
   "rewards": {

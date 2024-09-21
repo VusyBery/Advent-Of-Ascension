@@ -72,7 +72,7 @@ public class RPG extends BaseCannon {
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
 		super.appendHoverText(stack, context, tooltip, flag);
 
-		for (MutableComponent component : LocaleUtil.getExplosionInfoLocale(AoAExplosions.RPG, flag.isAdvanced(), false)) {
+		for (MutableComponent component : LocaleUtil.getExplosionInfoLocale(AoAExplosions.rpg(entity -> 1f), flag.isAdvanced(), false)) {
 			tooltip.add(2, component);
 		}
 	}

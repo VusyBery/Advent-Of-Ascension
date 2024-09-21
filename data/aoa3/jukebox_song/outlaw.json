@@ -1,6 +1,8 @@
 {
   "comparator_output": 15,
-  "description": "jukebox_song.aoa3.outlaw",
+  "description": {
+    "translate": "jukebox_song.aoa3.outlaw"
+  },
   "length_in_seconds": 3080.0,
   "sound_event": "aoa3:item.music_disc.outlaw"
 }

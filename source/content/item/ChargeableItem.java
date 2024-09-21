@@ -29,13 +29,13 @@ public interface ChargeableItem {
         stack.set(AoADataComponents.CHARGE, Math.min(getCharge(stack) + charge, maxCharge()));
     }
 
-    default float subtractCharge(ItemStack stack, float charge, boolean force) {
+    default float subtractCharge(ItemStack stack, float subtraction, boolean force) {
         float currentCharge = getCharge(stack);
 
-        if (currentCharge < charge && !force)
+        if (currentCharge < subtraction && !force)
             return 0;
 
-        float newValue = Math.max(0, currentCharge - charge);
+        float newValue = Math.max(0, currentCharge - subtraction);
 
         setCharge(stack, newValue);
 

@@ -20,6 +20,7 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
@@ -69,10 +70,13 @@ public class BaronLooseSand extends ColoredFallingBlock {
     @Override
     protected void entityInside(BlockState blockState, Level level, BlockPos pos, Entity entity) {
         if (!(entity instanceof LivingEntity) || entity.getInBlockState().is(this)) {
-            entity.makeStuckInBlock(blockState, new Vec3(0.8f, 0.9999f, 0.8f));
+            entity.makeStuckInBlock(blockState, new Vec3(0.8f, 0.2f, 0.8f));
+
+            if (!level.isClientSide && BlockPos.containing(entity.getEyePosition()).equals(pos))
+                DamageUtil.safelyDealDamage(level.damageSources().inWall(), entity, 1);
 
             if (level.isClientSide && (entity.xOld != entity.getX() || entity.zOld != entity.getZ()) && level.getRandom().nextBoolean()) {
-                ParticleBuilder.forRandomPosInEntity(new BlockParticleOption(ParticleTypes.FALLING_DUST, AoABlocks.BARON_LOOSE_SAND.get().defaultBlockState()), entity)
+                ParticleBuilder.forRandomPosInEntity(new BlockParticleOption(ParticleTypes.BLOCK, AoABlocks.BARON_LOOSE_SAND.get().defaultBlockState()), entity)
                         .power(new Vec3(RandomUtil.randomScaledGaussianValue(1 / 12f), 0.05f, RandomUtil.randomScaledGaussianValue(1 / 12f)))
                         .spawnParticles(level);
             }

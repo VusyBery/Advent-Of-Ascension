@@ -63,7 +63,7 @@ public class ReservedItem extends Item implements SequenceVerifiedItem {
 				return InteractionResult.SUCCESS;
 			}
 		}
-		else if (block == AoABlocks.MINERALIZATION_STATION.get()) {
+		else if (block == AoABlocks.INFUSED_PRESS.get()) {
 			if (this == AoAItems.DARK_BONES.get()) {
 				context.getPlayer().setItemInHand(context.getHand(), ((ReservedItem)AoAItems.ROCK_BONES.get()).newValidStack());
 

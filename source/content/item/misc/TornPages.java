@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.item.misc;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -8,6 +9,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import net.tslat.aoa3.integration.IntegrationManager;
+import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
+import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.PlayerUtil;
 
 import java.util.List;
 
@@ -20,39 +25,33 @@ public class TornPages extends Item {
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		ItemStack bookStack = player.getItemInHand(hand);
 
-		/*if (!IntegrationManager.isPatchouliActive())
+		if (!IntegrationManager.isPatchouliActive())
 			return InteractionResultHolder.pass(bookStack);
 
-		CompoundTag tag = bookStack.getTag();
+		return PatchouliIntegration.getBookFromStack(bookStack)
+				.filter(PatchouliIntegration::isBookLoaded)
+				.map(bookId -> {
+					if (!world.isClientSide) {
+						PlayerUtil.getAdventPlayer((ServerPlayer)player).addPatchouliBook(bookId);
+					}
+					else {
+						if (IntegrationManager.isPatchouliActive())
+							PatchouliIntegration.openBook(bookId);
+					}
 
-		if (tag == null || !tag.contains("TornPagesEntryId"))
-			return InteractionResultHolder.pass(bookStack);
-
-		ResourceLocation bookId = new ResourceLocation(tag.getString("TornPagesEntryId"));
-
-		if (!PatchouliIntegration.isBookLoaded(bookId))
-			return InteractionResultHolder.pass(bookStack);
-
-		if (!world.isClientSide) {
-			PlayerUtil.getAdventPlayer((ServerPlayer)player).addPatchouliBook(bookId);
-		}
-		else {
-			if (IntegrationManager.isPatchouliActive())
-				PatchouliIntegration.openBook(bookId);
-		}*/
-
-		return InteractionResultHolder.success(bookStack);
+					return InteractionResultHolder.success(bookStack);
+				})
+				.orElseGet(() -> InteractionResultHolder.pass(bookStack));
 	}
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag isAdvanced) {
-		/*CompoundTag tag = stack.getTag();
+		boolean patchouliIntegrated = IntegrationManager.isPatchouliActive();
+		boolean validBook = patchouliIntegrated && PatchouliIntegration.getBookFromStack(stack).filter(PatchouliIntegration::isBookLoaded).isPresent();
 
-		if (tag == null || !tag.contains("TornPagesEntryId"))
+		if (!validBook)
 			return;
 
-		boolean patchouli = IntegrationManager.isPatchouliActive();
-
-		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, patchouli ? LocaleUtil.ItemDescriptionType.NEUTRAL : LocaleUtil.ItemDescriptionType.HARMFUL, patchouli ? 1 : 2));*/
+		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, validBook ? LocaleUtil.ItemDescriptionType.NEUTRAL : LocaleUtil.ItemDescriptionType.HARMFUL, validBook ? 1 : 2));
 	}
 }

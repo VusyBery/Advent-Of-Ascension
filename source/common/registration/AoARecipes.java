@@ -20,6 +20,8 @@ public final class AoARecipes {
 	public static final RecipeTypeContainer<ToolInteractionRecipe> TOOL_INTERACTION = registerRecipeType("tool_interaction", ToolInteractionRecipe.Factory::new);
 	public static final RecipeTypeContainer<AshfernCookingRecipe> ASHFERN_COOKING = registerRecipeType("ashfern_cooking", AshfernCookingRecipe.Factory::new);
 	public static final RecipeTypeContainer<WhitewashingRecipe> WHITEWASHING = registerRecipeType("whitewashing", WhitewashingRecipe.Factory::new);
+	public static final RecipeTypeContainer<InfusedPressCompressionRecipe> INFUSED_PRESS_COMPRESSION = registerRecipeType("infused_press_compression", InfusedPressCompressionRecipe.Factory::new);
+	public static final RecipeTypeContainer<InfusedPressDecompressionRecipe> INFUSED_PRESS_DECOMPRESSION = registerRecipeType("infused_press_decompression", InfusedPressDecompressionRecipe.Factory::new);
 
 	private static <T extends Recipe<I>, I extends RecipeInput> RecipeTypeContainer<T> registerRecipeType(String id, Supplier<RecipeSerializer<T>> serializer) {
 		return new RecipeTypeContainer<>(AoARegistries.RECIPE_TYPES.register(id, () -> new RecipeType<>() {

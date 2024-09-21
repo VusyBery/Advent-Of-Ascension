@@ -407,8 +407,8 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 	}
 
 	@Override
-	public void aiStep() {
-		super.aiStep();
+	public void tick() {
+		super.tick();
 		updateMultipartPositions();
 	}
 

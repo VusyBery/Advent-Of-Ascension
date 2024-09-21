@@ -330,8 +330,8 @@ public abstract class AoAAnimal<T extends AoAAnimal<T>> extends Animal implement
 	}
 
 	@Override
-	public void aiStep() {
-		super.aiStep();
+	public void tick() {
+		super.tick();
 
 		for (AoAEntityPart<?> part : getParts()) {
 			part.updatePosition();

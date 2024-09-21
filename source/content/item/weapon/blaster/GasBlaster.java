@@ -6,8 +6,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -39,12 +37,10 @@ public class GasBlaster extends BaseBlaster {
 
 	@Override
 	public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-		if (target instanceof LivingEntity) {
-			if (target instanceof Player || (target instanceof TamableAnimal && shooter.getUUID().equals(((TamableAnimal)target).getOwnerUUID()))) {
-				EntityUtil.healEntity((LivingEntity)target, 0.05f);
+		if (target instanceof LivingEntity livingTarget && EntityUtil.isAllyOf(shooter, livingTarget)) {
+			EntityUtil.healEntity(livingTarget, 0.05f);
 
-				return true;
-			}
+			return false;
 		}
 
 		return super.doEntityImpact(shot, target, shooter);
@@ -52,10 +48,11 @@ public class GasBlaster extends BaseBlaster {
 
 	@Override
 	protected void doImpactEffect(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-		if (!((LivingEntity)target).hasEffect(MobEffects.POISON))
-			EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.POISON, 13).level(2));
-	}
+		LivingEntity livingTarget = EntityUtil.getLivingEntityFromSelfOrPart(target);
 
+		if (livingTarget != null)
+			EntityUtil.applyPotions(livingTarget, new EffectBuilder(MobEffects.POISON, 13).level(2));
+	}
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {

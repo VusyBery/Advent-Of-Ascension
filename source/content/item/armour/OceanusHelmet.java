@@ -25,7 +25,7 @@ public class OceanusHelmet extends AdventArmour {
 
 	@Override
 	public void onArmourTick(LivingEntity entity, EnumSet<Piece> equippedPieces) {
-		entity.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 0, 1, true, false));
+		entity.addEffect(new MobEffectInstance(MobEffects.DOLPHINS_GRACE, 2, 1, true, false));
 
 		if (entity.isInWater())
 			entity.setAirSupply(-10);

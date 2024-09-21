@@ -47,9 +47,14 @@ public class AttributeModification extends ScalableModAbility {
 	}
 
 	protected AttributeModifier updateModifier() {
-		markForClientSync();
+		this.modifier = new AttributeModifier(this.modifier.id(), getScaledValue(), this.modifier.operation());
 
-		return this.modifier = new AttributeModifier(this.modifier.id(), getScaledValue(), this.modifier.operation());
+		if (!getPlayer().level().isClientSide) {
+			applyAttributeModifiers(getSkill().getPlayerDataManager());
+			markForClientSync();
+		}
+
+		return this.modifier;
 	}
 
 	@Override
@@ -79,7 +84,7 @@ public class AttributeModification extends ScalableModAbility {
 
 	@Override
 	public MutableComponent getDescription() {
-		if (this.skill.getLevel(true) != lastUpdateLevel) {
+		if (this.skill.getLevel(true) != this.lastUpdateLevel) {
 			this.lastUpdateLevel = this.skill.getLevel(true);
 
 			updateDescription(Component.translatable(Util.makeDescriptionId("ability", AoARegistries.AOA_ABILITIES.getKey(type())) + ".description"));
@@ -110,7 +115,7 @@ public class AttributeModification extends ScalableModAbility {
 
 	@Override
 	public void handleLevelChange(PlayerLevelChangeEvent ev) {
-		AttributeUtil.applyTransientModifier(ev.getEntity(), this.attribute, updateModifier());
+		updateModifier();
 	}
 
 	@Override
@@ -155,13 +160,18 @@ public class AttributeModification extends ScalableModAbility {
 
 		updateModifier();
 
-		if (attribute == Attributes.MAX_HEALTH && getListenerState() == ListenerState.ACTIVE && data.contains("current_health")) {
+		if (this.attribute == Attributes.MAX_HEALTH && getListenerState() == ListenerState.ACTIVE && data.contains("current_health")) {
 			if (getLevelReq() == 1) {
-				loginHealth = (float)data.getDouble("current_health");
+				this.loginHealth = (float)data.getDouble("current_health");
 			}
 			else {
 				getPlayer().setHealth((float)data.getDouble("current_health"));
 			}
 		}
+	}
+
+	@Override
+	protected void onReenable() {
+		updateModifier();
 	}
 }

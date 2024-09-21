@@ -201,7 +201,7 @@ public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 	public NonNullList<ItemStack> getRemainingItems(ImbuingRecipeInput input) {
 		final NonNullList<ItemStack> returns = NonNullList.withSize(input.size() - 1, ItemStack.EMPTY);
 
-		for (int i = 0; i < returns.size() - 1; i++) {
+		for (int i = 0; i < returns.size(); i++) {
 			ItemStack stack = input.getItem(i);
 
 			if (!stack.isEmpty()) {

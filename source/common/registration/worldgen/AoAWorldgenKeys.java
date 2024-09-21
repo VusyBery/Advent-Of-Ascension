@@ -90,6 +90,9 @@ public final class AoAWorldgenKeys {
 			// Barathos
 			public static final ResourceKey<ConfiguredFeature<?, ?>> FIRE_PATCH = key("fire_patch");
 			public static final ResourceKey<ConfiguredFeature<?, ?>> HELLSTONE_LAVA_LAKE = key("hellstone_lava_lake");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> LOOSE_SAND_PATCH = key("loose_sand_patch");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> DRIED_OASIS_LAKE = key("dried_oasis_lake");
+			public static final ResourceKey<ConfiguredFeature<?, ?>> BARON_STONE_PILLARS = key("baron_stone_pillars");
 
 			private static ResourceKey<ConfiguredFeature<?, ?>> key(String id) {
 				return ResourceKey.create(Registries.CONFIGURED_FEATURE, AdventOfAscension.id(id));
@@ -182,6 +185,9 @@ public final class AoAWorldgenKeys {
 			// Barathos
 			public static final ResourceKey<PlacedFeature> FIRE_PATCH = key("fire_patch");
 			public static final ResourceKey<PlacedFeature> HELLSTONE_LAVA_LAKE = key("hellstone_lava_lake");
+			public static final ResourceKey<PlacedFeature> LOOSE_SAND_PATCH = key("loose_sand_patch");
+			public static final ResourceKey<PlacedFeature> DRIED_OASIS_LAKE = key("dried_oasis_lake");
+			public static final ResourceKey<PlacedFeature> BARON_STONE_PILLARS = key("baron_stone_pillars");
 
 			private static ResourceKey<PlacedFeature> key(String id) {
 				return ResourceKey.create(Registries.PLACED_FEATURE, AdventOfAscension.id(id));

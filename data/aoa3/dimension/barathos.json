@@ -7,7 +7,7 @@
           "parameters": {
             "weirdness": [
               -1,
-              0.05
+              0.26666668
             ],
             "continentalness": [
               -1.2,
@@ -36,7 +36,7 @@
         {
           "parameters": {
             "weirdness": [
-              0.05,
+              0.26666668,
               1
             ],
             "continentalness": [
@@ -66,12 +66,12 @@
         {
           "parameters": {
             "weirdness": [
-              0.05,
+              0.26666668,
               0.7666667
             ],
             "continentalness": [
               -1.2,
-              -0.11
+              1
             ],
             "erosion": [
               0.05,
@@ -87,71 +87,11 @@
             ],
             "depth": [
               0,
-              0
+              0.2
             ],
             "offset": 0
           },
           "biome": "aoa3:the_spears"
-        },
-        {
-          "parameters": {
-            "weirdness": [
-              0.05,
-              1
-            ],
-            "continentalness": [
-              -0.11,
-              1
-            ],
-            "erosion": [
-              0.05,
-              1
-            ],
-            "temperature": [
-              -1,
-              1
-            ],
-            "humidity": [
-              -1,
-              0.1
-            ],
-            "depth": [
-              0,
-              0.2
-            ],
-            "offset": 0
-          },
-          "biome": "aoa3:barathos_flats"
-        },
-        {
-          "parameters": {
-            "weirdness": [
-              0.05,
-              0.7666667
-            ],
-            "continentalness": [
-              -0.11,
-              1
-            ],
-            "erosion": [
-              0.05,
-              1
-            ],
-            "temperature": [
-              -1,
-              1
-            ],
-            "humidity": [
-              0.1,
-              1
-            ],
-            "depth": [
-              0,
-              0.2
-            ],
-            "offset": 0
-          },
-          "biome": "aoa3:barathos_flats"
         },
         {
           "parameters": {
@@ -173,7 +113,7 @@
             ],
             "humidity": [
               -1,
-              0.1
+              -0.35
             ],
             "depth": [
               0,
@@ -202,12 +142,12 @@
               -0.45
             ],
             "humidity": [
-              0.1,
+              -0.35,
               1
             ],
             "depth": [
               0,
-              0
+              0.2
             ],
             "offset": 0
           },
@@ -232,8 +172,8 @@
               1
             ],
             "humidity": [
-              0.1,
-              0.3
+              -0.35,
+              -0.1
             ],
             "depth": [
               0,
@@ -262,12 +202,12 @@
               -0.15
             ],
             "humidity": [
-              0.3,
+              -0.1,
               1
             ],
             "depth": [
               0,
-              0
+              0.2
             ],
             "offset": 0
           },
@@ -292,8 +232,8 @@
               1
             ],
             "humidity": [
-              0.3,
-              0.7
+              -0.1,
+              0.1
             ],
             "depth": [
               0,
@@ -322,12 +262,12 @@
               0.2
             ],
             "humidity": [
-              0.7,
+              0.1,
               1
             ],
             "depth": [
               0,
-              0
+              0.2
             ],
             "offset": 0
           },
@@ -352,37 +292,7 @@
               1
             ],
             "humidity": [
-              0.7,
-              1
-            ],
-            "depth": [
-              0,
-              0.2
-            ],
-            "offset": 0
-          },
-          "biome": "aoa3:barathos_flats"
-        },
-        {
-          "parameters": {
-            "weirdness": [
-              0.05,
-              1
-            ],
-            "continentalness": [
-              -1.2,
-              1
-            ],
-            "erosion": [
-              0.05,
-              1
-            ],
-            "temperature": [
-              -1,
-              1
-            ],
-            "humidity": [
-              -1,
+              0.1,
               1
             ],
             "depth": [

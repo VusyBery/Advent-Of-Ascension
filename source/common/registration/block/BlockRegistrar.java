@@ -6,6 +6,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ColorRGBA;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.effect.MobEffect;
@@ -245,6 +246,7 @@ public final class BlockRegistrar<T extends Block> {
 	public BlockRegistrar<T> basePottedPlant(Holder<? extends Block> plant) {
 		basedOn(Blocks.FLOWER_POT);
 		factory(properties -> new FlowerPotBlock(null, plant::value, properties));
+		addPottedPlant(plant);
 		noItem();
 
 		return this;
@@ -412,7 +414,7 @@ public final class BlockRegistrar<T extends Block> {
 		stats(1);
 		flammable();
 		decorationBlocksTab();
-		addToBlockEntity(hanging ? () -> BlockEntityType.HANGING_SIGN : () -> BlockEntityType.SIGN);
+		addToBlockEntity(hanging ? BlockEntityType.HANGING_SIGN : BlockEntityType.SIGN);
 
 		return this;
 	}
@@ -737,17 +739,27 @@ public final class BlockRegistrar<T extends Block> {
 		return this;
 	}
 
-	public BlockRegistrar<T> addToBlockEntity(Supplier<BlockEntityType<?>> blockEntity) {
-		this.callbacks.add(block -> AoABlockEntities.addBlockToExistingBlockEntityType(blockEntity, () -> block));
+	public BlockRegistrar<T> addToBlockEntity(BlockEntityType<?> blockEntity) {
+		this.callbacks.add(block -> AoABlockEntities.addBlockToExistingBlockEntityType(blockEntity, block));
 
 		return this;
+	}
+
+	public BlockRegistrar<T> addPottedPlant(Holder<? extends Block> plant) {
+		this.callbacks.add(block -> ((FlowerPotBlock)Blocks.FLOWER_POT).addPlant(plant.getKey().location(), this.registryObject));
+
+		return this;
+	}
+
+	ResourceLocation getId() {
+		return this.registryObject.getId();
 	}
 
 	T build(Consumer<BlockRegistrar<T>> registrar) {
 		registrar.accept(this);
 
 		if (this.itemProperties != null && this.registryObject != null)
-			AoAItems.registerItem(this.registryObject.getId().getPath(), () -> this.itemFactory.apply(this.registryObject.get(), this.itemProperties), this.creativeTabs);
+			AoAItems.registerItem(getId().getPath(), () -> this.itemFactory.apply(this.registryObject.get(), this.itemProperties), this.creativeTabs);
 
 		return (T)this.factory.apply(this.properties);
 	}

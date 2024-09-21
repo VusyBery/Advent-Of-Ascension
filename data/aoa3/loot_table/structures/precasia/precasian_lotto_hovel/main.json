@@ -217,6 +217,35 @@
         }
       ],
       "rolls": 10.0
+    },
+    {
+      "bonus_rolls": {
+        "type": "minecraft:uniform",
+        "max": 0.0,
+        "min": 0.0
+      },
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "quality": -5,
+          "weight": 50
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "components": {
+                "patchouli:book": "aoa3:primitive"
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "aoa3:torn_pages",
+          "quality": 5,
+          "weight": 10
+        }
+      ],
+      "rolls": 1.0
     }
   ]
 }

@@ -10,10 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.SpawnData;
@@ -21,7 +18,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.registration.entity.AoACustomSpawners;
 
-public class RoamingTraderSpawner implements AoACustomSpawner<Entity> {
+public class RoamingTraderSpawner implements AoACustomSpawner<Mob> {
 	public static final MapCodec<RoamingTraderSpawner> CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
 			AoACustomSpawner.GENERIC_SETTINGS_CODEC.fieldOf("base_settings").forGetter(spawner -> spawner.baseSettings),
 			Codec.lazyInitialized(() -> WeightedRandomList.codec(MobSpawnSettings.SpawnerData.CODEC)).fieldOf("spawns").forGetter(spawner -> spawner.spawns)
@@ -73,11 +70,12 @@ public class RoamingTraderSpawner implements AoACustomSpawner<Entity> {
 			if (level.getRandom().nextFloat() >= this.baseSettings.chancePerPlayer())
 				continue;
 
-			for (Pair<EntityType<Entity>, BlockPos> spawn : findNearbySpawnPositions(level, random, pl.blockPosition(), 20, 64, this.baseSettings.spawnAttemptsPerPlayer().sample(random), () -> this.spawns.getRandom(random).map(data -> (EntityType<Entity>)data.type))) {
+			for (Pair<EntityType<Mob>, BlockPos> spawn : findNearbySpawnPositions(level, random, pl.blockPosition(), 20, 64, this.baseSettings.spawnAttemptsPerPlayer().sample(random), () -> this.spawns.getRandom(random).map(data -> (EntityType<Mob>)data.type))) {
+				EntityType<Mob> entityType = spawn.left();
 				BlockPos pos = spawn.right();
 
 				if (this.baseSettings.spawnRules().isPresent()) {
-					if (!spawn.left().getCategory().isFriendly() && level.getDifficulty() == Difficulty.PEACEFUL)
+					if (!entityType.getCategory().isFriendly() && level.getDifficulty() == Difficulty.PEACEFUL)
 						continue;
 
 					SpawnData.CustomSpawnRules spawnRules = this.baseSettings.spawnRules().get();
@@ -86,7 +84,10 @@ public class RoamingTraderSpawner implements AoACustomSpawner<Entity> {
 						continue;
 				}
 
-				Entity entity = spawn.left().create(level, null, pos, MobSpawnType.NATURAL, false, false);
+				if (!SpawnPlacements.isSpawnPositionOk(entityType, level, pos) || !SpawnPlacements.checkSpawnRules(entityType, level, MobSpawnType.NATURAL, pos, level.random) || !level.noCollision(entityType.getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d)))
+					continue;
+
+				Entity entity = entityType.create(level, null, pos, MobSpawnType.NATURAL, false, false);
 
 				if (entity == null)
 					continue;

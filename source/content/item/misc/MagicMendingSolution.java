@@ -22,7 +22,7 @@ public class MagicMendingSolution extends Item implements ChargeableItem {
 
 	@Override
 	public void inventoryTick(ItemStack stack, Level level, Entity entity, int itemSlot, boolean isSelected) {
-		subtractCharge(stack, getCharge(stack), true);
+		subtractCharge(stack, 1, true);
 
 		if (getCharge(stack) <= 0 && !level.isClientSide) {
 			stack.shrink(1);

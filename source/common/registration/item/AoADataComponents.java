@@ -29,6 +29,8 @@ public final class AoADataComponents {
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<VulcaneStats>> VULCANE_STATS = register("vulcane_stats", builder -> builder.persistent(VulcaneStats.CODEC).networkSynchronized(VulcaneStats.STREAM_CODEC));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<StaffRuneCost>> STAFF_RUNE_COST = register("staff_rune_cost", builder -> builder.persistent(StaffRuneCost.CODEC).networkSynchronized(StaffRuneCost.STREAM_CODEC));
 
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompressedItemData>> COMPRESSED_ITEM_DATA = register("compressed_item_data", builder -> builder.persistent(CompressedItemData.CODEC).networkSynchronized(CompressedItemData.STREAM_CODEC));
+
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<TrophyBlock.TrophyData>> TROPHY_DATA = register("trophy_data", builder -> builder.persistent(TrophyBlock.TrophyData.CODEC).networkSynchronized(TrophyBlock.TrophyData.STREAM_CODEC));
 
 	private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String id, UnaryOperator<DataComponentType.Builder<T>> builder) {

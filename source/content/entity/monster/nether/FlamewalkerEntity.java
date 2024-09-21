@@ -7,6 +7,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -26,6 +27,7 @@ import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMobEffects;
 import net.tslat.aoa3.content.entity.base.AoARangedMob;
 import net.tslat.aoa3.content.entity.projectile.mob.BaseMobProjectile;
+import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
@@ -36,6 +38,7 @@ import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableRanged
 import net.tslat.smartbrainlib.api.core.behaviour.custom.move.StayWithinDistanceOfAttackTarget;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.target.InvalidateAttackTarget;
 import net.tslat.smartbrainlib.util.BrainUtils;
+import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.DefaultAnimations;
@@ -57,7 +60,9 @@ public class FlamewalkerEntity extends AoARangedMob<FlamewalkerEntity> {
         return BrainActivityGroup.fightTasks(
                 new InvalidateAttackTarget<>(),
                 new StayWithinDistanceOfAttackTarget<>(),
-                new FlameWalkerAttack(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration()));
+                new FlameWalkerAttack(getPreAttackTime())
+                        .attackRadius((float)getAttributeValue(Attributes.FOLLOW_RANGE) * 0.75f)
+                        .attackInterval(FlamewalkerEntity::getAttackSwingDuration));
     }
 
     @Nullable
@@ -138,7 +143,7 @@ public class FlamewalkerEntity extends AoARangedMob<FlamewalkerEntity> {
                 .health(45)
                 .moveSpeed(0.3)
                 .projectileDamage(7)
-                .followRange(10)
+                .followRange(64)
                 .aggroRange(16);
     }
 
@@ -177,16 +182,33 @@ public class FlamewalkerEntity extends AoARangedMob<FlamewalkerEntity> {
             if (!BrainUtils.canSee(entity, this.target) || entity.distanceToSqr(this.target) > this.attackRadius)
                 return;
 
-            TELParticlePacket packet = new TELParticlePacket(15);
+            for (int tick = 1; tick < 12; tick++) {
+                final int thisTick = tick;
+                final Vec3 targetPos = this.targetingPosition;
+                final RandomUtil.EasyRandom random = entity.rand();
 
-            for (int i = 0; i < 15; i++) {
-                packet.particle(ParticleBuilder.forPositions(EntityTrackingParticleOptions.fromEntity(AoAParticleTypes.BURNING_FLAME, entity), this.targetingPosition.add(entity.rand().randomValueBetween(-1, 1f), 0, entity.rand().randomValueBetween(-1, 1)))
-                        .scaleMod(0.5f)
-                        .lifespan(Mth.ceil(2 / (entity.random.nextFloat() * 0.8f + 0.2f)))
-                        .velocity(entity.rand().randomValueBetween(-0.05f, 0.05f), 0.5, entity.rand().randomValueBetween(-0.05f, 0.05f)));
+                AoAScheduler.scheduleSyncronisedTask(() -> {
+                    TELParticlePacket packet = new TELParticlePacket(45);
+
+                    for (int i = 0; i < 8; i++) {
+                        if (thisTick == 1) {
+                            packet.particle(ParticleBuilder.forPositions(EntityTrackingParticleOptions.fromEntity(AoAParticleTypes.BURNING_FLAME, entity), targetPos.add(random.randomScaledGaussianValue(0.8f), random.randomValueBetween(-0.5f, 0), random.randomScaledGaussianValue(0.8f)))
+                                    .scaleMod((float)random.randomValueBetween(1, 3))
+                                    .lifespan(Mth.ceil(5 / random.randomValueBetween(0.2f, 1f)))
+                                    .velocity(random.randomScaledGaussianValue(0.05f), 0.5, random.randomScaledGaussianValue(0.05f)));
+                        }
+
+                        packet.particle(ParticleBuilder.forPositions(ParticleTypes.SMOKE, targetPos.add(random.randomScaledGaussianValue(1), random.randomValueBetween(-0.5f, 0), random.randomScaledGaussianValue(1)))
+                                .velocity(random.randomScaledGaussianValue(0.05f), 0.5, random.randomScaledGaussianValue(0.05f)));
+                        packet.particle(ParticleBuilder.forPositions(EntityTrackingParticleOptions.ambient(AoAParticleTypes.BURNING_FLAME), targetPos.add(random.randomScaledGaussianValue(0.5f), random.randomValueBetween(-0.5f, 0), random.randomScaledGaussianValue(0.5f)))
+                                .scaleMod((float)random.randomValueBetween(0.5f, 1.5f))
+                                .velocity(random.randomScaledGaussianValue(0.05f), 0.5, random.randomScaledGaussianValue(0.05f)));
+                    }
+
+                    packet.sendToAllPlayersTrackingEntity((ServerLevel)entity.level(), entity);
+                }, thisTick);
             }
 
-            packet.sendToAllPlayersTrackingEntity((ServerLevel)entity.level(), entity);
             BrainUtils.setForgettableMemory(entity, MemoryModuleType.ATTACK_COOLING_DOWN, true, this.attackIntervalSupplier.apply(entity));
         }
 

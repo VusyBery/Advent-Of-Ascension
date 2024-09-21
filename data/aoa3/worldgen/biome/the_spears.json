@@ -20,7 +20,15 @@
     "water_color": 5210338,
     "water_fog_color": 329011
   },
-  "features": [],
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [
+      "aoa3:baron_stone_pillars"
+    ]
+  ],
   "has_precipitation": false,
   "spawn_costs": {},
   "spawners": {

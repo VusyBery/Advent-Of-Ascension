@@ -15,6 +15,7 @@ import net.tslat.aoa3.player.halo.HaloTypes;
 import java.io.File;
 
 public final class ClientConfig {
+	public final ModConfigSpec.BooleanValue hideSurvivalUnobtainableItems;
 	public final ModConfigSpec.BooleanValue showXpParticles;
 	public final ModConfigSpec.BooleanValue showWelcomeMessage;
 	public final ModConfigSpec.BooleanValue showPlayerHalos;
@@ -35,6 +36,11 @@ public final class ClientConfig {
 		AdventOfAscension.getModEventBus().addListener(ClientConfig::onConfigUpdate);
 
 		specBuilder.comment("AoA client-side configuration options").push("general_settings");
+
+		hideSurvivalUnobtainableItems = specBuilder
+				.comment("Set this to false to allow items that cannot currently be obtained in survival to be shown in the Creative Inventory")
+				.translation("config.aoa3.client.hideSurvivalUnobtainableItems")
+				.define("hideSurvivalUnobtainableItems", true);
 
 		showXpParticles = specBuilder
 				.comment("Set this to false to disable the small scrolling popups that appear when you gain xp in a skill")

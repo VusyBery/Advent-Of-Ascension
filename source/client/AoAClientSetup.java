@@ -88,6 +88,7 @@ public final class AoAClientSetup {
         ev.register(AoAMenus.WHITEWASHING_TABLE.get(), Generic2SlotContainerScreen<WhitewashingTableMenu>::new);
         ev.register(AoAMenus.FRAME_BENCH.get(), FrameBenchScreen::new);
         ev.register(AoAMenus.INFUSION_TABLE.get(), InfusionTableScreen::new);
+        ev.register(AoAMenus.INFUSED_PRESS.get(), InfusedPressScreen::new);
         ev.register(AoAMenus.IMBUING_CHAMBER.get(), ImbuingChamberScreen::new);
         ev.register(AoAMenus.TRADER.get(), MerchantScreen::new);
         ev.register(AoAMenus.BANKER.get(), BankerScreen::new);

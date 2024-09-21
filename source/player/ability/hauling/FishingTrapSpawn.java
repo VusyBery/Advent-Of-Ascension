@@ -3,6 +3,7 @@ package net.tslat.aoa3.player.ability.hauling;
 import com.google.gson.JsonObject;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -18,6 +19,8 @@ import net.tslat.aoa3.event.custom.events.HaulingItemFishedEvent;
 import net.tslat.aoa3.event.custom.events.PlayerChangeXpEvent;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
+import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.NumberUtil;
 
 import java.util.function.Function;
 
@@ -35,6 +38,14 @@ public class FishingTrapSpawn extends ScalableModAbility {
 	@Override
 	public ListenerType[] getListenerTypes() {
 		return LISTENERS;
+	}
+
+	@Override
+	protected MutableComponent getScalingDescriptionComponent(int precision) {
+		return LocaleUtil.getAbilityValueDesc(baseValue != 0, perLevelMod != 0, isPercent(),
+				NumberUtil.roundToNthDecimalPlace(baseValue * (isPercent() ? 100 : 1), precision),
+				NumberUtil.roundToNthDecimalPlace(perLevelMod * (isPercent() ? 100 : 1), precision),
+				NumberUtil.roundToNthDecimalPlace(Math.max(0, getScaledValue() * (isPercent() ? 100 : 1)), precision));
 	}
 
 	@Override

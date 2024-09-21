@@ -35,6 +35,10 @@ public final class Text extends MutableComponent {
         return of(langKey, formatting(styles), TranslatableContents.NO_ARGS);
     }
 
+    public static Text of(String langKey, Object... args) {
+        return of(langKey, formatting(NO_FORMAT), args);
+    }
+
     public static Text of(String langKey, int colour, ChatFormatting... styles) {
         return of(langKey, colourAndFormatting(colour, styles), TranslatableContents.NO_ARGS);
     }
@@ -162,8 +166,8 @@ public final class Text extends MutableComponent {
                 case UUID uuid -> ofLiteral(uuid.toString());
                 case Message message when message instanceof Component component -> component;
                 case Message message -> ofLiteral(message.toString());
-                case Item item -> item.getDefaultInstance().getDisplayName();
-                case ItemStack stack -> stack.getDisplayName();
+                case Item item -> item.getDefaultInstance().getHoverName();
+                case ItemStack stack -> stack.getHoverName();
                 case null, default -> TranslatableContents.TEXT_NULL;
             };
         }

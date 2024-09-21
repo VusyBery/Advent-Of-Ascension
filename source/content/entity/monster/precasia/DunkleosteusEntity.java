@@ -3,10 +3,7 @@ package net.tslat.aoa3.content.entity.monster.precasia;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.OwnableEntity;
-import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
@@ -44,6 +41,11 @@ public class DunkleosteusEntity extends AoAWaterMeleeMob<DunkleosteusEntity> {
 				new AoAEntityPart<>(this, getBbWidth(), getBbHeight(), 0, 0, -getBbWidth()),
 				new AoAEntityPart<>(this, getBbWidth() - 0.25f, 1.125f, 0, 0.375f, -getBbWidth() * 2)
 		);
+	}
+
+	@Override
+	protected boolean canRide(Entity vehicle) {
+		return false;
 	}
 
 	@Override

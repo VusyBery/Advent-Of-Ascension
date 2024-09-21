@@ -105,7 +105,7 @@ public final class AoAWeapons {
 	public static final DeferredItem<Item> AQUA_MAGNUM = registerWeapon("aqua_magnum", () -> new AquaMagnum(GunStats.of(2.0625f, 2, 0.95f, 0.86375f).durability(6080)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> ARTIFACT = registerWeapon("artifact", () -> new Artifact(GunStats.of(10f, 5, 0.65f, 0.9236364f).durability(6000)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> BARONATOR = registerWeapon("baronator", () -> new Baronator(GunStats.of(3f, 5, 0.95f, 0.8370909f).durability(2480)), AoACreativeModeTabs.GUNS.getKey());
-	public static final DeferredItem<Item> BAYONETTE_RIFLE = registerWeapon("bayonette_rifle", () -> new BayonetteRifle(GunStats.of(3.4375f, 5, 0.85f, 0.84250003f).durability(2520).attributes(BayonetteRifle.createAttributes())), AoACreativeModeTabs.GUNS.getKey());
+	public static final DeferredItem<Item> BAYONETTE_RIFLE = registerWeapon("bayonette_rifle", () -> new BayonetteRifle(GunStats.of(3.4375f, 5, 0.85f, 0.84250003f).durability(2520).attributes(BayonetteRifle.createAttributes(0.84250003f))), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> BIG_TOP = registerWeapon("big_top", () -> new BigTop(GunStats.of(3.125f, 4, 0.9f, 0.84829545f).durability(3680)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> BLOOD_IRON = registerWeapon("blood_iron", () -> new BloodIron(GunStats.of(6.125f, 8, 0.55f, 0.84732956f).durability(3480)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> CHAIN_WRECKER = registerWeapon("chain_wrecker", () -> new ChainWrecker(GunStats.of(1.5f, 2, 1.2f, 0.84636366f).durability(3840)), AoACreativeModeTabs.GUNS.getKey());
@@ -153,7 +153,7 @@ public final class AoAWeapons {
 	public static final DeferredItem<Item> MINT_MAGNUM = registerWeapon("mint_magnum", () -> new MintMagnum(GunStats.of(1.65f, 2, 1.25f, 0.851f).durability(3600)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> MK = registerWeapon("mk", () -> new MK(GunStats.of(3.625f, 4, 0.75f, 0.8560227f).durability(4960)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> MK_FUNG = registerWeapon("mk_fung", () -> new MKFung(GunStats.of(3.75f, 4, 0.75f, 0.85795456f).durability(5960)), AoACreativeModeTabs.GUNS.getKey());
-	public static final DeferredItem<Item> NETHENETTE_RIFLE = registerWeapon("nethenette_rifle", () -> new NethenetteRifle(GunStats.of(5.0875f, 5, 0.85f, 0.8629f).durability(6000).attributes(NethenetteRifle.createAttributes())), AoACreativeModeTabs.GUNS.getKey());
+	public static final DeferredItem<Item> NETHENETTE_RIFLE = registerWeapon("nethenette_rifle", () -> new NethenetteRifle(GunStats.of(5.0875f, 5, 0.85f, 0.8629f).durability(6000).attributes(NethenetteRifle.createAttributes(0.8629f))), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> NETHENGEIC_SLUGGER = registerWeapon("nethengeic_slugger", () -> new NethengeicSlugger(GunStats.of(6.1875f, 8, 0.75f, 0.84781253f).durability(3120)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> OVERSHOT = registerWeapon("overshot", () -> new Overshot(GunStats.of(1.625f, 4, 2.1f, 0.82511365f).durability(3960)), AoACreativeModeTabs.GUNS.getKey());
 	public static final DeferredItem<Item> PRECASIAN_SLUGGER = registerWeapon("precasian_slugger", () -> new PrecasianSlugger(GunStats.of(8.1125f, 8, 0.5f, 0.8626875f).durability(5960)), AoACreativeModeTabs.GUNS.getKey());
@@ -197,7 +197,7 @@ public final class AoAWeapons {
 	public static final DeferredItem<Item> VIVO = registerWeapon("vivo", () -> new Vivo(ShotgunStats.of(GunStats.of(7.0f, 36, 0.8f, 0.81202024f), 3, 0.3f).durability(710)), AoACreativeModeTabs.SHOTGUNS.getKey());
 
 	public static final DeferredItem<Item> BARON_SSR = registerWeapon("baron_ssr", () -> new BaronSSR(GunStats.of(35.0f, 88, 0.4f, 0.8245868f).durability(240)), AoACreativeModeTabs.SNIPERS.getKey());
-	public static final DeferredItem<Item> BAYONETTE_SR = registerWeapon("bayonette_sr", () -> new BayonetteSR(GunStats.of(33.0f, 86, 0.41f, 0.82372093f).durability(300).attributes(BayonetteSR.createAttributes())), AoACreativeModeTabs.SNIPERS.getKey());
+	public static final DeferredItem<Item> BAYONETTE_SR = registerWeapon("bayonette_sr", () -> new BayonetteSR(GunStats.of(33.0f, 86, 0.41f, 0.82372093f).durability(300).attributes(BayonetteSR.createAttributes(0.82372093f))), AoACreativeModeTabs.SNIPERS.getKey());
 	public static final DeferredItem<Item> BOLT_RIFLE = registerWeapon("bolt_rifle", () -> new BoltRifle(GunStats.of(30.0f, 100, 0.41f, 0.81854546f).durability(100)), AoACreativeModeTabs.SNIPERS.getKey());
 	public static final DeferredItem<Item> CAMO_RIFLE = registerWeapon("camo_rifle", () -> new CamoRifle(GunStats.of(31.5f, 84, 0.41f, 0.8231818f).durability(150)), AoACreativeModeTabs.SNIPERS.getKey());
 	public static final DeferredItem<Item> CLOWN_CRACKER = registerWeapon("clown_cracker", () -> new ClownCracker(GunStats.of(33.5f, 84, 0.4f, 0.8246537f).durability(305)), AoACreativeModeTabs.SNIPERS.getKey());

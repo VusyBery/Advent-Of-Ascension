@@ -111,16 +111,6 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "obtain_gardener": {
-      "conditions": {
-        "items": [
-          {
-            "items": "aoa3:gardener"
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
     "obtain_hazmat_boots": {
       "conditions": {
         "items": [
@@ -246,6 +236,16 @@
         "items": [
           {
             "items": "aoa3:jade_shovel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "obtain_jade_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:jade_sword"
           }
         ]
       },
@@ -481,6 +481,16 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "obtain_void_sword": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:void_sword"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "obtain_water_staff": {
       "conditions": {
         "items": [
@@ -595,6 +605,9 @@
       "obtain_biogenic_leggings"
     ],
     [
+      "obtain_void_sword"
+    ],
+    [
       "obtain_wither_staff"
     ],
     [
@@ -670,9 +683,6 @@
       "obtain_stampede"
     ],
     [
-      "obtain_gardener"
-    ],
-    [
       "obtain_void_helmet"
     ],
     [
@@ -680,6 +690,9 @@
     ],
     [
       "obtain_ice_leggings"
+    ],
+    [
+      "obtain_jade_sword"
     ]
   ],
   "rewards": {

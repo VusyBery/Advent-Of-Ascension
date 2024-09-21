@@ -7,6 +7,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -46,7 +47,8 @@ public class RPGEntity extends BaseBullet implements HardProjectile {
 	}
 
 	protected void explode(Vec3 position) {
-		if (!level().isClientSide)
-			new StandardExplosion(AoAExplosions.RPG, (ServerLevel)level(), this, getOwner(), position).explode();
+		if (!level().isClientSide) {
+			new StandardExplosion(AoAExplosions.rpg(target -> 1 + (float)(target.getAttributeValue(Attributes.ARMOR) * 1.5 + target.getAttributeValue(Attributes.ARMOR_TOUGHNESS) * 0.5f) / 100f), (ServerLevel) level(), this, getOwner(), position).explode();
+		}
 	}
 }

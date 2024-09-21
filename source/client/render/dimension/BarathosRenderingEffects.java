@@ -1,10 +1,14 @@
 package net.tslat.aoa3.client.render.dimension;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.*;
+import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.floats.FloatConsumer;
 import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.DimensionSpecialEffects;
-import net.minecraft.client.renderer.FogRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
@@ -23,6 +27,7 @@ import net.tslat.aoa3.content.world.event.BarathosSandstormEvent;
 import net.tslat.aoa3.library.object.ExtendedBulkSectionAccess;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 
 public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
     public static final ResourceLocation ID = AdventOfAscension.id("barathos");
@@ -31,11 +36,13 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
     private BarathosSandstormEvent sandstorm = null;
 
     BarathosRenderingEffects() {
-        super(192, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
+        super(Float.NaN, true, DimensionSpecialEffects.SkyType.NORMAL, false, false);
     }
 
     @Override
     public void adjustFogRender(ClientLevel level, FogRenderer.FogMode fogMode, FogType fogType, Camera camera, FloatConsumer farPlaneDistance, FloatConsumer nearPlaneDistance) {
+        //if (true)
+        //    return;
         final float cameraHeight = (float)camera.getPosition().y;
 
         if (cameraHeight < 80 || (cameraHeight > 125 && fogMode == FogRenderer.FogMode.FOG_SKY))
@@ -99,6 +106,8 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
 
     @Override
     public boolean isFoggyAt(int posX, int posY) {
+        //if (true)return false;
+
         return posY > 85 && posY < 105;
     }
 
@@ -113,5 +122,140 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
         double delta = 1 - Mth.clamp((70 - ClientOperations.getPlayer().getY()) / 10f, 0, 1);
 
         return fogColour.multiply(Math.max(168 / 255f, delta), Math.max(19 / 255f, delta), Math.max(0, delta));
+    }
+
+    @Override
+    public boolean renderSky(ClientLevel level, int ticks, float partialTick, Matrix4f frustumMatrix, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
+        Minecraft mc = Minecraft.getInstance();
+        LevelRenderer levelRenderer = mc.levelRenderer;
+
+        setupFog.run();
+
+        FogType screenFogType = camera.getFluidInCamera();
+
+        if (screenFogType != FogType.POWDER_SNOW && screenFogType != FogType.LAVA && !levelRenderer.doesMobEffectBlockSky(camera)) {
+            PoseStack poseStack = new PoseStack();
+
+            poseStack.mulPose(frustumMatrix);
+
+            if (mc.level.effects().skyType() == SkyType.END) {
+                levelRenderer.renderEndSky(poseStack);
+            }
+            else if (mc.level.effects().skyType() == SkyType.NORMAL) {
+                Vec3 skyColour = level.getSkyColor(mc.gameRenderer.getMainCamera().getPosition(), partialTick);
+                Tesselator tesselator = Tesselator.getInstance();
+                ShaderInstance shaderInstance = RenderSystem.getShader();
+                float rainStrength = 1 - level.getRainLevel(partialTick);
+                float[] sunriseColour = level.effects().getSunriseColor(level.getTimeOfDay(partialTick), partialTick);
+
+                FogRenderer.levelFogColor();
+                RenderSystem.depthMask(false);
+                RenderSystem.setShaderColor((float)skyColour.x, (float)skyColour.y, (float)skyColour.z, 1);
+
+                levelRenderer.skyBuffer.bind();
+                levelRenderer.skyBuffer.drawWithShader(poseStack.last().pose(), projectionMatrix, shaderInstance);
+                VertexBuffer.unbind();
+                RenderSystem.enableBlend();
+
+                if (sunriseColour != null) {
+                    RenderSystem.setShader(GameRenderer::getPositionColorShader);
+                    RenderSystem.setShaderColor(1, 1, 1, 1);
+                    poseStack.pushPose();
+                    poseStack.mulPose(Axis.XP.rotationDegrees(90));
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(level.getSunAngle(partialTick)) < 0 ? 180 : 0));
+                    poseStack.mulPose(Axis.ZP.rotationDegrees(90));
+
+                    Matrix4f pose = poseStack.last().pose();
+                    BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.TRIANGLE_FAN, DefaultVertexFormat.POSITION_COLOR);
+
+                    buffer.addVertex(pose, 0, 100, 0).setColor(sunriseColour[0], sunriseColour[1], sunriseColour[2], sunriseColour[3]);
+
+                    for (int i = 0; i <= 16; i++) {
+                        float angle = i * Mth.TWO_PI / 16;
+                        float cosine = Mth.cos(angle);
+
+                        buffer.addVertex(pose, Mth.sin(angle) * 120, cosine * 120, -cosine * 40 * sunriseColour[3])
+                                .setColor(sunriseColour[0], sunriseColour[1], sunriseColour[2], 0);
+                    }
+
+                    BufferUploader.drawWithShader(buffer.buildOrThrow());
+                    poseStack.popPose();
+                }
+
+                RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+                poseStack.pushPose();
+                RenderSystem.setShaderColor(1, 1, 1, rainStrength);
+                poseStack.mulPose(Axis.YP.rotationDegrees(-90));
+                poseStack.mulPose(Axis.XP.rotationDegrees(level.getTimeOfDay(partialTick) * 360));
+
+                Matrix4f pose = poseStack.last().pose();
+                float celestialRadius = 65;
+
+                RenderSystem.setShader(GameRenderer::getPositionTexShader);
+                RenderSystem.setShaderTexture(0, LevelRenderer.SUN_LOCATION);
+
+                BufferBuilder buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+                buffer.addVertex(pose, -celestialRadius, 100, -celestialRadius).setUv(0, 0);
+                buffer.addVertex(pose, celestialRadius, 100, -celestialRadius).setUv(1, 0);
+                buffer.addVertex(pose, celestialRadius, 100, celestialRadius).setUv(1, 1);
+                buffer.addVertex(pose, -celestialRadius, 100, celestialRadius).setUv(0, 1);
+                buffer.addVertex(pose, -celestialRadius + 40, 100 + 55, -celestialRadius + 40).setUv(0, 0);
+                buffer.addVertex(pose, celestialRadius + 40, 100 + 55, -celestialRadius + 40).setUv(1, 0);
+                buffer.addVertex(pose, celestialRadius + 40, 100 + 55, celestialRadius + 40).setUv(1, 1);
+                buffer.addVertex(pose, -celestialRadius + 40, 100 + 55, celestialRadius + 40).setUv(0, 1);
+                BufferUploader.drawWithShader(buffer.buildOrThrow());
+
+                if (level.dimensionType().fixedTime().orElse(0) != 2000) {
+                    float starBrightness = level.getStarBrightness(partialTick) * rainStrength;
+                    int moonPhase = level.getMoonPhase();
+                    int uColumn = moonPhase % 4;
+                    int vRow = moonPhase / 4 % 2;
+                    float uMin = (float)(uColumn) / 4f;
+                    float vMin = (float)(vRow) / 2f;
+                    float uMax = (float)(uColumn + 1) / 4f;
+                    float vMax = (float)(vRow + 1) / 2f;
+                    celestialRadius = 20f;
+                    buffer = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+
+                    RenderSystem.setShaderTexture(0, LevelRenderer.MOON_LOCATION);
+                    buffer.addVertex(pose, -celestialRadius, -100, celestialRadius).setUv(uMax, vMax);
+                    buffer.addVertex(pose, celestialRadius, -100, celestialRadius).setUv(uMin, vMax);
+                    buffer.addVertex(pose, celestialRadius, -100, -celestialRadius).setUv(uMin, vMin);
+                    buffer.addVertex(pose, -celestialRadius, -100, -celestialRadius).setUv(uMax, vMin);
+                    BufferUploader.drawWithShader(buffer.buildOrThrow());
+
+                    if (starBrightness > 0) {
+                        RenderSystem.setShaderColor(starBrightness, starBrightness, starBrightness, starBrightness);
+                        FogRenderer.setupNoFog();
+                        levelRenderer.starBuffer.bind();
+                        levelRenderer.starBuffer.drawWithShader(poseStack.last().pose(), projectionMatrix, GameRenderer.getPositionShader());
+                        VertexBuffer.unbind();
+                        setupFog.run();
+                    }
+
+                }
+
+                RenderSystem.setShaderColor(1, 1, 1, 1);
+                RenderSystem.disableBlend();
+                RenderSystem.defaultBlendFunc();
+                poseStack.popPose();
+                RenderSystem.setShaderColor(0, 0, 0, 1);
+
+                if (mc.player.getEyePosition(partialTick).y - level.getLevelData().getHorizonHeight(level) < 0) {
+                    poseStack.pushPose();
+                    poseStack.translate(0, 12, 0);
+                    levelRenderer.darkBuffer.bind();
+                    levelRenderer.darkBuffer.drawWithShader(poseStack.last().pose(), projectionMatrix, shaderInstance);
+                    VertexBuffer.unbind();
+                    poseStack.popPose();
+                }
+
+                RenderSystem.setShaderColor(1, 1, 1, 1);
+                RenderSystem.depthMask(true);
+            }
+        }
+
+        return true;
     }
 }

@@ -31,7 +31,7 @@ public class LunarCreationTable extends Block implements EntityBlock {
 	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
 		if (!state.is(newState.getBlock())) {
 			if (level.getBlockEntity(pos) instanceof LunarCreationTableBlockEntity creationTable)
-				creationTable.dropContents(level, pos);
+				creationTable.dropContents();
 
 			super.onRemove(state, level, pos, newState, isMoving);
 		}

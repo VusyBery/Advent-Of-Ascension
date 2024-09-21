@@ -6,6 +6,12 @@
     "aoa3:ashfern": {
       "burn_time": 800
     },
+    "aoa3:baobab_hanging_sign": {
+      "burn_time": 800
+    },
+    "aoa3:baobab_sign": {
+      "burn_time": 200
+    },
     "aoa3:blooming_power_stone": {
       "burn_time": 32500
     },
@@ -36,6 +42,12 @@
     "aoa3:hardened_confetti_ball": {
       "burn_time": 120
     },
+    "aoa3:lucalus_hanging_sign": {
+      "burn_time": 800
+    },
+    "aoa3:lucalus_sign": {
+      "burn_time": 200
+    },
     "aoa3:padded_cloth": {
       "burn_time": 110
     },
@@ -47,6 +59,12 @@
     },
     "aoa3:shining_power_stone": {
       "burn_time": 35000
+    },
+    "aoa3:stranglewood_hanging_sign": {
+      "burn_time": 800
+    },
+    "aoa3:stranglewood_sign": {
+      "burn_time": 200
     },
     "aoa3:vox_crate": {
       "burn_time": 300

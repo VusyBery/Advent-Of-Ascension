@@ -28,7 +28,7 @@ public class ImbuingChamberRenderer implements BlockEntityRenderer<ImbuingChambe
 
 	@Override
 	public void render(ImbuingChamberBlockEntity imbuingChamber, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
-		final List<ItemStack> contents = imbuingChamber.getContents();
+		final List<ItemStack> contents = imbuingChamber.getItems();
 		final Direction direction = imbuingChamber.getBlockState().getValue(HorizontalDirectionalBlock.FACING).getCounterClockWise();
 
 		poseStack.pushPose();

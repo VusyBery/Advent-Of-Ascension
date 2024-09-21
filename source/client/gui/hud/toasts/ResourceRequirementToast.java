@@ -6,8 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.toasts.ToastComponent;
 import net.minecraft.network.chat.Component;
-import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
 import net.tslat.aoa3.client.player.ClientPlayerDataManager;
+import net.tslat.aoa3.client.render.AoAGuiElementRenderers;
+import net.tslat.aoa3.common.registration.custom.AoAResources;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.NumberUtil;
@@ -24,7 +25,7 @@ public class ResourceRequirementToast extends GenericToast {
 
 	@Override
 	protected boolean stillValid() {
-		return RegistryUtil.getId(this.resource) != null;
+		return ClientPlayerDataManager.get().getResource(this.resource) != AoAResources.DEFAULT && RegistryUtil.getId(this.resource) != null;
 	}
 
 	@Override

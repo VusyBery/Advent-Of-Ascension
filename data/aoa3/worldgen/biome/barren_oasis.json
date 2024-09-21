@@ -19,7 +19,12 @@
     "water_color": 6990562,
     "water_fog_color": 601179
   },
-  "features": [],
+  "features": [
+    [],
+    [
+      "aoa3:dried_oasis_lake"
+    ]
+  ],
   "has_precipitation": false,
   "spawn_costs": {},
   "spawners": {
