@@ -10,7 +10,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Il existe quelques méthodes supplémentaires pour entraîner la $(thing)Pêche$(), telle que chasser le poulpe scintillant, et il existe des capacités et l'équipement permettant d'augmenter le gain en expérience des actions liées à la $(thing)Pêche$()."
+      "text": "Il existe quelques méthodes supplémentaires pour entraîner la $(thing)Pêche$(), telle que chasser le poulpe scintillant, et il existe des capacités et de l'équipement permettant d'augmenter le gain en expérience des actions liées à la $(thing)Pêche$()."
     },
     {
       "type": "patchouli:spotlight",
@@ -19,12 +19,12 @@
     },
     {
       "type": "patchouli:text",
-      "text": "La canne à pêche standard est la première étape de tout pratiquant de la $(thing)Pêche$(). Elle fonctionne comme d'habitude; clic droit pour lancer la ligne à l'eau, attends qu'une traînée de bulles morde à l'hameçon, puis clique droit pour attraper une prise."
+      "text": "La canne à pêche standard est la première étape de tout pratiquant de la $(thing)Pêche$(). Elle fonctionne comme d'habitude; clique droit pour lancer la ligne à l'eau, attends qu'une traînée de bulles morde à l'hameçon, puis clique droit pour attraper une prise."
     },
     {
       "type": "patchouli:spotlight",
       "item": "aoa3:hauling_rod",
-      "text": "Les cannes à pêche avancées : la nouvelle ère des technologies de la pêche!"
+      "text": "Les cannes à pêche avancées : la nouvelle ère des technologies de la pêche !"
     },
     {
       "type": "patchouli:text",
@@ -32,7 +32,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Pour utiliser une canne à pêche avancée, lance la ligne dans l'eau, et attends qu'un poisson vienne mordre à l'hameçon. Une fois qu'un poisson s'approche, il s'emparera du leurre avec la ferme intention de repartir avec.$(br)Clique droit de manière répétée aussi vite que possible pour remonter ta prise!$(br)Le poisson risque de s'échapper si tu prends trop longtemps, et tu devras alors recommencer."
+      "text": "Pour utiliser une canne à pêche avancée, lance la ligne dans l'eau, et attends qu'un poisson vienne mordre à l'hameçon. Une fois qu'un poisson s'approche, il s'emparera du leurre avec la ferme intention de repartir avec.$(br)Clique droit de manière répétée aussi vite que possible pour remonter ta prise !$(br)Le poisson risque de s'échapper si tu prends trop longtemps, et tu devras alors recommencer."
     },
     {
       "type": "patchouli:text",
