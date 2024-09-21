@@ -6,7 +6,7 @@
     {
       "type": "patchouli:text",
       "anchor": "energy",
-      "text": "L'$(thing)énergie$() est la ressource naturelle de ton corps qui contrôle tes faits et gestes.$(br)Tu devra utiliser de l'$(thing)énergie$() à chaque fois que tu utilise une capacité spéciale, et ce même si tu n'en as pas assez.$(br2)Ton $(thing)énergie$() se régénère naturellement, à une vitesse plutôt rapide.",
+      "text": "L'$(thing)énergie$() est la ressource naturelle de ton corps qui contrôle tes faits et gestes.$(br)Tu devra utiliser de l'$(thing)énergie$() à chaque fois que tu utilises une capacité spéciale, et ce même si tu n'en as pas assez.$(br2)Ton $(thing)énergie$() se régénère naturellement, à une vitesse plutôt rapide.",
       "title": "Énergie"
     },
     {
