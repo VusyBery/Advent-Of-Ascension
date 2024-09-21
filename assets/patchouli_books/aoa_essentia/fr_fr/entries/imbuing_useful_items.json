@@ -36,7 +36,7 @@
       "type": "patchouli:spotlight",
       "item": "aoa3:attuning_bowl",
       "text": "Le meilleur outil pour récolter l'énergie des $(thing)pixons$().",
-      "title": "Attuning Bowl"
+      "title": "Bol d'harmonisation"
     },
     {
       "type": "patchouli:text",

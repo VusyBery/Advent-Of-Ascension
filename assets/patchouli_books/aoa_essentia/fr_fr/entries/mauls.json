@@ -6,7 +6,7 @@
     {
       "type": "patchouli:text",
       "anchor": "mauls",
-      "text": "As-tu déjà eu l'envie de frapper quelque chose avec une $(l:aoa3:swords#swords)épée$(/l), mais également de l'envoyer valser à dix mètres?$(br)Alors voilà ce qu'il te faut! Les $(thing)marteaux$() offrent la portée augmentée des $(l:aoa3:greatblades#greatblades)espadons$(/l) en plus d'un énorme recul à l'impact, au prix de dégâts un peu faibles.",
+      "text": "As-tu déjà eu l'envie de frapper quelque chose avec une $(l:aoa3:swords#swords)épée$(/l), mais également de l'envoyer valser à dix mètres ?$(br)Alors voilà ce qu'il te faut ! Les $(thing)marteaux$() offrent la portée augmentée des $(l:aoa3:greatblades#greatblades)espadons$(/l) en plus d'un énorme recul à l'impact, au prix de dégâts un peu faibles.",
       "title": "Marteaux"
     },
     {

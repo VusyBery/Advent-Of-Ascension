@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "L'$(thing)Agriculture$() est plutôt simple à entraîner; il suffit de suivre l'une de ces deux méthodes:$(br)1. Récolter des plantations ayant atteint la maturité$(br)2. Faire se reproduire des animaux$(br2)Attention, car les plantations ne donneront de l'expérience que si elles sont récoltées après avoir poussé au maximum!",
+      "text": "L'$(thing)Agriculture$() est plutôt simple à entraîner; il suffit de suivre l'une de ces deux méthodes:$(br)1. Récolter des plantations ayant atteint la maturité$(br)2. Faire se reproduire des animaux$(br2)Attention, car les plantations ne donneront de l'expérience que si elles sont récoltées après avoir poussé au maximum !",
       "title": "Méthodes d'entraînement"
     },
     {
@@ -14,7 +14,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Utiliser les différentes capacités en $(thing)Agriculture$() permet également de gagner de l'expérience.$(br2)Au fur et à mesure que tu entraînes ton $(thing)Agriculture$(), tes plantations pourront se replanter automatiquement, et repousser plus vite. Ainsi, tes récoltes et ton expérience augmenteront de plus belle!"
+      "text": "Utiliser les différentes capacités en $(thing)Agriculture$() permet également de gagner de l'expérience.$(br2)Au fur et à mesure que tu entraînes ton $(thing)Agriculture$(), tes plantations pourront se replanter automatiquement, et repousser plus vite. Ainsi, tes récoltes et ton expérience augmenteront de plus belle !"
     }
   ],
   "sortnum": 0

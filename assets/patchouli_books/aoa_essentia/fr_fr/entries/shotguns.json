@@ -17,7 +17,7 @@
       "type": "patchouli:spotlight",
       "item": "aoa3:long_shot",
       "text": "Remplace le tir unique et rapide du $(l:aoa3:guns#guns)fusil$(/l) par les détonations surpuissantes des $(thing)fusils à pompe$().",
-      "title": "A Shotgun"
+      "title": "Un fusil à pompe"
     },
     {
       "type": "patchouli:link",

@@ -14,30 +14,30 @@
     {
       "type": "patchouli:spotlight",
       "item": "minecraft:bone_meal",
-      "text": "La poudre d'os permet d'améliorer le potentiel des récoltes!"
+      "text": "La poudre d'os permet d'améliorer le potentiel des récoltes !"
     },
     {
       "type": "patchouli:text",
-      "text": "Une fois que tu auras accumulé un peu d'expérience, tu pourras utiliser la $(thing)poudre d'os$() sur la terre labourée pour la fertiliser, permettant de doubler les récoltes de la prochaine plantation!$(br)Cet effet est cependant temporaire, alors n'oublie pas de re-fertiliser après une récolte."
+      "text": "Une fois que tu auras accumulé un peu d'expérience, tu pourras utiliser la $(thing)poudre d'os$() sur la terre labourée pour la fertiliser, permettant de doubler les récoltes de la prochaine plantation !$(br)Cet effet est cependant temporaire, alors n'oublie pas de re-fertiliser après une récolte."
     },
     {
       "type": "patchouli:spotlight",
       "item": "aoa3:green_manure_seeds",
-      "text": "Le summum de la fertilisation"
+      "text": "Le summum de la fertilisation !"
     },
     {
       "type": "patchouli:text",
-      "text": "Une fois entraîné, tu pourras te servir du $(thing)compost vert$(). C'est une méthode encore plus efficace de fertiliser les terres, qui nécessite de planter ces graines, puis de les récolter une fois poussées. Tu ne récupéreras pas de récolte à proprement parler, mais le sol en-dessous en sera fertilisé.$(br)Cet effet est encore plus puissant et durable que celui de la poudre d'os!"
+      "text": "Une fois entraîné, tu pourras te servir du $(thing)compost vert$(). C'est une méthode encore plus efficace de fertiliser les terres, qui nécessite de planter ces graines, puis de les récolter une fois poussées. Tu ne récupéreras pas de récolte à proprement parler, mais le sol en-dessous en sera fertilisé.$(br)Cet effet est encore plus puissant et durable que celui de la poudre d'os !"
     },
     {
       "type": "patchouli:spotlight",
       "item": "minecraft:golden_hoe",
-      "text": "Un outil pour l'agriculture? Pourquoi pas?",
+      "text": "Un outil pour l'agriculture ? Pourquoi pas ?",
       "title": "Houes"
     },
     {
       "type": "patchouli:text",
-      "text": "Les fermiers entraînés pourrant utiliser les $(thing)houes$() pour récolter de grandes zones en un coup. Cela rend la récolte bien plus rapide, et sera d'une aide précieuse une fois débloquée."
+      "text": "Les fermiers les mieux entraînés peuvent utiliser les $(thing)houes$() pour récolter de grandes zones en un coup. Cette capacité rend la récolte bien plus rapide, et sera d'une aide précieuse une fois débloquée."
     }
   ],
   "sortnum": 1

@@ -6,7 +6,7 @@
     {
       "type": "patchouli:text",
       "anchor": "skills_hud",
-      "text": "L'$(thing)affichage des compétences$() est l'interface permettant de consulter ton niveau en chaque compétence ainsi que ta distance au prochain niveau.$(br2)Cette interface est désactivée par défaut, mais peut être afficher après avoir assigné une touche à cette action dans le menu..",
+      "text": "L'$(thing)affichage des compétences$() est l'interface permettant de consulter ton niveau en chaque compétence ainsi que ta distance au prochain niveau.$(br2)Cette interface est désactivée par défaut, mais peut être affichée après avoir assigné une touche à cette action dans le menu.",
       "title": "Affichage des compétences"
     },
     {

@@ -1,7 +1,7 @@
 {
   "category": "aoa3:resources",
   "icon": "aoa3:patchouli/images/icons/spirit_icon.png",
-  "name": "Spirit",
+  "name": "Esprit",
   "pages": [
     {
       "type": "patchouli:text",
