@@ -8,7 +8,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Pour accéder aux autres dimensions d'$(aoa), tu vas devoir construire ton propre portail.$(br2)Les portails d'$(aoa) sont faits de $(thing)roche antique$() et de $(thing)runes gravées$(), et doivent être construits dans une forme particulière.$(br2)Pour faire un cadre portail, fabrique un rectangle vertical creux en $(thing)roche antique$(), puis remplace le bloc au milieu en bas par une $(l:aoa3:the_portal#carved_rune_of_power)rune gravée de puissance$(/l).",
+      "text": "Pour accéder aux autres dimensions d'$(aoa), tu vas devoir construire ton propre portail.$(br2)Les portails d'$(aoa) sont faits de $(thing)roche antique$() et de $(thing)runes gravées$(), et doivent être construits dans une forme particulière.$(br2)Pour faire un cadre de portail, fabrique un rectangle vertical creux en $(thing)roche antique$(), puis remplace le bloc au milieu en bas par une $(l:aoa3:the_portal#carved_rune_of_power)rune gravée de puissance$(/l).",
       "title": "Le portail"
     },
     {
@@ -77,7 +77,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "Quatre des runes gravées peuvent être trouvées à la Surface (ou Overworld), cachées dans des coffres, lâchées par diverses créatures, ou obtenues grâce à diverses actions.$(br2) La cinquième; la $(l:aoa3:the_portal#carved_rune_of_power)rune gravée de puissance$(/l), doit être fabriquée."
+      "text": "Quatre des runes gravées peuvent être trouvées à la Surface (ou Overworld), cachées dans des coffres, lâchées par diverses créatures, ou obtenues grâce à diverses actions.$(br2)La cinquième, la $(l:aoa3:the_portal#carved_rune_of_power)rune gravée de puissance$(/l), doit être fabriquée."
     },
     {
       "type": "patchouli:crafting",
