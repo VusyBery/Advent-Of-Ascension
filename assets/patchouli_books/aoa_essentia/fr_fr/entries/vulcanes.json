@@ -11,7 +11,7 @@
     },
     {
       "type": "patchouli:text",
-      "text": "En général, les $(thing)sceptres de furie$() resteront inactifs dans ton inventaire. Une fois que tu as accumulé assez de $(thing)rage$(), la prochaine entité qui t'attaque sera marquée comme cible.$(br)Avec une quantité suffisante de $(l:aoa3:rage#rage)rage$(/l) et une cible marquée, tu peux utiliser le $(thing)sceptres de furie$() et la cible sera immédiatement frappée par un éclair de dégâts pur, qui ignorent toute armure qu'elle pourrait porter."
+      "text": "En général, les $(thing)sceptres de furie$() resteront inactifs dans ton inventaire. Une fois que tu as accumulé assez de $(thing)rage$(), la prochaine entité qui t'attaque sera marquée comme cible.$(br)Avec une quantité suffisante de $(l:aoa3:rage#rage)rage$(/l) et une cible marquée, tu peux utiliser un $(thing)sceptre de furie$() et la cible sera immédiatement frappée par un éclair de dégâts purs, qui ignorent toute armure qu'elle pourrait porter."
     },
     {
       "type": "patchouli:spotlight",
