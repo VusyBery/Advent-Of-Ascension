@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Étant une mesure de tes aptitudes physiques, la $(thing)Dextérité$() est entraînée de manière assez simple: il suffit de bouger!$(br)Rester actif, courir et sauter permettent d'entraîner cette compétence, elle montera donc en niveau sans que tu n'aies besoin d'y consacrer du temps.$(br)Infliger des coups critiques en combat permet également d'entraîner la $(thing)Dextérité$().",
+      "text": "Étant une mesure de tes aptitudes physiques, la $(thing)Dextérité$() est entraînée de manière assez simple : il suffit de bouger !$(br)Rester actif, courir et sauter permettent d'entraîner cette compétence, elle montera donc en niveau sans que tu n'aies besoin d'y consacrer du temps.$(br)Infliger des coups critiques en combat permet également d'entraîner la $(thing)Dextérité$().",
       "title": "Méthodes d'entraînement"
     },
     {
