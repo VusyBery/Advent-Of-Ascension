@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Atteindre le niveau 100 en $(thing)Imprégnation$() permet de porter le $(thing)heaume du Guerrier$().$(br)Ce casque est indestructible, jouit de bonnes statistiques, et offre un bonus de 50% à tous les gains d'expérience en $(thing)Imprégnation$() tant qu'il est porté.$(br2)Au niveau 1000, il obtient une belle amélioration visuelle.",
+      "text": "Atteindre le niveau 100 en $(thing)Létalité$() permet de porter le $(thing)heaume du Guerrier$().$(br)Ce casque est indestructible, jouit de bonnes statistiques, et offre un bonus de 50% à tous les gains d'expérience en $(thing)Létalité$() tant qu'il est porté.$(br2)Au niveau 1000, il obtient une belle amélioration visuelle.",
       "title": "Heaume du Guerrier"
     }
   ],
