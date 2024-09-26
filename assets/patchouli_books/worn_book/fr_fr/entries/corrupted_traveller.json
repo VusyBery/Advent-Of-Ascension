@@ -6,7 +6,7 @@
     {
       "type": "patchouli:link",
       "link_text": "AoA Wiki",
-      "text": "Visite le wiki d'$(aoa) pour en savoir plus sur le $(thing)voyageur corrompu$()",
+      "text": "Visite le wiki d'$(aoa) pour en savoir plus sur le $(thing)voyageur corrompu$().",
       "title": "Lien du wiki",
       "url": ""
     },

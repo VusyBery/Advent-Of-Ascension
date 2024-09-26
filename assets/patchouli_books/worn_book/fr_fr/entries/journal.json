@@ -5,7 +5,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "Ils sont partout!$(br)L-Les visages, pourquoi tant d'yeux?$(br2)Quatre $(thing)runes gravées$():$(br)Une de $(thing)réalité.$()$(br)Une de $(thing)déplacement.$()$(br)Une d'$(thing)espace.$()$(br)Une de $(thing)direction.$()$(br)Construis un cadre avec la $(thing)pierre assombrie$(), six blocs de haut.",
+      "text": "Ils sont partout !$(br)L-Les visages, pourquoi tant d'yeux ?$(br2)Quatre $(thing)runes gravées$() :$(br)Une de $(thing)réalité.$()$(br)Une de $(thing)déplacement.$()$(br)Une d'$(thing)espace.$()$(br)Une de $(thing)direction.$()$(br)Construis un cadre avec la $(thing)pierre assombrie$(), six blocs de haut.",
       "title": "Page du journal"
     },
     {
@@ -19,7 +19,7 @@
     {
       "type": "patchouli:crafting",
       "recipe": "aoa3:crafting_shaped_carved_rune_of_power",
-      "text": "La cinquième rune clé doit être fabriquée d'une combinaison de $(thing)runes déchargées$() et d'un $(thing)oeil de l'Ender$(), imprégéns dans une pierre assombrie centrale. Quelque chose comme ça."
+      "text": "La cinquième rune clé doit être fabriquée d'une combinaison de $(thing)runes déchargées$() et d'un $(thing)oeil de l'Ender$(), imprégnés dans une pierre assombrie centrale. Quelque chose comme ça."
     },
     {
       "type": "patchouli:text",

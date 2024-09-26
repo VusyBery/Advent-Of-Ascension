@@ -1,5 +1,5 @@
 {
-  "description": "Les contenus du journal donné par le $(thing)voyageur corrompu$()",
+  "description": "Le contenu du journal donné par le $(thing)voyageur corrompu$().",
   "icon": "aoa3:worn_book",
   "name": "Contenu"
 }
