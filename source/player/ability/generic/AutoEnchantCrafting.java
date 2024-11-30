@@ -8,17 +8,21 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.tslat.aoa3.common.menu.ImbuingChamberMenu;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.ItemCraftingEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.EnchantmentUtil;
 
+import java.util.List;
 import java.util.Map;
 
 public class AutoEnchantCrafting extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.ITEM_CRAFTING};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(ItemCraftingEvent.class, serverOnly(this::handleItemCrafting)));
 
 	private final ObjectIntPair<Holder<Enchantment>>[] enchantments;
 
@@ -52,8 +56,8 @@ public class AutoEnchantCrafting extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -72,12 +76,14 @@ public class AutoEnchantCrafting extends ScalableModAbility {
 		super.updateDescription(defaultDescription);
 	}
 
-	@Override
-	public void handleItemCrafting(ItemCraftingEvent ev) {
+	private void handleItemCrafting(ItemCraftingEvent ev) {
 		if (ev.getCraftingInputs() instanceof ImbuingChamberMenu.ImbuingInventory)
 			return;
 
 		ItemStack output = ev.getOutputStack();
+
+		if (output.is(Items.BOOK) || output.is(Items.ENCHANTED_BOOK))
+			return;
 
 		for (ObjectIntPair<Holder<Enchantment>> data : enchantments) {
 			if (!output.isPrimaryItemFor(data.left()))

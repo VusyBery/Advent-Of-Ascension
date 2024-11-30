@@ -28,6 +28,7 @@ import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.item.AoAItems;
+import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.block.functional.misc.CheckpointBlock;
 import net.tslat.aoa3.content.block.functional.portal.NowhereActivityPortal;
 import net.tslat.aoa3.content.block.functional.utility.TeaSink;
@@ -68,10 +69,10 @@ public final class NowhereEvents {
 			if (pl instanceof ServerPlayer serverPl) {
 				if (isInParkourRegion(serverPl.blockPosition())) {
 					if (PlayerUtil.shouldPlayerBeAffected(serverPl))
-						PlayerUtil.getAdventPlayer(serverPl).setInAbilityLockRegion();
+						PlayerUtil.getAdventPlayer(serverPl).stats.setInAbilityLockRegion();
 				}
 				else {
-					PlayerUtil.getAdventPlayer(serverPl).leaveAbilityLockRegion();
+					PlayerUtil.getAdventPlayer(serverPl).stats.leaveAbilityLockRegion();
 				}
 			}
 			else if (isInBossRegion(pl.blockPosition())) {
@@ -103,7 +104,7 @@ public final class NowhereEvents {
 						}
 						else {
 							ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(serverPlayer);
-							PositionAndRotation checkpoint = plData.getCheckpoint();
+							PositionAndRotation checkpoint = plData.storage.getActiveCheckpoint();
 
 							if (checkpoint != null) {
 								if (CheckpointBlock.isValidCheckpoint(serverPlayer.level(), checkpoint)) {
@@ -123,7 +124,7 @@ public final class NowhereEvents {
 									return;
 								}
 								else {
-									plData.clearCheckpoint();
+									plData.storage.clearActiveCheckpoint();
 									serverPlayer.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("checkpoint.invalid"), ChatFormatting.RED));
 								}
 							}
@@ -141,11 +142,8 @@ public final class NowhereEvents {
 					FoodData foodData = pl.getFoodData();
 
 					foodData.setExhaustion(-4);
-
-					if (pl.tickCount > 2400) {
-						foodData.setFoodLevel(20);
-						foodData.setSaturation(20);
-					}
+					foodData.setFoodLevel(20);
+					foodData.setSaturation(20);
 				}
 			}
 		}
@@ -155,16 +153,22 @@ public final class NowhereEvents {
 		if (ev.getEntity() instanceof ServerPlayer pl) {
 			ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
 
-			plData.returnItemStorage();
-			plData.clearCheckpoint();
+			if (ev.getFrom() == AoADimensions.NOWHERE) {
+				plData.storage.restoreFoodData();
+				plData.storage.returnStoredItems();
+				plData.storage.clearActiveCheckpoint();
 
-			InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
-			pl.gameMode.getGameModeForPlayer().updatePlayerAbilities(pl.getAbilities());
+				InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
+				pl.gameMode.getGameModeForPlayer().updatePlayerAbilities(pl.getAbilities());
+			}
+			else {
+				plData.storage.saveFoodData();
+			}
 		}
 	}
 
 	public static void doDeathPrevention(final LivingDamageEvent.Pre ev, ServerPlayerDataManager plData) {
-		ServerPlayer player = plData.player();
+		ServerPlayer player = plData.getPlayer();
 		LivingEntity killer = player.getKillCredit();
 
 		player.getScoreboard().forAllObjectives(ObjectiveCriteria.DEATH_COUNT, player, ScoreAccess::increment);
@@ -183,11 +187,11 @@ public final class NowhereEvents {
 				PlayerUtil.resetToDefaultStatus(player);
 				player.connection.teleport(17.5d, 452.5d, 3.5d, 0, player.getXRot());
 				InventoryUtil.clearItems(player, AoAItems.RETURN_CRYSTAL);
-				PlayerUtil.getAdventPlayer(player).returnItemStorage();
+				PlayerUtil.getAdventPlayer(player).storage.returnStoredItems();
 			}, 1);
 		}
 		else {
-			NowhereActivityPortal.Activity.RETURN.activate(plData.player());
+			NowhereActivityPortal.Activity.RETURN.activate(plData.getPlayer());
 		}
 
 		player.sendSystemMessage(LocaleUtil.getLocaleMessage("deathScreen.title", ChatFormatting.DARK_RED));

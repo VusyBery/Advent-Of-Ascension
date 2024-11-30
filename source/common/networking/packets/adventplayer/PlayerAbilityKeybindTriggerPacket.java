@@ -3,11 +3,10 @@ package net.tslat.aoa3.common.networking.packets.adventplayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.packets.AoAPacket;
-import net.tslat.aoa3.event.AoAPlayerEvents;
+import net.tslat.aoa3.player.AoAPlayerEventListener;
 
 import java.util.List;
 
@@ -24,6 +23,6 @@ public record PlayerAbilityKeybindTriggerPacket(List<String> abilities) implemen
 
 	@Override
 	public void receiveMessage(IPayloadContext context) {
-		context.enqueueWork(() -> AoAPlayerEvents.onKeyPress((ServerPlayer)context.player(), this.abilities));
+		context.enqueueWork(() -> AoAPlayerEventListener.onKeyPress(context.player(), this.abilities));
 	}
 }

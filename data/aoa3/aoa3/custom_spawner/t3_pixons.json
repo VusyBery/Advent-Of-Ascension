@@ -1,18 +1,18 @@
 {
   "base_settings": {
-    "biomes": "#c:is_dead",
     "chance_per_player": 1.0,
-    "dimensions": [
-      "aoa3:lborean",
-      "aoa3:greckon",
-      "aoa3:dustopia",
-      "aoa3:runandor"
-    ],
     "extra_delay_per_spawn": {
       "type": "minecraft:uniform",
       "max_inclusive": 6000,
       "min_inclusive": 3000
     },
+    "in_dimensions": [
+      "aoa3:dustopia",
+      "aoa3:lborean",
+      "aoa3:runandor",
+      "aoa3:greckon"
+    ],
+    "not_in_biomes": "#c:is_dead",
     "spawn_attempts_per_player": {
       "type": "minecraft:biased_to_bottom",
       "max_inclusive": 3,
@@ -23,8 +23,7 @@
       "type": "minecraft:uniform",
       "max_inclusive": 36000,
       "min_inclusive": 12000
-    },
-    "whitelist_mode": true
+    }
   },
   "spawner": "aoa3:pixons",
   "variants": [

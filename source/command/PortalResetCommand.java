@@ -33,7 +33,7 @@ public class PortalResetCommand implements Command<CommandSourceStack> {
 			throw AoACommand.NO_PERMISSION_EXCEPTION.create();
 
 		AoACommand.feedback(cmd.getSource(), "PortalReset", "--", AoACommand.CommandFeedbackType.INFO);
-		PlayerUtil.getAdventPlayer(pl).flushPortalReturnLocations();
+		PlayerUtil.getAdventPlayer(pl).storage.getPortalReturnLocations().clear();
 		AoACommand.feedback(cmd.getSource(), "PortalReset", "command.aoa.portalreset.success", AoACommand.CommandFeedbackType.SUCCESS);
 
 		return 1;

@@ -15,16 +15,20 @@ import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class HarvestSpeedBoost extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_BREAK_SPEED, ListenerType.PLAYER_TICK, ListenerType.KEY_INPUT};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerEvent.BreakSpeed.class, serverOnly(this::handleHarvestSpeedCheck)),
+			listener(PlayerTickEvent.Pre.class, serverOnly(this::handlePlayerTick)));
 
 	private final float energyDrainPerTick;
 	private final float costReductionPerLevel;
@@ -56,8 +60,8 @@ public class HarvestSpeedBoost extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -82,8 +86,7 @@ public class HarvestSpeedBoost extends AoAAbility.Instance {
 		this.active = data.getBoolean("active");
 	}
 
-	@Override
-	public void handleHarvestSpeedCheck(PlayerEvent.BreakSpeed ev) {
+	private void handleHarvestSpeedCheck(PlayerEvent.BreakSpeed ev) {
 		if (active)
 			ev.setNewSpeed(ev.getNewSpeed() * speedBoostMod);
 	}
@@ -113,24 +116,23 @@ public class HarvestSpeedBoost extends AoAAbility.Instance {
 
 	@Override
 	public void handleKeyInput() {
-		ServerPlayer player = (ServerPlayer)getPlayer();
+		if (getPlayer() instanceof ServerPlayer player) {
+			if (active) {
+				active = false;
+			}
+			else {
+				if (player.isCreative() || !player.gameMode.isDestroyingBlock)
+					return;
 
-		if (active) {
-			active = false;
+				active = true;
+			}
+
+			activatedActionKey(player);
+			markForClientSync();
 		}
-		else {
-			if (player.isCreative() || !player.gameMode.isDestroyingBlock)
-				return;
-
-			active = true;
-		}
-
-		activatedActionKey(player);
-		markForClientSync();
 	}
 
-	@Override
-	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
+	private void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (!active)
 			return;
 

@@ -2,7 +2,10 @@ package net.tslat.aoa3.content.entity.projectile.gun;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.BlockParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -26,6 +29,9 @@ import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import net.tslat.aoa3.content.item.weapon.sniper.BaseSniper;
 import net.tslat.aoa3.content.item.weapon.thrown.BaseThrownWeapon;
 import net.tslat.aoa3.util.EntityUtil;
+import net.tslat.effectslib.api.particle.ParticleBuilder;
+import net.tslat.effectslib.networking.packet.TELParticlePacket;
+import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -170,12 +176,18 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 	@Override
 	protected void onHitBlock(BlockHitResult rayTrace) {
 		BlockPos resultPos = rayTrace.getBlockPos();
-		BlockState bl = level().getBlockState(resultPos);
+		BlockState block = level().getBlockState(resultPos);
+		TELParticlePacket packet = new TELParticlePacket(5);
 
-		bl.onProjectileHit(level(), bl, rayTrace, this);
+		for (int i = 0; i < 5; i++) {
+			packet.particle(ParticleBuilder.forPositions(new BlockParticleOption(ParticleTypes.BLOCK, block), rayTrace.getLocation()).scaleMod((float)RandomUtil.randomValueBetween(0.5f, 0.75f)).cutoffDistance(64));
+		}
+
+		packet.sendToAllPlayersTrackingEntity((ServerLevel)level(), this);
+		block.onProjectileHit(level(), block, rayTrace, this);
 
 		if (AoAGameRules.checkDestructiveWeaponPhysics(level())) {
-			float hardness = bl.getDestroySpeed(level(), resultPos);
+			float hardness = block.getDestroySpeed(level(), resultPos);
 
 			if (hardness >= 0 && hardness <= 0.3f) {
 				if (random.nextBoolean()) {
@@ -190,7 +202,7 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 			}
 		}
 
-		if (!bl.blocksMotion())
+		if (!block.blocksMotion())
 			return;
 
 		doBlockImpact(rayTrace.getLocation(), rayTrace.getDirection(), rayTrace.getBlockPos());

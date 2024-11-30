@@ -12,15 +12,16 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.content.recipe.ImbuingRecipe;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.EnchantmentUtil;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 public class ImbuingLevelRestriction extends AoAAbility.Instance {
-	private final ListenerType[] LISTENERS = new ListenerType[0];
-
 	private final ResourceLocation recipeId;
 	private Optional<ImbuingRecipe> cachedRecipe = null;
 
@@ -37,8 +38,8 @@ public class ImbuingLevelRestriction extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return Collections.emptyList();
 	}
 
 	@Override

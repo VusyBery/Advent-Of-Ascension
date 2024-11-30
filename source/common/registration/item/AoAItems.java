@@ -8,6 +8,7 @@ import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.custom.AoAAspectFocus;
+import net.tslat.aoa3.common.registration.entity.AoABoatTypes;
 import net.tslat.aoa3.common.registration.entity.variant.PixonVariant;
 import net.tslat.aoa3.content.item.food.*;
 import net.tslat.aoa3.content.item.lootbox.*;
@@ -194,12 +195,12 @@ public final class AoAItems {
 	public static final DeferredItem<Item> CREATURE_ESSENCE = registerItem("creature_essence", CreatureEssence::new, (ResourceKey<CreativeModeTab>[])null);
 
 	public static final DeferredItem<Item> BALLOON = registerItem("balloon", () -> new Item(new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
-	public static final DeferredItem<Item> CANNONBALL = registerItem("cannonball", () -> new Item(new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
+	public static final DeferredItem<Item> CANNONBALL = registerItem("cannonball", () -> new TooltipItem(1, new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
 	public static final DeferredItem<Item> DISCHARGE_CAPSULE = registerItem("discharge_capsule", () -> new Item(new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
-	public static final DeferredItem<Item> LIMONITE_BULLET = registerItem("limonite_bullet", () -> new Item(new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
-	public static final DeferredItem<Item> METAL_SLUG = registerItem("metal_slug", () -> new Item(new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
+	public static final DeferredItem<Item> LIMONITE_BULLET = registerItem("limonite_bullet", () -> new TooltipItem(1, new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
+	public static final DeferredItem<Item> METAL_SLUG = registerItem("metal_slug", () -> new TooltipItem(1, new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
 	public static final DeferredItem<Item> POP_SHOT = registerItem("pop_shot", () -> new ArrowItem(new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
-	public static final DeferredItem<Item> SPREADSHOT = registerItem("spreadshot", () -> new Item(new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
+	public static final DeferredItem<Item> SPREADSHOT = registerItem("spreadshot", () -> new TooltipItem(1, new Item.Properties()), AoACreativeModeTabs.AMMUNITION.getKey());
 
 	public static final DeferredItem<Item> BLASTER_FRAME = registerItem("blaster_frame", miscItem());
 	public static final DeferredItem<Item> CROSSBOW_FRAME = registerItem("crossbow_frame", miscItem());
@@ -352,7 +353,7 @@ public final class AoAItems {
 	public static final DeferredItem<Item> GREEN_GEMTRAP = registerItem("green_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.GREEN_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> HYDRONE = registerItem("hydrone", miscItem());
 	public static final DeferredItem<Item> IRONBACK = registerItem("ironback", () -> new Item(new Item.Properties().food(AoAFood.IRONBACK)), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> JAMFISH = registerItem("jamfish", () -> new Item(new Item.Properties().food(AoAFood.JAMFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> JAMFISH = registerItem("jamfish", () -> new Jamfish(new Item.Properties().food(AoAFood.JAMFISH)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> PARAPIRANHA = registerItem("parapiranha", () -> new Item(new Item.Properties().food(AoAFood.PARAPIRANHA)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> PEARL_STRIPEFISH = registerItem("pearl_stripefish", () -> new Item(new Item.Properties().food(AoAFood.PEARL_STRIPEFISH)), AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> PURPLE_GEMTRAP = registerItem("purple_gemtrap", () -> new Item(new Item.Properties().food(AoAFood.PURPLE_GEMTRAP)), AoACreativeModeTabs.FOOD.getKey());
@@ -369,7 +370,7 @@ public final class AoAItems {
 	public static final DeferredItem<Item> VIOLET_SKIPPER = registerItem("violet_skipper", () -> new Item(new Item.Properties().food(AoAFood.VIOLET_SKIPPER)), AoACreativeModeTabs.FOOD.getKey());
 
 	public static final DeferredItem<Item> RAW_RAINBOWFISH = registerItem("raw_rainbowfish", () -> new Item(new Item.Properties().food(AoAFood.RAW_RAINBOWFISH)), AoACreativeModeTabs.FOOD.getKey());
-	public static final DeferredItem<Item> COOKED_RAINBOWFISH = registerItem("cooked_rainbowfish", () -> new HealingFood(5.0f, new Item.Properties().food(AoAFood.COOKED_RAINBOWFISH)), AoACreativeModeTabs.FOOD.getKey());
+	public static final DeferredItem<Item> COOKED_RAINBOWFISH = registerItem("cooked_rainbowfish", () -> new CookedRainbowfish(5.0f, new Item.Properties().food(AoAFood.COOKED_RAINBOWFISH)), AoACreativeModeTabs.FOOD.getKey());
 
 	public static final DeferredItem<Item> BUBBLE_BERRIES = registerItem("bubble_berries", BubbleBerries::new, AoACreativeModeTabs.FOOD.getKey());
 	public static final DeferredItem<Item> CANDY_CANE = registerItem("candy_cane", () -> new Item(new Item.Properties().food(AoAFood.CANDY_CANE)), AoACreativeModeTabs.FOOD.getKey());
@@ -446,10 +447,12 @@ public final class AoAItems {
 	public static final DeferredItem<Item> WIND_RUNE_BANNER_PATTERN = registerItem("wind_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.WIND_RUNE, new Item.Properties().stacksTo(1)));
 	public static final DeferredItem<Item> WITHER_RUNE_BANNER_PATTERN = registerItem("wither_rune_banner_pattern", () -> new BannerPatternItem(AoATags.BannerPatterns.WITHER_RUNE, new Item.Properties().stacksTo(1)));
 
-	// TODO - add boat extensibility into NeoForge then come back to this
-	//public static final DeferredItem<Item> BAOBAB_BOAT = registerItem("baobab_boat", () -> new BoatItem(true, null, new Item.Properties().stacksTo(1)));
-	//public static final DeferredItem<Item> LUCALUS_BOAT = registerItem("lucalus_boat", () -> new BoatItem(true, null, new Item.Properties().stacksTo(1)));
-	//public static final DeferredItem<Item> STRANGLEWOOD_BOAT = registerItem("stranglewood_boat", () -> new BoatItem(true, null, new Item.Properties().stacksTo(1)));
+	public static final DeferredItem<BoatItem> BAOBAB_BOAT = registerItem("baobab_boat", () -> new BoatItem(false, AoABoatTypes.BAOBAB.getValue(), new Item.Properties().stacksTo(1)), CreativeModeTabs.TOOLS_AND_UTILITIES);
+	public static final DeferredItem<BoatItem> BAOBAB_CHEST_BOAT = registerItem("baobab_chest_boat", () -> new BoatItem(true, AoABoatTypes.BAOBAB.getValue(), new Item.Properties().stacksTo(1)), CreativeModeTabs.TOOLS_AND_UTILITIES);
+	public static final DeferredItem<BoatItem> LUCALUS_BOAT = registerItem("lucalus_boat", () -> new BoatItem(false, AoABoatTypes.LUCALUS.getValue(), new Item.Properties().stacksTo(1)), CreativeModeTabs.TOOLS_AND_UTILITIES);
+	public static final DeferredItem<BoatItem> LUCALUS_CHEST_BOAT = registerItem("lucalus_chest_boat", () -> new BoatItem(true, AoABoatTypes.LUCALUS.getValue(), new Item.Properties().stacksTo(1)), CreativeModeTabs.TOOLS_AND_UTILITIES);
+	public static final DeferredItem<BoatItem> STRANGLEWOOD_BOAT = registerItem("stranglewood_boat", () -> new BoatItem(false, AoABoatTypes.STRANGLEWOOD.getValue(), new Item.Properties().stacksTo(1)), CreativeModeTabs.TOOLS_AND_UTILITIES);
+	public static final DeferredItem<BoatItem> STRANGLEWOOD_CHEST_BOAT = registerItem("stranglewood_chest_boat", () -> new BoatItem(true, AoABoatTypes.STRANGLEWOOD.getValue(), new Item.Properties().stacksTo(1)), CreativeModeTabs.TOOLS_AND_UTILITIES);
 
 	@SafeVarargs
 	public static <T extends Item> DeferredItem<T> registerItem(String registryId, Supplier<T> item, @Nullable ResourceKey<CreativeModeTab>... tabs) {

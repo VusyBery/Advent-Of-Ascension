@@ -47,6 +47,7 @@ import net.tslat.aoa3.content.entity.brain.task.temp.FixedTargetOrRetaliate;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.AttributeUtil;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.MathUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
@@ -125,7 +126,7 @@ public class VeloraptorEntity extends AoAMeleeMob<VeloraptorEntity> {
 	@Override
 	public BrainActivityGroup<VeloraptorEntity> getFightTasks() {
 		return BrainActivityGroup.fightTasks(
-				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
+				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> !DamageUtil.isAttackable(target) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
 				new SetWalkTargetToAttackTarget<>().speedMod((entity, target) -> entity.distanceToSqr(target) < 8 ? 1f : 1.2f),
 				new OneRandomBehaviour<>(
 						Pair.of(new AnimatableMeleeAttack<>(7).attackInterval(entity -> 8)
@@ -143,7 +144,7 @@ public class VeloraptorEntity extends AoAMeleeMob<VeloraptorEntity> {
 				new FixedTargetOrRetaliate<>()
 						.alertAlliesWhen((entity, target) -> target instanceof Player || target instanceof Animal)
 						.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-						.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)),
 				new OneRandomBehaviour<>(
 						new SetRandomWalkTarget<>().speedModifier(0.9f),
 						new Idle<>().runFor(entity -> entity.level().isDay() ? entity.getRandom().nextInt(30, 60) : entity.getRandom().nextInt(60, 120))));

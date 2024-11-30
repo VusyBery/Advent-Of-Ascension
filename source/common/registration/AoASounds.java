@@ -49,6 +49,8 @@ public final class AoASounds {
 
 	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_BLASTER_ENERGY_PULSE_FIRE = registerSound("item.blaster.energy_pulse.fire");
 
+	public static final DeferredHolder<SoundEvent, SoundEvent> ITEM_HAULING_ROD_REEL_IN = registerSound("item.hauling_rod.reel_in");
+
 	public static final DeferredHolder<SoundEvent, SoundEvent> PLAYER_LEVEL_UP = registerSound("player.skills.level_up");
 	public static final DeferredHolder<SoundEvent, SoundEvent> PLAYER_LEVEL_UP_100 = registerSound("player.skills.level_up_100");
 	public static final DeferredHolder<SoundEvent, SoundEvent> PLAYER_LEVEL_UP_1000 = registerSound("player.skills.level_up_1000");

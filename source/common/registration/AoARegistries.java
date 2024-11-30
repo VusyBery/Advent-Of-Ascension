@@ -71,6 +71,7 @@ import net.tslat.aoa3.common.registration.loot.AoALootFunctions;
 import net.tslat.aoa3.common.registration.loot.AoALootModifiers;
 import net.tslat.aoa3.common.registration.worldgen.*;
 import net.tslat.aoa3.common.toast.CustomToastData;
+import net.tslat.aoa3.content.skill.hauling.HaulingSpawnPool;
 import net.tslat.aoa3.content.world.event.AoAWorldEvent;
 import net.tslat.aoa3.content.world.nowhere.NowhereBossArena;
 import net.tslat.aoa3.content.world.nowhere.NowhereParkourCourse;
@@ -98,6 +99,7 @@ public final class AoARegistries {
 	public static final ResourceKey<Registry<NowhereBossArena>> NOWHERE_BOSS_ARENAS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("nowhere_boss_arena"));
 	public static final ResourceKey<Registry<NowhereParkourCourse>> NOWHERE_PARKOUR_COURSES_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("nowhere_parkour_course"));
 	public static final ResourceKey<Registry<AoAWorldEvent>> WORLD_EVENTS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("world_event"));
+	public static final ResourceKey<Registry<HaulingSpawnPool>> HAULING_SPAWN_POOLS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("hauling_spawn_pool"));
 
 	public static final ResourceKey<Registry<ChargerVariant>> CHARGER_VARIANTS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("charger_variant"));
 	public static final ResourceKey<Registry<VeloraptorVariant>> VELORAPTOR_VARIANTS_REGISTRY_KEY = ResourceKey.createRegistryKey(AdventOfAscension.id("veloraptor_variant"));
@@ -194,6 +196,7 @@ public final class AoARegistries {
 		ev.dataPackRegistry(NOWHERE_BOSS_ARENAS_REGISTRY_KEY, NowhereBossArena.CODEC, NowhereBossArena.CODEC);
 		ev.dataPackRegistry(NOWHERE_PARKOUR_COURSES_REGISTRY_KEY, NowhereParkourCourse.CODEC, NowhereParkourCourse.CODEC);
 		ev.dataPackRegistry(WORLD_EVENTS_REGISTRY_KEY, AoAWorldEvents.CODEC, AoAWorldEvents.CODEC);
+		ev.dataPackRegistry(HAULING_SPAWN_POOLS_REGISTRY_KEY, HaulingSpawnPool.CODEC, HaulingSpawnPool.CODEC);
 	}
 
 	public record RegistryHelper<T>(Supplier<Registry<T>> registry, DeferredRegister<T> deferredRegister, Runnable registrationTasks) implements IdMap<T>, Keyable {
@@ -206,7 +209,7 @@ public final class AoARegistries {
 		private RegistryHelper(ResourceKey<Registry<T>> registryKey, BiFunction<ResourceKey<Registry<T>>, String, DeferredRegister<T>> defRegFactory, Runnable... registrations) {
 			this(Suppliers.memoize(() -> (Registry<T>)BuiltInRegistries.REGISTRY.get(registryKey.location())), defRegFactory.apply(registryKey, AdventOfAscension.MOD_ID), () -> Arrays.asList(registrations).forEach(Runnable::run));
 
-			deferredRegister().register(AdventOfAscension.getModEventBus());
+			REGISTRY_INIT_TASKS.add(() -> deferredRegister().register(AdventOfAscension.getModEventBus()));
 			REGISTRY_INIT_TASKS.add(this.registrationTasks);
 		}
 

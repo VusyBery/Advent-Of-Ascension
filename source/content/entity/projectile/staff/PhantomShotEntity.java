@@ -9,6 +9,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.tslat.aoa3.common.registration.entity.AoAProjectiles;
 import net.tslat.aoa3.content.item.EnergyProjectileWeapon;
+import net.tslat.aoa3.util.EntityUtil;
 
 import java.util.UUID;
 
@@ -43,12 +44,17 @@ public class PhantomShotEntity extends BaseEnergyShot {
 
 					discard();
 				}
-				else if (result instanceof EntityHitResult entityResult && !entityResult.getEntity().getUUID().equals(lastHit)) {
+				else if (result instanceof EntityHitResult entityResult) {
+					Entity realTarget = EntityUtil.getPartOrPartOwner(entityResult.getEntity());
+
+					if (realTarget.getUUID().equals(this.lastHit))
+						return;
+
 					Entity shooter = getOwner();
-					this.lastHit = entityResult.getEntity().getUUID();
+					this.lastHit = realTarget.getUUID();
 
 					if (shooter instanceof LivingEntity)
-						weapon.doEntityImpact(this, entityResult.getEntity(), (LivingEntity)shooter);
+						this.weapon.doEntityImpact(this, entityResult.getEntity(), (LivingEntity)shooter);
 				}
 			}
 		}

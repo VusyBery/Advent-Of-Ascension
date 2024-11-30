@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "tag": "neoforge:ingots/skeletal"
+      "tag": "c:ingots/skeletal"
     }
   ],
   "result": {

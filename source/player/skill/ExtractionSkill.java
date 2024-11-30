@@ -14,13 +14,17 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.custom.events.PlayerSkillsLootModificationEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.PlayerUtil;
 
 import java.util.List;
 
 public class ExtractionSkill extends AoASkill.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.LOOT_MODIFICATION, ListenerType.ITEM_SMELTED};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerSkillsLootModificationEvent.class, serverOnly(this::handleLootModification)),
+			listener(PlayerEvent.ItemSmeltedEvent.class, serverOnly(this::handleItemSmelted)));
 
 	public ExtractionSkill(ServerPlayerDataManager plData, JsonObject jsonData) {
 		super(AoASkills.EXTRACTION.get(), plData, jsonData);
@@ -31,16 +35,16 @@ public class ExtractionSkill extends AoASkill.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleLootModification(List<ItemStack> loot, LootContext context) {
+	private void handleLootModification(final PlayerSkillsLootModificationEvent ev) {
 		if (!canGainXp(true))
 			return;
 
-		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+		final LootContext context = ev.getLootContext();
+		final BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
 
 		if (state == null)
 			return;
@@ -63,7 +67,7 @@ public class ExtractionSkill extends AoASkill.Instance {
 		float hardness = state.getDestroySpeed(world, pos);
 		float xp = PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 2 * hardness);
 
-		for (ItemStack item : loot) {
+		for (ItemStack item : ev.getGeneratedLoot()) {
 			if (item.getItem() != block.asItem()) {
 				xp *= 2f;
 
@@ -71,21 +75,20 @@ public class ExtractionSkill extends AoASkill.Instance {
 			}
 		}
 
-		if (loot.size() > 2)
+		if (ev.getGeneratedLoot().size() > 2)
 			xp *= 1.5f;
 
 		adjustXp(xp, false, false);
 	}
 
-	@Override
-	public void handleItemSmelted(PlayerEvent.ItemSmeltedEvent ev) {
+	private void handleItemSmelted(final PlayerEvent.ItemSmeltedEvent ev) {
 		if (ev.getEntity().level().isClientSide() || ev.getSmelting().getCount() <= 0)
 			return;
 
 		ItemStack smelting = ev.getSmelting();
 
 		if (smelting.getFoodProperties(ev.getEntity()) == null && canGainXp(true)) {
-			float xp = PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 40);
+			float xp = PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 40)/* * ev.getRemovedCount()*/; // TODO when Neoforge fixes #1367
 
 			if (smelting.is(Tags.Items.NUGGETS)) {
 				xp *= 1.5f;

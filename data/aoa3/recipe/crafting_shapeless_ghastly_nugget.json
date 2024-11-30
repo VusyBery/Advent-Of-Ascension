@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "tag": "neoforge:ingots/ghastly"
+      "tag": "c:ingots/ghastly"
     }
   ],
   "result": {

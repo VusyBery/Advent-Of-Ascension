@@ -50,11 +50,13 @@ public class GoldTrophyRecipe extends CustomRecipe implements RecipeBookRecipe<C
 	}
 
 	@Override
-	public boolean matches(CraftingInput inv, Level worldIn) {
-		String entityType = null;
-		int count = 0;
+	public boolean matches(CraftingInput input, Level worldIn) {
+		if (input.ingredientCount() != 9)
+			return false;
 
-		for (ItemStack stack : inv.items()) {
+		String entityType = null;
+
+		for (ItemStack stack : input.items()) {
 			if (stack.getItem() != AoABlocks.TROPHY.get().asItem())
 				return false;
 
@@ -65,19 +67,19 @@ public class GoldTrophyRecipe extends CustomRecipe implements RecipeBookRecipe<C
 				return false;
 
 			if (entityType == null) {
+				if (trophyData.getEntityType() == null)
+					return false;
+
 				entityType = entityId;
-				count++;
 
 				continue;
 			}
 
 			if (!entityType.equals(entityId))
 				return false;
-
-			count++;
 		}
 
-		return count == 9;
+		return true;
 	}
 
 	@Override

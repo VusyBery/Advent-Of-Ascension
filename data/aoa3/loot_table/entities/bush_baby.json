@@ -30,7 +30,7 @@
                 "max": 5.0,
                 "min": 2.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -55,7 +55,7 @@
                 "max": 2.0,
                 "min": 1.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -73,9 +73,9 @@
                       "duration": 30,
                       "id": "minecraft:poison",
                       "neoforge:cures": [
-                        "protected_by_totem",
                         "milk",
-                        "honey"
+                        "honey",
+                        "protected_by_totem"
                       ],
                       "show_icon": true
                     }

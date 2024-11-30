@@ -49,8 +49,8 @@ public class RPG extends BaseCannon {
 	@Override
 	public void doImpactDamage(Entity target, LivingEntity shooter, BaseBullet bullet, Vec3 impactPosition, float bulletDmgMultiplier) {
 		if (target != null) {
-			if (target instanceof LivingEntity)
-				bulletDmgMultiplier *= 1 + (((LivingEntity)target).getAttribute(Attributes.ARMOR).getValue() * 6.66) / 100;
+			if (target instanceof LivingEntity livingTarget)
+				bulletDmgMultiplier *= 1 + (livingTarget.getAttributeValue(Attributes.ARMOR) * 1.5 + livingTarget.getAttributeValue(Attributes.ARMOR_TOUGHNESS) * 0.5f) / 100f;
 
 			ItemStack stack = shooter.getItemInHand(bullet.getHand());
 
@@ -62,7 +62,7 @@ public class RPG extends BaseCannon {
 			if (DamageUtil.doHeavyGunAttack(shooter, bullet, target, source -> damage) && shooter instanceof ServerPlayer pl) {
 				if (target instanceof LivingEntity livingTarget && livingTarget.getHealth() == 0 && target.hasImpulse) {
 					if (target.level().isEmptyBlock(target.blockPosition().below()) && target.level().isEmptyBlock(target.blockPosition().below(2)))
-						AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("overworld/surface_to_air"), "rpg_air_kill");
+						AdvancementUtil.grantCriterion(pl, AdventOfAscension.id("completionist/surface_to_air"), "rpg_air_kill");
 				}
 			}
 		}

@@ -32,16 +32,16 @@ public class BaseBow extends BowItem implements ArrowFiringWeapon {
 		super(properties);
 	}
 
-	public BowStats bowStats() {
-		return components().get(AoADataComponents.BOW_STATS.get());
+	public BowStats bowStats(ItemStack bowStack) {
+		return bowStack.get(AoADataComponents.BOW_STATS.get());
 	}
 
-	public float getBowDamage() {
-		return bowStats().damage();
+	public float getBowDamage(ItemStack bowStack) {
+		return bowStats(bowStack).damage();
 	}
 
-	public float getDrawSpeedMultiplier() {
-		return bowStats().drawSpeedModifier();
+	public float getDrawSpeedMultiplier(ItemStack bowStack) {
+		return bowStats(bowStack).drawSpeedModifier();
 	}
 
 	@Override
@@ -69,7 +69,7 @@ public class BaseBow extends BowItem implements ArrowFiringWeapon {
 		Player pl = (Player)shooter;
 		boolean infiniteAmmo = pl.isCreative() || EnchantmentUtil.hasEnchantment(level, stack, Enchantments.INFINITY);
 		ItemStack ammoStack = findAmmo(pl, stack, infiniteAmmo);
-		int charge = (int)((getUseDuration(stack, shooter) - timeLeft) * getDrawSpeedMultiplier());
+		int charge = (int)((getUseDuration(stack, shooter) - timeLeft) * getDrawSpeedMultiplier(stack));
 		charge = EventHooks.onArrowLoose(stack, level, pl, charge, !ammoStack.isEmpty() || infiniteAmmo);
 
 		if (charge < 0)
@@ -109,7 +109,7 @@ public class BaseBow extends BowItem implements ArrowFiringWeapon {
 
 	protected CustomArrowEntity makeArrow(LivingEntity shooter, ItemStack bowStack, ItemStack ammoStack, float velocity, boolean consumeAmmo) {
 		ArrowItem arrowItem = (ArrowItem)(ammoStack.getItem() instanceof ArrowItem ? ammoStack.getItem() : Items.ARROW);
-		CustomArrowEntity arrow = CustomArrowEntity.fromArrow(arrowItem.createArrow(shooter.level(), ammoStack, shooter, bowStack), bowStack, shooter, getBowDamage());
+		CustomArrowEntity arrow = CustomArrowEntity.fromArrow(arrowItem.createArrow(shooter.level(), ammoStack, shooter, bowStack), bowStack, shooter, getBowDamage(bowStack));
 
 		arrow.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), 0.0F, velocity * 3.0F, 1.0F);
 
@@ -131,8 +131,8 @@ public class BaseBow extends BowItem implements ArrowFiringWeapon {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ARROW_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(Float.toString(getBowDamage()))));
-		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BOW_DRAW_TIME, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(Double.toString(((int)(72000 / getDrawSpeedMultiplier()) / 720) / 100d))));
+		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ARROW_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(Float.toString(getBowDamage(stack)))));
+		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BOW_DRAW_TIME, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(Double.toString(((int)(72000 / getDrawSpeedMultiplier(stack)) / 720) / 100d))));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, LocaleUtil.getLocaleMessage(Items.ARROW.getDescriptionId())));
 	}
 }

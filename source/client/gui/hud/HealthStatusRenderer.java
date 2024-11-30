@@ -242,8 +242,8 @@ public class HealthStatusRenderer {
 		if (mc.gui.tickCount % 25 == 0 && mc.player.hasEffect(MobEffects.REGENERATION))
 			y -= 2;
 
-		RenderUtil.renderSprite(poseStack, Gui.HeartType.CONTAINER.getSprite(hardcore, false, flashing), 0, y);
-		RenderUtil.renderSprite(poseStack, Gui.HeartType.forPlayer(mc.player).getSprite(hardcore, currentHealth < maxHealth, flashing), 0, y);
+		RenderUtil.renderSprite(poseStack, Gui.HeartType.CONTAINER.getSprite(hardcore, false, flashing), 0, y, 9, 9);
+		RenderUtil.renderSprite(poseStack, Gui.HeartType.forPlayer(mc.player).getSprite(hardcore, currentHealth < maxHealth, flashing), 0, y, 9, 9);
 	}
 
 	private static boolean handleHealthState(LocalPlayer player, Gui gui, float currentHealth) {

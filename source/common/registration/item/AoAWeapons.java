@@ -452,7 +452,7 @@ public final class AoAWeapons {
 	public static final DeferredItem<Item> WHIMSY_WINDER = registerWeapon("whimsy_winder", () -> new WhimsyWinder(BlasterStats.of(6.0f, 5, 13f, 5).durability(2830)), AoACreativeModeTabs.BLASTERS.getKey());
 	public static final DeferredItem<Item> WITHERS_WRATH = registerWeapon("withers_wrath", () -> new WithersWrath(BlasterStats.of(7.5f, 7, 21f, 7).durability(800)), AoACreativeModeTabs.BLASTERS.getKey());
 
-	private static <T extends Item> DeferredItem<T> registerWeapon(String registryName, Supplier<T> item, @Nullable ResourceKey<CreativeModeTab>... creativeTabs) {
+    private static <T extends Item> DeferredItem<T> registerWeapon(String registryName, Supplier<T> item, @Nullable ResourceKey<CreativeModeTab>... creativeTabs) {
 		return AoAItems.registerItem(registryName, item, creativeTabs);
 	}
 }

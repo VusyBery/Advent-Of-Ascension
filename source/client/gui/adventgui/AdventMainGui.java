@@ -30,7 +30,7 @@ public class AdventMainGui extends Screen {
 	protected static final int GUI_HEIGHT = 512;
 	protected static final int BACKGROUND_TEXTURE_WIDTH = 976;
 	protected static final int BACKGROUND_TEXTURE_HEIGHT = 480;
-	protected static final float SCALE = 0.45f;
+	protected static float SCALE = 0.45f;
 
 	protected static AdventMainGui instance;
 	protected static AdventGuiThemeReloadListener.AdventGuiTheme theme = null;
@@ -327,6 +327,8 @@ public class AdventMainGui extends Screen {
 
 	private void correctGuiPositions() {
 		Window window = getMinecraft().getWindow();
+		float scaleDeltaRatio = window.calculateScale(0, getMinecraft().isEnforceUnicode()) / (float)window.getGuiScale();
+		SCALE = 0.45f * scaleDeltaRatio;
 
 		scaledRootX = (int) (Math.round((window.getGuiScaledWidth() / 2d) / SCALE) - Math.round(BACKGROUND_TEXTURE_WIDTH / 2d));
 		scaledRootY = (int) (Math.round((window.getGuiScaledHeight() / 2d) / SCALE) - Math.round(BACKGROUND_TEXTURE_HEIGHT / 2d));

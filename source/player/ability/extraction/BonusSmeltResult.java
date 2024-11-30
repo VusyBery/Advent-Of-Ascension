@@ -8,14 +8,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.RetrieveSmeltedItemEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.InventoryUtil;
 
+import java.util.List;
 import java.util.Random;
 
 public class BonusSmeltResult extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.ITEM_SMELTING};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(RetrieveSmeltedItemEvent.class, serverOnly(this::handleItemSmelting)));
 
 	private final Random random = new Random();
 	private final int uniqueIdHash;
@@ -33,12 +36,11 @@ public class BonusSmeltResult extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleItemSmelting(RetrieveSmeltedItemEvent ev) {
+	private void handleItemSmelting(final RetrieveSmeltedItemEvent ev) {
 		ItemStack baseStack = ev.getOriginalStack();
 		ItemStack smeltedStack = ev.getOutputStack();
 

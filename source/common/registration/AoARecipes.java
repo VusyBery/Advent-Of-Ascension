@@ -22,6 +22,8 @@ public final class AoARecipes {
 	public static final RecipeTypeContainer<WhitewashingRecipe> WHITEWASHING = registerRecipeType("whitewashing", WhitewashingRecipe.Factory::new);
 	public static final RecipeTypeContainer<InfusedPressCompressionRecipe> INFUSED_PRESS_COMPRESSION = registerRecipeType("infused_press_compression", InfusedPressCompressionRecipe.Factory::new);
 	public static final RecipeTypeContainer<InfusedPressDecompressionRecipe> INFUSED_PRESS_DECOMPRESSION = registerRecipeType("infused_press_decompression", InfusedPressDecompressionRecipe.Factory::new);
+	public static final RecipeTypeContainer<StaffChargingRecipe> STAFF_CHARGING = registerRecipeType("staff_charging", StaffChargingRecipe.Factory::new);
+	public static final RecipeTypeContainer<ArcanumBatteryAttachRecipe> ARCANUM_BATTERY_ATTACH = registerRecipeType("arcanum_battery_attach", ArcanumBatteryAttachRecipe.Factory::new);
 
 	private static <T extends Recipe<I>, I extends RecipeInput> RecipeTypeContainer<T> registerRecipeType(String id, Supplier<RecipeSerializer<T>> serializer) {
 		return new RecipeTypeContainer<>(AoARegistries.RECIPE_TYPES.register(id, () -> new RecipeType<>() {

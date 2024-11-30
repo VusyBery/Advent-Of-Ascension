@@ -26,7 +26,7 @@ public final class AoAPostProcessing {
     private static final Map<ResourceLocation, PostChain> ACTIVE_EFFECTS = new Object2ObjectArrayMap<>();
 
     private static final ResourceLocation DUSTOPIA_DESATURATE = AdventOfAscension.id("shaders/post/dustopia_desaturate.json");
-    private static final ResourceLocation NIGHT_VISION_GOGGLES = AdventOfAscension.id("shaders/post/night_vision_goggles.json");
+    private static final ResourceLocation CHROMA_GOGGLES = AdventOfAscension.id("shaders/post/chroma_goggles.json");
 
     public static void init() {
         final IEventBus eventBus = NeoForge.EVENT_BUS;
@@ -118,11 +118,11 @@ public final class AoAPostProcessing {
     }
 
     private static void checkNightVisionGogglesShader(Player player) {
-        if (player != null && player.getItemBySlot(EquipmentSlot.HEAD).is(AoAArmour.NIGHT_VISION_GOGGLES)) {
-            activateEffect(NIGHT_VISION_GOGGLES);
+        if (player != null && player.getItemBySlot(EquipmentSlot.HEAD).is(AoAArmour.CHROMA_GOGGLES)) {
+            activateEffect(CHROMA_GOGGLES);
         }
         else {
-            deactivateEffect(NIGHT_VISION_GOGGLES);
+            deactivateEffect(CHROMA_GOGGLES);
         }
     }
 }

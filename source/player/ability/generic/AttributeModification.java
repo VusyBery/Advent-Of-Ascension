@@ -14,17 +14,22 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.custom.events.ApplyDynamicAttributeModifiersEvent;
 import net.tslat.aoa3.event.custom.events.PlayerLevelChangeEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.library.object.Text;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
-import net.tslat.aoa3.util.*;
+import net.tslat.aoa3.util.AttributeUtil;
+import net.tslat.aoa3.util.LocaleUtil;
+import net.tslat.aoa3.util.NumberUtil;
+import net.tslat.aoa3.util.RegistryUtil;
 
-import static net.tslat.aoa3.player.AoAPlayerEventListener.ListenerType.ATTRIBUTE_MODIFIERS;
-import static net.tslat.aoa3.player.AoAPlayerEventListener.ListenerType.LEVEL_CHANGE;
+import java.util.List;
 
 public class AttributeModification extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ATTRIBUTE_MODIFIERS, LEVEL_CHANGE};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(ApplyDynamicAttributeModifiersEvent.class, ApplyDynamicAttributeModifiersEvent::getEntity, serverOnly(this::applyAttributeModifiers)),
+			listener(PlayerLevelChangeEvent.class, serverOnly(this::handleLevelChange)));
 
 	private final Holder<Attribute> attribute;
 	private AttributeModifier modifier;
@@ -50,7 +55,9 @@ public class AttributeModification extends ScalableModAbility {
 		this.modifier = new AttributeModifier(this.modifier.id(), getScaledValue(), this.modifier.operation());
 
 		if (!getPlayer().level().isClientSide) {
-			applyAttributeModifiers(getSkill().getPlayerDataManager());
+			if (isStillValid())
+				applyAttributeModifiers(new ApplyDynamicAttributeModifiersEvent(getPlayer()));
+
 			markForClientSync();
 		}
 
@@ -94,27 +101,26 @@ public class AttributeModification extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void applyAttributeModifiers(ServerPlayerDataManager plData) {
-		AttributeUtil.applyTransientModifier(plData.player(), this.attribute, this.modifier);
+	private void applyAttributeModifiers(final ApplyDynamicAttributeModifiersEvent ev) {
+		ev.applyTransientModifier(this.attribute, this.modifier);
 
 		if (loginHealth > 0) {
-			plData.player().setHealth(loginHealth);
+			ev.getEntity().setHealth(loginHealth);
 			loginHealth = -1;
 		}
 	}
 
 	@Override
-	public void removeAttributeModifiers(ServerPlayerDataManager plData) {
-		AttributeUtil.removeModifier(plData.player(), this.attribute, this.modifier.id());
+	protected void onDisable() {
+		super.onDisable();
+		AttributeUtil.removeModifier(getPlayer(), this.attribute, this.modifier.id());
 	}
 
-	@Override
-	public void handleLevelChange(PlayerLevelChangeEvent ev) {
+	private void handleLevelChange(PlayerLevelChangeEvent ev) {
 		updateModifier();
 	}
 

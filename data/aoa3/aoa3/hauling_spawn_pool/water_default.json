@@ -1,0 +1,187 @@
+{
+  "biomes": [],
+  "entries": [
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -50.0,
+      "object_id": {
+        "entity": "minecraft:cod"
+      },
+      "weight": 1000
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -50.0,
+      "object_id": {
+        "entity": "minecraft:salmon"
+      },
+      "weight": 1000
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -50.0,
+      "object_id": {
+        "entity": "minecraft:tropical_fish"
+      },
+      "weight": 1000
+    },
+    {
+      "hauling_level_req": 5,
+      "luck_mod": -45.0,
+      "object_id": {
+        "entity": "minecraft:pufferfish"
+      },
+      "weight": 900
+    },
+    {
+      "hauling_level_req": 10,
+      "luck_mod": 5.0,
+      "object_id": {
+        "entity": "minecraft:squid"
+      },
+      "weight": 300
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 40.0,
+      "object_id": {
+        "entity": "aoa3:rainbowfish"
+      },
+      "weight": 350
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 30.0,
+      "object_id": {
+        "entity": "aoa3:sailback"
+      },
+      "weight": 800
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 30.0,
+      "object_id": {
+        "entity": "aoa3:violet_skipper"
+      },
+      "weight": 800
+    },
+    {
+      "hauling_level_req": 30,
+      "luck_mod": 10.0,
+      "object_id": {
+        "entity": "minecraft:dolphin"
+      },
+      "weight": 200
+    },
+    {
+      "hauling_level_req": 20,
+      "luck_mod": 5.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:nautilus_shell"
+        }
+      },
+      "weight": 400
+    },
+    {
+      "hauling_level_req": 5,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:name_tag"
+        }
+      },
+      "weight": 600
+    },
+    {
+      "hauling_level_req": 14,
+      "luck_mod": -100.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:leather"
+        }
+      },
+      "weight": 900
+    },
+    {
+      "hauling_level_req": 25,
+      "luck_mod": 15.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:crystal_box"
+        }
+      },
+      "weight": 250
+    },
+    {
+      "hauling_level_req": 15,
+      "luck_mod": 15.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:gem_bag"
+        }
+      },
+      "weight": 250
+    },
+    {
+      "hauling_level_req": 30,
+      "luck_mod": 15.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:treasure_box"
+        }
+      },
+      "weight": 250
+    },
+    {
+      "hauling_level_req": 20,
+      "luck_mod": 15.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:weapons_case"
+        }
+      },
+      "weight": 250
+    },
+    {
+      "hauling_level_req": 50,
+      "luck_mod": 5.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:old_boot"
+        }
+      },
+      "weight": 5
+    },
+    {
+      "hauling_level_req": 75,
+      "luck_mod": 3.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:tidal_greatblade"
+        }
+      },
+      "weight": 1
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:water_bucket"
+        }
+      },
+      "weight": 1
+    }
+  ],
+  "for_fluid": "minecraft:water",
+  "is_default": true
+}

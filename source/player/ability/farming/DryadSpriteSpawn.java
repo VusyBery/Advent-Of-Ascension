@@ -13,6 +13,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.entity.AoANpcs;
 import net.tslat.aoa3.content.entity.npc.ambient.DryadSpriteEntity;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.EntitySpawningUtil;
@@ -20,8 +21,11 @@ import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
+import java.util.List;
+
 public class DryadSpriteSpawn extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_BREAK};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(BlockEvent.BreakEvent.class, BlockEvent.BreakEvent::getPlayer, serverOnly(this::handleBlockBreak)));
 
 	public DryadSpriteSpawn(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.DRYAD_SPRITE_SPAWN.get(), skill, data);
@@ -32,12 +36,11 @@ public class DryadSpriteSpawn extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleBlockBreak(BlockEvent.BreakEvent ev) {
+	private void handleBlockBreak(BlockEvent.BreakEvent ev) {
 		if (ev.getLevel() instanceof ServerLevel serverLevel && testAsChance()) {
 			if (!(ev.getState().getBlock() instanceof CropBlock crop) || !crop.isMaxAge(ev.getState()) || getPlayer().getAbilities().instabuild)
 				return;

@@ -25,15 +25,13 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.util.RecipeMatcher;
 import net.tslat.aoa3.common.menu.ImbuingChamberMenu;
-import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.AoARecipes;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.content.item.misc.AspectFocusItem;
+import net.tslat.aoa3.util.CodecUtil;
 import net.tslat.aoa3.util.PlayerUtil;
-import net.tslat.aoa3.util.StreamCodecUtil;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,10 +46,6 @@ public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 	private final Optional<FloatProvider> xpOverride;
 
 	private final boolean isSimpleIngredients;
-
-	private boolean isSafeToEnchant = true;
-	@Nullable
-	private Boolean lastConfigValue = null;
 
 	public ImbuingRecipe(int imbuingLevelReq, Optional<FloatProvider> xpOverride, Holder<Enchantment> enchant, int enchantLevel, NonNullList<Ingredient> foci, Ingredient powerSource, boolean showUnlockNotification) {
 		this.enchant = ObjectIntPair.of(enchant, enchantLevel);
@@ -98,7 +92,7 @@ public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 
 	@Override
 	public boolean showNotification() {
-		return this.showUnlockNotification && (AoAConfigs.SERVER.allowUnsafeInfusion.get() || getEnchant().rightInt() <= getEnchant().left().value().getMaxLevel());
+		return this.showUnlockNotification;
 	}
 
 	@Override
@@ -122,9 +116,6 @@ public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 
 	@Override
 	public boolean matches(ImbuingRecipeInput input, Level level) {
-		if (!checkEnchantSafety())
-			return false;
-
 		final ItemStack targetStack = input.getItem(6);
 
 		if (!targetStack.isEmpty() && !input.inventory.imbuing && !canEnchantInput(targetStack))
@@ -133,18 +124,6 @@ public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 		final List<Ingredient> ingredients = getIngredients();
 
 		return this.isSimpleIngredients ? checkSimpleIngredients(input, ingredients.size(), targetStack) : checkNonSimpleIngredients(input, ingredients, targetStack);
-	}
-
-	private boolean checkEnchantSafety() {
-		final boolean configValue = AoAConfigs.SERVER.allowUnsafeInfusion.get();
-
-		if (this.lastConfigValue != null && this.lastConfigValue == configValue)
-			return this.isSafeToEnchant;
-
-		this.lastConfigValue = configValue;
-		this.isSafeToEnchant = configValue || getEnchant().rightInt() <= getEnchant().left().value().getMaxLevel();
-
-		return this.isSafeToEnchant;
 	}
 
 	public boolean canEnchantInput(ItemStack inputStack) {
@@ -270,7 +249,7 @@ public class ImbuingRecipe implements Recipe<ImbuingRecipe.ImbuingRecipeInput> {
 				ByteBufCodecs.BOOL, ImbuingRecipe::showNotification,
 				ByteBufCodecs.holderRegistry(Registries.ENCHANTMENT), recipe -> recipe.enchant.left(),
 				ByteBufCodecs.VAR_INT, recipe -> recipe.enchant.rightInt(),
-				StreamCodecUtil.nonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), ImbuingRecipe::getIngredients,
+				CodecUtil.streamNonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), ImbuingRecipe::getIngredients,
 				(imbuingLevelReq, xpOverride, showUnlockNotification, enchant, enchantLevel, foci) -> {
 					Ingredient powerSource = foci.getFirst();
 					NonNullList<Ingredient> patchedIngredients = NonNullList.withSize(foci.size() - 1, Ingredient.EMPTY);

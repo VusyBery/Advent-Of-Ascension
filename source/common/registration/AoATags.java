@@ -9,18 +9,18 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.material.Fluid;
-import net.neoforged.neoforge.internal.versions.neoforge.NeoForgeVersion;
 import net.tslat.aoa3.advent.AdventOfAscension;
 
 public final class AoATags {
 	public static class Blocks {
-		public static final TagKey<Block> GRASS = tag("grass");
-		public static final TagKey<Block> MUSHROOMS = tag("mushrooms");
+		public static final TagKey<Block> GRASS = commonTag("grass");
+		public static final TagKey<Block> MUSHROOMS = commonTag("mushrooms");
 
 		public static final TagKey<Block> INCORRECT_FOR_EMBERSTONE_TOOL = aoaTag("incorrect_for_emberstone_tool");
 		public static final TagKey<Block> INCORRECT_FOR_JADE_TOOL = aoaTag("incorrect_for_jade_tool");
@@ -38,64 +38,64 @@ public final class AoATags {
 		public static final TagKey<Block> INCORRECT_FOR_ROCK_PICK_TOOL = aoaTag("incorrect_for_rock_pick_tool");
 		public static final TagKey<Block> INCORRECT_FOR_TROLL_BASHER_TOOL = aoaTag("incorrect_for_troll_basher_tool");
 
-		public static final TagKey<Block> BARONYTE_ORE = tag("ores/baronyte");
-		public static final TagKey<Block> BLAZIUM_ORE = tag("ores/blazium");
-		public static final TagKey<Block> BLOODSTONE_ORE = tag("ores/bloodstone");
-		public static final TagKey<Block> BLUE_GEMSTONE_ORE = tag("ores/blue_gemstone");
-		public static final TagKey<Block> CHARGED_RUNIUM_ORE = tag("ores/charged_runium");
-		public static final TagKey<Block> BONE_FRAGMENTS_ORE = tag("ores/chestbone_fragments");
-		public static final TagKey<Block> CRYSTALLITE_ORE = tag("ores/crystallite");
-		public static final TagKey<Block> ELECANIUM_ORE = tag("ores/elecanium");
-		public static final TagKey<Block> EMBERSTONE_ORE = tag("ores/emberstone");
-		public static final TagKey<Block> GEMENYTE_ORE = tag("ores/gemenyte");
-		public static final TagKey<Block> GHASTLY_ORE = tag("ores/ghastly");
-		public static final TagKey<Block> GHOULISH_ORE = tag("ores/ghoulish");
-		public static final TagKey<Block> GREEN_GEMSTONE_ORE = tag("ores/green_gemstone");
-		public static final TagKey<Block> JADE_ORE = tag("ores/jade");
-		public static final TagKey<Block> JEWELYTE_ORE = tag("ores/jewelyte");
-		public static final TagKey<Block> LIMONITE_ORE = tag("ores/limonite");
-		public static final TagKey<Block> LYON_ORE = tag("ores/lyon");
-		public static final TagKey<Block> MYSTITE_ORE = tag("ores/mystite");
-		public static final TagKey<Block> ORNAMYTE_ORE = tag("ores/ornamyte");
-		public static final TagKey<Block> PURPLE_GEMSTONE_ORE = tag("ores/purple_gemstone");
-		public static final TagKey<Block> RED_GEMSTONE_ORE = tag("ores/red_gemstone");
-		public static final TagKey<Block> RUNIUM_ORE = tag("ores/runium");
-		public static final TagKey<Block> SHYREGEM_ORE = tag("ores/shyregem");
-		public static final TagKey<Block> SHYRESTONE_ORE = tag("ores/shyrestone");
-		public static final TagKey<Block> VARSIUM_ORE = tag("ores/varsium");
-		public static final TagKey<Block> WHITE_GEMSTONE_ORE = tag("ores/white_gemstone");
-		public static final TagKey<Block> YELLOW_GEMSTONE_ORE = tag("ores/yellow_gemstone");
-		public static final TagKey<Block> STORAGE_BLOCKS_BARONYTE = tag("storage_blocks/baronyte");
-		public static final TagKey<Block> STORAGE_BLOCKS_BLAZIUM = tag("storage_blocks/blazium");
-		public static final TagKey<Block> STORAGE_BLOCKS_BLOODSTONE = tag("storage_blocks/bloodstone");
-		public static final TagKey<Block> STORAGE_BLOCKS_CRYSTALLITE = tag("storage_blocks/crystallite");
-		public static final TagKey<Block> STORAGE_BLOCKS_ELECANIUM = tag("storage_blocks/elecanium");
-		public static final TagKey<Block> STORAGE_BLOCKS_EMBERSTONE = tag("storage_blocks/emberstone");
-		public static final TagKey<Block> STORAGE_BLOCKS_GEMENYTE = tag("storage_blocks/gemenyte");
-		public static final TagKey<Block> STORAGE_BLOCKS_GHASTLY = tag("storage_blocks/ghastly");
-		public static final TagKey<Block> STORAGE_BLOCKS_GHOULISH = tag("storage_blocks/ghoulish");
-		public static final TagKey<Block> STORAGE_BLOCKS_JADE = tag("storage_blocks/jade");
-		public static final TagKey<Block> STORAGE_BLOCKS_JEWELYTE = tag("storage_blocks/jewelyte");
-		public static final TagKey<Block> STORAGE_BLOCKS_RAW_LIMONITE = tag("storage_blocks/raw_limonite");
-		public static final TagKey<Block> STORAGE_BLOCKS_RAW_EMBERSTONE = tag("storage_blocks/raw_emberstone");
-		public static final TagKey<Block> STORAGE_BLOCKS_LIMONITE = tag("storage_blocks/limonite");
-		public static final TagKey<Block> STORAGE_BLOCKS_LUNAR = tag("storage_blocks/lunar");
-		public static final TagKey<Block> STORAGE_BLOCKS_LYON = tag("storage_blocks/lyon");
-		public static final TagKey<Block> STORAGE_BLOCKS_MYSTITE = tag("storage_blocks/mystite");
-		public static final TagKey<Block> STORAGE_BLOCKS_ORNAMYTE = tag("storage_blocks/ornamyte");
-		public static final TagKey<Block> STORAGE_BLOCKS_SHYREGEM = tag("storage_blocks/shyregem");
-		public static final TagKey<Block> STORAGE_BLOCKS_SHYRESTONE = tag("storage_blocks/shyrestone");
-		public static final TagKey<Block> STORAGE_BLOCKS_SKELETAL = tag("storage_blocks/skeletal");
-		public static final TagKey<Block> STORAGE_BLOCKS_VARSIUM = tag("storage_blocks/varsium");
+		public static final TagKey<Block> BARONYTE_ORE = commonTag("ores/baronyte");
+		public static final TagKey<Block> BLAZIUM_ORE = commonTag("ores/blazium");
+		public static final TagKey<Block> BLOODSTONE_ORE = commonTag("ores/bloodstone");
+		public static final TagKey<Block> BLUE_GEMSTONE_ORE = commonTag("ores/blue_gemstone");
+		public static final TagKey<Block> CHARGED_RUNIUM_ORE = commonTag("ores/charged_runium");
+		public static final TagKey<Block> BONE_FRAGMENTS_ORE = commonTag("ores/chestbone_fragments");
+		public static final TagKey<Block> CRYSTALLITE_ORE = commonTag("ores/crystallite");
+		public static final TagKey<Block> ELECANIUM_ORE = commonTag("ores/elecanium");
+		public static final TagKey<Block> EMBERSTONE_ORE = commonTag("ores/emberstone");
+		public static final TagKey<Block> GEMENYTE_ORE = commonTag("ores/gemenyte");
+		public static final TagKey<Block> GHASTLY_ORE = commonTag("ores/ghastly");
+		public static final TagKey<Block> GHOULISH_ORE = commonTag("ores/ghoulish");
+		public static final TagKey<Block> GREEN_GEMSTONE_ORE = commonTag("ores/green_gemstone");
+		public static final TagKey<Block> JADE_ORE = commonTag("ores/jade");
+		public static final TagKey<Block> JEWELYTE_ORE = commonTag("ores/jewelyte");
+		public static final TagKey<Block> LIMONITE_ORE = commonTag("ores/limonite");
+		public static final TagKey<Block> LYON_ORE = commonTag("ores/lyon");
+		public static final TagKey<Block> MYSTITE_ORE = commonTag("ores/mystite");
+		public static final TagKey<Block> ORNAMYTE_ORE = commonTag("ores/ornamyte");
+		public static final TagKey<Block> PURPLE_GEMSTONE_ORE = commonTag("ores/purple_gemstone");
+		public static final TagKey<Block> RED_GEMSTONE_ORE = commonTag("ores/red_gemstone");
+		public static final TagKey<Block> RUNIUM_ORE = commonTag("ores/runium");
+		public static final TagKey<Block> SHYREGEM_ORE = commonTag("ores/shyregem");
+		public static final TagKey<Block> SHYRESTONE_ORE = commonTag("ores/shyrestone");
+		public static final TagKey<Block> VARSIUM_ORE = commonTag("ores/varsium");
+		public static final TagKey<Block> WHITE_GEMSTONE_ORE = commonTag("ores/white_gemstone");
+		public static final TagKey<Block> YELLOW_GEMSTONE_ORE = commonTag("ores/yellow_gemstone");
+		public static final TagKey<Block> STORAGE_BLOCKS_BARONYTE = commonTag("storage_blocks/baronyte");
+		public static final TagKey<Block> STORAGE_BLOCKS_BLAZIUM = commonTag("storage_blocks/blazium");
+		public static final TagKey<Block> STORAGE_BLOCKS_BLOODSTONE = commonTag("storage_blocks/bloodstone");
+		public static final TagKey<Block> STORAGE_BLOCKS_CRYSTALLITE = commonTag("storage_blocks/crystallite");
+		public static final TagKey<Block> STORAGE_BLOCKS_ELECANIUM = commonTag("storage_blocks/elecanium");
+		public static final TagKey<Block> STORAGE_BLOCKS_EMBERSTONE = commonTag("storage_blocks/emberstone");
+		public static final TagKey<Block> STORAGE_BLOCKS_GEMENYTE = commonTag("storage_blocks/gemenyte");
+		public static final TagKey<Block> STORAGE_BLOCKS_GHASTLY = commonTag("storage_blocks/ghastly");
+		public static final TagKey<Block> STORAGE_BLOCKS_GHOULISH = commonTag("storage_blocks/ghoulish");
+		public static final TagKey<Block> STORAGE_BLOCKS_JADE = commonTag("storage_blocks/jade");
+		public static final TagKey<Block> STORAGE_BLOCKS_JEWELYTE = commonTag("storage_blocks/jewelyte");
+		public static final TagKey<Block> STORAGE_BLOCKS_RAW_LIMONITE = commonTag("storage_blocks/raw_limonite");
+		public static final TagKey<Block> STORAGE_BLOCKS_RAW_EMBERSTONE = commonTag("storage_blocks/raw_emberstone");
+		public static final TagKey<Block> STORAGE_BLOCKS_LIMONITE = commonTag("storage_blocks/limonite");
+		public static final TagKey<Block> STORAGE_BLOCKS_LUNAR = commonTag("storage_blocks/lunar");
+		public static final TagKey<Block> STORAGE_BLOCKS_LYON = commonTag("storage_blocks/lyon");
+		public static final TagKey<Block> STORAGE_BLOCKS_MYSTITE = commonTag("storage_blocks/mystite");
+		public static final TagKey<Block> STORAGE_BLOCKS_ORNAMYTE = commonTag("storage_blocks/ornamyte");
+		public static final TagKey<Block> STORAGE_BLOCKS_SHYREGEM = commonTag("storage_blocks/shyregem");
+		public static final TagKey<Block> STORAGE_BLOCKS_SHYRESTONE = commonTag("storage_blocks/shyrestone");
+		public static final TagKey<Block> STORAGE_BLOCKS_SKELETAL = commonTag("storage_blocks/skeletal");
+		public static final TagKey<Block> STORAGE_BLOCKS_VARSIUM = commonTag("storage_blocks/varsium");
 
 		public static final TagKey<Block> CARVED_RUNE = aoaTag("carved_rune");
 		public static final TagKey<Block> LUNAR_ORB = aoaTag("lunar_orb");
 		public static final TagKey<Block> BASE_STONE_CREEPONIA = aoaTag("base_stone_creeponia");
 		public static final TagKey<Block> NOWHERE_SAFE_GUI_BLOCK = aoaTag("nowhere_safe_gui_block");
 
-		public static final TagKey<Block> BASE_STONE_PRECASIA = tag("base_stone_precasia");
+		public static final TagKey<Block> BASE_STONE_PRECASIA = commonTag("base_stone_precasia");
 
-		public static final TagKey<Block> EXTRACTION_TRAINABLE = tag("extraction_trainable");
+		public static final TagKey<Block> EXTRACTION_TRAINABLE = commonTag("extraction_trainable");
 
 		public static final TagKey<Block> INFINIBURN_BARATHOS = aoaTag("infiniburn_barathos");
 
@@ -103,106 +103,106 @@ public final class AoATags {
 			return BlockTags.create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<Block> tag(String id) {
-			return BlockTags.create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<Block> commonTag(String id) {
+			return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 	}
 
 	public static class Items {
-		public static final TagKey<Item> GRASS = tag("grass");
+		public static final TagKey<Item> GRASS = commonTag("grass");
 
-		public static final TagKey<Item> BARONYTE_ORE = tag("ores/baronyte");
-		public static final TagKey<Item> BLAZIUM_ORE = tag("ores/blazium");
-		public static final TagKey<Item> BLOODSTONE_ORE = tag("ores/bloodstone");
-		public static final TagKey<Item> BLUE_GEMSTONE_ORE = tag("ores/blue_gemstone");
-		public static final TagKey<Item> CHARGED_RUNIUM_ORE = tag("ores/charged_runium");
-		public static final TagKey<Item> BONE_FRAGMENTS_ORE = tag("ores/chestbone_fragments");
-		public static final TagKey<Item> CRYSTALLITE_ORE = tag("ores/crystallite");
-		public static final TagKey<Item> ELECANIUM_ORE = tag("ores/elecanium");
-		public static final TagKey<Item> EMBERSTONE_ORE = tag("ores/emberstone");
-		public static final TagKey<Item> GEMENYTE_ORE = tag("ores/gemenyte");
-		public static final TagKey<Item> GHASTLY_ORE = tag("ores/ghastly");
-		public static final TagKey<Item> GHOULISH_ORE = tag("ores/ghoulish");
-		public static final TagKey<Item> GREEN_GEMSTONE_ORE = tag("ores/green_gemstone");
-		public static final TagKey<Item> JADE_ORE = tag("ores/jade");
-		public static final TagKey<Item> JEWELYTE_ORE = tag("ores/jewelyte");
-		public static final TagKey<Item> LIMONITE_ORE = tag("ores/limonite");
-		public static final TagKey<Item> LYON_ORE = tag("ores/lyon");
-		public static final TagKey<Item> MYSTITE_ORE = tag("ores/mystite");
-		public static final TagKey<Item> ORNAMYTE_ORE = tag("ores/ornamyte");
-		public static final TagKey<Item> PURPLE_GEMSTONE_ORE = tag("ores/purple_gemstone");
-		public static final TagKey<Item> RED_GEMSTONE_ORE = tag("ores/red_gemstone");
-		public static final TagKey<Item> RUNIUM_ORE = tag("ores/runium");
-		public static final TagKey<Item> SHYREGEM_ORE = tag("ores/shyregem");
-		public static final TagKey<Item> SHYRESTONE_ORE = tag("ores/shyrestone");
-		public static final TagKey<Item> VARSIUM_ORE = tag("ores/varsium");
-		public static final TagKey<Item> WHITE_GEMSTONE_ORE = tag("ores/white_gemstone");
-		public static final TagKey<Item> YELLOW_GEMSTONE_ORE = tag("ores/yellow_gemstone");
+		public static final TagKey<Item> BARONYTE_ORE = commonTag("ores/baronyte");
+		public static final TagKey<Item> BLAZIUM_ORE = commonTag("ores/blazium");
+		public static final TagKey<Item> BLOODSTONE_ORE = commonTag("ores/bloodstone");
+		public static final TagKey<Item> BLUE_GEMSTONE_ORE = commonTag("ores/blue_gemstone");
+		public static final TagKey<Item> CHARGED_RUNIUM_ORE = commonTag("ores/charged_runium");
+		public static final TagKey<Item> BONE_FRAGMENTS_ORE = commonTag("ores/chestbone_fragments");
+		public static final TagKey<Item> CRYSTALLITE_ORE = commonTag("ores/crystallite");
+		public static final TagKey<Item> ELECANIUM_ORE = commonTag("ores/elecanium");
+		public static final TagKey<Item> EMBERSTONE_ORE = commonTag("ores/emberstone");
+		public static final TagKey<Item> GEMENYTE_ORE = commonTag("ores/gemenyte");
+		public static final TagKey<Item> GHASTLY_ORE = commonTag("ores/ghastly");
+		public static final TagKey<Item> GHOULISH_ORE = commonTag("ores/ghoulish");
+		public static final TagKey<Item> GREEN_GEMSTONE_ORE = commonTag("ores/green_gemstone");
+		public static final TagKey<Item> JADE_ORE = commonTag("ores/jade");
+		public static final TagKey<Item> JEWELYTE_ORE = commonTag("ores/jewelyte");
+		public static final TagKey<Item> LIMONITE_ORE = commonTag("ores/limonite");
+		public static final TagKey<Item> LYON_ORE = commonTag("ores/lyon");
+		public static final TagKey<Item> MYSTITE_ORE = commonTag("ores/mystite");
+		public static final TagKey<Item> ORNAMYTE_ORE = commonTag("ores/ornamyte");
+		public static final TagKey<Item> PURPLE_GEMSTONE_ORE = commonTag("ores/purple_gemstone");
+		public static final TagKey<Item> RED_GEMSTONE_ORE = commonTag("ores/red_gemstone");
+		public static final TagKey<Item> RUNIUM_ORE = commonTag("ores/runium");
+		public static final TagKey<Item> SHYREGEM_ORE = commonTag("ores/shyregem");
+		public static final TagKey<Item> SHYRESTONE_ORE = commonTag("ores/shyrestone");
+		public static final TagKey<Item> VARSIUM_ORE = commonTag("ores/varsium");
+		public static final TagKey<Item> WHITE_GEMSTONE_ORE = commonTag("ores/white_gemstone");
+		public static final TagKey<Item> YELLOW_GEMSTONE_ORE = commonTag("ores/yellow_gemstone");
 
-		public static final TagKey<Item> STORAGE_BLOCKS_BARONYTE = tag("storage_blocks/baronyte");
-		public static final TagKey<Item> STORAGE_BLOCKS_BLAZIUM = tag("storage_blocks/blazium");
-		public static final TagKey<Item> STORAGE_BLOCKS_BLOODSTONE = tag("storage_blocks/bloodstone");
-		public static final TagKey<Item> STORAGE_BLOCKS_CRYSTALLITE = tag("storage_blocks/crystallite");
-		public static final TagKey<Item> STORAGE_BLOCKS_ELECANIUM = tag("storage_blocks/elecanium");
-		public static final TagKey<Item> STORAGE_BLOCKS_EMBERSTONE = tag("storage_blocks/emberstone");
-		public static final TagKey<Item> STORAGE_BLOCKS_GEMENYTE = tag("storage_blocks/gemenyte");
-		public static final TagKey<Item> STORAGE_BLOCKS_GHASTLY = tag("storage_blocks/ghastly");
-		public static final TagKey<Item> STORAGE_BLOCKS_GHOULISH = tag("storage_blocks/ghoulish");
-		public static final TagKey<Item> STORAGE_BLOCKS_JADE = tag("storage_blocks/jade");
-		public static final TagKey<Item> STORAGE_BLOCKS_JEWELYTE = tag("storage_blocks/jewelyte");
-		public static final TagKey<Item> STORAGE_BLOCKS_RAW_LIMONITE = tag("storage_blocks/raw_limonite");
-		public static final TagKey<Item> STORAGE_BLOCKS_RAW_EMBERSTONE = tag("storage_blocks/raw_emberstone");
-		public static final TagKey<Item> STORAGE_BLOCKS_LIMONITE = tag("storage_blocks/limonite");
-		public static final TagKey<Item> STORAGE_BLOCKS_LUNAR = tag("storage_blocks/lunar");
-		public static final TagKey<Item> STORAGE_BLOCKS_LYON = tag("storage_blocks/lyon");
-		public static final TagKey<Item> STORAGE_BLOCKS_MYSTITE = tag("storage_blocks/mystite");
-		public static final TagKey<Item> STORAGE_BLOCKS_ORNAMYTE = tag("storage_blocks/ornamyte");
-		public static final TagKey<Item> STORAGE_BLOCKS_SHYREGEM = tag("storage_blocks/shyregem");
-		public static final TagKey<Item> STORAGE_BLOCKS_SHYRESTONE = tag("storage_blocks/shyrestone");
-		public static final TagKey<Item> STORAGE_BLOCKS_SKELETAL = tag("storage_blocks/skeletal");
-		public static final TagKey<Item> STORAGE_BLOCKS_VARSIUM = tag("storage_blocks/varsium");
+		public static final TagKey<Item> STORAGE_BLOCKS_BARONYTE = commonTag("storage_blocks/baronyte");
+		public static final TagKey<Item> STORAGE_BLOCKS_BLAZIUM = commonTag("storage_blocks/blazium");
+		public static final TagKey<Item> STORAGE_BLOCKS_BLOODSTONE = commonTag("storage_blocks/bloodstone");
+		public static final TagKey<Item> STORAGE_BLOCKS_CRYSTALLITE = commonTag("storage_blocks/crystallite");
+		public static final TagKey<Item> STORAGE_BLOCKS_ELECANIUM = commonTag("storage_blocks/elecanium");
+		public static final TagKey<Item> STORAGE_BLOCKS_EMBERSTONE = commonTag("storage_blocks/emberstone");
+		public static final TagKey<Item> STORAGE_BLOCKS_GEMENYTE = commonTag("storage_blocks/gemenyte");
+		public static final TagKey<Item> STORAGE_BLOCKS_GHASTLY = commonTag("storage_blocks/ghastly");
+		public static final TagKey<Item> STORAGE_BLOCKS_GHOULISH = commonTag("storage_blocks/ghoulish");
+		public static final TagKey<Item> STORAGE_BLOCKS_JADE = commonTag("storage_blocks/jade");
+		public static final TagKey<Item> STORAGE_BLOCKS_JEWELYTE = commonTag("storage_blocks/jewelyte");
+		public static final TagKey<Item> STORAGE_BLOCKS_RAW_LIMONITE = commonTag("storage_blocks/raw_limonite");
+		public static final TagKey<Item> STORAGE_BLOCKS_RAW_EMBERSTONE = commonTag("storage_blocks/raw_emberstone");
+		public static final TagKey<Item> STORAGE_BLOCKS_LIMONITE = commonTag("storage_blocks/limonite");
+		public static final TagKey<Item> STORAGE_BLOCKS_LUNAR = commonTag("storage_blocks/lunar");
+		public static final TagKey<Item> STORAGE_BLOCKS_LYON = commonTag("storage_blocks/lyon");
+		public static final TagKey<Item> STORAGE_BLOCKS_MYSTITE = commonTag("storage_blocks/mystite");
+		public static final TagKey<Item> STORAGE_BLOCKS_ORNAMYTE = commonTag("storage_blocks/ornamyte");
+		public static final TagKey<Item> STORAGE_BLOCKS_SHYREGEM = commonTag("storage_blocks/shyregem");
+		public static final TagKey<Item> STORAGE_BLOCKS_SHYRESTONE = commonTag("storage_blocks/shyrestone");
+		public static final TagKey<Item> STORAGE_BLOCKS_SKELETAL = commonTag("storage_blocks/skeletal");
+		public static final TagKey<Item> STORAGE_BLOCKS_VARSIUM = commonTag("storage_blocks/varsium");
 
-		public static final TagKey<Item> GEMS_BLOODSTONE = tag("gems/bloodstone");
-		public static final TagKey<Item> GEMS_CRYSTALLITE = tag("gems/crystallite");
-		public static final TagKey<Item> GEMS_GEMENYTE = tag("gems/gemenyte");
-		public static final TagKey<Item> GEMS_JADE = tag("gems/jade");
-		public static final TagKey<Item> GEMS_JEWELYTE = tag("gems/jewelyte");
-		public static final TagKey<Item> GEMS_ORNAMYTE = tag("gems/ornamyte");
-		public static final TagKey<Item> GEMS_SHYREGEM = tag("gems/shyregem");
+		public static final TagKey<Item> GEMS_BLOODSTONE = commonTag("gems/bloodstone");
+		public static final TagKey<Item> GEMS_CRYSTALLITE = commonTag("gems/crystallite");
+		public static final TagKey<Item> GEMS_GEMENYTE = commonTag("gems/gemenyte");
+		public static final TagKey<Item> GEMS_JADE = commonTag("gems/jade");
+		public static final TagKey<Item> GEMS_JEWELYTE = commonTag("gems/jewelyte");
+		public static final TagKey<Item> GEMS_ORNAMYTE = commonTag("gems/ornamyte");
+		public static final TagKey<Item> GEMS_SHYREGEM = commonTag("gems/shyregem");
 		
-		public static final TagKey<Item> INGOTS_BARONYTE = tag("ingots/baronyte");
-		public static final TagKey<Item> INGOTS_BLAZIUM = tag("ingots/blazium");
-		public static final TagKey<Item> INGOTS_ELECANIUM = tag("ingots/elecanium");
-		public static final TagKey<Item> INGOTS_EMBERSTONE = tag("ingots/emberstone");
-		public static final TagKey<Item> INGOTS_GHASTLY = tag("ingots/ghastly");
-		public static final TagKey<Item> INGOTS_GHOULISH = tag("ingots/ghoulish");
-		public static final TagKey<Item> INGOTS_LIMONITE = tag("ingots/limonite");
-		public static final TagKey<Item> INGOTS_LUNAR = tag("ingots/lunar");
-		public static final TagKey<Item> INGOTS_LYON = tag("ingots/lyon");
-		public static final TagKey<Item> INGOTS_MYSTITE = tag("ingots/mystite");
-		public static final TagKey<Item> INGOTS_SHYRESTONE = tag("ingots/shyrestone");
-		public static final TagKey<Item> INGOTS_SKELETAL = tag("ingots/skeletal");
-		public static final TagKey<Item> INGOTS_VARSIUM = tag("ingots/varsium");
+		public static final TagKey<Item> INGOTS_BARONYTE = commonTag("ingots/baronyte");
+		public static final TagKey<Item> INGOTS_BLAZIUM = commonTag("ingots/blazium");
+		public static final TagKey<Item> INGOTS_ELECANIUM = commonTag("ingots/elecanium");
+		public static final TagKey<Item> INGOTS_EMBERSTONE = commonTag("ingots/emberstone");
+		public static final TagKey<Item> INGOTS_GHASTLY = commonTag("ingots/ghastly");
+		public static final TagKey<Item> INGOTS_GHOULISH = commonTag("ingots/ghoulish");
+		public static final TagKey<Item> INGOTS_LIMONITE = commonTag("ingots/limonite");
+		public static final TagKey<Item> INGOTS_LUNAR = commonTag("ingots/lunar");
+		public static final TagKey<Item> INGOTS_LYON = commonTag("ingots/lyon");
+		public static final TagKey<Item> INGOTS_MYSTITE = commonTag("ingots/mystite");
+		public static final TagKey<Item> INGOTS_SHYRESTONE = commonTag("ingots/shyrestone");
+		public static final TagKey<Item> INGOTS_SKELETAL = commonTag("ingots/skeletal");
+		public static final TagKey<Item> INGOTS_VARSIUM = commonTag("ingots/varsium");
 
-		public static final TagKey<Item> RAW_MATERIALS_LIMONITE = tag("raw_materials/limonite");
-		public static final TagKey<Item> RAW_MATERIALS_EMBERSTONE = tag("raw_materials/emberstone");
+		public static final TagKey<Item> RAW_MATERIALS_LIMONITE = commonTag("raw_materials/limonite");
+		public static final TagKey<Item> RAW_MATERIALS_EMBERSTONE = commonTag("raw_materials/emberstone");
 
-		public static final TagKey<Item> NUGGETS_BARONYTE = tag("nuggets/baronyte");
-		public static final TagKey<Item> NUGGETS_BLAZIUM = tag("nuggets/blazium");
-		public static final TagKey<Item> NUGGETS_ELECANIUM = tag("nuggets/elecanium");
-		public static final TagKey<Item> NUGGETS_EMBERSTONE = tag("nuggets/emberstone");
-		public static final TagKey<Item> NUGGETS_GHASTLY = tag("nuggets/ghastly");
-		public static final TagKey<Item> NUGGETS_GHOULISH = tag("nuggets/ghoulish");
-		public static final TagKey<Item> NUGGETS_LIMONITE = tag("nuggets/limonite");
-		public static final TagKey<Item> NUGGETS_LUNAR = tag("nuggets/lunar");
-		public static final TagKey<Item> NUGGETS_LYON = tag("nuggets/lyon");
-		public static final TagKey<Item> NUGGETS_MYSTITE = tag("nuggets/mystite");
-		public static final TagKey<Item> NUGGETS_SHYRESTONE = tag("nuggets/shyrestone");
-		public static final TagKey<Item> NUGGETS_SKELETAL = tag("nuggets/skeletal");
-		public static final TagKey<Item> NUGGETS_VARSIUM = tag("nuggets/varsium");
+		public static final TagKey<Item> NUGGETS_BARONYTE = commonTag("nuggets/baronyte");
+		public static final TagKey<Item> NUGGETS_BLAZIUM = commonTag("nuggets/blazium");
+		public static final TagKey<Item> NUGGETS_ELECANIUM = commonTag("nuggets/elecanium");
+		public static final TagKey<Item> NUGGETS_EMBERSTONE = commonTag("nuggets/emberstone");
+		public static final TagKey<Item> NUGGETS_GHASTLY = commonTag("nuggets/ghastly");
+		public static final TagKey<Item> NUGGETS_GHOULISH = commonTag("nuggets/ghoulish");
+		public static final TagKey<Item> NUGGETS_LIMONITE = commonTag("nuggets/limonite");
+		public static final TagKey<Item> NUGGETS_LUNAR = commonTag("nuggets/lunar");
+		public static final TagKey<Item> NUGGETS_LYON = commonTag("nuggets/lyon");
+		public static final TagKey<Item> NUGGETS_MYSTITE = commonTag("nuggets/mystite");
+		public static final TagKey<Item> NUGGETS_SHYRESTONE = commonTag("nuggets/shyrestone");
+		public static final TagKey<Item> NUGGETS_SKELETAL = commonTag("nuggets/skeletal");
+		public static final TagKey<Item> NUGGETS_VARSIUM = commonTag("nuggets/varsium");
 		
 		public static final TagKey<Item> PRECASIAN_BONE = aoaTag("precasian_bone");
-		public static final TagKey<Item> ADVENT_RUNE = aoaTag("rune");
+		public static final TagKey<Item> ADVENT_RUNE = aoaTag("runes");
 		public static final TagKey<Item> FRAME_BENCH_FRAME = aoaTag("frame_bench_frame");
 		public static final TagKey<Item> ENERGY_STONE = aoaTag("energy_stone");
 		public static final TagKey<Item> SKILL_CRYSTAL = aoaTag("skill_crystal");
@@ -210,16 +210,16 @@ public final class AoATags {
 		public static final TagKey<Item> FAUNAMANCER_TOOL = aoaTag("faunamancer_tool");
 		public static final TagKey<Item> POWER_STONE = aoaTag("power_stones");
 
-		public static final TagKey<Item> CURRENCY = tag("currency");
-		public static final TagKey<Item> FRUIT = tag("fruit");
-		public static final TagKey<Item> MILK = tag("milk");
-		public static final TagKey<Item> GINGERBREAD = tag("gingerbread");
-		public static final TagKey<Item> MINTS = tag("mints");
-		public static final TagKey<Item> FOOD = tag("food");
-		public static final TagKey<Item> SHULKER_BOXES = tag("shulker_boxes");
-		public static final TagKey<Item> IVORY = tag("ivory");
-		public static final TagKey<Item> RODS_METAL = tag("rods/metal");
-		public static final TagKey<Item> AIRTIGHT = tag("armor/airtight");
+		public static final TagKey<Item> CURRENCY = commonTag("currency");
+		public static final TagKey<Item> FRUIT = commonTag("fruit");
+		public static final TagKey<Item> MILK = commonTag("milk");
+		public static final TagKey<Item> GINGERBREAD = commonTag("gingerbread");
+		public static final TagKey<Item> MINTS = commonTag("mints");
+		public static final TagKey<Item> FOOD = commonTag("food");
+		public static final TagKey<Item> SHULKER_BOXES = commonTag("shulker_boxes");
+		public static final TagKey<Item> IVORY = commonTag("ivory");
+		public static final TagKey<Item> RODS_METAL = commonTag("rods/metal");
+		public static final TagKey<Item> AIRTIGHT = commonTag("armor/airtight");
 
 		public static final TagKey<Item> COMPASS_RUNE_CATALYST = aoaTag("compass_rune_catalyst");
 		public static final TagKey<Item> DISTORTION_RUNE_CATALYST = aoaTag("distortion_rune_catalyst");
@@ -264,27 +264,27 @@ public final class AoATags {
 			return ItemTags.create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<Item> tag(String id) {
-			return ItemTags.create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<Item> commonTag(String id) {
+			return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 	}
 
 	public static class Fluids {
-		public static final TagKey<Fluid> CANDIED_WATER = tag("candied_water");
-		public static final TagKey<Fluid> TOXIC_WASTE = tag("toxic_waste");
-		public static final TagKey<Fluid> TAR = tag("tar");
+		public static final TagKey<Fluid> CANDIED_WATER = commonTag("candied_water");
+		public static final TagKey<Fluid> TOXIC_WASTE = commonTag("toxic_waste");
+		public static final TagKey<Fluid> TAR = commonTag("tar");
 
 		private static TagKey<Fluid> aoaTag(String id) {
 			return FluidTags.create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<Fluid> tag(String id) {
-			return FluidTags.create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<Fluid> commonTag(String id) {
+			return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 	}
 
 	public static class Entities {
-		public static final TagKey<EntityType<?>> FLYING = tag("flying");
+		public static final TagKey<EntityType<?>> FLYING = commonTag("flying");
 		public static final TagKey<EntityType<?>> IMMUNE_TO_SANDSTORM = aoaTag("immune_to_sandstorm");
 		public static final TagKey<EntityType<?>> LOOSE_SAND_WALKABLE_MOBS = aoaTag("loose_sand_walkable_mobs");
 
@@ -292,8 +292,8 @@ public final class AoATags {
 			return create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<EntityType<?>> tag(String id) {
-			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<EntityType<?>> commonTag(String id) {
+			return create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 
 		public static TagKey<EntityType<?>> create(ResourceLocation id) {
@@ -302,7 +302,7 @@ public final class AoATags {
 	}
 
 	public static class Biomes {
-		public static final TagKey<Biome> NO_MOB_SPAWNS = tag("no_mob_spawns");
+		public static final TagKey<Biome> NO_MOB_SPAWNS = commonTag("no_mob_spawns");
 		public static final TagKey<Biome> IS_ABYSS = aoaTag("is_abyss");
 		public static final TagKey<Biome> IS_BARATHOS = aoaTag("is_barathos");
 		public static final TagKey<Biome> IS_CELEVE = aoaTag("is_celeve");
@@ -321,8 +321,8 @@ public final class AoATags {
 			return create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<Biome> tag(String id) {
-			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<Biome> commonTag(String id) {
+			return create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 
 		public static TagKey<Biome> create(ResourceLocation id) {
@@ -337,8 +337,8 @@ public final class AoATags {
 			return create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<Structure> tag(String id) {
-			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<Structure> commonTag(String id) {
+			return create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 
 		public static TagKey<Structure> create(ResourceLocation id) {
@@ -350,15 +350,15 @@ public final class AoATags {
 		public static final TagKey<DamageType> GUN = aoaTag("gun");
 		public static final TagKey<DamageType> ENERGY = aoaTag("energy");
 		public static final TagKey<DamageType> NO_SPIRIT_REGEN = aoaTag("no_spirit_regen");
-		public static final TagKey<DamageType> REDUCED_FLINCH = tag("reduced_flinch");
-		public static final TagKey<DamageType> NO_ARMOUR_DAMAGE = tag("no_armour_damage");
+		public static final TagKey<DamageType> REDUCED_FLINCH = commonTag("reduced_flinch");
+		public static final TagKey<DamageType> NO_ARMOUR_DAMAGE = commonTag("no_armour_damage");
 
 		private static TagKey<DamageType> aoaTag(String id) {
 			return create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<DamageType> tag(String id) {
-			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<DamageType> commonTag(String id) {
+			return create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 
 		public static TagKey<DamageType> create(ResourceLocation id) {
@@ -386,12 +386,24 @@ public final class AoATags {
 			return create(AdventOfAscension.id(id));
 		}
 
-		private static TagKey<BannerPattern> tag(String id) {
-			return create(ResourceLocation.fromNamespaceAndPath(NeoForgeVersion.MOD_ID, id));
+		private static TagKey<BannerPattern> commonTag(String id) {
+			return create(ResourceLocation.fromNamespaceAndPath("c", id));
 		}
 
 		public static TagKey<BannerPattern> create(ResourceLocation id) {
 			return TagKey.create(Registries.BANNER_PATTERN, id);
+		}
+	}
+
+	public static class Enchantments {
+		public static final TagKey<Enchantment> ARTIFICE_TOOL_INCOMPATIBLE = aoaTag("artifice_tool_incompatible");
+
+		private static TagKey<Enchantment> aoaTag(String id) {
+			return create(AdventOfAscension.id(id));
+		}
+
+		public static TagKey<Enchantment> create(ResourceLocation id) {
+			return TagKey.create(Registries.ENCHANTMENT, id);
 		}
 	}
 }

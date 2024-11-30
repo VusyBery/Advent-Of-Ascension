@@ -10,12 +10,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
@@ -61,7 +59,7 @@ public class EmbrakeEntity extends AoAMeleeMob<EmbrakeEntity> implements AoARang
 	@Override
 	public BrainActivityGroup<EmbrakeEntity> getFightTasks() {
 		return BrainActivityGroup.fightTasks(
-				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
+				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> !DamageUtil.isAttackable(target) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
 				new FirstApplicableBehaviour<>(
 						new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration() + 2),
 						new FirstApplicableBehaviour<>(
@@ -214,7 +212,7 @@ public class EmbrakeEntity extends AoAMeleeMob<EmbrakeEntity> implements AoARang
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(DefaultAnimations.genericWalkIdleController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_BITE)
+				DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_BITE).transitionLength(0)
 						.triggerableAnim("breath_start", BREATH_ATTACK)
 						.triggerableAnim("breath_stop", BREATH_ATTACK_END));
 	}

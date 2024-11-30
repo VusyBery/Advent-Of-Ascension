@@ -17,6 +17,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.data.server.AoASkillReqReloadListener;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
@@ -25,8 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 public class LevelRestriction extends AoAAbility.Instance {
-	private final ListenerType[] LISTENERS = new ListenerType[0];
-
 	private final ResourceLocation restrictedId;
 
 	public LevelRestriction(AoASkill.Instance skill, JsonObject data) {
@@ -42,8 +41,8 @@ public class LevelRestriction extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return Collections.emptyList();
 	}
 
 	@Override

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "aoa3:block/scoria_slab"
+    },
+    "type=double": {
+      "model": "aoa3:block/scoria"
+    },
+    "type=top": {
+      "model": "aoa3:block/scoria_slab_top"
+    }
+  }
+}

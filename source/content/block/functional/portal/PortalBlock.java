@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.block.functional.portal;
 import com.google.common.base.Suppliers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -32,7 +33,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.tslat.aoa3.common.registration.AoAConfigs;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.content.world.teleporter.AoAPortal;
-import net.tslat.aoa3.content.world.teleporter.PortalCoordinatesContainer;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
@@ -238,9 +238,9 @@ public abstract class PortalBlock extends Block implements AoAPortal {
 		final ResourceKey<Level> currentDimension = level.dimension();
 		final ResourceKey<Level> portalTargetDimension = getDimension();
 		final MinecraftServer server = level.getServer();
-		final Optional<PortalCoordinatesContainer> existingLink = Optional.ofNullable(entity instanceof ServerPlayer pl ? PlayerUtil.getAdventPlayer(pl).getPortalReturnLocation(currentDimension) : null);
+		final Optional<GlobalPos> existingLink = Optional.ofNullable(entity instanceof ServerPlayer pl ? PlayerUtil.getAdventPlayer(pl).storage.getPortalReturnFor(currentDimension) : null);
 		ServerLevel targetLevel = existingLink
-				.map(link -> server.getLevel(currentDimension != portalTargetDimension ? portalTargetDimension : link.fromDim()))
+				.map(link -> server.getLevel(currentDimension != portalTargetDimension ? portalTargetDimension : link.dimension()))
 				.orElseGet(() -> server.getLevel(currentDimension == portalTargetDimension ? Level.OVERWORLD : portalTargetDimension));
 
 		if (targetLevel == null) {
@@ -253,7 +253,7 @@ public abstract class PortalBlock extends Block implements AoAPortal {
 		return getTransitionForPortalLink(targetLevel, entity, Optional.of(pos), AoAPortal.makeSafeCoords(level, targetLevel, entity.position()), existingLink);
 	}
 
-	public DimensionTransition getTransitionForPortalLink(ServerLevel targetLevel, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, Optional<PortalCoordinatesContainer> existingLink) {
+	public DimensionTransition getTransitionForPortalLink(ServerLevel targetLevel, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, Optional<GlobalPos> existingLink) {
 		return AoAPortal.getTransitionForLevel(targetLevel, entity, fromPortal, safeCoords, this, existingLink);
 	}
 }

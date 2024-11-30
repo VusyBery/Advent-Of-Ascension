@@ -27,15 +27,17 @@ public final class AttributeUtil {
         return getAttribute(entity, attribute).map(instance -> instance.hasModifier(modifierId)).orElse(false);
     }
 
-    public static void applyTransientModifier(LivingEntity entity, Holder<Attribute> attribute, AttributeModifier modifier) {
-        applyTransientModifier(entity, attribute, modifier, false);
+    public static boolean applyTransientModifier(LivingEntity entity, Holder<Attribute> attribute, AttributeModifier modifier) {
+        return applyTransientModifier(entity, attribute, modifier, false);
     }
 
-    public static void applyTransientModifier(LivingEntity entity, Holder<Attribute> attribute, AttributeModifier modifier, boolean skipIfPresent) {
-        getAttribute(entity, attribute).filter(instance -> !skipIfPresent || !instance.hasModifier(modifier.id())).ifPresent(instance -> {
+    public static boolean applyTransientModifier(LivingEntity entity, Holder<Attribute> attribute, AttributeModifier modifier, boolean skipIfPresent) {
+        return getAttribute(entity, attribute).filter(instance -> !skipIfPresent || !instance.hasModifier(modifier.id())).map(instance -> {
             instance.addOrUpdateTransientModifier(modifier);
             checkResidualHealthAfterAttribute(attribute, entity);
-        });
+
+            return true;
+        }).orElse(false);
     }
 
     public static void applyPermanentModifier(LivingEntity entity, Holder<Attribute> attribute, AttributeModifier modifier) {

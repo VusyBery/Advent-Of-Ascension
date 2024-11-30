@@ -186,7 +186,7 @@ public class KingBamBamBamEntity extends AoABoss implements AoARangedAttacker {
 		return BrainActivityGroup.idleTasks(
 				new TargetOrRetaliate<>()
 						.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-						.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)));
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)));
 	}
 
 	@Override

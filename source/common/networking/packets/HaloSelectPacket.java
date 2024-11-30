@@ -11,8 +11,7 @@ import net.tslat.aoa3.player.halo.PlayerHaloManager;
 public record HaloSelectPacket(HaloTypes.Selectable selected) implements AoAPacket {
 	public static final Type<HaloSelectPacket> TYPE = new Type<>(AdventOfAscension.id("halo_select"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, HaloSelectPacket> CODEC = StreamCodec.composite(
-			NeoForgeStreamCodecs.enumCodec(HaloTypes.Selectable.class),
-			HaloSelectPacket::selected,
+			NeoForgeStreamCodecs.enumCodec(HaloTypes.Selectable.class), HaloSelectPacket::selected,
 			HaloSelectPacket::new);
 
 	@Override

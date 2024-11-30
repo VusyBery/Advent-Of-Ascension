@@ -9,8 +9,7 @@ import net.tslat.aoa3.library.builder.SoundBuilder;
 public record AoASoundBuilderPacket(SoundBuilder soundBuilder) implements AoAPacket {
 	public static final Type<AoASoundBuilderPacket> TYPE = new Type<>(AdventOfAscension.id("sound_builder"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, AoASoundBuilderPacket> CODEC = StreamCodec.composite(
-			SoundBuilder.STREAM_CODEC,
-			AoASoundBuilderPacket::soundBuilder,
+			SoundBuilder.STREAM_CODEC, AoASoundBuilderPacket::soundBuilder,
 			AoASoundBuilderPacket::new);
 	@Override
 	public Type<? extends AoASoundBuilderPacket> type() {

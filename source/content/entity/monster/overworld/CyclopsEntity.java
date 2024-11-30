@@ -6,7 +6,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.Level;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
 import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
@@ -64,6 +63,6 @@ public class CyclopsEntity extends AoAMeleeMob<CyclopsEntity> {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				DefaultAnimations.genericWalkIdleController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SWING));
+				DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SWING).transitionLength(0));
 	}
 }

@@ -22,7 +22,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -38,6 +37,7 @@ import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySe
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.scheduling.AoAScheduler;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.smartbrainlib.api.SmartBrainOwner;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.SmartBrainProvider;
@@ -173,7 +173,7 @@ public abstract class AoAMonster<T extends AoAMonster<T>> extends Monster implem
 		return BrainActivityGroup.idleTasks(
 				new TargetOrRetaliate<>()
 						.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-						.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)),
 				new OneRandomBehaviour<>(
 						new SetRandomWalkTarget<>().speedModifier(0.9f),
 						new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));

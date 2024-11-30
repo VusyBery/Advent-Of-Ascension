@@ -44,6 +44,10 @@ public final class ClientOperations {
 		return Minecraft.getInstance().player;
 	}
 
+	public static boolean isLocalServer() {
+		return Minecraft.getInstance().isLocalServer();
+	}
+
 	public static void displayWornBookGui() {
 		Player player = Minecraft.getInstance().player;
 		ItemStack bookStack = player.getMainHandItem().getItem() == AoAItems.WORN_BOOK.get() ? player.getMainHandItem() : player.getOffhandItem();

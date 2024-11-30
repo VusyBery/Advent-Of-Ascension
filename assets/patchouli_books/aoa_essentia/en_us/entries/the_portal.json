@@ -8,7 +8,7 @@
   "pages": [
     {
       "type": "patchouli:text",
-      "text": "To get around to other $(aoa) dimensions, you will need to construct your own portal.$(br2)$(aoa) portals are made from $(thing)Ancient Rock$() and $(thing)Carved Runes$(), and must be constructed in a specific shape.$(br2)To make a portal frame, make a vertical, hollow rectangle out of $(thing)Ancient Rock$(), then replace the bottom center block with a $(l:aoa3:the_portal#carved_rune_of_power)Carved Rune of Power$(/l).",
+      "text": "To get around to other $(aoa) inDimensions, you will need to construct your own portal.$(br2)$(aoa) portals are made from $(thing)Ancient Rock$() and $(thing)Carved Runes$(), and must be constructed in a specific shape.$(br2)To make a portal frame, make a vertical, hollow rectangle out of $(thing)Ancient Rock$(), then replace the bottom center block with a $(l:aoa3:the_portal#carved_rune_of_power)Carved Rune of Power$(/l).",
       "title": "The Portal"
     },
     {

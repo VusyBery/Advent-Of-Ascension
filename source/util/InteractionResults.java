@@ -279,8 +279,6 @@ public final class InteractionResults {
 	 * Specifically for {@link net.minecraft.world.level.block.state.BlockBehaviour#useItemOn Block.useItemOn}.<br>
 	 */
 	public static class BlockUseItemOn {
-		// TODO review this and the other methods after 1.20.5's changes
-
 		public static ItemInteractionResult success() {
 			return ItemInteractionResult.SUCCESS;
 		}

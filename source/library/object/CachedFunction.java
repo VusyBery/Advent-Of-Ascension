@@ -1,32 +1,40 @@
 package net.tslat.aoa3.library.object;
 
-
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 
+/**
+ * A memoizing {@link Function} with generics.
+ * <p>
+ * This differs from typical memoizing functions in that it only caches the first result, allowing for it to be used as
+ * a lightweight lazily-initialized supplier that takes an input argument.<br>
+ * Additionally, the function itself is dropped after caching the result, to alleviate memory leaks and other similar
+ * potential effects.
+ *
+ * @param <T> the type of the input to the function
+ * @param <R> the type of the result of the function
+ */
+@FunctionalInterface
 public interface CachedFunction<T, R> extends Function<T, R> {
-	static <T, R> CachedFunction<T, R> of(@NotNull Function<T, R> function) {
-		return new Impl<>(function);
-	}
+	/**
+	 * Create a new CachedFunction for the given input function
+	 */
+	static <T, R> CachedFunction<T, R> of(@NotNull Function<T, R> inputFunction) {
+		return new CachedFunction<>() {
+			private Function<T, R> function = inputFunction;
+			private R cached = null;
 
-	final class Impl<T, R> implements CachedFunction<T, R> {
-		private Function<T, R> function;
-		private R cached = null;
+			@Override
+			public R apply(T t) {
+				if (this.cached != null)
+					return this.cached;
 
-		private Impl(Function<T, R> function) {
-			this.function = function;
-		}
+				this.cached = this.function.apply(t);
+				this.function = null;
 
-		@Override
-		public R apply(T t) {
-			if (cached != null)
-				return cached;
-
-			cached = function.apply(t);
-			function = null;
-
-			return cached;
-		}
+				return this.cached;
+			}
+		};
 	}
 }

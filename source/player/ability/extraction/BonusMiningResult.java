@@ -7,10 +7,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.custom.events.PlayerSkillsLootModificationEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.ItemUtil;
@@ -18,7 +19,8 @@ import net.tslat.aoa3.util.ItemUtil;
 import java.util.List;
 
 public class BonusMiningResult extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.LOOT_MODIFICATION};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerSkillsLootModificationEvent.class, serverOnly(this::handleLootModification)));
 
 
 	public BonusMiningResult(AoASkill.Instance skill, JsonObject data) {
@@ -30,13 +32,12 @@ public class BonusMiningResult extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleLootModification(List<ItemStack> loot, LootContext context) {
-		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+	private void handleLootModification(final PlayerSkillsLootModificationEvent ev) {
+		BlockState state = ev.getLootContext().getParamOrNull(LootContextParams.BLOCK_STATE);
 
 		if (state == null)
 			return;
@@ -48,6 +49,7 @@ public class BonusMiningResult extends ScalableModAbility {
 			return;
 
 		Item blockItem = state.getBlock().asItem();
+		List<ItemStack> loot = ev.getGeneratedLoot();
 
 		if (blockItem != Items.AIR) {
 			for (ItemStack stack : loot) {

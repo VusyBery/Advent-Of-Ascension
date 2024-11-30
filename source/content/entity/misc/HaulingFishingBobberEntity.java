@@ -28,12 +28,14 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.content.item.tool.misc.HaulingRod;
-import net.tslat.aoa3.data.server.AoAHaulingFishReloadListener;
-import net.tslat.aoa3.event.AoAPlayerEvents;
+import net.tslat.aoa3.content.skill.hauling.HaulingEntity;
+import net.tslat.aoa3.content.skill.hauling.HaulingSpawnPool;
+import net.tslat.aoa3.event.custom.AoAEvents;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.WorldUtil;
@@ -41,7 +43,7 @@ import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Function;
+import java.util.Optional;
 
 public class HaulingFishingBobberEntity extends FishingHook {
 	protected static final EntityDataAccessor<Integer> STATE = SynchedEntityData.defineId(HaulingFishingBobberEntity.class, EntityDataSerializers.INT);
@@ -135,6 +137,10 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		return this.luck;
 	}
 
+	public ItemStack getRod() {
+		return this.rod;
+	}
+
 	protected void calculateFishingLureBonus() {
 		this.fishingBonusMod = 1;
 
@@ -203,7 +209,7 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		if (!level().isClientSide())
 			updateState();
 
-		if (hookedEntity == null)
+		if (this.hookedEntity == null)
 			checkIfCollided();
 
 		if (!level().isClientSide() && position().distanceToSqr(player.position()) > Math.pow(getMaxCastDistance() * 2f, 2)) {
@@ -215,21 +221,21 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		BlockPos pos = blockPosition();
 		FluidState fluidState = level().getFluidState(pos);
 
-		if (state == State.HOOKED_FISH || state == State.HOOKED_IN_ENTITY) {
+		if (this.state == State.HOOKED_FISH || this.state == State.HOOKED_IN_ENTITY) {
 			if (hookedEntity != null) {
-				setPos(hookedEntity.getX(), hookedEntity.getY(0.8d) - 0.1d, hookedEntity.getZ());
+				setPos(hookedEntity.getX(), hookedEntity.getY(0.8d) - 0.1d, this.hookedEntity.getZ());
 
-				if (state == State.HOOKED_FISH) {
-					if (!level().isClientSide() && hookTime-- <= 0) {
+				if (this.state == State.HOOKED_FISH) {
+					if (!level().isClientSide() && this.hookTime-- <= 0) {
 						stopFishing();
 					}
 					else {
 						if (EntityUtil.isEntityMoving(player))
-							hookTime -= 2;
+							this.hookTime -= 2;
 
-						if (hookedEntity instanceof PathfinderMob) {
+						if (this.hookedEntity instanceof PathfinderMob) {
 							if (!level().isClientSide()) {
-								PathfinderMob creature = (PathfinderMob)hookedEntity;
+								PathfinderMob creature = (PathfinderMob)this.hookedEntity;
 
 								if (creature.getNavigation().isDone()) {
 									Vec3 targetPos = DefaultRandomPos.getPosAway(creature, 30, 5, player.position());
@@ -240,11 +246,11 @@ public class HaulingFishingBobberEntity extends FishingHook {
 							}
 						}
 						else {
-							if (hookedEntity.onGround()) {
+							if (this.hookedEntity.onGround()) {
 								stopFishing();
 							}
 							else {
-								hookedEntity.setDeltaMovement(hookedEntity.getDeltaMovement().subtract(0, 0.008, 0));
+								this.hookedEntity.setDeltaMovement(this.hookedEntity.getDeltaMovement().subtract(0, 0.008, 0));
 							}
 						}
 					}
@@ -343,8 +349,10 @@ public class HaulingFishingBobberEntity extends FishingHook {
 		FluidState fluidState = level().getFluidState(blockPosition());
 
 		if (fluidState.is(getApplicableFluid())) {
-			if (state == State.MIDAIR)
+			if (state == State.MIDAIR) {
 				state = State.IN_FLUID;
+
+			}
 		}
 		else if (state == State.IN_FLUID) {
 			state = State.MIDAIR;
@@ -435,14 +443,11 @@ public class HaulingFishingBobberEntity extends FishingHook {
 	}
 
 	protected void spawnFish(ServerPlayer player) {
-		Function<Level, Entity> fishFunction = AoAHaulingFishReloadListener.getFishListForBiome(level().getBiome(blockPosition()).value(), false, this.level()).getRandomElement(player, getLuck());
+		boolean isLava = Fluids.LAVA.is(getApplicableFluid());
+		Optional<HaulingSpawnPool> pool = HaulingSpawnPool.getPoolForLocation(level(), blockPosition(), isLava ? NeoForgeMod.LAVA_TYPE.value() : NeoForgeMod.WATER_TYPE.value());
+		Optional<HaulingEntity> entry = pool.flatMap(pool2 -> pool2.getEntry(player, getLuck()));
 
-		if (fishFunction != null) {
-			Entity entity = fishFunction.apply(player.level());
-
-			if (entity == null)
-				return;
-
+		AoAEvents.fireCheckHaulingEntitySpawn(pool.orElse(null), entry.map(haulingEntity -> haulingEntity.apply(level(), isLava)).orElse(null), player, this).ifPresent(entity -> {
 			if (entity instanceof Mob mob) {
 				BlockPos pos = RandomUtil.getRandomPositionWithinRange(this.blockPosition(), 10, 10, 10, 2, 2, 2, false, level(), 5, (state, statePos) -> state.getFluidState().getType() == Fluids.WATER);
 
@@ -455,10 +460,8 @@ public class HaulingFishingBobberEntity extends FishingHook {
 				level().addFreshEntity(entity);
 			}
 
-			spawnedFish = entity;
-
-			AoAPlayerEvents.handleCustomInteraction(player, "hauling_spawn_fish", spawnedFish);
-		}
+			this.spawnedFish = entity;
+		});
 	}
 
 	protected void checkIfCollided() {

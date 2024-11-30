@@ -1,21 +1,30 @@
 {
   "entities": [
     {
-      "entity": "minecraft:magma_cube",
+      "entity": "aoa3:fake_tnt",
       "weight": 180
     },
     {
+      "entity": "minecraft:magma_cube",
+      "weight": 150
+    },
+    {
       "entity": "minecraft:wither_skeleton",
-      "weight": 100,
-      "weight_mod": 2.0
+      "weight": 75,
+      "weight_mod": 10.0
     },
     {
       "entity": "minecraft:blaze",
-      "weight": 130
+      "weight": 100
+    },
+    {
+      "entity": "aoa3:fake_tnt",
+      "weight": 20
     },
     {
       "entity": "minecraft:zombified_piglin",
-      "weight": 100
+      "weight": 130
     }
-  ]
+  ],
+  "for_traps": true
 }

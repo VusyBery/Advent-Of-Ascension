@@ -1,0 +1,99 @@
+{
+  "biomes": [],
+  "entries": [
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "aoa3:crimson_skipper"
+      },
+      "weight": 200
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "aoa3:crimson_stripefish"
+      },
+      "weight": 200
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "aoa3:charred_char"
+      },
+      "weight": 150
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "aoa3:candlefish"
+      },
+      "weight": 150
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:obsidian"
+        }
+      },
+      "weight": 100
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 2.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:crying_obsidian"
+        }
+      },
+      "weight": 25
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 5.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:diamond"
+        }
+      },
+      "weight": 50
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 7.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:emerald"
+        }
+      },
+      "weight": 35
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -10.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:coal"
+        }
+      },
+      "weight": 120
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:lava_bucket"
+        }
+      },
+      "weight": 1
+    }
+  ],
+  "for_fluid": "minecraft:lava",
+  "is_default": true
+}

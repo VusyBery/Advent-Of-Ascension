@@ -15,6 +15,7 @@ import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.library.constant.ScreenImageEffect;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
@@ -22,10 +23,13 @@ import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class InnervationMobLure extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.PLAYER_TICK, ListenerType.INCOMING_DAMAGE};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerTickEvent.Pre.class, PlayerTickEvent.Pre::getEntity, serverOnly(this::handlePlayerTick)),
+			whenTakingDamage(serverOnly(this::handleIncomingDamage)));
 
 	private final float onHitDrain;
 	private final float perTickDrain;
@@ -56,8 +60,8 @@ public class InnervationMobLure extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -82,18 +86,17 @@ public class InnervationMobLure extends AoAAbility.Instance {
 
 	@Override
 	public void handleKeyInput() {
-		ServerPlayer player = (ServerPlayer)getPlayer();
+		if (getPlayer() instanceof ServerPlayer player) {
+			if (!isLuring && player.isCrouching() && player.getLastHurtMob() instanceof Mob mob) {
+				this.luringEntity = mob;
+				this.isLuring = true;
 
-		if (!isLuring && player.isCrouching() && player.getLastHurtMob() instanceof Mob mob) {
-			this.luringEntity = mob;
-			this.isLuring = true;
-
-			activatedActionKey(player);
+				activatedActionKey(player);
+			}
 		}
 	}
 
-	@Override
-	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
+	private void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (!isLuring)
 			return;
 
@@ -112,8 +115,7 @@ public class InnervationMobLure extends AoAAbility.Instance {
 			luringEntity.setTarget(pl);
 	}
 
-	@Override
-	public void handleIncomingDamage(LivingIncomingDamageEvent ev) {
+	private void handleIncomingDamage(LivingIncomingDamageEvent ev) {
 		if (isLuring && ev.getSource().getEntity() == luringEntity) {
 			skill.getPlayerDataManager().getResource(AoAResources.SPIRIT.get()).consume(this.onHitDrain, true);
 			ev.setAmount(ev.getAmount() * this.luredDamageModifier);

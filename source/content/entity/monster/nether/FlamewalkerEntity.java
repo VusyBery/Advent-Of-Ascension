@@ -16,7 +16,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
@@ -151,7 +150,7 @@ public class FlamewalkerEntity extends AoARangedMob<FlamewalkerEntity> {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(DefaultAnimations.genericLivingController(this),
                 DefaultAnimations.genericWalkIdleController(this),
-                AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_STRIKE));
+                DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_STRIKE).transitionLength(0));
     }
 
     private static class FlameWalkerAttack extends AnimatableRangedAttack<FlamewalkerEntity> {

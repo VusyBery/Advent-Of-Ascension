@@ -38,7 +38,7 @@ public class WornBook extends WrittenBookItem {
 			if (!InventoryUtil.hasItem(pl, AoAItems.BLANK_REALMSTONE)) {
 				InventoryUtil.giveItemTo(pl, AoAItems.BLANK_REALMSTONE);
 				pl.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("wornBook.droppedRealmstone")));
-				PlayerUtil.getAdventPlayer(pl).addPatchouliBook(AdventOfAscension.id("worn_book"));
+				PlayerUtil.getAdventPlayer(pl).storage.addPatchouliBook(AdventOfAscension.id("worn_book"));
 			}
 		}
 		else {

@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "tag": "neoforge:ingots/shyrestone"
+      "tag": "c:ingots/shyrestone"
     }
   ],
   "result": {

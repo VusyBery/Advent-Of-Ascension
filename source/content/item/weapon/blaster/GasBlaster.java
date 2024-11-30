@@ -48,10 +48,7 @@ public class GasBlaster extends BaseBlaster {
 
 	@Override
 	protected void doImpactEffect(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-		LivingEntity livingTarget = EntityUtil.getLivingEntityFromSelfOrPart(target);
-
-		if (livingTarget != null)
-			EntityUtil.applyPotions(livingTarget, new EffectBuilder(MobEffects.POISON, 13).level(2));
+		EntityUtil.applyPotions(target, new EffectBuilder(MobEffects.POISON, 13).level(2));
 	}
 
 	@Override

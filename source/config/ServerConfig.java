@@ -4,7 +4,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import net.tslat.aoa3.library.constant.BossDropsScheme;
 
 public final class ServerConfig {
-	public final ModConfigSpec.BooleanValue allowUnsafeInfusion;
 	public final ModConfigSpec.IntValue portalSearchRadius;
 	public final ModConfigSpec.BooleanValue easyCorruptedTravellers;
 	public final ModConfigSpec.BooleanValue allowNonPlayerPortalTravel;
@@ -21,11 +20,6 @@ public final class ServerConfig {
 
 	public ServerConfig(ModConfigSpec.Builder configBuilder) {
 		configBuilder.comment("AoA server-side configuration options").push("general_settings");
-
-		allowUnsafeInfusion = configBuilder
-				.comment("Set this to false to disable enchantments that breach level caps")
-				.translation("config.aoa3.server.allowUnsafeInfusion")
-				.define("allowUnsafeInfusion", true);
 
 		portalSearchRadius = configBuilder
 				.comment("Adjust this value to modify how far to look for safe/existing portal locations.",

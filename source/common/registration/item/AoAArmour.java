@@ -17,7 +17,7 @@ public final class AoAArmour {
 	public static final DeferredItem<Item> OCEANUS_HELMET = registerArmour("oceanus_helmet", OceanusHelmet::new);
 	public static final DeferredItem<Item> SEALORD_HELMET = registerArmour("sealord_helmet", SealordHelmet::new);
 	public static final DeferredItem<Item> FACE_MASK = registerArmour("face_mask", FaceMask::new);
-	public static final DeferredItem<Item> NIGHT_VISION_GOGGLES = registerArmour("night_vision_goggles", NightVisionGoggles::new);
+	public static final DeferredItem<Item> CHROMA_GOGGLES = registerArmour("chroma_goggles", ChromaGoggles::new);
 	
 	public static final ArmourSet ALACRITY_ARMOUR = registerArmourSet("alacrity", AlacrityArmour::new);
 	public static final ArmourSet ARCHAIC_ARMOUR = registerArmourSet("archaic", ArchaicArmour::new);

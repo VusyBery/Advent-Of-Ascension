@@ -2,14 +2,19 @@ package net.tslat.aoa3.common.registration.custom;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.common.registration.AoARegistries;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.player.resource.EnergyResource;
 import net.tslat.aoa3.player.resource.RageResource;
 import net.tslat.aoa3.player.resource.SpiritResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
 
 public final class AoAResources {
 	public static void init() {}
@@ -19,6 +24,11 @@ public final class AoAResources {
 	public static final DeferredHolder<AoAResource, AoAResource> RAGE = AoARegistries.AOA_RESOURCES.register("rage", () -> new AoAResource(RageResource::new, RageResource::new));
 
 	public static final AoAResource.Instance DEFAULT = new AoAResource.Instance(null, null) {
+		@Override
+		public List<DynamicEventSubscriber<? extends Event>> getEventSubscribers() {
+			return Collections.emptyList();
+		}
+
 		@Override
 		public float getCurrentValue() {
 			return 0;

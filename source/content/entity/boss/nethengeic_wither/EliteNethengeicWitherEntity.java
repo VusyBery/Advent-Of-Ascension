@@ -22,7 +22,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.schedule.Activity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -187,7 +186,7 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 		return BrainActivityGroup.idleTasks(
 				new TargetOrRetaliate<>()
 						.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-						.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)),
 				new SetRandomHoverTarget<>().speedModifier(0.9f));
 	}
 
@@ -195,7 +194,7 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 	public BrainActivityGroup<AoABoss> getFightTasks() {
 		return BrainActivityGroup.fightTasks(
 				new InvalidateAttackTarget<AoABoss>()
-						.invalidateIf((entity, target) -> !target.isAlive() || (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
+						.invalidateIf((entity, target) -> !DamageUtil.isAttackable(target) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
 				new SetAdditionalAttackTargets<>()
 						.withMemories(AoABrainMemories.SECOND_ATTACK_TARGET.get(), AoABrainMemories.THIRD_ATTACK_TARGET.get())
 						.allowDuplicateTargeting()
@@ -249,8 +248,8 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 						.priority(11)
 						.behaviours(
 								new InvalidateMemory<>(AoABrainMemories.SECOND_ATTACK_TARGET.get())
-										.invalidateIf((entity, memory) -> {
-											if (!memory.isAlive() || (memory instanceof Player pl && pl.getAbilities().invulnerable) || memory.distanceToSqr(entity) > Math.pow((int)getAttributeValue(Attributes.FOLLOW_RANGE), 2)) {
+										.invalidateIf((entity, target) -> {
+											if (!DamageUtil.isAttackable(target) || target.distanceToSqr(entity) > Math.pow((int)getAttributeValue(Attributes.FOLLOW_RANGE), 2)) {
 												SECOND_HEAD_TARGET.set(entity, -1);
 
 												return true;
@@ -280,8 +279,8 @@ public class EliteNethengeicWitherEntity extends AoABoss implements AoARangedAtt
 						.priority(12)
 						.behaviours(
 								new InvalidateMemory<>(AoABrainMemories.THIRD_ATTACK_TARGET.get())
-										.invalidateIf((entity, memory) -> {
-											if (!memory.isAlive() || (memory instanceof Player pl && pl.getAbilities().invulnerable) || memory.distanceToSqr(entity) > Math.pow((int)getAttributeValue(Attributes.FOLLOW_RANGE), 2)) {
+										.invalidateIf((entity, target) -> {
+											if (!DamageUtil.isAttackable(target) || target.distanceToSqr(entity) > Math.pow((int)getAttributeValue(Attributes.FOLLOW_RANGE), 2)) {
 												THIRD_HEAD_TARGET.set(entity, -1);
 
 												return true;

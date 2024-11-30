@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
 import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
@@ -156,6 +155,6 @@ public class InfernalEntity extends AoAMeleeMob<InfernalEntity> {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(DefaultAnimations.genericLivingController(this));
         controllers.add(DefaultAnimations.genericWalkIdleController(this));
-        controllers.add(AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_STRIKE));
+        controllers.add(DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_STRIKE).transitionLength(0));
     }
 }

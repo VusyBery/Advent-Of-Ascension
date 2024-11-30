@@ -8,13 +8,17 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.GsonHelper;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.NumberUtil;
 
+import java.util.List;
+
 public class VulcaneDamageIncrease extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			whenAttacking(serverOnly(this::handleOutgoingAttack)));
 
 	private final float minRage;
 	private final float modifier;
@@ -34,8 +38,8 @@ public class VulcaneDamageIncrease extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -43,8 +47,7 @@ public class VulcaneDamageIncrease extends AoAAbility.Instance {
 		super.updateDescription(Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey() + (minRage > 0 ? ".minRage" : ""), NumberUtil.roundToNthDecimalPlace((modifier - 1) * 100, 2), NumberUtil.roundToNthDecimalPlace(minRage, 2)));
 	}
 
-	@Override
-	public void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
+	private void handleOutgoingAttack(final LivingIncomingDamageEvent ev) {
 		if (DamageUtil.isVulcaneDamage(ev.getSource()))
 			ev.setAmount(ev.getAmount() * this.modifier);
 	}

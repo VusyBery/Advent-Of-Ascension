@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.ClientOperations;
-import net.tslat.aoa3.util.StreamCodecUtil;
+import net.tslat.aoa3.util.CodecUtil;
 
 import java.util.OptionalDouble;
 
@@ -14,9 +14,9 @@ public record UpdateClientMovementPacket(Operation operation, OptionalDouble x, 
 	public static final Type<UpdateClientMovementPacket> TYPE = new Type<>(AdventOfAscension.id("update_client_movement"));
 	public static final StreamCodec<FriendlyByteBuf, UpdateClientMovementPacket> CODEC = StreamCodec.composite(
 			NeoForgeStreamCodecs.enumCodec(Operation.class), UpdateClientMovementPacket::operation,
-			StreamCodecUtil.OPTIONAL_DOUBLE, UpdateClientMovementPacket::x,
-			StreamCodecUtil.OPTIONAL_DOUBLE, UpdateClientMovementPacket::y,
-			StreamCodecUtil.OPTIONAL_DOUBLE, UpdateClientMovementPacket::z,
+			CodecUtil.STREAM_OPTIONAL_DOUBLE, UpdateClientMovementPacket::x,
+			CodecUtil.STREAM_OPTIONAL_DOUBLE, UpdateClientMovementPacket::y,
+			CodecUtil.STREAM_OPTIONAL_DOUBLE, UpdateClientMovementPacket::z,
 			UpdateClientMovementPacket::new);
 
 	public UpdateClientMovementPacket(Operation operation, double x, double y, double z) {

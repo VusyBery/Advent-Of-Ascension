@@ -31,6 +31,7 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.block.decoration.banner.BannerBlock;
 import net.tslat.aoa3.content.block.generation.log.LogBlock;
 import net.tslat.aoa3.content.block.generation.misc.StaticMushroomBlock;
+import net.tslat.aoa3.content.block.generation.plants.GenericPlantBlock;
 import net.tslat.aoa3.content.block.generation.plants.GenericWaterPlant;
 import net.tslat.aoa3.util.BlockUtil;
 import org.jetbrains.annotations.Nullable;
@@ -178,7 +179,23 @@ public final class BlockRegistrar<T extends Block> {
 		return this;
 	}
 
-	public BlockRegistrar<T> basePlant() {
+	public BlockRegistrar<T> basePlant(Predicate<BlockState> validSurface, float width, float height) {
+		mapColour(MapColor.PLANT);
+		sounds(SoundType.GRASS);
+		flammable();
+		noClip();
+		neverSolid();
+		pistonBreaks();
+		modelOffset(BlockBehaviour.OffsetType.XZ);
+		instabreak();
+		replaceable();
+		factory(properties -> new GenericPlantBlock(properties, validSurface, width, height));
+		generationBlocksTab();
+
+		return this;
+	}
+
+	public BlockRegistrar<T> basePlantOld() {
 		mapColour(MapColor.PLANT);
 		sounds(SoundType.GRASS);
 		flammable();
@@ -200,7 +217,7 @@ public final class BlockRegistrar<T extends Block> {
 	}
 
 	public BlockRegistrar<T> baseStackablePlant(Function<BlockBehaviour.Properties, Block> factory) {
-		basePlant();
+		basePlantOld();
 		modelOffset(BlockBehaviour.OffsetType.NONE);
 		factory(factory);
 

@@ -1,0 +1,173 @@
+{
+  "biomes": [
+    "aoa3:precasian_plains",
+    "aoa3:precasian_savannah",
+    "aoa3:precasian_ocean",
+    "aoa3:precasian_shore",
+    "aoa3:precasian_volcano",
+    "aoa3:precasian_deadlands",
+    "aoa3:precasian_tar_pits",
+    "aoa3:precasian_jungle",
+    "aoa3:precasian_desert",
+    "aoa3:precasian_river",
+    "aoa3:precasian_forest",
+    "aoa3:precasian_tall_forest",
+    "aoa3:precasian_caves"
+  ],
+  "entries": [
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -10.0,
+      "object_id": {
+        "entity": "minecraft:cod"
+      },
+      "weight": 200
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -10.0,
+      "object_id": {
+        "entity": "minecraft:salmon"
+      },
+      "weight": 200
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -5.0,
+      "object_id": {
+        "entity": "minecraft:tropical_fish"
+      },
+      "weight": 180
+    },
+    {
+      "hauling_level_req": 5,
+      "object_id": {
+        "entity": "minecraft:pufferfish"
+      },
+      "weight": 150
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 10.0,
+      "object_id": {
+        "entity": "aoa3:rainbowfish"
+      },
+      "weight": 50
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 20.0,
+      "object_id": {
+        "entity": "aoa3:sailback"
+      },
+      "weight": 140
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 20.0,
+      "object_id": {
+        "entity": "aoa3:dark_hatchetfish"
+      },
+      "weight": 140
+    },
+    {
+      "hauling_level_req": 20,
+      "luck_mod": 5.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:nautilus_shell"
+        }
+      },
+      "weight": 65
+    },
+    {
+      "hauling_level_req": 5,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:name_tag"
+        }
+      },
+      "weight": 100
+    },
+    {
+      "hauling_level_req": 14,
+      "luck_mod": -20.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:leather"
+        }
+      },
+      "weight": 120
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 8.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:sharp_claw"
+        }
+      },
+      "weight": 90
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 8.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:jungle_thorns"
+        }
+      },
+      "weight": 90
+    },
+    {
+      "hauling_level_req": 25,
+      "luck_mod": 5.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:crystal_box"
+        }
+      },
+      "weight": 35
+    },
+    {
+      "hauling_level_req": 10,
+      "luck_mod": 5.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:shiny_box"
+        }
+      },
+      "weight": 35
+    },
+    {
+      "hauling_level_req": 30,
+      "luck_mod": 5.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:treasure_box"
+        }
+      },
+      "weight": 35
+    },
+    {
+      "hauling_level_req": 75,
+      "luck_mod": 3.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:tidal_greatblade"
+        }
+      },
+      "weight": 1
+    }
+  ],
+  "for_fluid": "minecraft:water"
+}

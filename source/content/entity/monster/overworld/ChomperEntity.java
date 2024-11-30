@@ -6,9 +6,7 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
@@ -18,6 +16,7 @@ import net.tslat.aoa3.content.entity.base.AoAEntityPart;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.util.AttributeUtil;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.FirstApplicableBehaviour;
@@ -94,7 +93,7 @@ public class ChomperEntity extends AoAMeleeMob<ChomperEntity> {
 		return BrainActivityGroup.idleTasks(
 				new TargetOrRetaliate<>()
 						.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-						.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)),
 				new OneRandomBehaviour<>(
 						new FirstApplicableBehaviour<>(
 								new SeekRandomNearbyPosition<>().speedModifier(0.8f).validPositions((entity, state) -> state.getFluidState().is(FluidTags.WATER)).startCondition(entity -> entity.level().isDay() && !entity.isInWater()),
@@ -105,7 +104,7 @@ public class ChomperEntity extends AoAMeleeMob<ChomperEntity> {
 	@Override
 	public BrainActivityGroup<ChomperEntity> getFightTasks() {
 		return BrainActivityGroup.fightTasks(
-				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
+				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> !DamageUtil.isAttackable(target) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
 				new SetWalkTargetToAttackTarget<>().speedMod((entity, target) -> 1.05f),
 				new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration() + 2));
 	}
@@ -149,6 +148,6 @@ public class ChomperEntity extends AoAMeleeMob<ChomperEntity> {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				DefaultAnimations.genericWalkRunIdleController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_BITE));
+				DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_BITE).transitionLength(0));
 	}
 }

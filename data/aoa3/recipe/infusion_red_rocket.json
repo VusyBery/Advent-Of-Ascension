@@ -5,13 +5,13 @@
   },
   "ingredients": [
     {
-      "tag": "neoforge:ingots/baronyte"
+      "tag": "c:ingots/baronyte"
     },
     {
-      "tag": "neoforge:ingots/baronyte"
+      "tag": "c:ingots/baronyte"
     },
     {
-      "tag": "neoforge:ingots/blazium"
+      "tag": "c:ingots/blazium"
     },
     {
       "tag": "c:ingots/iron"

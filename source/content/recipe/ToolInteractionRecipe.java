@@ -6,13 +6,12 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.tslat.aoa3.common.registration.AoARecipes;
+import net.tslat.aoa3.util.CodecUtil;
 import net.tslat.aoa3.util.RecipeUtil;
-import net.tslat.aoa3.util.StreamCodecUtil;
 import org.jetbrains.annotations.Nullable;
 
 public class ToolInteractionRecipe extends CustomRecipe implements RecipeBookRecipe<CraftingInput> {
@@ -56,34 +55,30 @@ public class ToolInteractionRecipe extends CustomRecipe implements RecipeBookRec
 	}
 
 	@Override
-	public boolean matches(CraftingInput inventory, Level level) {
-		StackedContents itemHelper = new StackedContents();
+	public boolean matches(CraftingInput input, Level level) {
+		if (this.ingredients.size() != input.ingredientCount())
+			return false;
+
 		boolean hasTool = false;
-		int ingredientCount = 0;
 
-		for (int i = 0; i < inventory.size(); i++) {
-			ItemStack stack = inventory.getItem(i);
+		for (ItemStack stack : input.items()) {
+			if (this.toolItem.test(stack)) {
+				hasTool = true;
 
-			if (!stack.isEmpty()) {
-				if (!hasTool && this.toolItem.test(stack))
-					hasTool = true;
-
-				ingredientCount++;
-
-				itemHelper.accountStack(stack, 1);
+				break;
 			}
 		}
 
-		return hasTool && ingredientCount == this.ingredients.size() && itemHelper.canCraft(this, null);
+		return hasTool && input.stackedContents().canCraft(this, null);
 	}
 
 	@Override
-	public NonNullList<ItemStack> getRemainingItems(CraftingInput inventory) {
-		final NonNullList<ItemStack> returns = NonNullList.withSize(inventory.size(), ItemStack.EMPTY);
+	public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
+		final NonNullList<ItemStack> returns = NonNullList.withSize(input.size(), ItemStack.EMPTY);
 		boolean hasTool = false;
 
 		for(int i = 0; i < returns.size(); ++i) {
-			ItemStack stack = inventory.getItem(i);
+			ItemStack stack = input.getItem(i);
 
 			if (!hasTool && this.toolItem.test(stack)) {
 				ItemStack toolCopy = stack.copy();
@@ -123,7 +118,7 @@ public class ToolInteractionRecipe extends CustomRecipe implements RecipeBookRec
 						.apply(builder, ToolInteractionRecipe::new));
 		public static final StreamCodec<RegistryFriendlyByteBuf, ToolInteractionRecipe> STREAM_CODEC = StreamCodec.composite(
 				RecipeUtil.RecipeBookDetails.STREAM_CODEC, recipe -> recipe.recipeBookDetails,
-				StreamCodecUtil.nonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), recipe -> recipe.ingredients,
+				CodecUtil.streamNonNullList(Ingredient.CONTENTS_STREAM_CODEC, Ingredient.EMPTY), recipe -> recipe.ingredients,
 				Ingredient.CONTENTS_STREAM_CODEC, recipe -> recipe.toolItem,
 				ItemStack.STREAM_CODEC, recipe -> recipe.output,
 				ToolInteractionRecipe::new);

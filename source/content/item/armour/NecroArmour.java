@@ -1,6 +1,5 @@
 package net.tslat.aoa3.content.item.armour;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -23,6 +22,7 @@ import net.tslat.aoa3.util.EnchantmentUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
+import org.apache.commons.lang3.mutable.MutableInt;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -55,26 +55,20 @@ public class NecroArmour extends AdventArmour {
 		if (!(entity instanceof ServerPlayer pl))
 			return;
 
-		Level level = entity.level();
-		ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
-		int count = perPieceValue(equippedPieces, 1);
-		int slotIndex = 0;
+		final ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
+		final Level level = pl.level();
+		final MutableInt count = new MutableInt(perPieceValue(equippedPieces, 1));
 
-		for (NonNullList<ItemStack> compartment : pl.getInventory().compartments) {
-			for (int i = 0; i < compartment.size(); i++) {
-				ItemStack stack = compartment.get(i);
+		if (count.intValue() > 0) {
+			plData.storage.putItemsInStorage(stack -> {
+				if (!EnchantmentUtil.hasEnchantment(level, stack, AoAEnchantments.INTERVENTION) && !EnchantmentUtil.hasEnchantment(level, stack, Enchantments.VANISHING_CURSE)) {
+					count.decrement();
 
-				if (!stack.isEmpty() && !EnchantmentUtil.hasEnchantment(level, stack, AoAEnchantments.INTERVENTION) && !EnchantmentUtil.hasEnchantment(level, stack, Enchantments.VANISHING_CURSE)) {
-					plData.storeItem(slotIndex + i, stack);
-					compartment.set(i, ItemStack.EMPTY);
-					count--;
-
-					if (count == 0)
-						return;
+					return true;
 				}
-			}
 
-			slotIndex += compartment.size();
+				return false;
+			}, () -> count.intValue() > 0);
 		}
 	}
 

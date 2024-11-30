@@ -17,8 +17,8 @@ public class UpdatePlayerTask extends InsertionTask {
 	private int newTotal;
 
 	public UpdatePlayerTask(ServerPlayerDataManager plData, AoASkill.Instance skill) {
-		this.uuid = plData.player().getUUID().toString();
-		this.name = plData.player().getName().getString();
+		this.uuid = plData.getPlayer().getUUID().toString();
+		this.name = plData.getPlayer().getName().getString();
 		this.skill = skill.type();
 		this.level = (short)skill.getLevel(true);
 

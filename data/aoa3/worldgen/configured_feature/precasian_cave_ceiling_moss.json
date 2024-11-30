@@ -14,7 +14,7 @@
         "Name": "minecraft:moss_block"
       }
     },
-    "replaceable": "#neoforge:base_stone_precasia",
+    "replaceable": "#c:base_stone_precasia",
     "surface": "ceiling",
     "vegetation_chance": 0.08,
     "vegetation_feature": {

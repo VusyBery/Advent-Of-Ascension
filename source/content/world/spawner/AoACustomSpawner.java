@@ -34,9 +34,10 @@ public interface AoACustomSpawner<E extends Entity> extends CustomSpawner {
 			IntProvider.CODEC.fieldOf("extra_delay_per_spawn").forGetter(GenericSettings::extraDelayPerSpawn),
 			Codec.FLOAT.fieldOf("chance_per_player").forGetter(GenericSettings::chancePerPlayer),
 			IntProvider.CODEC.fieldOf("spawn_attempts_per_player").forGetter(GenericSettings::spawnAttemptsPerPlayer),
-			Biome.LIST_CODEC.optionalFieldOf("biomes").forGetter(GenericSettings::biomeList),
-			ResourceKey.codec(Registries.DIMENSION).listOf().xmap(Set::copyOf, List::copyOf).fieldOf("dimensions").forGetter(GenericSettings::dimensions),
-			Codec.BOOL.fieldOf("whitelist_mode").forGetter(GenericSettings::whitelistMode),
+			Biome.LIST_CODEC.optionalFieldOf("in_biomes").forGetter(GenericSettings::inBiomes),
+			Biome.LIST_CODEC.optionalFieldOf("not_in_biomes").forGetter(GenericSettings::notInBiomes),
+			ResourceKey.codec(Registries.DIMENSION).listOf().xmap(Set::copyOf, List::copyOf).optionalFieldOf("in_dimensions").forGetter(GenericSettings::inDimensions),
+			ResourceKey.codec(Registries.DIMENSION).listOf().xmap(Set::copyOf, List::copyOf).optionalFieldOf("not_in_dimensions").forGetter(GenericSettings::notInDimensions),
 			SpawnData.CustomSpawnRules.CODEC.optionalFieldOf("spawn_rules").forGetter(GenericSettings::spawnRules),
 			Codec.BOOL.fieldOf("spawn_in_flat_world").forGetter(GenericSettings::spawnInSuperflat)
 	).apply(builder, GenericSettings::new));
@@ -54,7 +55,11 @@ public interface AoACustomSpawner<E extends Entity> extends CustomSpawner {
 	}
 
 	default boolean canSpawnAt(EntityType<E> entityType, ServerLevel level, RandomSource random, BlockPos pos, SpawnPlacementType spawnPlacement) {
-		return NaturalSpawner.isValidEmptySpawnBlock(level, pos, level.getBlockState(pos), level.getFluidState(pos), entityType) && level.noCollision(entityType.getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d));
+		return canSpawnInBiome(level, pos) && NaturalSpawner.isValidEmptySpawnBlock(level, pos, level.getBlockState(pos), level.getFluidState(pos), entityType) && level.noCollision(entityType.getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d));
+	}
+
+	default boolean canSpawnInBiome(ServerLevel level, BlockPos pos) {
+		return true;
 	}
 
 	default List<Pair<EntityType<E>, BlockPos>> findNearbySpawnPositions(ServerLevel level, RandomSource random, BlockPos centerPos, int minRadius, int maxRadius, int maxTries, Supplier<Optional<EntityType<E>>> entityTypeSupplier) {
@@ -95,5 +100,5 @@ public interface AoACustomSpawner<E extends Entity> extends CustomSpawner {
 	}
 
 	record Type<E extends Entity>(MapCodec<? extends AoACustomSpawner<E>> codec) {}
-	record GenericSettings(IntProvider spawnInterval, IntProvider extraDelayPerSpawn, float chancePerPlayer, IntProvider spawnAttemptsPerPlayer, Optional<HolderSet<Biome>> biomeList, Set<ResourceKey<Level>> dimensions, boolean whitelistMode, Optional<SpawnData.CustomSpawnRules> spawnRules, boolean spawnInSuperflat) {}
+	record GenericSettings(IntProvider spawnInterval, IntProvider extraDelayPerSpawn, float chancePerPlayer, IntProvider spawnAttemptsPerPlayer, Optional<HolderSet<Biome>> inBiomes, Optional<HolderSet<Biome>> notInBiomes, Optional<Set<ResourceKey<Level>>> inDimensions, Optional<Set<ResourceKey<Level>>> notInDimensions, Optional<SpawnData.CustomSpawnRules> spawnRules, boolean spawnInSuperflat) {}
 }

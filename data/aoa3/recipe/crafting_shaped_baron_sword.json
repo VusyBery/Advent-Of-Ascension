@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "A": {
-      "tag": "neoforge:ingots/baronyte"
+      "tag": "c:ingots/baronyte"
     },
     "B": {
       "tag": "c:rods/wooden"

@@ -11,7 +11,6 @@ import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.tslat.aoa3.common.registration.AoASounds;
@@ -19,6 +18,7 @@ import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
 import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.content.entity.brain.task.temp.SetRandomFlyingTarget;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -48,7 +48,7 @@ public class MeganeuropsisEntity extends AoAMeleeMob<MeganeuropsisEntity> {
 		return BrainActivityGroup.idleTasks(
 				new TargetOrRetaliate<>()
 						.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-						.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)),
 				new SetRandomFlyingTarget<>()
 						.verticalWeight(entity -> -(entity.getRandom().nextInt(10) == 0 ? 1 : 0))
 						.setRadius(4, 4)

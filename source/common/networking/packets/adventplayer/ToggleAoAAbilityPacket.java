@@ -15,10 +15,8 @@ import net.tslat.aoa3.util.PlayerUtil;
 public record ToggleAoAAbilityPacket(AoASkill skill, String abilityUniqueId) implements AoAPacket {
 	public static final Type<ToggleAoAAbilityPacket> TYPE = new Type<>(AdventOfAscension.id("toggle_aoa_ability"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, ToggleAoAAbilityPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.registry(AoARegistries.SKILLS_REGISTRY_KEY),
-			ToggleAoAAbilityPacket::skill,
-			ByteBufCodecs.STRING_UTF8,
-			ToggleAoAAbilityPacket::abilityUniqueId,
+			ByteBufCodecs.registry(AoARegistries.SKILLS_REGISTRY_KEY), ToggleAoAAbilityPacket::skill,
+			ByteBufCodecs.STRING_UTF8, ToggleAoAAbilityPacket::abilityUniqueId,
 			ToggleAoAAbilityPacket::new);
 
 	public ToggleAoAAbilityPacket(AoASkill skill, AoAAbility.Instance ability) {

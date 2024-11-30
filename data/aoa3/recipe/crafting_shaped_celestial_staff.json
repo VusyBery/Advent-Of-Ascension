@@ -3,10 +3,10 @@
   "category": "misc",
   "key": {
     "A": {
-      "tag": "neoforge:gems/crystallite"
+      "tag": "c:gems/crystallite"
     },
     "B": {
-      "tag": "neoforge:rods/metal"
+      "tag": "c:rods/metal"
     }
   },
   "pattern": [

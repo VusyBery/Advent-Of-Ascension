@@ -15,6 +15,7 @@ import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -27,6 +28,7 @@ public record ImbuingIngredientHelper(IIngredientType<EnchantmentInstance> ingre
         return this.ingredientType;
     }
 
+    @NotNull
     @Override
     public String getDisplayName(EnchantmentInstance ingredient) {
         return Enchantment.getFullname(ingredient.enchantment, ingredient.level).getString();
@@ -37,6 +39,7 @@ public record ImbuingIngredientHelper(IIngredientType<EnchantmentInstance> ingre
         return "enchantment:" + getResourceLocation(ingredient) + "_" + ingredient.level;
     }
 
+    @NotNull
     @Override
     public ResourceLocation getResourceLocation(EnchantmentInstance ingredient) {
         ResourceLocation id = RegistryUtil.getRegistry(Registries.ENCHANTMENT).getKey(ingredient.enchantment.value());
@@ -50,21 +53,25 @@ public record ImbuingIngredientHelper(IIngredientType<EnchantmentInstance> ingre
         return id;
     }
 
+    @NotNull
     @Override
     public ItemStack getCheatItemStack(EnchantmentInstance ingredient) {
         return EnchantedBookItem.createForEnchantment(ingredient);
     }
 
+    @NotNull
     @Override
     public EnchantmentInstance copyIngredient(EnchantmentInstance ingredient) {
         return new EnchantmentInstance(ingredient.enchantment, ingredient.level);
     }
 
+    @NotNull
     @Override
     public EnchantmentInstance normalizeIngredient(EnchantmentInstance ingredient) {
         return new EnchantmentInstance(ingredient.enchantment, 1);
     }
 
+    @NotNull
     @Override
     public Stream<ResourceLocation> getTagStream(EnchantmentInstance ingredient) {
         final Registry<Enchantment> registry = RegistryUtil.getRegistry(Registries.ENCHANTMENT);
@@ -76,11 +83,13 @@ public record ImbuingIngredientHelper(IIngredientType<EnchantmentInstance> ingre
                 .map(TagKey::location);
     }
 
+    @NotNull
     @Override
-    public Optional<ResourceLocation> getTagEquivalent(Collection<EnchantmentInstance> ingredients) {
+    public Optional<TagKey<?>> getTagKeyEquivalent(Collection<EnchantmentInstance> ingredients) {
         return TagUtil.getTagEquivalent(ingredients, instance -> instance.enchantment.value(), RegistryUtil.getRegistry(Registries.ENCHANTMENT)::getTags);
     }
 
+    @NotNull
     @Override
     public String getErrorInfo(@Nullable EnchantmentInstance ingredient) {
         if (ingredient == null)

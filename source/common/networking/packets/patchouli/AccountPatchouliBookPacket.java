@@ -3,10 +3,10 @@ package net.tslat.aoa3.common.networking.packets.patchouli;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.packets.AoAPacket;
-import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.PlayerUtil;
 
 public record AccountPatchouliBookPacket(ResourceLocation book) implements AoAPacket {
@@ -23,6 +23,6 @@ public record AccountPatchouliBookPacket(ResourceLocation book) implements AoAPa
 
 	@Override
 	public void receiveMessage(IPayloadContext context) {
-		((ServerPlayerDataManager)PlayerUtil.getAdventPlayer(context.player())).addPatchouliBook(book);
+		PlayerUtil.getAdventPlayer((ServerPlayer)context.player()).storage.addPatchouliBook(this.book);
 	}
 }

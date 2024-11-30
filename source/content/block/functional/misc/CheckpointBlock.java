@@ -75,11 +75,11 @@ public class CheckpointBlock extends Block {
 	public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
 		if (entity.tickCount % 5 == 0 && !level.isClientSide() && EntityPredicate.SURVIVAL_PLAYER.test(entity)) {
 			ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer((ServerPlayer)entity);
-			PositionAndRotation checkpoint = plData.getCheckpoint();
+			PositionAndRotation checkpoint = plData.storage.getActiveCheckpoint();
 
 			if (checkpoint == null || checkpoint.asBlockPos().distSqr(pos) > 9) {
-				plData.setCheckpoint(PositionAndRotation.from(pos, entity));
-				plData.player().sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("checkpoint.set"), ChatFormatting.GREEN), true);
+				plData.storage.setActiveCheckpoint(PositionAndRotation.from(pos, entity));
+				plData.getPlayer().sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("checkpoint.set"), ChatFormatting.GREEN), true);
 				new SoundBuilder(AoASounds.CHECKPOINT).notInWorld().execute();
 			}
 		}

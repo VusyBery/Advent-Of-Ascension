@@ -7,11 +7,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.PositionAndMotionUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
@@ -77,14 +77,16 @@ public class GroundSlamAttack<E extends LivingEntity> extends ConditionlessAttac
 					BlockState groundState;
 
 					if ((groundState = level.getBlockState(pos.set(spawnPos.x, spawnPos.y - 1, spawnPos.z))).blocksMotion())
-						packet.particle(ParticleBuilder.forPositions(new BlockParticleOption(ParticleTypes.BLOCK, groundState), new Vec3(spawnPos.x + rand.nextGaussian(), spawnPos.y + 1.1, spawnPos.z + rand.nextGaussian())).spawnNTimes(3));
+						packet.particle(ParticleBuilder.forPositions(new BlockParticleOption(ParticleTypes.BLOCK, groundState), new Vec3(spawnPos.x + rand.nextGaussian(), spawnPos.y + 1.1, spawnPos.z + rand.nextGaussian()))
+								.ignoreDistanceAndLimits()
+								.spawnNTimes(3));
 				});
 			}
 		}
 
 		packet.sendToAllPlayersTrackingEntity((ServerLevel)level, entity);
 
-		for (LivingEntity target : EntityRetrievalUtil.<LivingEntity>getEntities(entity.level(), new AABB(originEntity.position(), originEntity.position()).inflate(radius.xzRadius(), radius.yRadius(), radius.xzRadius()), target -> target.isAlive() && target.onGround() && target != entity && target instanceof LivingEntity && (!(target instanceof Player pl) || !pl.getAbilities().invulnerable))) {
+		for (LivingEntity target : EntityRetrievalUtil.getEntities(level, AABB.ofSize(originEntity.position(), this.radius.xzRadius(), this.radius.yRadius(), this.radius.xzRadius()), LivingEntity.class, target -> DamageUtil.isAttackable(target) && target.onGround())) {
 			entity.doHurtTarget(target);
 		}
 	}

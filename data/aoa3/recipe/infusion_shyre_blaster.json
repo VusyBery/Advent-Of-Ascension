@@ -5,16 +5,16 @@
   },
   "ingredients": [
     {
-      "tag": "neoforge:ingots/shyrestone"
+      "tag": "c:ingots/shyrestone"
     },
     {
-      "tag": "neoforge:ingots/shyrestone"
+      "tag": "c:ingots/shyrestone"
     },
     {
-      "tag": "neoforge:gems/shyregem"
+      "tag": "c:gems/shyregem"
     },
     {
-      "tag": "neoforge:gems/shyregem"
+      "tag": "c:gems/shyregem"
     },
     {
       "tag": "c:gunpowders"

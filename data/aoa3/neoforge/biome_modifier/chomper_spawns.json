@@ -2,7 +2,7 @@
   "type": "aoa3:new_mob_spawn",
   "biomes": {
     "excluding": [
-      "#neoforge:no_mob_spawns",
+      "#c:no_mob_spawns",
       "#minecraft:is_jungle"
     ],
     "if_all": [

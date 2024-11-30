@@ -12,13 +12,17 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
+
 public class OneShotDamageLimiter extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.INCOMING_DAMAGE_APPLICATION};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(LivingDamageEvent.Pre.class, LivingDamageEvent.Pre::getEntity, serverOnly(this::handlePreDamageApplication)));
 
 	private final float restoreHealthTo;
 	private final float minActivationHealth;
@@ -38,8 +42,8 @@ public class OneShotDamageLimiter extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -52,8 +56,7 @@ public class OneShotDamageLimiter extends AoAAbility.Instance {
 		}
 	}
 
-	@Override
-	public void handlePreDamageApplication(LivingDamageEvent.Pre ev) {
+	private void handlePreDamageApplication(final LivingDamageEvent.Pre ev) {
 		if (ev.getContainer().getSource().is(Tags.DamageTypes.IS_TECHNICAL))
 			return;
 

@@ -8,7 +8,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.Level;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.entity.AoAEntitySpawnPlacements;
 import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
@@ -94,7 +93,7 @@ public class BombCarrierEntity extends AoARangedMob<BombCarrierEntity> {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				DefaultAnimations.genericWalkIdleController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_THROW)
+				DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_THROW).transitionLength(0)
 						.setSoundKeyframeHandler(event -> new SoundBuilder(AoASounds.LIGHT_FUSE).followEntity(this).category(SoundSource.HOSTILE).execute()));
 	}
 }

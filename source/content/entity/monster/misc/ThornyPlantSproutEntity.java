@@ -13,7 +13,6 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.phys.AABB;
@@ -24,6 +23,7 @@ import net.tslat.aoa3.common.registration.entity.AoAEntityStats;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.library.builder.EntityPredicate;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableMeleeAttack;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
@@ -66,13 +66,13 @@ public class ThornyPlantSproutEntity extends AoAMeleeMob<ThornyPlantSproutEntity
 	public BrainActivityGroup<ThornyPlantSproutEntity> getIdleTasks() {
 		return BrainActivityGroup.idleTasks(new TargetOrRetaliate<>()
 				.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-				.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)));
+				.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)));
 	}
 
 	@Override
 	public BrainActivityGroup<ThornyPlantSproutEntity> getFightTasks() {
 		return BrainActivityGroup.fightTasks(
-				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
+				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> !DamageUtil.isAttackable(target) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
 				new AnimatableMeleeAttack<>(getPreAttackTime()).attackInterval(entity -> getAttackSwingDuration() + 2));
 	}
 
@@ -160,6 +160,6 @@ public class ThornyPlantSproutEntity extends AoAMeleeMob<ThornyPlantSproutEntity
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				new AnimationController<>(this, "living", 0, event -> event.setAndContinue(this.tickCount < 20 ? DefaultAnimations.SPAWN : DefaultAnimations.IDLE)),
-				AoAAnimations.genericAttackAnimation(this, AoAAnimations.ATTACK_SWIPE_RIGHT));
+				DefaultAnimations.genericAttackAnimation(this, AoAAnimations.ATTACK_SWIPE_RIGHT).transitionLength(0));
 	}
 }

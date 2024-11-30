@@ -1,10 +1,7 @@
 package net.tslat.aoa3.client.render;
 
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
@@ -35,55 +32,23 @@ public final class AoAAnimations {
 	public static final RawAnimation SWIM_SPRINT = RawAnimation.begin().thenLoop("move.swim_sprint");
 
 	public static <T extends LivingEntity & GeoEntity> AnimationController<T> genericWalkRunSwimIdleController(T entity) {
-		return new AnimationController<T>(entity, "movement", 0, event -> {
-			if (event.isMoving()) {
-				if (false && entity.isInWater() && entity.getFluidTypeHeight(NeoForgeMod.WATER_TYPE.value()) > entity.getFluidJumpThreshold()) { // Disable until Geckolib fixes fluid movement
-					// TODO Fix Geckolib fluid movement?
-					// Unsure, entity might be floating too high.
-					// Think I already fixed it in Geckolib though
-					event.setAnimation(DefaultAnimations.SWIM);
-				}
-				else if (entity.isSprinting()) {
-					event.setAnimation(DefaultAnimations.RUN);
-				}
-				else {
-					event.setAnimation(DefaultAnimations.WALK);
-				}
-			}
-			else {
-				event.setAnimation(DefaultAnimations.IDLE);
-			}
+		return new AnimationController<>(entity, "Walk/Run/Swim/Idle", 2, state -> {
+			if (entity.isInWater() && !entity.onGround())
+				return state.setAndContinue(DefaultAnimations.SWIM);
 
-			return PlayState.CONTINUE;
-		});
-	}
+			if (state.isMoving())
+				return state.setAndContinue(entity.isSprinting() ? DefaultAnimations.RUN : DefaultAnimations.WALK);
 
-	public static <T extends LivingEntity & GeoAnimatable> AnimationController<T> genericAttackAnimation(T animatable, RawAnimation attackAnimation) {
-		return new AnimationController<>(animatable, "Attack", 0, state -> {
-			if (animatable.swinging)
-				return state.setAndContinue(attackAnimation);
-
-			state.getController().forceAnimationReset();
-
-			return PlayState.STOP;
+			return state.setAndContinue(DefaultAnimations.IDLE);
 		});
 	}
 
 	public static <T extends LivingEntity & GeoEntity> AnimationController<T> dynamicAttackController(T entity, Function<AnimationState<T>, RawAnimation> animationSupplier) {
-		return new AnimationController<T>(entity, "attacking", 0, state -> {
+		return new AnimationController<T>(entity, "Attack", 0, state -> {
 			if (entity.swinging)
 				return state.setAndContinue(animationSupplier.apply(state));
 
 			state.getController().forceAnimationReset();
-
-			return PlayState.STOP;
-		});
-	}
-
-	public static <T extends Entity & GeoEntity> AnimationController<T> genericSpawnController(T entity, int spawnTicks) {
-		return new AnimationController<T>(entity, "spawning", 0, state -> {
-			if (entity.tickCount < spawnTicks)
-				return state.setAndContinue(DefaultAnimations.SPAWN);
 
 			return PlayState.STOP;
 		});

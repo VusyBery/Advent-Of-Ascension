@@ -24,7 +24,7 @@ public class LunalusEvents {
 		if (hasDistortingArtifact)
 			return;
 
-		//if (pl.flyingSpeed < 0.05f) TODO test what might need to replace this
+		//if (pl.flyingSpeed < 0.05f)
 		//	pl.flyingSpeed = Math.min(0.05f, pl.flyingSpeed + 0.05f);
 
 		Vec3 motion = pl.getDeltaMovement();

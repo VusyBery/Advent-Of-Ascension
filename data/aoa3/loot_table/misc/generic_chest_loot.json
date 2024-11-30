@@ -224,10 +224,8 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "components": {
-                "patchouli:book": "aoa3:lessons"
-              },
-              "function": "minecraft:set_components"
+              "book_id": "aoa3:lessons",
+              "function": "aoa3:set_patchouli_book"
             }
           ],
           "name": "aoa3:torn_pages",
@@ -252,10 +250,8 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "components": {
-                "patchouli:book": "aoa3:the_portal"
-              },
-              "function": "minecraft:set_components"
+              "book_id": "aoa3:the_portal",
+              "function": "aoa3:set_patchouli_book"
             }
           ],
           "name": "aoa3:torn_pages",
@@ -280,10 +276,8 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "components": {
-                "patchouli:book": "aoa3:discovery"
-              },
-              "function": "minecraft:set_components"
+              "book_id": "aoa3:discovery",
+              "function": "aoa3:set_patchouli_book"
             }
           ],
           "name": "aoa3:torn_pages",

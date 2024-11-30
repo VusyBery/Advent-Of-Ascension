@@ -8,11 +8,15 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.GrindstoneResultEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
+import java.util.List;
+
 public class GrindstoneCursesRemoval extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.ITEM_GRINDSTONING};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(GrindstoneResultEvent.class, GrindstoneResultEvent::getEntity, serverOnly(this::handleGrindstoneModifying)));
 
 	public GrindstoneCursesRemoval(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.GRINDSTONE_CURSES_REMOVAL.get(), skill, data);
@@ -23,12 +27,11 @@ public class GrindstoneCursesRemoval extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleGrindstoneModifying(GrindstoneResultEvent ev) {
+	private void handleGrindstoneModifying(final GrindstoneResultEvent ev) {
 		ItemEnchantments remainingEnchants = EnchantmentHelper.updateEnchantments(ev.getOriginalOutput(), enchants -> enchants.removeIf(enchantmentIntegerEntry -> enchantmentIntegerEntry.is(EnchantmentTags.CURSE)));
 
 		if (ev.getOutput().is(Items.ENCHANTED_BOOK) && remainingEnchants.isEmpty())

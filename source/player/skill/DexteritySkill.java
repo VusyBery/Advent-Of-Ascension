@@ -8,11 +8,17 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
+
 public class DexteritySkill extends AoASkill.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_TICK, ListenerType.PLAYER_JUMP, ListenerType.CRITICAL_HIT};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerTickEvent.Pre.class, PlayerTickEvent.Pre::getEntity, serverOnly(this::handlePlayerTick)),
+			listener(LivingEvent.LivingJumpEvent.class, LivingEvent.LivingJumpEvent::getEntity, serverOnly(this::handlePlayerJump)),
+			listener(CriticalHitEvent.class, CriticalHitEvent::getEntity, serverOnly(this::handleCriticalHit)));
 
 	private double lastX = 0;
 	private double lastZ = 0;
@@ -29,17 +35,16 @@ public class DexteritySkill extends AoASkill.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
+	private void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (!canGainXp(true) || ev.getEntity().isPassenger())
 			return;
 
 		final Player pl = ev.getEntity();
-		Vec3 pos = pl.position();
+		final Vec3 pos = pl.position();
 
 		if (pl.isSprinting()) {
 			if (pl.onGround() || pl.isSwimming()) {
@@ -63,7 +68,7 @@ public class DexteritySkill extends AoASkill.Instance {
 
 		if (pl.tickCount % 200 == 0) {
 			if (cumulativeDistance > 0) {
-				cumulativeXp += PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 100) * Math.min(1.75f, (float)(cumulativeDistance / 56f));
+				cumulativeXp += PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 100) * Math.min(1.65f, (float)(cumulativeDistance / 56f));
 				cumulativeDistance = 0;
 			}
 
@@ -75,8 +80,7 @@ public class DexteritySkill extends AoASkill.Instance {
 		}
 	}
 
-	@Override
-	public void handlePlayerJump(LivingEvent.LivingJumpEvent ev) {
+	private void handlePlayerJump(final LivingEvent.LivingJumpEvent ev) {
 		if (!canGainXp(true))
 			return;
 
@@ -88,8 +92,7 @@ public class DexteritySkill extends AoASkill.Instance {
 		cumulativeXp += xp;
 	}
 
-	@Override
-	public void handleCriticalHit(CriticalHitEvent ev) {
+	private void handleCriticalHit(final CriticalHitEvent ev) {
 		if (!canGainXp(true))
 			return;
 

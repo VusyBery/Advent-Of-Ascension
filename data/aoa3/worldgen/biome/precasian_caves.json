@@ -70,7 +70,8 @@
     [
       "aoa3:single_spindly_stranglewood_tree",
       "aoa3:precasian_cave_floor_vegetation",
-      "aoa3:precasian_cave_ceiling_vegetation"
+      "aoa3:precasian_cave_ceiling_vegetation",
+      "minecraft:glow_lichen"
     ],
     [
       "minecraft:freeze_top_layer"

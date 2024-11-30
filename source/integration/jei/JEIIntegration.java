@@ -9,6 +9,7 @@ import mezz.jei.api.registration.*;
 import mezz.jei.api.runtime.IIngredientManager;
 import mezz.jei.api.runtime.IJeiRuntime;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -20,6 +21,7 @@ import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoARecipes;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
+import net.tslat.aoa3.common.registration.item.AoADataComponents;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.item.AoATools;
 import net.tslat.aoa3.content.recipe.*;
@@ -29,6 +31,7 @@ import net.tslat.aoa3.integration.jei.ingredient.subtype.TrophySubtypeInterprete
 import net.tslat.aoa3.integration.jei.ingredient.type.imbuing.ImbuingIngredientHelper;
 import net.tslat.aoa3.integration.jei.ingredient.type.imbuing.ImbuingIngredientRenderer;
 import net.tslat.aoa3.integration.jei.ingredient.type.imbuing.ImbuingIngredientType;
+import net.tslat.aoa3.integration.jei.recipe.arcanumbatteryattach.ArcanumBatteryAttachRecipeExtension;
 import net.tslat.aoa3.integration.jei.recipe.ashferncooking.AshfernCookingRecipeExtension;
 import net.tslat.aoa3.integration.jei.recipe.framebench.FrameBenchRecipeCategory;
 import net.tslat.aoa3.integration.jei.recipe.framebench.FrameBenchRecipeTransferInfo;
@@ -36,12 +39,15 @@ import net.tslat.aoa3.integration.jei.recipe.imbuing.ImbuingRecipeCategory;
 import net.tslat.aoa3.integration.jei.recipe.imbuing.ImbuingRecipeTransferInfo;
 import net.tslat.aoa3.integration.jei.recipe.infusion.InfusionRecipeCategory;
 import net.tslat.aoa3.integration.jei.recipe.infusion.InfusionRecipeTransferInfo;
+import net.tslat.aoa3.integration.jei.recipe.staffcharging.JEIStaffChargingRecipe;
+import net.tslat.aoa3.integration.jei.recipe.staffcharging.StaffChargingRecipeExtension;
 import net.tslat.aoa3.integration.jei.recipe.toolinteraction.ToolInteractionRecipeExtension;
 import net.tslat.aoa3.integration.jei.recipe.upgradekit.UpgradeKitRecipeCategory;
 import net.tslat.aoa3.integration.jei.recipe.upgradekit.UpgradeKitRecipeTransferInfo;
 import net.tslat.aoa3.integration.jei.recipe.whitewashing.WhitewashingRecipeCategory;
 import net.tslat.aoa3.integration.jei.recipe.whitewashing.WhitewashingRecipeTransferInfo;
 import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
+import net.tslat.aoa3.util.CodecUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 
 import java.util.ArrayList;
@@ -59,13 +65,15 @@ public class JEIIntegration implements IModPlugin {
 
 	@Override
 	public void registerIngredients(IModIngredientRegistration registration) {
-		registration.register(new ImbuingIngredientType(), List.of(), new ImbuingIngredientHelper(ImbuingIngredientType.INSTANCE), new ImbuingIngredientRenderer());
+		registration.register(new ImbuingIngredientType(), List.of(), new ImbuingIngredientHelper(ImbuingIngredientType.INSTANCE), new ImbuingIngredientRenderer(), CodecUtil.ENCHANTMENT_INSTANCE);
 	}
 
 	@Override
 	public void registerVanillaCategoryExtensions(IVanillaCategoryExtensionRegistration registration) {
 		registration.getCraftingCategory().addExtension(ToolInteractionRecipe.class, new ToolInteractionRecipeExtension());
 		registration.getCraftingCategory().addExtension(AshfernCookingRecipe.class, new AshfernCookingRecipeExtension());
+		registration.getCraftingCategory().addExtension(StaffChargingRecipe.class, new StaffChargingRecipeExtension());
+		registration.getCraftingCategory().addExtension(ArcanumBatteryAttachRecipe.class, new ArcanumBatteryAttachRecipeExtension());
 	}
 
 	@Override
@@ -104,6 +112,7 @@ public class JEIIntegration implements IModPlugin {
 		registration.addRecipes(InfusionRecipeCategory.RECIPE_TYPE, compileInfusionRecipes(recipeManager));
 		registration.addRecipes(FrameBenchRecipeCategory.RECIPE_TYPE, compileFrameBenchRecipes(recipeManager));
 		registration.addRecipes(WhitewashingRecipeCategory.RECIPE_TYPE, compileWhitewashingRecipes(recipeManager));
+		//registration.addRecipes(StaffChargingRecipeCategory.RECIPE_TYPE, compileStaffChargingRecipes(recipeManager));
 
 		addInfoRecipes(registration);
 	}
@@ -130,7 +139,8 @@ public class JEIIntegration implements IModPlugin {
 				new ImbuingRecipeCategory(guiHelper, idHelper, ingredientHelper),
 				new InfusionRecipeCategory(guiHelper),
 				new FrameBenchRecipeCategory(guiHelper),
-				new WhitewashingRecipeCategory(guiHelper)
+				new WhitewashingRecipeCategory(guiHelper)/*,
+				new StaffChargingRecipeCategory(guiHelper)*/
 		);
 	}
 
@@ -151,6 +161,14 @@ public class JEIIntegration implements IModPlugin {
 
 	private List<WhitewashingRecipe> compileWhitewashingRecipes(RecipeManager recipeManager) {
 		return recipeManager.getAllRecipesFor(AoARecipes.WHITEWASHING.type().get()).stream().map(RecipeHolder::value).toList();
+	}
+
+	private List<StaffChargingRecipe> compileStaffChargingRecipes(RecipeManager recipeManager) {
+		return BuiltInRegistries.ITEM.stream()
+				.filter(item -> item.components().has(AoADataComponents.STORED_SPELL_CASTS.get()) && item.components().has(AoADataComponents.STAFF_RUNE_COST.get()))
+				.map(JEIStaffChargingRecipe::new)
+				.map(StaffChargingRecipe.class::cast)
+				.toList();
 	}
 
 	private ArrayList<FrameBenchRecipe> compileFrameBenchRecipes(RecipeManager recipeManager) {
@@ -195,6 +213,7 @@ public class JEIIntegration implements IModPlugin {
 		infoRecipes.accept(AoABlocks.TEA_SINK.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("tea_sink"))});
 		infoRecipes.accept(AoABlocks.RUNE_RANDOMIZER.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("rune_randomizer"))});
 		infoRecipes.accept(AoABlocks.INFUSED_PRESS.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("infused_press"))});
+		infoRecipes.accept(AoABlocks.TINKERERS_TABLE.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("tinkerers_table"))});
 		infoRecipes.accept(AoABlocks.LUNAR_CREATION_TABLE.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("lunar_creation_table"))});
 		infoRecipes.accept(AoABlocks.MENDING_TABLE.get()::asItem, new Component[] {Component.translatable(jeiInfoLocaleKey("mending_table"))});
 		infoRecipes.accept(AoAItems.MAGIC_REPAIR_DUST, new Component[] {Component.translatable(jeiInfoLocaleKey("magic_repair_dust"))});
@@ -209,6 +228,7 @@ public class JEIIntegration implements IModPlugin {
 		infoRecipes.accept(AoAItems.GLOWING_ENERGY_STONE, new Component[] {Component.translatable(jeiInfoLocaleKey("energy_stone"))});
 		infoRecipes.accept(AoAItems.GLARING_ENERGY_STONE, new Component[] {Component.translatable(jeiInfoLocaleKey("energy_stone"))});
 		infoRecipes.accept(AoAItems.RADIANT_ENERGY_STONE, new Component[] {Component.translatable(jeiInfoLocaleKey("energy_stone"))});
+		infoRecipes.accept(AoAItems.CHUM, new Component[] {Component.translatable(jeiInfoLocaleKey("chum"))});
 	}
 
 	private static void addItemDescription(IRecipeRegistration registration, Supplier<Item> item, Component... description) {

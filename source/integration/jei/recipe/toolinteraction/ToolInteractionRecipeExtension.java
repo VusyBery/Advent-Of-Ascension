@@ -5,7 +5,6 @@ import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.category.extensions.vanilla.crafting.ICraftingCategoryExtension;
 import mezz.jei.library.util.RecipeUtil;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.tslat.aoa3.content.recipe.ToolInteractionRecipe;
@@ -17,12 +16,10 @@ public class ToolInteractionRecipeExtension implements ICraftingCategoryExtensio
 	@Override
 	public void setRecipe(RecipeHolder<ToolInteractionRecipe> recipeHolder, IRecipeLayoutBuilder builder, ICraftingGridHelper craftingGridHelper, IFocusGroup focuses) {
 		final CraftingRecipe recipe = recipeHolder.value();
-		final List<List<ItemStack>> inputs = recipe.getIngredients().stream()
-				.map(ingredient -> List.of(ingredient.getItems()))
-				.toList();
 
+		craftingGridHelper.createAndSetIngredients(builder, recipe.getIngredients(), getWidth(recipeHolder), getHeight(recipeHolder));
 		craftingGridHelper.createAndSetOutputs(builder, List.of(RecipeUtil.getResultItem(recipe)));
-		craftingGridHelper.createAndSetInputs(builder, inputs, getWidth(recipeHolder), getHeight(recipeHolder));
+		builder.setShapeless();
 	}
 
 	@Override

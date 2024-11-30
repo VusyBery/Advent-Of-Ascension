@@ -4096,6 +4096,17 @@
     ],
     "subtitle": "subtitles.aoa3.item.gun.sniper.metallic_fire.short"
   },
+  "item.hauling_rod.reel_in": {
+    "sounds": [
+      "aoa3:item/hauling_rod/reel_in-01",
+      "aoa3:item/hauling_rod/reel_in-02",
+      "aoa3:item/hauling_rod/reel_in-03",
+      "aoa3:item/hauling_rod/reel_in-04",
+      "aoa3:item/hauling_rod/reel_in-05",
+      "aoa3:item/hauling_rod/reel_in-06"
+    ],
+    "subtitle": "subtitles.aoa3.item.hauling_rod.reel_in"
+  },
   "item.high_cannon.fire": {
     "sounds": [
       "aoa3:item/high_cannon/fire"

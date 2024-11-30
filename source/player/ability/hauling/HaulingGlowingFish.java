@@ -2,13 +2,17 @@ package net.tslat.aoa3.player.ability.hauling;
 
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.Entity;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.custom.events.HaulingSpawnEntityEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
+import java.util.List;
+
 public class HaulingGlowingFish extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.CUSTOM};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(HaulingSpawnEntityEvent.class, serverOnly(this::handleHaulingEntitySpawn)));
 
 	public HaulingGlowingFish(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.HAULING_GLOWING_FISH.get(), skill, data);
@@ -19,13 +23,12 @@ public class HaulingGlowingFish extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleCustomInteraction(String interactionType, Object data) {
-		if (interactionType.equals("hauling_spawn_fish"))
-			((Entity)data).setGlowingTag(true);
+	private void handleHaulingEntitySpawn(final HaulingSpawnEntityEvent ev) {
+		if (ev.getNewEntity() != null)
+			ev.getNewEntity().setGlowingTag(true);
 	}
 }

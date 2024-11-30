@@ -37,7 +37,6 @@ public abstract class AoAFlyingMeleeMob extends FlyingMob implements Enemy, GeoE
 	protected static final EntityDataAccessor<Boolean> INVULNERABLE = SynchedEntityData.defineId(AoAFlyingMeleeMob.class, EntityDataSerializers.BOOLEAN);
 
 	private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
-	protected boolean isSlipperyMovement = false;
 
 	protected AoAFlyingMeleeMob(EntityType<? extends FlyingMob> entityType, Level world) {
 		super(entityType, world);

@@ -7,12 +7,17 @@ import net.minecraft.util.Mth;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 
 public class EnergyResource extends AoAResource.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_TICK, ListenerType.INCOMING_DAMAGE_AFTER};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			afterTakingDamage(this::handleAfterDamaged),
+			listener(PlayerTickEvent.Pre.class, PlayerTickEvent.Pre::getEntity, this::handlePlayerTick));
 
 	private final float maxValue;
 	private final int dischargeDelay;
@@ -41,8 +46,8 @@ public class EnergyResource extends AoAResource.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -83,8 +88,7 @@ public class EnergyResource extends AoAResource.Instance {
 		return regenAmount;
 	}
 
-	@Override
-	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
+	private void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (currentDelay > 0) {
 			currentDelay--;
 		}
@@ -93,8 +97,7 @@ public class EnergyResource extends AoAResource.Instance {
 		}
 	}
 
-	@Override
-	public void handleAfterDamaged(LivingDamageEvent.Post ev) {
+	private void handleAfterDamaged(LivingDamageEvent.Post ev) {
 		if (ev.getNewDamage() > 0) {
 			this.currentDelay += this.hitDelay;
 

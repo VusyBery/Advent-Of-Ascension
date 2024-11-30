@@ -22,6 +22,6 @@ public class GameRendererMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/pipeline/RenderTarget;bindWrite(Z)V"), require = 0)
     public void aoa$renderPostProcessing(DeltaTracker deltaTracker, boolean setViewport, CallbackInfo ci) {
-        AoAPostProcessing.doShaderProcessing(deltaTracker.getGameTimeDeltaTicks()); // TODO check this again after Mojang fixes their partialTick bug
+        AoAPostProcessing.doShaderProcessing(deltaTracker.getGameTimeDeltaTicks());
     }
 }

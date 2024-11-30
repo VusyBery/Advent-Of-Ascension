@@ -16,7 +16,6 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidType;
@@ -30,6 +29,7 @@ import net.tslat.aoa3.content.entity.brain.task.custom.ChargeAttack;
 import net.tslat.aoa3.content.entity.brain.task.custom.GroundSlamAttack;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.util.AttributeUtil;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -190,7 +190,7 @@ public class SmashEntity extends AoABoss {
 				new FirstApplicableBehaviour<AoABoss>(
 						new TargetOrRetaliate<>()
 								.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-								.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target))
+								.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target))
 								.startCondition(entity -> !ATTACK_STATE.is(this, CHARGE_STATE)),
 						new Idle<>().runFor(entity -> entity.getRandom().nextInt(15, 45))),
 				new OneRandomBehaviour<>(

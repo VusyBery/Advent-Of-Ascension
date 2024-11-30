@@ -30,7 +30,7 @@
                 "max": 3.0,
                 "min": 2.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -46,7 +46,7 @@
                 "max": 1.0,
                 "min": 0.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -62,7 +62,7 @@
                 "max": 1.0,
                 "min": 0.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -87,7 +87,7 @@
                 "max": 4.0,
                 "min": 2.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],

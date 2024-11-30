@@ -81,6 +81,16 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "obtain_chroma_goggles": {
+      "conditions": {
+        "items": [
+          {
+            "items": "aoa3:chroma_goggles"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "obtain_deadlock": {
       "conditions": {
         "items": [
@@ -306,16 +316,6 @@
         "items": [
           {
             "items": "aoa3:moon_shiner"
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
-    "obtain_night_vision_goggles": {
-      "conditions": {
-        "items": [
-          {
-            "items": "aoa3:night_vision_goggles"
           }
         ]
       },
@@ -560,13 +560,13 @@
       "obtain_fire_staff"
     ],
     [
-      "obtain_night_vision_goggles"
-    ],
-    [
       "obtain_void_leggings"
     ],
     [
       "obtain_poison_staff"
+    ],
+    [
+      "obtain_chroma_goggles"
     ],
     [
       "obtain_deadlock"

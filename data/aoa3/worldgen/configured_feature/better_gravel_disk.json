@@ -25,7 +25,7 @@
         },
         {
           "type": "minecraft:matching_block_tag",
-          "tag": "neoforge:grass"
+          "tag": "c:grass"
         }
       ]
     }

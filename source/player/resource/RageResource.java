@@ -7,10 +7,15 @@ import net.minecraft.util.Mth;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 
+import java.util.List;
+
 public class RageResource extends AoAResource.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.INCOMING_DAMAGE_AFTER, ListenerType.PLAYER_TICK};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			afterTakingDamage(this::handleAfterDamaged),
+			listener(PlayerTickEvent.Pre.class, PlayerTickEvent.Pre::getEntity, this::handlePlayerTick));
 
 	private final float maxValue;
 	private final float perTickDrain;
@@ -32,8 +37,8 @@ public class RageResource extends AoAResource.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -51,14 +56,12 @@ public class RageResource extends AoAResource.Instance {
 		return maxValue;
 	}
 
-	@Override
-	public void handleAfterDamaged(LivingDamageEvent.Post ev) {
+	private void handleAfterDamaged(LivingDamageEvent.Post ev) {
 		if (ev.getSource().getEntity() != null)
 			this.value = Math.min(getMaxValue(), this.value + ev.getOriginalDamage());
 	}
 
-	@Override
-	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
+	private void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (this.value > 0)
 			this.value -= perTickDrain;
 	}

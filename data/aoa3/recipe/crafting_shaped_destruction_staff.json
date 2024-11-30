@@ -3,16 +3,16 @@
   "category": "misc",
   "key": {
     "A": {
-      "tag": "neoforge:ingots/lyon"
+      "tag": "c:ingots/lyon"
     },
     "B": {
-      "tag": "neoforge:rods/metal"
+      "tag": "c:rods/metal"
     },
     "C": {
       "tag": "c:gunpowders"
     },
     "D": {
-      "tag": "neoforge:ingots/blazium"
+      "tag": "c:ingots/blazium"
     }
   },
   "pattern": [

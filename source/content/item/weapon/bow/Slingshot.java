@@ -74,7 +74,7 @@ public class Slingshot extends BaseBow {
 
 	@Override
 	protected CustomArrowEntity makeArrow(LivingEntity shooter, ItemStack bowStack, ItemStack ammoStack, float velocity, boolean consumeAmmo) {
-		PopShotEntity popShot = new PopShotEntity(shooter.level(), bowStack, shooter, dmg, ammoStack.getItem() instanceof ArrowItem);
+		PopShotEntity popShot = new PopShotEntity(shooter.level(), bowStack, shooter, getBowDamage(bowStack), ammoStack.getItem() instanceof ArrowItem);
 		int powerEnchant = EnchantmentUtil.getEnchantmentLevel(shooter.level(), bowStack, Enchantments.POWER);
 
 		popShot.shootFromRotation(shooter, shooter.getXRot(), shooter.getYRot(), 0, velocity * 2, 1);
@@ -87,7 +87,7 @@ public class Slingshot extends BaseBow {
 
 	@Override
 	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ARROW_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(Double.toString(dmg))));
+		tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.ARROW_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, Component.literal(Double.toString(getBowDamage(stack)))));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(this, LocaleUtil.ItemDescriptionType.BENEFICIAL, 1));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.BOW_DRAW_TIME, LocaleUtil.ItemDescriptionType.NEUTRAL, Component.literal(Double.toString(((72000 / drawSpeedMultiplier) / 720) / (double)100))));
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.AMMO_ITEM, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, LocaleUtil.getLocaleMessage(AoAItems.POP_SHOT.get().getDescriptionId()).append(Component.literal("/")).append(LocaleUtil.getLocaleMessage(Items.FLINT.getDescriptionId()))));

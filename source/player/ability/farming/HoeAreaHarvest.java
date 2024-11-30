@@ -16,13 +16,17 @@ import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.WorldUtil;
 
+import java.util.List;
+
 public class HoeAreaHarvest extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_INTERACT};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerInteractEvent.RightClickBlock.class, serverOnly(this::handleBlockInteraction)));
 
 	private final int baseRadius;
 	private final int levelsPerRadiusIncrease;
@@ -56,12 +60,11 @@ public class HoeAreaHarvest extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleBlockInteraction(PlayerInteractEvent.RightClickBlock ev) {
+	private void handleBlockInteraction(PlayerInteractEvent.RightClickBlock ev) {
 		if (ev.getLevel().getBlockState(ev.getPos()).is(BlockTags.CROPS)) {
 			Player player = ev.getEntity();
 			ItemStack heldStack = player.getItemInHand(ev.getHand());

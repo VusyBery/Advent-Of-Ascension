@@ -16,6 +16,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
@@ -23,10 +24,12 @@ import net.tslat.aoa3.util.RegistryUtil;
 import net.tslat.aoa3.util.StringUtil;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class PotionDurationReducer extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.MOB_EFFECT_APPLIED};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(MobEffectEvent.Added.class, MobEffectEvent.Added::getEntity, serverOnly(this::handleAppliedMobEffect)));
 
 	private final float modifier;
 	private final boolean useAddition;
@@ -102,8 +105,8 @@ public class PotionDurationReducer extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -119,8 +122,7 @@ public class PotionDurationReducer extends AoAAbility.Instance {
 		}
 	}
 
-	@Override
-	public void handleAppliedMobEffect(MobEffectEvent.Added ev) {
+	private void handleAppliedMobEffect(final MobEffectEvent.Added ev) {
 		MobEffectInstance effect = ev.getEffectInstance();
 
 		if (!effectMatches(effect))

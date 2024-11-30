@@ -6,12 +6,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.common.registration.entity.AoAMonsters;
 import net.tslat.aoa3.library.builder.EntityPredicate;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.DefaultAnimations;
 
 public class SandGiantSpikeTrapEntity extends BasicMiscEntity {
 	private static final EntityPredicate<Entity> damagePredicate = new EntityPredicate<>().isAlive().isNot(AoAMonsters.SAND_GIANT.get()).isDamageable();
@@ -73,6 +73,6 @@ public class SandGiantSpikeTrapEntity extends BasicMiscEntity {
 
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(AoAAnimations.genericSpawnController(this, 41));
+		controllers.add(DefaultAnimations.getSpawnController(this, state -> this, 41));
 	}
 }

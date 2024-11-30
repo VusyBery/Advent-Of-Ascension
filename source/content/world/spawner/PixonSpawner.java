@@ -16,6 +16,7 @@ import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnPlacementType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
@@ -57,7 +58,12 @@ public class PixonSpawner implements AoACustomSpawner<PixonEntity> {
 		if (!dimension.location().getNamespace().equals("minecraft") && !AdventOfAscension.isAoA(dimension.location()))
 			return false;
 
-		return this.baseSettings.whitelistMode() == this.baseSettings.dimensions().contains(dimension);
+		if ((this.baseSettings.inDimensions().isEmpty() || this.baseSettings.inDimensions().get().isEmpty()) &&
+				(this.baseSettings.notInDimensions().isEmpty() || this.baseSettings.notInDimensions().get().isEmpty()))
+			return true;
+
+		return this.baseSettings.inDimensions().map(set -> set.contains(dimension)).orElse(true) &&
+				this.baseSettings.notInDimensions().map(set -> !set.contains(dimension)).orElse(true);
 	}
 
 	@Override
@@ -88,7 +94,7 @@ public class PixonSpawner implements AoACustomSpawner<PixonEntity> {
 			if (level.getRandom().nextFloat() >= this.baseSettings.chancePerPlayer())
 				continue;
 
-			for (Pair<EntityType<PixonEntity>, BlockPos> spawn : findNearbySpawnPositions(level, random, pl.blockPosition(), 40, 128, this.baseSettings.spawnAttemptsPerPlayer().sample(random), () -> Optional.of(AoAMiscEntities.PIXON.get()))) {
+			for (Pair<EntityType<PixonEntity>, BlockPos> spawn : findNearbySpawnPositions(level, random, pl.blockPosition(), 40, 128, this.baseSettings.spawnAttemptsPerPlayer().sample(random) + (int)pl.getAttributeValue(Attributes.LUCK), () -> Optional.of(AoAMiscEntities.PIXON.get()))) {
 				if (this.baseSettings.spawnRules().isPresent()) {
 					SpawnData.CustomSpawnRules spawnRules = this.baseSettings.spawnRules().get();
 
@@ -117,13 +123,16 @@ public class PixonSpawner implements AoACustomSpawner<PixonEntity> {
 		return canSpawnInBiome(level, pos) && canSpawnOn(level, level.getBlockState(pos.below()), pos.below()) && canSpawnInside(level, level.getBlockState(pos), pos) && level.noCollision(entityType.getSpawnAABB(pos.getX() + 0.5d, pos.getY(), pos.getZ() + 0.5d));
 	}
 
-	private boolean canSpawnInBiome(ServerLevel level, BlockPos pos) {
-		if (this.baseSettings.biomeList().isEmpty() || this.baseSettings.biomeList().get().size() == 0)
+	@Override
+	public boolean canSpawnInBiome(ServerLevel level, BlockPos pos) {
+		if ((this.baseSettings.inBiomes().isEmpty() || this.baseSettings.inBiomes().get().size() == 0) &&
+				(this.baseSettings.notInBiomes().isEmpty() || this.baseSettings.notInBiomes().get().size() == 0))
 			return true;
 
 		Holder<Biome> biome = level.getBiome(pos);
 
-		return this.baseSettings.whitelistMode() == this.baseSettings.biomeList().get().contains(biome);
+		return this.baseSettings.inBiomes().map(set -> set.contains(biome)).orElse(true) &&
+				this.baseSettings.notInBiomes().map(set -> !set.contains(biome)).orElse(true);
 	}
 
 	private static boolean canSpawnOn(ServerLevel level, BlockState state, BlockPos pos) {

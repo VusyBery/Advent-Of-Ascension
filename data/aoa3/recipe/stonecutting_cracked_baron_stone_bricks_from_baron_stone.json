@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "aoa3:baron_stone"
+  },
+  "result": {
+    "count": 1,
+    "id": "aoa3:cracked_baron_stone_bricks"
+  }
+}

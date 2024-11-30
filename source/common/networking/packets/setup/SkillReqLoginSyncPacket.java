@@ -11,7 +11,7 @@ import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.configtask.SkillReqsHandshakeTask;
 import net.tslat.aoa3.common.networking.packets.AoAPacket;
 import net.tslat.aoa3.data.server.AoASkillReqReloadListener;
-import net.tslat.aoa3.util.StreamCodecUtil;
+import net.tslat.aoa3.util.CodecUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -23,7 +23,7 @@ public record SkillReqLoginSyncPacket(Optional<Map<ResourceLocation, Map<String,
 			ByteBufCodecs.optional(ByteBufCodecs.map(Object2ObjectOpenHashMap::new,
 					ResourceLocation.STREAM_CODEC, ByteBufCodecs.map(Object2ObjectOpenHashMap::new,
 					ByteBufCodecs.STRING_UTF8,
-					StreamCodecUtil.pair(ObjectIntPair::of, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT).apply(ByteBufCodecs.list())))), SkillReqLoginSyncPacket::skillReqData,
+					CodecUtil.streamPair(ObjectIntPair::of, ResourceLocation.STREAM_CODEC, ByteBufCodecs.VAR_INT).apply(ByteBufCodecs.list())))), SkillReqLoginSyncPacket::skillReqData,
 			SkillReqLoginSyncPacket::new);
 
 	public SkillReqLoginSyncPacket(Map<ResourceLocation, Map<String, List<ObjectIntPair<ResourceLocation>>>> skillReqData) {

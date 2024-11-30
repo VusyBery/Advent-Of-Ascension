@@ -22,7 +22,7 @@ public class TornPages extends Item {
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack bookStack = player.getItemInHand(hand);
 
 		if (!IntegrationManager.isPatchouliActive())
@@ -31,8 +31,8 @@ public class TornPages extends Item {
 		return PatchouliIntegration.getBookFromStack(bookStack)
 				.filter(PatchouliIntegration::isBookLoaded)
 				.map(bookId -> {
-					if (!world.isClientSide) {
-						PlayerUtil.getAdventPlayer((ServerPlayer)player).addPatchouliBook(bookId);
+					if (!level.isClientSide) {
+						PlayerUtil.getAdventPlayer((ServerPlayer)player).storage.addPatchouliBook(bookId);
 					}
 					else {
 						if (IntegrationManager.isPatchouliActive())

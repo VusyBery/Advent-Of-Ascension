@@ -8,6 +8,8 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.content.block.functional.misc.TrophyBlock;
 import net.tslat.aoa3.content.item.datacomponent.*;
+import net.tslat.aoa3.content.item.weapon.staff.BaseStaff;
+import net.tslat.aoa3.library.object.CachedEntity;
 
 import java.util.UUID;
 import java.util.function.UnaryOperator;
@@ -20,6 +22,7 @@ public final class AoADataComponents {
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> DAMAGE_SCALING = register("damage_scaling", builder -> builder.networkSynchronized(ByteBufCodecs.FLOAT));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<Float>> MELEE_SWING_STRENGTH = register("melee_swing_strength", builder -> builder.networkSynchronized(ByteBufCodecs.FLOAT));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> RESERVED_ITEM_STAGE = register("reserved_item_stage", builder -> builder.persistent(Codec.STRING).networkSynchronized(ByteBufCodecs.STRING_UTF8));
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<BaseStaff.StoredCasts>> STORED_SPELL_CASTS = register("stored_spell_casts", builder -> builder.persistent(BaseStaff.StoredCasts.CODEC).networkSynchronized(BaseStaff.StoredCasts.STREAM_CODEC));
 
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<BlasterStats>> BLASTER_STATS = register("blaster_stats", builder -> builder.persistent(BlasterStats.CODEC).networkSynchronized(BlasterStats.STREAM_CODEC));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<BowStats>> BOW_STATS = register("bow_stats", builder -> builder.persistent(BowStats.CODEC).networkSynchronized(BowStats.STREAM_CODEC));
@@ -28,6 +31,7 @@ public final class AoADataComponents {
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<ShotgunStats>> SHOTGUN_STATS = register("shotgun_stats", builder -> builder.persistent(ShotgunStats.CODEC).networkSynchronized(ShotgunStats.STREAM_CODEC));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<VulcaneStats>> VULCANE_STATS = register("vulcane_stats", builder -> builder.persistent(VulcaneStats.CODEC).networkSynchronized(VulcaneStats.STREAM_CODEC));
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<StaffRuneCost>> STAFF_RUNE_COST = register("staff_rune_cost", builder -> builder.persistent(StaffRuneCost.CODEC).networkSynchronized(StaffRuneCost.STREAM_CODEC));
+	public static final DeferredHolder<DataComponentType<?>, DataComponentType<CachedEntity<?>>> STORED_ENTITY = register("stored_entity", builder -> builder.persistent(CachedEntity.CODEC).networkSynchronized(CachedEntity.STREAM_CODEC));
 
 	public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompressedItemData>> COMPRESSED_ITEM_DATA = register("compressed_item_data", builder -> builder.persistent(CompressedItemData.CODEC).networkSynchronized(CompressedItemData.STREAM_CODEC));
 

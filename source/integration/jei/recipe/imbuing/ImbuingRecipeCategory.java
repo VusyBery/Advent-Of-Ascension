@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -100,16 +101,14 @@ public class ImbuingRecipeCategory extends ContainerRecipeCategory<ImbuingRecipe
 	}
 
 	@Override
-	public List<Component> getTooltipStrings(ImbuingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
+	public void getTooltip(ITooltipBuilder tooltip, ImbuingRecipe recipe, IRecipeSlotsView recipeSlotsView, double mouseX, double mouseY) {
 		if (mouseX < 140 || mouseY > 14)
-			return super.getTooltipStrings(recipe, recipeSlotsView, mouseX, mouseY);
+			return;
 
-		final List<Component> tooltip = new ObjectArrayList<>();
 		AoASkill.Instance skill = ClientPlayerDataManager.get().getSkill(AoASkills.IMBUING.get());
-		boolean hasLevel = skill.hasLevel(recipe.getImbuingLevelReq());
 
 		tooltip.add(LocaleUtil.getLocaleMessage(LocaleUtil.createGuiLocaleKey("tooltip.skillReq"), ChatFormatting.LIGHT_PURPLE));
-		tooltip.add(LocaleUtil.getLocaleMessage(LocaleUtil.Keys.SKILL_REQUIREMENT, Component.literal(String.valueOf(recipe.getImbuingLevelReq())), skill.getName()).withStyle(style -> style.withColor(hasLevel ? 0xFF80FF20: 0xFFFF6060)));
+		tooltip.add(LocaleUtil.getLocaleMessage(LocaleUtil.Keys.SKILL_REQUIREMENT, Component.literal(String.valueOf(recipe.getImbuingLevelReq())), skill.getName()).withStyle(style -> style.withColor(skill.hasLevel(recipe.getImbuingLevelReq()) ? 0xFF80FF20: 0xFFFF6060)));
 
 		if (recipe.getXpOverrideProvider().isPresent()) {
 			FloatProvider xpProvider = recipe.getXpOverrideProvider().get();
@@ -121,8 +120,6 @@ public class ImbuingRecipeCategory extends ContainerRecipeCategory<ImbuingRecipe
 		else {
 			tooltip.add(LocaleUtil.getLocaleMessage(LocaleUtil.createGuiLocaleKey("misc.xpAmount"), ChatFormatting.YELLOW, Component.literal(NumberUtil.roundToNthDecimalPlace(recipe.getXp(Minecraft.getInstance().player), 2)), skill.getName()));
 		}
-
-		return tooltip;
 	}
 
 	@Override

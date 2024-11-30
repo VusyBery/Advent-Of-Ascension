@@ -10,9 +10,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -23,6 +21,8 @@ import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.adventplayer.SyncAoAAbilityDataPacket;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.custom.events.PlayerSkillsLootModificationEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.RegistryUtil;
@@ -31,8 +31,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class AutoHarvestingTrash extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.LOOT_MODIFICATION};
-
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerSkillsLootModificationEvent.class, serverOnly(this::handleLootModification)));
 	@Nullable
 	private Item consumingItem = null;
 
@@ -58,14 +58,13 @@ public class AutoHarvestingTrash extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleLootModification(List<ItemStack> loot, LootContext context) {
-		if (consumingItem != null && context.getParamOrNull(LootContextParams.BLOCK_STATE) != null)
-			loot.removeIf(stack -> stack.getItem() == consumingItem);
+	private void handleLootModification(final PlayerSkillsLootModificationEvent ev) {
+		if (this.consumingItem != null && ev.getLootContext().getParamOrNull(LootContextParams.BLOCK_STATE) != null)
+			ev.getGeneratedLoot().removeIf(stack -> stack.getItem() == this.consumingItem);
 	}
 
 	@Override

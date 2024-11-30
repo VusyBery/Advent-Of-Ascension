@@ -17,6 +17,7 @@ import net.tslat.aoa3.client.AoAKeybinds;
 import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -27,10 +28,12 @@ import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.effectslib.api.util.EffectBuilder;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class StunStrike extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.OUTGOING_ATTACK_AFTER};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			afterAttacking(serverOnly(this::handleAfterAttacking)));
 
 	private final float energyCost;
 	private final int stunDuration;
@@ -57,8 +60,8 @@ public class StunStrike extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -85,17 +88,16 @@ public class StunStrike extends AoAAbility.Instance {
 
 	@Override
 	public void handleKeyInput() {
-		ServerPlayer player = (ServerPlayer)getPlayer();
+		if (getPlayer() instanceof ServerPlayer player) {
+			if (!primedAttack && skill.getPlayerDataManager().getResource(AoAResources.ENERGY.get()).hasAmount(this.energyCost)) {
+				this.primedAttack = true;
 
-		if (!primedAttack && skill.getPlayerDataManager().getResource(AoAResources.ENERGY.get()).hasAmount(this.energyCost)) {
-			this.primedAttack = true;
-
-			activatedActionKey(player);
+				activatedActionKey(player);
+			}
 		}
 	}
 
-	@Override
-	public void handleAfterAttacking(LivingDamageEvent.Post ev) {
+	private void handleAfterAttacking(LivingDamageEvent.Post ev) {
 		if (ev.getNewDamage() > 0 && primedAttack && DamageUtil.isMeleeDamage(ev.getSource()) && !getPlayer().getItemInHand(InteractionHand.OFF_HAND).isEmpty()) {
 			this.primedAttack = false;
 

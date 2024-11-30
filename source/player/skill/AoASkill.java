@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.bus.api.Event;
 import net.tslat.aoa3.client.ClientOperations;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.XpGainPacket;
@@ -22,6 +23,7 @@ import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.event.custom.AoAEvents;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
@@ -30,7 +32,9 @@ import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -108,6 +112,11 @@ public final class AoASkill {
 			}
 		}
 
+		@Override
+		public List<DynamicEventSubscriber<? extends Event>> getEventSubscribers() {
+			return Collections.emptyList();
+		}
+
 		public void changePlayerInstance(ServerPlayerDataManager plData) {
 			this.playerDataManager = plData;
 		}
@@ -120,12 +129,17 @@ public final class AoASkill {
 			return type().getName().copy();
 		}
 
+		@Override
+		public boolean isStillValid() {
+			return this.playerDataManager != null && this.playerDataManager.isStillValid();
+		}
+
 		public HashMap<String, AoAAbility.Instance> getAbilityMap() {
 			return this.abilities;
 		}
 
 		public Player getPlayer() {
-			return this.playerDataManager == null ? ClientOperations.getPlayer() : this.playerDataManager.player();
+			return this.playerDataManager == null ? ClientOperations.getPlayer() : this.playerDataManager.getPlayer();
 		}
 
 		public ServerPlayerDataManager getPlayerDataManager() {
@@ -155,7 +169,7 @@ public final class AoASkill {
 			this.needsSync = true;
 
 			this.playerDataManager.applyLegitimacyPenalties();
-			AoAEvents.playerLevelChange(this.playerDataManager, this, oldLevel, false);
+			AoAEvents.firePlayerLevelChange(this.playerDataManager, this, oldLevel, false);
 		}
 
 		public void applyXpModifier(float xpMod) {
@@ -188,7 +202,7 @@ public final class AoASkill {
 			if (!isUnnaturalSource && !ignoreXpBuffs)
 				xpAfterMods = applyXpBuffs(xp);
 
-			xp = AoAEvents.playerChangeXp(playerDataManager, this, xp, xpAfterMods, !isUnnaturalSource);
+			xp = AoAEvents.firePlayerChangeXp(playerDataManager, this, xp, xpAfterMods, !isUnnaturalSource);
 
 			if (xp > 0) {
 				if (this.level >= 1000)
@@ -229,14 +243,14 @@ public final class AoASkill {
 				playerDataManager.applyLegitimacyPenalties();
 			}
 			else {
-				AoAAdvancementTriggers.XP_GAIN.get().trigger(this.playerDataManager.player(), this.skill, xp);
+				AoAAdvancementTriggers.XP_GAIN.get().trigger(this.playerDataManager.getPlayer(), this.skill, xp);
 			}
 
 			this.xp += remaining;
 			this.needsSync = true;
 
 			playerDataManager.checkAndUpdateLegitimacy();
-			AoANetworking.sendToPlayer(playerDataManager.player(), new XpGainPacket(AoARegistries.AOA_SKILLS.getKey(skill), xp, newLevels > 0));
+			AoANetworking.sendToPlayer(playerDataManager.getPlayer(), new XpGainPacket(AoARegistries.AOA_SKILLS.getKey(skill), xp, newLevels > 0));
 		}
 
 		private void subtractXp(float xp, boolean isUnnaturalSource) {
@@ -258,7 +272,7 @@ public final class AoASkill {
 			if (newLevels > 0) {
 				this.level = Math.max(1, this.level - newLevels);
 
-				AoAEvents.playerLevelChange(this.playerDataManager, this, this.level + newLevels, !isUnnaturalSource);
+				AoAEvents.firePlayerLevelChange(this.playerDataManager, this, this.level + newLevels, !isUnnaturalSource);
 			}
 
 			this.xp = Math.max(0, PlayerUtil.getXpRequiredForNextLevel(this.level - newLevels) - remaining);
@@ -267,11 +281,11 @@ public final class AoASkill {
 			if (!isUnnaturalSource)
 				playerDataManager.applyLegitimacyPenalties();
 
-			AoANetworking.sendToPlayer(playerDataManager.player(), new XpGainPacket(AoARegistries.AOA_SKILLS.getKey(skill), xp, newLevels > 0));
+			AoANetworking.sendToPlayer(playerDataManager.getPlayer(), new XpGainPacket(AoARegistries.AOA_SKILLS.getKey(skill), xp, newLevels > 0));
 		}
 
 		private void levelUp(int oldLevel, int newLevel, boolean isNaturalLevel) {
-			ServerPlayer player = playerDataManager.player();
+			ServerPlayer player = playerDataManager.getPlayer();
 
 			new SoundBuilder(AoASounds.PLAYER_LEVEL_UP).isPlayer().notInWorld().include(player).execute();
 
@@ -281,7 +295,7 @@ public final class AoASkill {
 			this.level = newLevel;
 			this.xp = 0f;
 
-			AoAEvents.playerLevelChange(this.playerDataManager, this, oldLevel, isNaturalLevel);
+			AoAEvents.firePlayerLevelChange(this.playerDataManager, this, oldLevel, isNaturalLevel);
 			AoAAdvancementTriggers.LEVEL_UP.get().trigger(player, this.skill, newLevel);
 		}
 
@@ -294,8 +308,8 @@ public final class AoASkill {
 				this.xp = 0;
 				this.needsSync = true;
 
-				AoAEvents.playerLevelChange(this.playerDataManager, this, oldLevel, true);
-				AoAAdvancementTriggers.CYCLE_SKILL.get().trigger(this.playerDataManager.player(), this.skill, this.cycle);
+				AoAEvents.firePlayerLevelChange(this.playerDataManager, this, oldLevel, true);
+				AoAAdvancementTriggers.CYCLE_SKILL.get().trigger(this.playerDataManager.getPlayer(), this.skill, this.cycle);
 
 				return true;
 			}

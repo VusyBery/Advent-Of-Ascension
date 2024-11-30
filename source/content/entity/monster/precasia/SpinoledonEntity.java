@@ -14,7 +14,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.damagesource.DamageContainer;
 import net.tslat.aoa3.advent.AdventOfAscension;
@@ -33,6 +32,7 @@ import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.library.object.EntityDataHolder;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.AttributeUtil;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -108,7 +108,7 @@ public class SpinoledonEntity extends AoAMeleeMob<SpinoledonEntity> {
 		return BrainActivityGroup.idleTasks(
 				new TargetOrRetaliate<>()
 						.useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-						.attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)),
 				new OneRandomBehaviour<>(
 						new SetRandomWalkTarget<>().speedModifier(0.9f),
 						new Idle<>().runFor(entity -> entity.level().isDay() ? entity.getRandom().nextInt(30, 60) : entity.getRandom().nextInt(60, 120))));
@@ -117,7 +117,7 @@ public class SpinoledonEntity extends AoAMeleeMob<SpinoledonEntity> {
 	@Override
 	public BrainActivityGroup<? extends SpinoledonEntity> getFightTasks() {
 		return BrainActivityGroup.fightTasks(
-				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
+				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> !DamageUtil.isAttackable(target) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
 				new SetWalkTargetToAttackTarget<>().closeEnoughDist((entity, target) -> 2),
 				new AnimatableMeleeAttack<>(getPreAttackTime())
 						.attackInterval(entity -> getAttackSwingDuration())
@@ -230,6 +230,11 @@ public class SpinoledonEntity extends AoAMeleeMob<SpinoledonEntity> {
 				.knockbackResist(0.7f)
 				.aggroRange(16)
 				.followRange(32);
+	}
+
+	@Override
+	protected int getAttackSwingDuration() {
+		return this.lunging ? 25 : 11;
 	}
 
 	@Override

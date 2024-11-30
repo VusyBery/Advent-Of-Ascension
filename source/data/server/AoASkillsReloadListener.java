@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -15,28 +17,28 @@ import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.skill.AoASkill;
 import org.apache.logging.log4j.Level;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class AoASkillsReloadListener extends SimpleJsonResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String folder = "player/skills";
 
-	private static final HashMap<AoASkill, JsonObject> SKILLS_DATA = new HashMap<AoASkill, JsonObject>();
+	private static final Map<AoASkill, JsonObject> SKILLS_DATA = new Object2ObjectArrayMap<>();
 
 	public AoASkillsReloadListener() {
 		super(GSON, folder);
 	}
 
-	public static void populateSkillMap(ServerPlayerDataManager plData, Map<AoASkill, AoASkill.Instance> skillMap) {
-		skillMap.clear();
+	public static Object2ObjectOpenHashMap<AoASkill, AoASkill.Instance> generateSkillsMap(ServerPlayerDataManager plData) {
+		final Object2ObjectOpenHashMap<AoASkill, AoASkill.Instance> skills = new Object2ObjectOpenHashMap<>(SKILLS_DATA.size());
 
-		if (AoAConfigs.SERVER.disableSkills.get())
-			return;
-
-		for (Map.Entry<AoASkill, JsonObject> skill : SKILLS_DATA.entrySet()) {
-			skillMap.put(skill.getKey(), skill.getKey().buildDefaultInstance(plData, skill.getValue()));
+		if (!AoAConfigs.SERVER.disableSkills.get()) {
+			for (Map.Entry<AoASkill, JsonObject> skill : SKILLS_DATA.entrySet()) {
+				skills.put(skill.getKey(), skill.getKey().buildDefaultInstance(plData, skill.getValue()));
+			}
 		}
+
+		return skills;
 	}
 
 	@Override
@@ -62,7 +64,7 @@ public class AoASkillsReloadListener extends SimpleJsonResourceReloadListener {
 
 			JsonObject obj = json.getAsJsonObject();
 
-			if (obj.size() == 0)
+			if (obj.isEmpty())
 				continue;
 
 			SKILLS_DATA.put(skill, obj);

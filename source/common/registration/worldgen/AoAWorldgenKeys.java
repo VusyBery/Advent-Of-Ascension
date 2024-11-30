@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.synth.NormalNoise;
 import net.neoforged.neoforge.common.world.BiomeModifier;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.tslat.aoa3.advent.AdventOfAscension;
@@ -245,6 +246,15 @@ public final class AoAWorldgenKeys {
 
 		private static ResourceKey<BiomeModifier> key(String id) {
 			return ResourceKey.create(NeoForgeRegistries.Keys.BIOME_MODIFIERS, AdventOfAscension.id(id));
+		}
+	}
+
+	public static final class NoiseParams {
+		public static final ResourceKey<NormalNoise.NoiseParameters> TEMPERATURE_MEDIUM = key("temperature_medium");
+		public static final ResourceKey<NormalNoise.NoiseParameters> VEGETATION_MEDIUM = key("vegetation_medium");
+
+		private static ResourceKey<NormalNoise.NoiseParameters> key(String id) {
+			return ResourceKey.create(Registries.NOISE, AdventOfAscension.id(id));
 		}
 	}
 }

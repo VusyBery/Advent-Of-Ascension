@@ -26,7 +26,7 @@ public final class AoAArmourMaterials {
 	public static final DeferredHolder<ArmorMaterial, ArmorMaterial> OCEANUS_HELMET = register("oceanus_helmet", Builder.helmet(5).toughness(7));
 	public static final DeferredHolder<ArmorMaterial, ArmorMaterial> SEALORD_HELMET = register("sealord_helmet", Builder.helmet(5).toughness(7));
 	public static final DeferredHolder<ArmorMaterial, ArmorMaterial> FACE_MASK = register("face_mask", Builder.helmet(5).toughness(5));
-	public static final DeferredHolder<ArmorMaterial, ArmorMaterial> NIGHT_VISION_GOGGLES = register("night_vision_goggles", Builder.helmet(2).toughness(1));
+	public static final DeferredHolder<ArmorMaterial, ArmorMaterial> CHROMA_GOGGLES = register("chroma_goggles", Builder.helmet(2).toughness(1));
 	public static final DeferredHolder<ArmorMaterial, ArmorMaterial> SKILL_HELMET = register("skill_helmet", Builder.helmet(5).toughness(7).enchantValue(20).equipSound(SoundEvents.ARMOR_EQUIP_DIAMOND));
 	public static final DeferredHolder<ArmorMaterial, ArmorMaterial> OLD_BOOT = register("old_boot", Builder.boots(2).enchantValue(0).equipSound(SoundEvents.ARMOR_EQUIP_LEATHER));
 

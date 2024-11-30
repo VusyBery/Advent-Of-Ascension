@@ -4,13 +4,15 @@ import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.HaulingRodPullEntityEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
-import static net.tslat.aoa3.player.AoAPlayerEventListener.ListenerType.HAULING_ROD_PULL_ENTITY;
+import java.util.List;
 
 public class HaulingRodPullStrengthModifier extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {HAULING_ROD_PULL_ENTITY};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(HaulingRodPullEntityEvent.class, serverOnly(this::handleHaulingRodPullEntity)));
 
 	public HaulingRodPullStrengthModifier(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.HAULING_ROD_PULL_STRENGTH.get(), skill, data);
@@ -21,12 +23,11 @@ public class HaulingRodPullStrengthModifier extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleHaulingRodPullEntity(HaulingRodPullEntityEvent ev) {
+	private void handleHaulingRodPullEntity(HaulingRodPullEntityEvent ev) {
 		ev.setPullStrength(ev.getPullStrength() * (1 + getScaledValue()));
 	}
 }

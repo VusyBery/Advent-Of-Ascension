@@ -44,11 +44,14 @@ public class AshfernCookingRecipe extends CustomRecipe implements RecipeBookReci
 	}
 
 	@Override
-	public boolean matches(CraftingInput container, Level level) {
+	public boolean matches(CraftingInput input, Level level) {
+		if (input.ingredientCount() != 2)
+			return false;
+
 		boolean hasFern = false;
 		boolean hasFood = false;
 
-		for (ItemStack stack : container.items()) {
+		for (ItemStack stack : input.items()) {
 			if (stack.isEmpty())
 				continue;
 

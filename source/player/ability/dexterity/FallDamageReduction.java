@@ -9,11 +9,15 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
+import java.util.List;
+
 public class FallDamageReduction extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_FALL};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(LivingFallEvent.class, LivingFallEvent::getEntity, serverOnly(this::handlePlayerFall)));
 
 	private final int minHeight;
 	private final int maxHeight;
@@ -52,12 +56,11 @@ public class FallDamageReduction extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handlePlayerFall(LivingFallEvent ev) {
+	private void handlePlayerFall(LivingFallEvent ev) {
 		if (ev.getDistance() >= minHeight && ev.getDistance() <= maxHeight) {
 			ev.setDamageMultiplier(Math.max(0, ev.getDamageMultiplier() * (1 - Math.min(1, getScaledValue()))));
 

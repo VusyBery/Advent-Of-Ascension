@@ -11,6 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.Item;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.item.AoADataComponents;
+import net.tslat.aoa3.content.item.weapon.staff.BaseStaff;
 
 public record StaffRuneCost(Object2IntMap<Item> runeCosts) {
     public static final Codec<StaffRuneCost> CODEC = RecordCodecBuilder.create(builder -> builder.group(
@@ -21,6 +22,6 @@ public record StaffRuneCost(Object2IntMap<Item> runeCosts) {
             StaffRuneCost::new);
 
     public static Item.Properties of(Object2IntMap<Item> runeCosts) {
-        return new Item.Properties().component(AoADataComponents.STAFF_RUNE_COST.get(), new StaffRuneCost(runeCosts));
+        return new Item.Properties().component(AoADataComponents.STAFF_RUNE_COST, new StaffRuneCost(runeCosts)).component(AoADataComponents.STORED_SPELL_CASTS, BaseStaff.StoredCasts.DISABLED);
     }
 }

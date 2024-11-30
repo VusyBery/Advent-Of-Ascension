@@ -43,6 +43,7 @@
       "color": "white",
       "translate": "advancements.aoa3.nether.nethengeic_deliverance.description"
     },
+    "frame": "challenge",
     "icon": {
       "count": 1,
       "id": "aoa3:ornate_trophy"

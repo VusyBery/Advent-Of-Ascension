@@ -19,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.particleoption.EntityTrackingParticleOptions;
 import net.tslat.aoa3.common.registration.AoAAttributes;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
@@ -156,7 +155,7 @@ public class IceGiantEntity extends AoAMeleeMob<IceGiantEntity> implements AoARa
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
 		if (super.hurt(source, amount)) {
-			if (source.getDirectEntity() instanceof LivingEntity attacker && DamageUtil.isMeleeDamage(source) && (!(attacker instanceof Player pl) || pl.getAbilities().invulnerable))
+			if (source.getDirectEntity() instanceof LivingEntity attacker && DamageUtil.isMeleeDamage(source) && DamageUtil.isAttackable(attacker))
 				attacker.setTicksFrozen(attacker.getTicksFrozen() + 100);
 
 			return true;
@@ -222,6 +221,6 @@ public class IceGiantEntity extends AoAMeleeMob<IceGiantEntity> implements AoARa
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				DefaultAnimations.genericWalkController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SLAM));
+				DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_SLAM).transitionLength(0));
 	}
 }

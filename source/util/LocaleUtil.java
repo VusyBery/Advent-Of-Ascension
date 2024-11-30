@@ -233,6 +233,8 @@ public final class LocaleUtil {
 		public static final String SNIPER_CROUCH = LocaleUtil.createItemDescriptionLocaleKey("sniper.crouch");
 		public static final String STAFF_RUNE_COST = LocaleUtil.createItemDescriptionLocaleKey("staff.runesRequired");
 		public static final String STAFF_RUNE_COST_LINE = LocaleUtil.createItemDescriptionLocaleKey("staff.runesRequired.specific");
+		public static final String STAFF_STORED_CHARGES = LocaleUtil.createItemDescriptionLocaleKey("staff.storedCharges.amount");
+		public static final String STAFF_ADD_CHARGE = LocaleUtil.createItemDescriptionLocaleKey("staff.storedCharges.charge");
 		public static final String STICKLER_DESCRIPTION_1 = LocaleUtil.createItemDescriptionLocaleKey("stickler.desc.1");
 		public static final String STICKLER_DESCRIPTION_2 = LocaleUtil.createItemDescriptionLocaleKey("stickler.desc.2");
 		public static final String THROWN_WEAPON = LocaleUtil.createItemDescriptionLocaleKey("thrownWeapon");

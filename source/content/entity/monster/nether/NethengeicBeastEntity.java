@@ -91,7 +91,7 @@ public class NethengeicBeastEntity extends AoARangedMob<NethengeicBeastEntity> {
     public BrainActivityGroup<NethengeicBeastEntity> getIdleTasks() {
         return BrainActivityGroup.idleTasks(
                 new SetRetaliateTarget<>()
-                        .attackablePredicate(target -> target.isAlive() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+                        .attackablePredicate(target -> DamageUtil.isAttackable(target) && !isAlliedTo(target)),
                 new OneRandomBehaviour<>(
                         new SetRandomWalkTarget<>().speedModifier(0.9f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));

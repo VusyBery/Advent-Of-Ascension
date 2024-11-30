@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "tag": "neoforge:ingots/limonite"
+      "tag": "c:ingots/limonite"
     }
   ],
   "result": {

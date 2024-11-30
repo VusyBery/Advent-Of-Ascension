@@ -23,8 +23,8 @@ public class NightmareBow extends BaseBow {
 		double zOffset = Mth.sin(shooter.getYRot() / 180.0F * (float)Math.PI) * 0.7F;
 
 		CustomArrowEntity centralArrow = super.makeArrow(shooter, bowStack, ammoStack, velocity, consumeAmmo);
-		CustomArrowEntity leftArrow = CustomArrowEntity.fromArrow(centralArrow, bowStack, shooter, getBowDamage());
-		CustomArrowEntity rightArrow = CustomArrowEntity.fromArrow(centralArrow, bowStack, shooter, getBowDamage());
+		CustomArrowEntity leftArrow = CustomArrowEntity.fromArrow(centralArrow, bowStack, shooter, getBowDamage(bowStack));
+		CustomArrowEntity rightArrow = CustomArrowEntity.fromArrow(centralArrow, bowStack, shooter, getBowDamage(bowStack));
 
 		leftArrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
 		rightArrow.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;

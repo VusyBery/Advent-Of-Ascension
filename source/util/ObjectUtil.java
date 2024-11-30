@@ -3,7 +3,6 @@ package net.tslat.aoa3.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.util.RandomSource;
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -46,12 +44,7 @@ public final class ObjectUtil {
 	}
 
 	public static <T> JsonObject codecToJson(Codec<T> codec, T object, DynamicOps<JsonElement> ops, Function<String, String> errMsg) {
-		DataResult<JsonElement> result = codec.encodeStart(ops, object);
-		Optional<JsonElement> output = result.resultOrPartial(error -> {
-			throw new IllegalArgumentException(errMsg.apply(error));
-		});
-
-		return output.get().getAsJsonObject();
+		return codec.encodeStart(ops, object).getOrThrow(error -> new IllegalArgumentException(errMsg.apply(error))).getAsJsonObject();
 	}
 
 	public static <T> T[] shuffleArray(T[] array, RandomSource random) {

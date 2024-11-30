@@ -5,6 +5,10 @@ import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.tslat.aoa3.content.item.misc.DistortingArtifact;
 import net.tslat.aoa3.content.item.misc.Gravitator;
+import net.tslat.aoa3.content.item.tool.artifice.ArtificeItem;
+import net.tslat.aoa3.content.item.tool.artifice.ExpFlask;
+import net.tslat.aoa3.content.item.tool.artifice.StasisCapsule;
+import net.tslat.aoa3.content.item.tool.artifice.TemporalAnvil;
 import net.tslat.aoa3.content.item.tool.axe.*;
 import net.tslat.aoa3.content.item.tool.hoe.BaseHoe;
 import net.tslat.aoa3.content.item.tool.hoe.DryadsBlessing;
@@ -63,9 +67,13 @@ public final class AoATools {
 	public static final DeferredItem<Item> FISHING_CAGE = registerTool("fishing_cage", () -> new FishingCage(new Item.Properties().durability(10)));
 
 	public static final DeferredItem<Item> ATTUNING_BOWL = registerTool("attuning_bowl", AttuningBowl::new); // TODO Retexture
-	public static final DeferredItem<Item> EXP_FLASK = registerTool("exp_flask", ExpFlask::new);
 	public static final DeferredItem<Item> GRAVITATOR = registerTool("gravitator", Gravitator::new);
 	public static final DeferredItem<Item> DISTORTING_ARTIFACT = registerTool("distorting_artifact", DistortingArtifact::new);
+
+	public static final DeferredItem<Item> EXP_FLASK = registerTool("exp_flask", ExpFlask::new);
+	public static final DeferredItem<Item> TEMPORAL_ANVIL = registerTool("temporal_anvil", TemporalAnvil::new);
+	public static final DeferredItem<Item> STASIS_CAPSULE = registerTool("stasis_capsule", StasisCapsule::new);
+	public static final DeferredItem<Item> ARCANUM_BATTERY = registerTool("arcanum_battery", () -> new ArtificeItem(new Item.Properties().stacksTo(1)));
 
 	private static <T extends Item> DeferredItem<T> registerTool(String registryName, Supplier<T> item) {
 		return AoAItems.registerItem(registryName, item, AoACreativeModeTabs.TOOLS.getKey());

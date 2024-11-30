@@ -9,12 +9,17 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 
 public class SpiritResource extends AoAResource.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_TICK, ListenerType.OUTGOING_ATTACK_AFTER};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			afterAttacking(this::handleAfterAttacking),
+			listener(PlayerTickEvent.Pre.class, PlayerTickEvent.Pre::getEntity, this::handlePlayerTick));
 
 	private final float maxValue;
 	private final float regenPerTick;
@@ -42,8 +47,8 @@ public class SpiritResource extends AoAResource.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -66,20 +71,18 @@ public class SpiritResource extends AoAResource.Instance {
 		return regenPerTick;
 	}
 
-	@Override
-	public void handleAfterAttacking(LivingDamageEvent.Post ev) {
+	private void handleAfterAttacking(LivingDamageEvent.Post ev) {
 		if (this.value < getMaxValue() && !ev.getSource().is(AoATags.DamageTypes.NO_SPIRIT_REGEN))
 			addValue(getHealthScaledRegen(this.regenPerDamage * ev.getNewDamage()));
 	}
 
-	@Override
-	public void handlePlayerTick(final PlayerTickEvent.Pre ev) {
+	private void handlePlayerTick(final PlayerTickEvent.Pre ev) {
 		if (this.value < getMaxValue())
 			addValue(getHealthScaledRegen(getPerTickRegen()));
 	}
 
 	protected float getHealthScaledRegen(float regenAmount) {
-		ServerPlayer player = getPlayerDataManager().player();
+		ServerPlayer player = getPlayerDataManager().getPlayer();
 
 		return (1 + (1 - player.getHealth() / player.getMaxHealth()) * (this.healthModMax - 1)) * regenAmount;
 	}

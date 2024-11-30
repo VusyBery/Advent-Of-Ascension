@@ -18,6 +18,7 @@ import net.tslat.aoa3.client.player.AoAPlayerKeybindListener;
 import net.tslat.aoa3.client.player.ClientPlayerDataManager;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -25,10 +26,12 @@ import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class InnervationDodge extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.INCOMING_DAMAGE};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			whenTakingDamage(serverOnly(this::handleIncomingDamage)));
 
 	private final float energyCost;
 
@@ -52,8 +55,8 @@ public class InnervationDodge extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -97,18 +100,17 @@ public class InnervationDodge extends AoAAbility.Instance {
 
 	@Override
 	public void handleKeyInput() {
-		ServerPlayer player = (ServerPlayer)getPlayer();
+		if (getPlayer() instanceof ServerPlayer player) {
+			if (skill.getPlayerDataManager().getResource(AoAResources.ENERGY.get()).consume(this.energyCost, true)) {
+				activatedActionKey(player);
 
-		if (skill.getPlayerDataManager().getResource(AoAResources.ENERGY.get()).consume(this.energyCost, true)) {
-			activatedActionKey(player);
-
-			if (skill.canGainXp(true))
-				PlayerUtil.giveTimeBasedXpToPlayer(player, this.skill.type(), 20,  false);
+				if (skill.canGainXp(true))
+					PlayerUtil.giveTimeBasedXpToPlayer(player, this.skill.type(), 20,  false);
+			}
 		}
 	}
 
-	@Override
-	public void handleIncomingDamage(LivingIncomingDamageEvent ev) {
+	private void handleIncomingDamage(LivingIncomingDamageEvent ev) {
 		if (ev.getEntity().level().getGameTime() < activationTime + 5 && DamageUtil.isMeleeDamage(ev.getSource()))
 			ev.setCanceled(true);
 	}

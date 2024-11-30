@@ -13,13 +13,17 @@ import net.minecraft.world.item.Item;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.ItemCraftingEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.RegistryUtil;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 
 public class BonusCraftingOutput extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.ITEM_CRAFTING};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(ItemCraftingEvent.class, serverOnly(this::handleItemCrafting)));
 
 	@Nullable
 	private final Item outputTarget;
@@ -67,12 +71,11 @@ public class BonusCraftingOutput extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleItemCrafting(ItemCraftingEvent ev) {
+	private void handleItemCrafting(ItemCraftingEvent ev) {
 		if (outputTarget != null) {
 			if (ev.getOutputStack().getItem() == outputTarget)
 				ev.getOutputStack().setCount((int)Math.ceil(ev.getOutputStack().getCount() * (1 + getScaledValue())));

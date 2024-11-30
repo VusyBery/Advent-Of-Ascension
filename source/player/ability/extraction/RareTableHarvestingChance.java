@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -13,7 +12,8 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
-import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.custom.events.PlayerSkillsLootModificationEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.player.skill.ExtractionSkill;
@@ -23,7 +23,8 @@ import net.tslat.aoa3.util.PlayerUtil;
 import java.util.List;
 
 public class RareTableHarvestingChance extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.LOOT_MODIFICATION};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerSkillsLootModificationEvent.class, serverOnly(this::handleLootModification)));
 
 	public RareTableHarvestingChance(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.RARE_TABLE_HARVESTING_CHANCE.get(), skill, data);
@@ -34,15 +35,15 @@ public class RareTableHarvestingChance extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleLootModification(List<ItemStack> loot, LootContext context) {
+	private void handleLootModification(final PlayerSkillsLootModificationEvent ev) {
 		if (!testAsChance())
 			return;
 
+		LootContext context = ev.getLootContext();
 		BlockState state = context.getParamOrNull(LootContextParams.BLOCK_STATE);
 
 		if (state == null)
@@ -62,7 +63,7 @@ public class RareTableHarvestingChance extends ScalableModAbility {
 		ServerPlayer player = (ServerPlayer)getPlayer();
 		ServerLevel world = context.getLevel();
 
-		loot.addAll(LootUtil.generateLoot(AdventOfAscension.id("misc/lotto_totem"), LootUtil.getGiftParameters(world, origin, player.getLuck(), player)));
-		PlayerUtil.giveXpToPlayer(player, getSkill().type(), PlayerUtil.getTimeBasedXpForLevel(PlayerUtil.getLevel(player, AoASkills.FARMING.get()), 10), false);
+		ev.getGeneratedLoot().addAll(LootUtil.generateLoot(AdventOfAscension.id("misc/lotto_totem"), LootUtil.getGiftParameters(world, origin, player.getLuck(), player)));
+		PlayerUtil.giveXpToPlayer(player, getSkill().type(), PlayerUtil.getTimeBasedXpForLevel(PlayerUtil.getLevel(player, getSkill().type()), 10), false);
 	}
 }

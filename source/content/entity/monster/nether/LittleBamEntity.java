@@ -9,13 +9,11 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.tslat.aoa3.client.render.AoAAnimations;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.AoASoundBuilderPacket;
 import net.tslat.aoa3.common.registration.AoAExplosions;
@@ -27,6 +25,7 @@ import net.tslat.aoa3.content.entity.base.AoAMeleeMob;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.library.builder.SoundBuilder;
 import net.tslat.aoa3.library.object.explosion.StandardExplosion;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.effectslib.api.particle.ParticleBuilder;
 import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
@@ -86,7 +85,7 @@ public class LittleBamEntity extends AoAMeleeMob<LittleBamEntity> {
 	@Override
 	public BrainActivityGroup<LittleBamEntity> getFightTasks() {
 		return BrainActivityGroup.fightTasks(
-				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> (target instanceof Player pl && pl.getAbilities().invulnerable) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
+				new InvalidateAttackTarget<>().invalidateIf((entity, target) -> !DamageUtil.isAttackable(target) || distanceToSqr(target.position()) > Math.pow(getAttributeValue(Attributes.FOLLOW_RANGE), 2)),
 				new SetWalkTargetToAttackTarget<>(),
 				new ConditionlessAttack<LittleBamEntity>(getAttackSwingDuration())
 						.attack(mob -> {
@@ -153,6 +152,6 @@ public class LittleBamEntity extends AoAMeleeMob<LittleBamEntity> {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				DefaultAnimations.genericWalkIdleController(this),
-				AoAAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_POWERUP));
+				DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_POWERUP).transitionLength(0));
 	}
 }

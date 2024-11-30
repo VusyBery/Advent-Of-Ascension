@@ -21,7 +21,7 @@ public class PlayerChangeXpEvent extends PlayerEvent implements ICancellableEven
 	private final boolean isNaturalGain;
 
 	public PlayerChangeXpEvent(ServerPlayerDataManager playerDataManager, AoASkill.Instance skill, float rawXpGain, float xpAfterModifiers, boolean isNaturalGainMethod) {
-		super(playerDataManager.player());
+		super(playerDataManager.getPlayer());
 
 		this.rawXpGain = rawXpGain;
 		this.xpGain = xpAfterModifiers;

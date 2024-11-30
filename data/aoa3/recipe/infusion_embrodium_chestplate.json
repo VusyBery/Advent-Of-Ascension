@@ -5,22 +5,22 @@
   },
   "ingredients": [
     {
-      "tag": "neoforge:ingots/varsium"
+      "tag": "c:ingots/varsium"
     },
     {
-      "tag": "neoforge:ingots/varsium"
+      "tag": "c:ingots/varsium"
     },
     {
-      "tag": "neoforge:ingots/varsium"
+      "tag": "c:ingots/varsium"
     },
     {
-      "tag": "neoforge:ingots/blazium"
+      "tag": "c:ingots/blazium"
     },
     {
-      "tag": "neoforge:ingots/blazium"
+      "tag": "c:ingots/blazium"
     },
     {
-      "tag": "neoforge:ingots/blazium"
+      "tag": "c:ingots/blazium"
     }
   ],
   "result": {

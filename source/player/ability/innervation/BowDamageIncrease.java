@@ -11,12 +11,16 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 
+import java.util.List;
+
 public class BowDamageIncrease extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			whenAttacking(serverOnly(this::handleOutgoingAttack)));
 
 	private final boolean requireFullyCharged;
 	private final float modifier;
@@ -36,8 +40,8 @@ public class BowDamageIncrease extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -45,8 +49,7 @@ public class BowDamageIncrease extends AoAAbility.Instance {
 		super.updateDescription(Component.translatable(((TranslatableContents)defaultDescription.getContents()).getKey() + (requireFullyCharged ? ".fullCharge" : ""), NumberUtil.roundToNthDecimalPlace((modifier - 1) * 100, 2)));
 	}
 
-	@Override
-	public void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
+	private void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
 		DamageSource source = ev.getSource();
 
 		if (source.is(DamageTypeTags.IS_PROJECTILE) && source.getDirectEntity() instanceof AbstractArrow arrow && (!this.requireFullyCharged || arrow.isCritArrow()))

@@ -17,7 +17,7 @@
     "aoa3:bright_rock_slab",
     "aoa3:churry_slab",
     "aoa3:coral_brick_slab",
-    "aoa3:precasian_stone_bricks_slab",
+    "aoa3:precasian_stone_brick_slab",
     "aoa3:coral_rock_slab",
     "aoa3:creeponia_brick_slab",
     "aoa3:creep_slab",
@@ -88,6 +88,7 @@
     "aoa3:toxicwood_slab",
     "aoa3:weightless_stone_slab",
     "aoa3:precasian_cobblestone_slab",
+    "aoa3:scoria_slab",
     "aoa3:whitewash_brick_slab",
     "aoa3:white_shyre_brick_slab",
     "aoa3:yellow_shyre_brick_slab"

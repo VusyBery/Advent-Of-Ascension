@@ -5,8 +5,6 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2IntOpenHashMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -17,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.EventHooks;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
@@ -337,7 +334,7 @@ public final class ItemUtil {
 		int maxCount = stack.getMaxStackSize();
 
 		if (stack.getCount() + addAmount <= maxCount) {
-			stack.setCount(stack.getCount() + addAmount);
+			stack.grow(addAmount);
 
 			return Collections.emptyList();
 		}
@@ -354,9 +351,5 @@ public final class ItemUtil {
 		}
 
 		return newStacks;
-	}
-
-	public static ItemStack loadStackFromNbt(Level level, CompoundTag nbt) {
-		return ItemStack.CODEC.decode(level.registryAccess().createSerializationContext(NbtOps.INSTANCE), nbt).getOrThrow().getFirst();
 	}
 }

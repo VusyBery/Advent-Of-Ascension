@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "tag": "neoforge:ingots/mystite"
+      "tag": "c:ingots/mystite"
     }
   ],
   "result": {

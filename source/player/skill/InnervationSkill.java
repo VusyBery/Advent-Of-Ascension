@@ -17,13 +17,18 @@ import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.event.EntityEvents;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
+
 public class InnervationSkill extends AoASkill.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK_AFTER, ListenerType.ENTITY_KILL, };
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			afterAttacking(serverOnly(this::handleAfterAttacking)),
+			onEntityKill(serverOnly(this::handleEntityKill)));
 
 	private final Int2ObjectOpenHashMap<Pair<Long, Float>> attackTracker = new Int2ObjectOpenHashMap<Pair<Long, Float>>();
 
@@ -36,12 +41,11 @@ public class InnervationSkill extends AoASkill.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleAfterAttacking(LivingDamageEvent.Post ev) {
+	private void handleAfterAttacking(LivingDamageEvent.Post ev) {
 		LivingEntity target = ev.getEntity();
 
 		this.attackTracker.compute(target.getId(), (id, value) -> {
@@ -52,8 +56,7 @@ public class InnervationSkill extends AoASkill.Instance {
 		});
 	}
 
-	@Override
-	public void handleEntityKill(LivingDeathEvent ev) {
+	private void handleEntityKill(LivingDeathEvent ev) {
 		LivingEntity target = ev.getEntity();
 		Pair<Long, Float> attackEntry = this.attackTracker.get(target.getId());
 		float damageDealt = attackEntry == null ? 5f : attackEntry.getSecond();
@@ -77,7 +80,7 @@ public class InnervationSkill extends AoASkill.Instance {
 	}
 
 	public boolean hasAttackedEntity(Entity entity) {
-		return attackTracker.containsKey(entity.getId());
+		return this.attackTracker.containsKey(entity.getId());
 	}
 
 	protected float getKillXpForEntity(LivingEntity target, float damageDealt) {

@@ -8,11 +8,15 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
+
 public class FaunamancySkill extends AoASkill.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK_AFTER};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			afterAttacking(serverOnly(this::handleAfterAttacking)));
 
 	public FaunamancySkill(ServerPlayerDataManager plData, JsonObject jsonData) {
 		super(AoASkills.FAUNAMANCY.get(), plData, jsonData);
@@ -23,12 +27,11 @@ public class FaunamancySkill extends AoASkill.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleAfterAttacking(LivingDamageEvent.Post ev) {
+	private void handleAfterAttacking(LivingDamageEvent.Post ev) {
 		if (canGainXp(true) && isValidSacrifice(ev.getEntity(), getPlayer(), ev.getNewDamage()))
 			PlayerUtil.giveTimeBasedXpToPlayer((ServerPlayer)getPlayer(), type(), (int)(ev.getEntity().getMaxHealth() / 30f * 20),  false);
 	}

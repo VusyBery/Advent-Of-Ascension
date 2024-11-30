@@ -115,33 +115,29 @@ public class SoulSpark extends BaseBlaster {
 					if (stack.getItem() != this)
 						return false;
 
+					Entity target = rayTrace.getEntity();
+					Vec3 center = target.position().add(0, target.getBbHeight() * 0.5f, 0);
+
+					ParticleBuilder.forRandomPosInSphere(ParticleTypes.ELECTRIC_SPARK, center, Math.max(target.getBbHeight(), target.getBbWidth()) * 1.1f)
+							.spawnNTimes(1000)
+							.scaleMod(1.5f)
+							.lifespan(15)
+							.colourOverride(0, 100 + shooter.getRandom().nextInt(130), 230, 255)
+							.ignoreDistanceAndLimits()
+							.addTransition(ScaleParticleTransition.create(0.1f, 10))
+							.sendToAllPlayersTrackingEntity(player.serverLevel(), shooter);
+					ParticleBuilder.forPositionsInSphere(ParticleTypes.END_ROD, center, Math.max(target.getBbHeight(), target.getBbWidth()) * 1.25f, 32)
+							.colourOverride(0, 230, 230, 255)
+							.spawnNTimes(4096)
+							.lifespan(20)
+							.ignoreDistanceAndLimits()
+							.addTransition(PositionParticleTransition.create(center, 10))
+							.sendToAllPlayersTrackingEntity(player.serverLevel(), shooter);
+
+					AoANetworking.sendToAllPlayersTrackingEntity(new AoASoundBuilderPacket(new SoundBuilder(AoASounds.ITEM_SOUL_SPARK_FIRE).atEntity(rayTrace.getEntity())), shooter);
+					rayTrace.getEntity().discard();
 					ItemUtil.damageItemForUser(player, stack, hand);
 				}
-			}
-
-			if (shooter.level() instanceof ServerLevel serverLevel) {
-				Entity entity = rayTrace.getEntity();
-				RandomSource rand = shooter.getRandom();
-				Vec3 center = entity.position().add(0, entity.getBbHeight() * 0.5f, 0);
-
-				ParticleBuilder.forRandomPosInSphere(ParticleTypes.ELECTRIC_SPARK, center, Math.max(entity.getBbHeight(), entity.getBbWidth()) * 1.1f)
-						.spawnNTimes(1000)
-						.scaleMod(1.5f)
-						.lifespan(15)
-						.colourOverride(0, 100 + rand.nextInt(130), 230, 255)
-						.ignoreDistanceAndLimits()
-						.addTransition(ScaleParticleTransition.create(0.1f, 10))
-						.sendToAllPlayersTrackingEntity(serverLevel, shooter);
-				ParticleBuilder.forPositionsInSphere(ParticleTypes.END_ROD, center, Math.max(entity.getBbHeight(), entity.getBbWidth()) * 1.25f, 32)
-						.colourOverride(0, 230, 230, 255)
-						.spawnNTimes(4096)
-						.lifespan(20)
-						.ignoreDistanceAndLimits()
-						.addTransition(PositionParticleTransition.create(center, 10))
-						.sendToAllPlayersTrackingEntity(serverLevel, shooter);
-
-				AoANetworking.sendToAllPlayersTrackingEntity(new AoASoundBuilderPacket(new SoundBuilder(AoASounds.ITEM_SOUL_SPARK_FIRE).atEntity(rayTrace.getEntity())), shooter);
-				rayTrace.getEntity().discard();
 			}
 
 			return true;
@@ -159,7 +155,7 @@ public class SoulSpark extends BaseBlaster {
 			ServerPlayer player = shooter instanceof ServerPlayer ? (ServerPlayer)shooter : null;
 
 			if (player == null || player.getCooldowns().getCooldownPercent(this, 0) == 0) {
-				if (tryFireBlaster(serverLevel, shooter, stack, player)) {
+				if ((player == null || (player.getAbilities().instabuild || PlayerUtil.getResourceValue(player, AoAResources.SPIRIT.get()) >= 200)) && tryFireBlaster(serverLevel, shooter, stack, player)) {
 					if (player != null) {
 						player.awardStat(Stats.ITEM_USED.get(this));
 

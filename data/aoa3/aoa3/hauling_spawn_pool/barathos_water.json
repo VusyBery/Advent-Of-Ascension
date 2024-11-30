@@ -1,0 +1,104 @@
+{
+  "biomes": [
+    "aoa3:barathos_flats",
+    "aoa3:barren_oasis",
+    "aoa3:the_spears"
+  ],
+  "entries": [
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "aoa3:skelecanth"
+      },
+      "weight": 200
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -20.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:dead_bush"
+        }
+      },
+      "weight": 200
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -20.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:bone_meal"
+        }
+      },
+      "weight": 190
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -15.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:bone"
+        }
+      },
+      "weight": 180
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -10.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:sand"
+        }
+      },
+      "weight": 160
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:clay_ball"
+        }
+      },
+      "weight": 140
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": -10.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "minecraft:red_sand"
+        }
+      },
+      "weight": 150
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 20.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:hive_chunk"
+        }
+      },
+      "weight": 100
+    },
+    {
+      "hauling_level_req": 50,
+      "luck_mod": 2.0,
+      "object_id": {
+        "item": {
+          "count": 1,
+          "id": "aoa3:old_boot"
+        }
+      },
+      "weight": 1
+    }
+  ],
+  "for_fluid": "minecraft:water"
+}

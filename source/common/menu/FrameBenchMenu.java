@@ -23,7 +23,6 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 
 import java.util.function.Supplier;
 
-
 public class FrameBenchMenu extends ExtensibleRecipeMenu<TransientCraftingContainer, SingleRecipeInput> {
 	private static final Supplier<Item>[] SELECTIONS = new Supplier[] {AoAItems.CROSSBOW_FRAME, AoAItems.BLASTER_FRAME, AoAItems.CANNON_FRAME, AoAItems.HELMET_FRAME, AoAItems.CHESTPLATE_FRAME, AoAItems.LEGGINGS_FRAME, AoAItems.BOOTS_FRAME, AoAItems.GUN_FRAME, AoAItems.SHOTGUN_FRAME, AoAItems.SNIPER_FRAME};
 

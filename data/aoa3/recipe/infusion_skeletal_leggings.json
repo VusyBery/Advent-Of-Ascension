@@ -11,19 +11,19 @@
       "item": "aoa3:legbone_fragment"
     },
     {
-      "tag": "neoforge:ingots/skeletal"
+      "tag": "c:ingots/skeletal"
     },
     {
-      "tag": "neoforge:ingots/skeletal"
+      "tag": "c:ingots/skeletal"
     },
     {
-      "tag": "neoforge:ingots/skeletal"
+      "tag": "c:ingots/skeletal"
     },
     {
-      "tag": "neoforge:food"
+      "tag": "c:food"
     },
     {
-      "tag": "neoforge:food"
+      "tag": "c:food"
     }
   ],
   "result": {

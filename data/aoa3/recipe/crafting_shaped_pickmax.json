@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "A": {
-      "tag": "neoforge:ingots/shyrestone"
+      "tag": "c:ingots/shyrestone"
     },
     "B": {
-      "tag": "neoforge:gems/shyregem"
+      "tag": "c:gems/shyregem"
     },
     "C": {
-      "tag": "neoforge:rods/metal"
+      "tag": "c:rods/metal"
     }
   },
   "pattern": [

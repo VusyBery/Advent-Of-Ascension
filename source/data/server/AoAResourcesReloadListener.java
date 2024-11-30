@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -14,25 +16,26 @@ import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.player.resource.AoAResource;
 import org.apache.logging.log4j.Level;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class AoAResourcesReloadListener extends SimpleJsonResourceReloadListener {
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String folder = "player/resources";
 
-	private static final HashMap<AoAResource, JsonObject> RESOURCES = new HashMap<>();
+	private static final Map<AoAResource, JsonObject> RESOURCES = new Object2ObjectArrayMap<>();
 
 	public AoAResourcesReloadListener() {
 		super(GSON, folder);
 	}
 
-	public static void populateResourceMap(ServerPlayerDataManager plData, Map<AoAResource, AoAResource.Instance> resourceMap) {
-		resourceMap.clear();
+	public static Object2ObjectOpenHashMap<AoAResource, AoAResource.Instance> generateResourcesMap(ServerPlayerDataManager plData) {
+		final Object2ObjectOpenHashMap<AoAResource, AoAResource.Instance> resources = new Object2ObjectOpenHashMap<>(RESOURCES.size());
 
 		for (Map.Entry<AoAResource, JsonObject> resource : RESOURCES.entrySet()) {
-			resourceMap.put(resource.getKey(), resource.getKey().buildDefaultInstance(plData, resource.getValue()));
+			resources.put(resource.getKey(), resource.getKey().buildDefaultInstance(plData, resource.getValue()));
 		}
+
+		return resources;
 	}
 
 	@Override

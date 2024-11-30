@@ -14,7 +14,5 @@ public final class AoADatapackLoaders {
 		ev.addListener(new AoAResourcesReloadListener());
 		ev.addListener(new AoASkillReqReloadListener());
 		ev.addListener(new AoASkillsReloadListener());
-		ev.addListener(new AoAHaulingFishReloadListener());
-		//ev.addListener(new AoACustomSpawnersListener());
 	}
 }

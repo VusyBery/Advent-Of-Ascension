@@ -43,7 +43,7 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.block.functional.misc.CheckpointBlock;
 import net.tslat.aoa3.content.item.misc.ReservedItem;
-import net.tslat.aoa3.content.item.tool.misc.ExpFlask;
+import net.tslat.aoa3.content.item.tool.artifice.ExpFlask;
 import net.tslat.aoa3.content.item.weapon.sword.BaseSword;
 import net.tslat.aoa3.content.world.event.AoAWorldEventManager;
 import net.tslat.aoa3.event.dimension.LelyetiaEvents;
@@ -135,7 +135,7 @@ public class PlayerEvents {
 		if (ev.getEntity() instanceof ServerPlayer pl) {
 			if (pl.getHealth() <= ev.getContainer().getNewDamage()) {
 				ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
-				PositionAndRotation checkpoint = plData.getCheckpoint();
+				PositionAndRotation checkpoint = plData.storage.getActiveCheckpoint();
 
 				if (checkpoint != null) {
 					if (CheckpointBlock.isValidCheckpoint(pl.level(), checkpoint)) {
@@ -154,7 +154,7 @@ public class PlayerEvents {
 						return;
 					}
 					else {
-						plData.clearCheckpoint();
+						plData.storage.clearActiveCheckpoint();
 						pl.sendSystemMessage(LocaleUtil.getLocaleMessage(LocaleUtil.createFeedbackLocaleKey("checkpoint.invalid"), ChatFormatting.RED));
 					}
 				}
@@ -235,7 +235,9 @@ public class PlayerEvents {
 				player.serverLevel().sendParticles(ParticleTypes.LARGE_SMOKE, player.getX(), player.getY() + 0.2d, player.getZ(), 16, RandomUtil.randomValueUpTo(0.1f) - 0.05d, RandomUtil.randomValueUpTo(0.1f) - 0.05d, RandomUtil.randomValueUpTo(0.1f) - 0.05d, 1);
 			}
 
-			ServerPlayerDataManager.syncNewPlayer(player);
+			ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(player);
+
+			plData.syncNewPlayer();
 			AoAWorldEventManager.syncToPlayer(player);
 
 			final PlayerAdvancements plAdvancements = player.getAdvancements();
@@ -293,11 +295,11 @@ public class PlayerEvents {
 	}
 
 	private static void onDimensionChange(final PlayerEvent.PlayerChangedDimensionEvent ev) {
-		if (ev.getFrom() == AoADimensions.NOWHERE)
+		if (ev.getFrom() == AoADimensions.NOWHERE || ev.getTo() == AoADimensions.NOWHERE)
 			NowhereEvents.doDimensionChange(ev);
 
 		if (ev.getEntity() instanceof ServerPlayer pl) {
-			PlayerUtil.getAdventPlayer(pl).clearCheckpoint();
+			PlayerUtil.getAdventPlayer(pl).storage.clearActiveCheckpoint();
 			AoAWorldEventManager.syncToPlayer(pl);
 		}
 	}

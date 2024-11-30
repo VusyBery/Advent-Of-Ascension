@@ -71,7 +71,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 	}
 
 	public float getBaseSpiritCost(ItemStack stack) {
-		return blasterStats(stack).energyCost();
+		return blasterStats(stack).spiritCost();
 	}
 
 	@Nullable
@@ -150,9 +150,9 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 	}
 
 	protected boolean tryFireBlaster(ServerLevel level, LivingEntity shooter, ItemStack stack, @Nullable ServerPlayer playerShooter) {
-		final float energyCost = getSpiritCost(stack, shooter, false);
+		final float spiritCost = getSpiritCost(stack, shooter, false);
 
-		if (energyCost == 0 || consumeEnergy(playerShooter, stack, energyCost)) {
+		if (spiritCost == 0 || consumeEnergy(playerShooter, stack, spiritCost)) {
 			ShotInfo shotInfo = fireBlaster(level, shooter, stack, true);
 
 			if (shotInfo != null)
@@ -164,7 +164,7 @@ public abstract class BaseBlaster extends Item implements EnergyProjectileWeapon
 			return true;
 		}
 		else {
-			PlayerUtil.notifyPlayerOfInsufficientResources(playerShooter, AoAResources.SPIRIT.get(), energyCost);
+			PlayerUtil.notifyPlayerOfInsufficientResources(playerShooter, AoAResources.SPIRIT.get(), spiritCost);
 		}
 
 		return false;

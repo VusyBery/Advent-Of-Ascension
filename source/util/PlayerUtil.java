@@ -59,7 +59,7 @@ public final class PlayerUtil {
 
         for (int i = 100; i <= 999; i++) {
             XP_MAP.put(i, (float)Math.pow(i - 10, 2.5) / 100f + 630000);
-            TIME_BASED_XP_MAP.put(i, XP_MAP.get(i) / (1050 + i));
+            TIME_BASED_XP_MAP.put(i, XP_MAP.get(i) / (1050 / (float)Math.pow(i, 0.01f)));
         }
     }
 
@@ -70,19 +70,21 @@ public final class PlayerUtil {
 
     @NotNull
     public static PlayerDataManager getAdventPlayer(@NotNull Player player) {
-        PlayerDataManager plData;
-
         if (player instanceof ServerPlayer pl) {
-            plData = pl.getData(AoADataAttachments.ADVENT_PLAYER.get());
-        }
-        else {
-            if (player != ClientOperations.getPlayer())
-                throw new IllegalStateException("Attempting to retrieve Advent Player data for remote client player");
+            ServerPlayerDataManager plData = pl.getData(AoADataAttachments.ADVENT_PLAYER.get());
 
-            plData = ClientPlayerDataManager.get();
+            if (plData.getPlayer() == null)
+                player.setData(AoADataAttachments.ADVENT_PLAYER.get(), plData = new ServerPlayerDataManager(pl));
+
+            return plData;
         }
 
-        if (plData.player() == null)
+        if (player != ClientOperations.getPlayer())
+            throw new IllegalStateException("Attempting to retrieve Advent Player data for remote client player");
+
+        ClientPlayerDataManager plData = ClientPlayerDataManager.get();
+
+        if (plData.getPlayer() == null)
             plData.updatePlayerInstance(player);
 
         return plData;
@@ -166,7 +168,7 @@ public final class PlayerUtil {
     @Nullable
     public static Holder<ArmorMaterial> getCurrentArmourSet(Player player) {
         if (player instanceof ServerPlayer serverPlayer)
-            return getAdventPlayer(serverPlayer).equipment().getCurrentFullArmourSet();
+            return getAdventPlayer(serverPlayer).equipment.getCurrentFullArmourSet();
 
         Holder<ArmorMaterial> material = null;
 
@@ -334,6 +336,6 @@ public final class PlayerUtil {
         foodData.setFoodLevel(20);
         foodData.setSaturation(5);
         foodData.setExhaustion(0);
-        PlayerUtil.getAdventPlayer(player).clearCheckpoint();
+        PlayerUtil.getAdventPlayer(player).storage.clearActiveCheckpoint();
     }
 }

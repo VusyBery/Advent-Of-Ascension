@@ -13,7 +13,6 @@ import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.WorldEventSyncPacket;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import org.apache.commons.lang3.tuple.Triple;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -43,7 +42,6 @@ public class AoAWorldEventManager extends SavedData {
         return tag;
     }
 
-    @Nullable
     public static AoAWorldEvent getEventById(Level level, ResourceLocation id) {
         return getForLevel(level).events.getOrDefault(id, null);
     }

@@ -178,7 +178,7 @@ public class TrophyBlock extends WaterloggableBlock implements EntityBlock {
 
 		@Nullable
 		public EntityType<?> getEntityType() {
-			return AoARegistries.ENTITIES.getEntry(ResourceLocation.read(this.entityData.getString("id")).getOrThrow());
+			return ResourceLocation.read(this.entityData.getString("id")).mapOrElse(AoARegistries.ENTITIES::getEntry, err -> null);
 		}
 
 		private Entity createEntity() {

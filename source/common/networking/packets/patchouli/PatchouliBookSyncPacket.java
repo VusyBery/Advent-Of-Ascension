@@ -14,8 +14,7 @@ import java.util.List;
 public record PatchouliBookSyncPacket(List<ResourceLocation> books) implements AoAPacket {
 	public static final Type<PatchouliBookSyncPacket> TYPE = new Type<>(AdventOfAscension.id("patchouli_book_sync"));
 	public static final StreamCodec<FriendlyByteBuf, PatchouliBookSyncPacket> CODEC = StreamCodec.composite(
-			ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list()),
-			PatchouliBookSyncPacket::books,
+			ResourceLocation.STREAM_CODEC.apply(ByteBufCodecs.list()), PatchouliBookSyncPacket::books,
 			PatchouliBookSyncPacket::new);
 
 	@Override

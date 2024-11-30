@@ -10,12 +10,17 @@ import net.minecraft.util.GsonHelper;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 
+import java.util.List;
+
 public class OnKillDamageBoost extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.OUTGOING_ATTACK, ListenerType.ENTITY_KILL};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			whenAttacking(serverOnly(this::handleOutgoingAttack)),
+			onEntityKill(serverOnly(this::handleEntityKill)));
 
 	private long boostExpiry;
 
@@ -42,18 +47,16 @@ public class OnKillDamageBoost extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
+	private void handleOutgoingAttack(LivingIncomingDamageEvent ev) {
 		if (ev.getEntity().level().getGameTime() < boostExpiry && !ev.getSource().is(DamageTypeTags.IS_EXPLOSION))
 			ev.setAmount(ev.getAmount() * this.modifier);
 	}
 
-	@Override
-	public void handleEntityKill(LivingDeathEvent ev) {
+	private void handleEntityKill(LivingDeathEvent ev) {
 		this.boostExpiry = ev.getEntity().level().getGameTime() + this.postKillDuration;
 	}
 

@@ -10,11 +10,15 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.PlayerLevelChangeEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
+import java.util.List;
+
 public class DummyAbility extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.LEVEL_CHANGE};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerLevelChangeEvent.class, serverOnly(this::handleLevelChange)));
 
 	private final MutableComponent displayName;
 
@@ -31,12 +35,11 @@ public class DummyAbility extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleLevelChange(PlayerLevelChangeEvent ev) {
+	private void handleLevelChange(PlayerLevelChangeEvent ev) {
 		if (getListenerState() == ListenerState.ACTIVE && !meetsRequirements())
 			disable(ListenerState.DEACTIVATED, false);
 	}

@@ -247,7 +247,7 @@
     "ridges": "minecraft:overworld/ridges",
     "temperature": {
       "type": "minecraft:shifted_noise",
-      "noise": "minecraft:temperature_large",
+      "noise": "aoa3:temperature_medium",
       "shift_x": "minecraft:shift_x",
       "shift_y": 0.0,
       "shift_z": "minecraft:shift_z",
@@ -256,7 +256,7 @@
     },
     "vegetation": {
       "type": "minecraft:shifted_noise",
-      "noise": "minecraft:vegetation_large",
+      "noise": "aoa3:vegetation_medium",
       "shift_x": "minecraft:shift_x",
       "shift_y": 0.0,
       "shift_z": "minecraft:shift_z",

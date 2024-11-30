@@ -33,13 +33,14 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.advent.AdventOfAscension;
+import net.tslat.aoa3.common.registration.custom.AoASkills;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
 import net.tslat.aoa3.common.registration.item.AoATools;
-import net.tslat.aoa3.event.AoAPlayerEvents;
 import net.tslat.aoa3.library.object.EntityDataHolder;
+import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.InventoryUtil;
-import net.tslat.aoa3.util.ItemUtil;
+import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +98,13 @@ public class FishingCageEntity extends Entity implements OwnableEntity {
 			}
 
 			if (hasCatches()) {
-				AoAPlayerEvents.handleCustomInteraction(pl, "fishing_cage_harvest", loot);
+				AoASkill.Instance hauling = PlayerUtil.getAdventPlayer(pl).getSkill(AoASkills.HAULING.get());
+
+				if (hauling.canGainXp(true)) {
+					float xp = PlayerUtil.getTimeBasedXpForLevel(hauling.getLevel(true), 1000) * Math.min(4, this.loot.length);
+
+					hauling.adjustXp(xp, false, false);
+				}
 
 				for (ItemStack drop : loot) {
 					if (drop.is(ItemTags.FISHES))
@@ -166,12 +173,12 @@ public class FishingCageEntity extends Entity implements OwnableEntity {
 			ListTag lootList = compound.getList("loot", Tag.TAG_COMPOUND);
 
 			if (lootList.size() > 2)
-				CAUGHT_STACK_3.set(this, ItemUtil.loadStackFromNbt(level(), lootList.getCompound(2)));
+				CAUGHT_STACK_3.set(this, ItemStack.parseOptional(level().registryAccess(), lootList.getCompound(2)));
 
 			if (lootList.size() > 1)
-				CAUGHT_STACK_2.set(this, ItemUtil.loadStackFromNbt(level(), lootList.getCompound(1)));
+				CAUGHT_STACK_2.set(this, ItemStack.parseOptional(level().registryAccess(), lootList.getCompound(1)));
 
-			CAUGHT_STACK_1.set(this, ItemUtil.loadStackFromNbt(level(), lootList.getCompound(0)));
+			CAUGHT_STACK_1.set(this, ItemStack.parseOptional(level().registryAccess(), lootList.getCompound(0)));
 		}
 	}
 

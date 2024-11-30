@@ -6,16 +6,18 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.custom.events.PlayerSkillsLootModificationEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
 import java.util.List;
 
 public class DoubleDropsChance extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.LOOT_MODIFICATION};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerSkillsLootModificationEvent.class, serverOnly(this::handleLootModification)));
 
 	public DoubleDropsChance(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.DOUBLE_DROPS_CHANCE.get(), skill, data);
@@ -26,16 +28,16 @@ public class DoubleDropsChance extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleLootModification(List<ItemStack> loot, LootContext context) {
-		if (!context.hasParam(LootContextParams.THIS_ENTITY))
+	private void handleLootModification(final PlayerSkillsLootModificationEvent ev) {
+		if (!ev.getLootContext().hasParam(LootContextParams.THIS_ENTITY))
 			return;
 
-		Entity killedEntity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+		List<ItemStack> loot = ev.getGeneratedLoot();
+		Entity killedEntity = ev.getLootContext().getParamOrNull(LootContextParams.THIS_ENTITY);
 
 		if (killedEntity instanceof Player)
 			return;

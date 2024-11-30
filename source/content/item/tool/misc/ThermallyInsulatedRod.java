@@ -30,38 +30,40 @@ public class ThermallyInsulatedRod extends HaulingRod {
 	}
 
 	@Override
-	protected void reelIn(ServerPlayer player, HaulingFishingBobberEntity bobber, ItemStack stack, InteractionHand hand) {
+	protected void reelIn(Player player, HaulingFishingBobberEntity bobber, ItemStack stack, InteractionHand hand) {
 		if (bobber.distanceToSqr(player) <= 9) {
-			List<ItemStack> loot = landEntity(player, stack, hand, bobber);
-			int xp = RandomUtil.randomNumberBetween(1, 6);
-			HaulingItemFishedEvent event = AoAEvents.haulingItemFished(bobber.getHookedIn(), stack, loot, xp, 1, bobber);
+			if (player instanceof ServerPlayer pl) {
+				List<ItemStack> loot = landEntity(pl, stack, hand, bobber);
+				int xp = RandomUtil.randomNumberBetween(1, 6);
+				HaulingItemFishedEvent event = AoAEvents.fireHaulingItemFished(bobber.getHookedIn(), stack, loot, xp, 1, bobber);
 
-			if (!event.isCanceled()) {
-				handleLureRetrieval(player, stack, bobber, loot);
+				if (!event.isCanceled()) {
+					handleLureRetrieval(pl, stack, bobber, loot);
 
-				for (ItemStack lootStack : loot) {
-					ItemEntity entity = new ItemEntity(player.level(), bobber.getX(), bobber.getY(), bobber.getZ(), lootStack) {
-						@Override
-						public boolean isInvulnerableTo(DamageSource source) {
-							return source.is(DamageTypeTags.IS_FIRE) || super.isInvulnerableTo(source);
-						}
-					};
+					for (ItemStack lootStack : loot) {
+						ItemEntity entity = new ItemEntity(pl.level(), bobber.getX(), bobber.getY(), bobber.getZ(), lootStack) {
+							@Override
+							public boolean isInvulnerableTo(DamageSource source) {
+								return source.is(DamageTypeTags.IS_FIRE) || super.isInvulnerableTo(source);
+							}
+						};
 
-					double velX = player.getX() - bobber.getX();
-					double velY = player.getY() - bobber.getY();
-					double velZ = player.getZ() - bobber.getZ();
+						double velX = pl.getX() - bobber.getX();
+						double velY = pl.getY() - bobber.getY();
+						double velZ = pl.getZ() - bobber.getZ();
 
-					entity.setDeltaMovement(velX * 0.1d, velY * 0.1d + Math.sqrt(Math.sqrt(velX * velX + velY * velY + velZ * velZ)) * 0.1d, velZ * 0.1d);
-					player.level().addFreshEntity(entity);
+						entity.setDeltaMovement(velX * 0.1d, velY * 0.1d + Math.sqrt(Math.sqrt(velX * velX + velY * velY + velZ * velZ)) * 0.1d, velZ * 0.1d);
+						pl.level().addFreshEntity(entity);
 
-					if (lootStack.is(ItemTags.FISHES))
-						player.awardStat(Stats.FISH_CAUGHT, 1);
+						if (lootStack.is(ItemTags.FISHES))
+							pl.awardStat(Stats.FISH_CAUGHT, 1);
+					}
 				}
-			}
 
-			ItemUtil.damageItemForUser(player, stack, event.getRodDamage(), hand);
-			player.level().addFreshEntity(new ExperienceOrb(player.level(), player.getX() + 0.5d, player.getY() + 0.5d, player.getZ() + 0.5d, event.getXp()));
-			bobber.discard();
+				ItemUtil.damageItemForUser(pl, stack, event.getRodDamage(), hand);
+				pl.level().addFreshEntity(new ExperienceOrb(pl.level(), pl.getX() + 0.5d, pl.getY() + 0.5d, pl.getZ() + 0.5d, event.getXp()));
+				bobber.discard();
+			}
 		}
 		else {
 			Entity hookedEntity = bobber.getHookedIn();

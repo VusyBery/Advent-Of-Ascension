@@ -55,12 +55,8 @@ public class TidalWaveEntity extends ThrowableProjectile {
 			else if (result.getType() == HitResult.Type.ENTITY) {
 				EntityHitResult rayTraceResult = (EntityHitResult)result;
 
-				if (rayTraceResult.getEntity() != getOwner()) {
-					LivingEntity target = EntityUtil.getLivingEntityFromSelfOrPart(rayTraceResult.getEntity());
-
-					if (target != null)
-						DamageUtil.doBodySlamKnockback(target, this, 0.3f, 0.3f, 0.3f);
-				}
+				if (rayTraceResult.getEntity() != getOwner() && EntityUtil.getPartOrPartOwner(rayTraceResult.getEntity()) instanceof LivingEntity target)
+					DamageUtil.doBodySlamKnockback(target, this, 0.3f, 0.3f, 0.3f);
 			}
 		}
 	}

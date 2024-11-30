@@ -70,7 +70,7 @@ public class ShyreStaff extends BaseStaff<Object> {
 		}
 
 		if (state.isAir()) {
-			MagicTeleportEvent event = AoAEvents.magicalTeleport(shooter, null, null, testVec);
+			MagicTeleportEvent event = AoAEvents.fireMagicalTeleport(shooter, null, null, testVec);
 
 			if (event.isCanceled())
 				return;
@@ -86,7 +86,7 @@ public class ShyreStaff extends BaseStaff<Object> {
 
 	@Override
 	public boolean doEntityImpact(BaseEnergyShot shot, Entity target, LivingEntity shooter) {
-		MagicTeleportEvent event = AoAEvents.magicalTeleport(shooter, null, null, new Vec3((target.getX() + shot.getX()) / 2d, (target.getY() + shot.getY()) / 2d, (target.getZ() + shot.getZ()) / 2d));
+		MagicTeleportEvent event = AoAEvents.fireMagicalTeleport(shooter, null, null, new Vec3((target.getX() + shot.getX()) / 2d, (target.getY() + shot.getY()) / 2d, (target.getZ() + shot.getZ()) / 2d));
 
 		if (event.isCanceled())
 			return false;

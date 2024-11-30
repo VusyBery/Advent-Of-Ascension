@@ -3,6 +3,7 @@ package net.tslat.aoa3.content.world.teleporter;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -65,10 +66,10 @@ public interface AoAPortal extends Portal {
     }
 
     static DimensionTransition getTransitionForLevel(ServerLevel destination, Entity entity, Block aoaPortalBlock) {
-        return getTransitionForLevel(destination, entity, Optional.empty(), entity.blockPosition(), (PortalBlock)aoaPortalBlock, Optional.ofNullable(entity instanceof ServerPlayer pl ? PlayerUtil.getAdventPlayer(pl).getPortalReturnLocation(entity.level().dimension()) : null));
+        return getTransitionForLevel(destination, entity, Optional.empty(), entity.blockPosition(), (PortalBlock)aoaPortalBlock, Optional.ofNullable(entity instanceof ServerPlayer pl ? PlayerUtil.getAdventPlayer(pl).storage.getPortalReturnFor(entity.level().dimension()) : null));
     }
 
-    static DimensionTransition getTransitionForLevel(ServerLevel destination, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, AoAPortal portal, Optional<PortalCoordinatesContainer> existingLink) {
+    static DimensionTransition getTransitionForLevel(ServerLevel destination, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, AoAPortal portal, Optional<GlobalPos> existingLink) {
         final ServerLevel fromLevel = (ServerLevel)entity.level();
         final BlockPos portalPos = getOrCreatePortalLocation(destination, fromLevel, entity, safeCoords, portal, existingLink);
 
@@ -80,8 +81,8 @@ public interface AoAPortal extends Portal {
         return new DimensionTransition(destination, Vec3.atCenterOf(portalPos), entity.getDeltaMovement(), entity.getYRot(), entity.getXRot(), portal.playTransitSound(entity).then(DimensionTransition.PLACE_PORTAL_TICKET));
     }
 
-    static BlockPos getOrCreatePortalLocation(ServerLevel destination, ServerLevel fromLevel, Entity entity, BlockPos safeCoords, AoAPortal portal, Optional<PortalCoordinatesContainer> existingLink) {
-        BlockPos portalPos = entity instanceof ServerPlayer pl ? existingLink.filter(link -> link.fromDim() == destination.dimension()).map(link -> portal.retrieveExistingLinkExit(pl, pl.serverLevel(), destination, link)).orElse(null) : null;
+    static BlockPos getOrCreatePortalLocation(ServerLevel destination, ServerLevel fromLevel, Entity entity, BlockPos safeCoords, AoAPortal portal, Optional<GlobalPos> existingLink) {
+        BlockPos portalPos = entity instanceof ServerPlayer pl ? existingLink.filter(link -> link.dimension() == destination.dimension()).map(link -> portal.retrieveExistingLinkExit(pl, pl.serverLevel(), destination, link)).orElse(null) : null;
 
         if (fromLevel.getBlockState(entity.blockPosition()).getBlock() instanceof PortalBlock)
             updateLocalCache(fromLevel, entity.blockPosition());
@@ -104,17 +105,17 @@ public interface AoAPortal extends Portal {
 
     static void updatePlayerLink(ServerPlayer pl, BlockPos fromPortalBlockPos, ResourceKey<Level> fromDim, ResourceKey<Level> destinationDim) {
         final ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
-        final PortalCoordinatesContainer portalLoc = plData.getPortalReturnLocation(destinationDim);
+        final GlobalPos portalLoc = plData.storage.getPortalReturnFor(destinationDim);
 
         if (portalLoc != null) {
-            PortalCoordinatesContainer returnPortalLoc = plData.getPortalReturnLocation(fromDim);
+            GlobalPos returnPortalLoc = plData.storage.getPortalReturnFor(fromDim);
 
-            if (returnPortalLoc != null && returnPortalLoc.fromDim() == destinationDim)
+            if (returnPortalLoc != null && returnPortalLoc.dimension() == destinationDim)
                 return;
         }
 
-        if (portalLoc == null || fromDim == portalLoc.fromDim() || pl.distanceToSqr(Vec3.atLowerCornerOf(portalLoc.portalPos())) > AoAConfigs.SERVER.portalSearchRadius.get() * AoAConfigs.SERVER.portalSearchRadius.get())
-            plData.setPortalReturnLocation(destinationDim, new PortalCoordinatesContainer(fromDim, fromPortalBlockPos));
+        if (portalLoc == null || fromDim == portalLoc.dimension() || pl.distanceToSqr(Vec3.atLowerCornerOf(portalLoc.pos())) > AoAConfigs.SERVER.portalSearchRadius.get() * AoAConfigs.SERVER.portalSearchRadius.get())
+            plData.storage.setPortalReturnLocation(destinationDim, fromDim, fromPortalBlockPos);
     }
 
     @Nullable
@@ -153,16 +154,16 @@ public interface AoAPortal extends Portal {
     }
 
     @Nullable
-    default BlockPos retrieveExistingLinkExit(ServerPlayer player, ServerLevel currentWorld, ServerLevel destWorld, PortalCoordinatesContainer existingLink) {
+    default BlockPos retrieveExistingLinkExit(ServerPlayer player, ServerLevel currentWorld, ServerLevel destWorld, GlobalPos existingLink) {
         final ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(player);
-        BlockPos locPos = existingLink.portalPos();
+        BlockPos locPos = existingLink.pos();
         BlockState state = destWorld.getBlockState(locPos);
 
         if (state.is(getPortalBlock()))
             return locPos;
 
         if (!(state.getBlock() instanceof PortalBlock))
-            plData.removePortalReturnLocation(currentWorld.dimension());
+            plData.storage.removePortalReturnLocation(currentWorld.dimension());
 
         return null;
     }

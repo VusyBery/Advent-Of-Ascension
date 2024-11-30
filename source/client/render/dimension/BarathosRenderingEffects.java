@@ -75,24 +75,35 @@ public class BarathosRenderingEffects extends AoADimensionEffectsRenderer {
 
     @Override
     public boolean spawnAmbientParticle(ClientLevel level, ExtendedBulkSectionAccess sectionAccess, BlockPos pos, Biome biome) {
-        if (pos.getY() <= 125 && 0.98572f >= level.random.nextFloat()) {
+        if (pos.getY() <= 125) {
             if (pos.getY() >= 90) {
                 if (this.sandstorm != null) {
                     if (level.getBrightness(LightLayer.SKY, pos) == 15) {
                         float intensity = this.sandstorm.getIntensity(level.getGameTime());
                         float rotProgress = ((level.getGameTime() / 60f) % 360) * Mth.DEG_TO_RAD;
-                        Vec3 angle = new Vec3(Math.cos(rotProgress), 0, Math.sin(rotProgress)).scale(Mth.sin(((level.getGameTime() / (level.getGameTime() % 1000 > 250 ? 20f : 1f)) % 360) * Mth.DEG_TO_RAD) * 0.3f * intensity + 0.9f);
+                        Vec3 angle = new Vec3(Math.cos(rotProgress), 0, Math.sin(rotProgress)).scale(Mth.sin(((level.getGameTime() / (level.getGameTime() % 1000 > 250 ? 20f : 1f)) % 360) * Mth.DEG_TO_RAD) * 0.4f * intensity + 0.9f);
 
                         ParticleBuilder.forPositions(EntityTrackingParticleOptions.ambient(AoAParticleTypes.SANDSTORM), Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
-                                .scaleMod(0.3f * intensity)
+                                .scaleMod(0.6f * intensity)
                                 .lifespan(Mth.ceil(5 / (level.random.nextFloat() * 0.8f + 0.2f)))
                                 .colourOverride(0xC4C0A1)
                                 .velocity(angle)
                                 .spawnParticles(level);
                     }
                 }
+                else if (0.01f * 0.98572f > level.random.nextFloat()) {
+                    float rotProgress = ((level.getGameTime() / 60f) % 360) * Mth.DEG_TO_RAD;
+                    Vec3 angle = new Vec3(Math.cos(rotProgress), 0, Math.sin(rotProgress)).scale(Mth.sin(((level.getGameTime() / (level.getGameTime() % 1000 > 250 ? 20f : 1f)) % 360) * Mth.DEG_TO_RAD) * 0.3f);
+
+                    ParticleBuilder.forPositions(EntityTrackingParticleOptions.ambient(AoAParticleTypes.SANDSTORM), Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
+                            .scaleMod(0.3f)
+                            .lifespan(Mth.ceil(10 / (level.random.nextFloat() * 0.8f + 0.2f)))
+                            .colourOverride(0xC4C0A1)
+                            .velocity(angle)
+                            .spawnParticles(level);
+                }
             }
-            else if (0.1f >= level.random.nextFloat()) {
+            else if (0.1f * 0.98572f >= level.random.nextFloat()) {
                 ParticleBuilder.forPositions(ParticleTypes.SMOKE, Vec3.atLowerCornerOf(pos).add(level.random.nextDouble(), level.random.nextDouble(), level.random.nextDouble()))
                         .lifespan(Mth.ceil(5 / (level.random.nextFloat() * 0.8f + 0.2f)))
                         //.scaleMod(0.5f)

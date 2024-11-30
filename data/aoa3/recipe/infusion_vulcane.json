@@ -1,7 +1,7 @@
 {
   "type": "aoa3:infusion",
   "base": {
-    "tag": "neoforge:rods/metal"
+    "tag": "c:rods/metal"
   },
   "ingredients": [
     {

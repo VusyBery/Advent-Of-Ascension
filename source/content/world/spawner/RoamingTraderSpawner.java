@@ -5,6 +5,8 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
@@ -12,10 +14,13 @@ import net.minecraft.util.random.WeightedRandomList;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.SpawnData;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.neoforged.neoforge.event.EventHooks;
+import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.entity.AoACustomSpawners;
 
 public class RoamingTraderSpawner implements AoACustomSpawner<Mob> {
@@ -39,7 +44,17 @@ public class RoamingTraderSpawner implements AoACustomSpawner<Mob> {
 		if (level.isFlat() && !this.baseSettings.spawnInSuperflat())
 			return false;
 
-		return this.baseSettings.whitelistMode() == this.baseSettings.dimensions().contains(level.dimension());
+		final ResourceKey<Level> dimension = level.dimension();
+
+		if (!dimension.location().getNamespace().equals("minecraft") && !AdventOfAscension.isAoA(dimension.location()))
+			return false;
+
+		if ((this.baseSettings.inDimensions().isEmpty() || this.baseSettings.inDimensions().get().isEmpty()) &&
+				(this.baseSettings.notInDimensions().isEmpty() || this.baseSettings.notInDimensions().get().isEmpty()))
+			return true;
+
+		return this.baseSettings.inDimensions().map(set -> set.contains(dimension)).orElse(true) &&
+				this.baseSettings.notInDimensions().map(set -> !set.contains(dimension)).orElse(true);
 	}
 
 	@Override
@@ -61,6 +76,18 @@ public class RoamingTraderSpawner implements AoACustomSpawner<Mob> {
 		this.nextSpawnTick = level.getGameTime() + this.baseSettings.spawnInterval().sample(random);
 
 		return doSpawning(level, random);
+	}
+
+	@Override
+	public boolean canSpawnInBiome(ServerLevel level, BlockPos pos) {
+		if ((this.baseSettings.inBiomes().isEmpty() || this.baseSettings.inBiomes().get().size() == 0) &&
+				(this.baseSettings.notInBiomes().isEmpty() || this.baseSettings.notInBiomes().get().size() == 0))
+			return true;
+
+		Holder<Biome> biome = level.getBiome(pos);
+
+		return this.baseSettings.inBiomes().map(set -> set.contains(biome)).orElse(true) &&
+				this.baseSettings.notInBiomes().map(set -> !set.contains(biome)).orElse(true);
 	}
 
 	private int doSpawning(ServerLevel level, RandomSource random) {

@@ -61,7 +61,7 @@
                 "max": 5.0,
                 "min": 2.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -86,7 +86,7 @@
                 "max": 6.0,
                 "min": 3.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -120,7 +120,7 @@
                 "max": 8.0,
                 "min": 4.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -145,7 +145,7 @@
                 "max": 3.0,
                 "min": 1.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -175,7 +175,7 @@
                 "max": 1.0,
                 "min": 0.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -200,7 +200,7 @@
                 "max": 1.0,
                 "min": -1.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],
@@ -219,8 +219,8 @@
                       "duration": 18000,
                       "id": "minecraft:strength",
                       "neoforge:cures": [
-                        "protected_by_totem",
-                        "milk"
+                        "milk",
+                        "protected_by_totem"
                       ],
                       "show_icon": true
                     }
@@ -242,7 +242,7 @@
                 "max": 1.0,
                 "min": -1.0
               },
-              "enchantment": "minecraft:fortune",
+              "enchantment": "minecraft:looting",
               "function": "minecraft:enchanted_count_increase"
             }
           ],

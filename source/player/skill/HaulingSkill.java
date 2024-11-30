@@ -6,12 +6,17 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.entity.player.ItemFishedEvent;
 import net.tslat.aoa3.common.registration.AoATags;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.custom.events.HaulingItemFishedEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
+import java.util.List;
+
 public class HaulingSkill extends AoASkill.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.FISHED_ITEM, ListenerType.CUSTOM};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(ItemFishedEvent.class, ItemFishedEvent::getEntity, serverOnly(this::handleItemFished)));
 
 	public HaulingSkill(ServerPlayerDataManager plData, JsonObject jsonData) {
 		super(AoASkills.HAULING.get(), plData, jsonData);
@@ -22,18 +27,17 @@ public class HaulingSkill extends AoASkill.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleItemFished(ItemFishedEvent ev, boolean isHauling) {
+	private void handleItemFished(final ItemFishedEvent ev) {
 		if (!canGainXp(true))
 			return;
 
 		float xp = PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 200) * (float)(1 + RandomUtil.randomScaledGaussianValue(0.25f));
 
-		if (isHauling) {
+		if (ev instanceof HaulingItemFishedEvent) {
 			xp *= 2f;
 
 			for (ItemStack stack : ev.getDrops()) {
@@ -43,18 +47,5 @@ public class HaulingSkill extends AoASkill.Instance {
 		}
 
 		adjustXp(xp, false, false);
-	}
-
-	@Override
-	public void handleCustomInteraction(String interactionType, Object data) {
-		if (interactionType.equals("fishing_cage_harvest")) {
-			if (!canGainXp(true))
-				return;
-
-			ItemStack[] loot = (ItemStack[])data;
-			float xp = PlayerUtil.getTimeBasedXpForLevel(getLevel(true), 1000) * Math.min(4, loot.length);
-
-			adjustXp(xp, false, false);
-		}
 	}
 }

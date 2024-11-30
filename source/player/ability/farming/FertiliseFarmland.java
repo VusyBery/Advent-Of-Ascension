@@ -14,13 +14,17 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
 
+import java.util.List;
+
 public class FertiliseFarmland extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_INTERACT};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerInteractEvent.RightClickBlock.class, serverOnly(this::handleBlockInteraction)));
 
 	public FertiliseFarmland(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.FERTILISE_FARMLAND.get(), skill, data);
@@ -31,12 +35,11 @@ public class FertiliseFarmland extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleBlockInteraction(PlayerInteractEvent.RightClickBlock ev) {
+	private void handleBlockInteraction(PlayerInteractEvent.RightClickBlock ev) {
 		ItemStack stack = ev.getItemStack();
 
 		if (stack.getItem() == Items.BONE_MEAL) {

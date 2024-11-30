@@ -131,7 +131,7 @@ public class DeinotheriumEntity extends AoAAnimal<DeinotheriumEntity> {
 						new OneRandomBehaviour<>(
 								new SequentialBehaviour<>(
 										new SetWalkTargetToBlock<>()
-												.predicate((entity, block) -> block.getSecond().is(BlockTags.LEAVES))
+												.predicate((entity, block) -> block.getFirst().distSqr(entity.blockPosition()) < 25 && block.getSecond().is(BlockTags.LEAVES))
 												.closeEnoughWhen((entity, pos) -> 5)
 												.cooldownFor(entity -> entity.getRandom().nextInt(100, 200)),
 										new CustomHeldBehaviour<DeinotheriumEntity>(entity -> {})

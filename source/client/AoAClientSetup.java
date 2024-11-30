@@ -1,6 +1,7 @@
 package net.tslat.aoa3.client;
 
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
+import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
@@ -8,13 +9,15 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.client.clientextension.fluid.CandiedWaterClientExtension;
 import net.tslat.aoa3.client.clientextension.fluid.TarClientExtension;
 import net.tslat.aoa3.client.clientextension.fluid.ToxicWasteClientExtension;
 import net.tslat.aoa3.client.clientextension.item.AttuningBowlClientExtension;
-import net.tslat.aoa3.client.clientextension.item.NightVisionGogglesClientExtension;
+import net.tslat.aoa3.client.clientextension.item.LargeGunClientExtension;
 import net.tslat.aoa3.client.clientextension.item.SkillHelmetClientExtension;
+import net.tslat.aoa3.client.clientextension.item.SmallGunClientExtension;
 import net.tslat.aoa3.client.event.ClientEventHandler;
 import net.tslat.aoa3.client.gui.container.*;
 import net.tslat.aoa3.client.gui.hud.AoACameraModifications;
@@ -40,10 +43,15 @@ import net.tslat.aoa3.common.menu.MendingTableMenu;
 import net.tslat.aoa3.common.menu.WhitewashingTableMenu;
 import net.tslat.aoa3.common.registration.AoAMenus;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
+import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.block.AoAFluidTypes;
 import net.tslat.aoa3.common.registration.item.AoAArmour;
 import net.tslat.aoa3.common.registration.item.AoATools;
+import net.tslat.aoa3.content.item.weapon.cannon.BaseCannon;
+import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
+import net.tslat.aoa3.content.item.weapon.sniper.BaseSniper;
+import net.tslat.aoa3.content.item.weapon.thrown.BaseThrownWeapon;
 import net.tslat.aoa3.data.client.AoAResourceReloadListeners;
 import net.tslat.aoa3.integration.IntegrationManager;
 
@@ -89,6 +97,7 @@ public final class AoAClientSetup {
         ev.register(AoAMenus.FRAME_BENCH.get(), FrameBenchScreen::new);
         ev.register(AoAMenus.INFUSION_TABLE.get(), InfusionTableScreen::new);
         ev.register(AoAMenus.INFUSED_PRESS.get(), InfusedPressScreen::new);
+        ev.register(AoAMenus.TINKERERS_TABLE.get(), TinkerersTableScreen::new);
         ev.register(AoAMenus.IMBUING_CHAMBER.get(), ImbuingChamberScreen::new);
         ev.register(AoAMenus.TRADER.get(), MerchantScreen::new);
         ev.register(AoAMenus.BANKER.get(), BankerScreen::new);
@@ -108,8 +117,17 @@ public final class AoAClientSetup {
     private static void registerClientExtensions(RegisterClientExtensionsEvent ev) {
         ev.registerItem(new SkillHelmetClientExtension(), AoAArmour.HELM_OF_THE_DEXTROUS.get(), AoAArmour.HELM_OF_THE_DRYAD.get(), AoAArmour.HELM_OF_THE_RITUALIST.get(), AoAArmour.HELM_OF_THE_TRAWLER.get(), AoAArmour.HELM_OF_THE_TREASURER.get(), AoAArmour.HELM_OF_THE_WARRIOR.get());
         ev.registerItem(new AttuningBowlClientExtension(), AoATools.ATTUNING_BOWL.get());
-        ev.registerItem(new NightVisionGogglesClientExtension(), AoAArmour.NIGHT_VISION_GOGGLES.get());
-        //ev.registerItem(new GunClientExtension(), AoAWeapons.SQUAD_GUN.get());
+
+        for (DeferredHolder<Item, ? extends Item> item : AoARegistries.ITEMS.getAllAoARegisteredObjects()) {
+            if (item.get() instanceof BaseGun gun && !(gun instanceof BaseThrownWeapon)) {
+                if (gun instanceof BaseCannon || gun instanceof BaseSniper) {
+                    ev.registerItem(new LargeGunClientExtension(), item);
+                }
+                else {
+                    ev.registerItem(new SmallGunClientExtension(), item);
+                }
+            }
+        }
 
         ev.registerFluidType(new ToxicWasteClientExtension(), AoAFluidTypes.TOXIC_WASTE.get());
         ev.registerFluidType(new TarClientExtension(), AoAFluidTypes.TAR.get());

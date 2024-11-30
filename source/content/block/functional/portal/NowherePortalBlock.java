@@ -1,6 +1,7 @@
 package net.tslat.aoa3.content.block.functional.portal;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -20,7 +21,6 @@ import net.tslat.aoa3.common.registration.AoASounds;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.world.teleporter.AoAPortal;
-import net.tslat.aoa3.content.world.teleporter.PortalCoordinatesContainer;
 import net.tslat.aoa3.util.ColourUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.aoa3.util.WorldUtil;
@@ -46,12 +46,12 @@ public class NowherePortalBlock extends PortalBlock {
 
 	@Nullable
 	@Override
-	public BlockPos retrieveExistingLinkExit(ServerPlayer player, ServerLevel currentWorld, ServerLevel destWorld, PortalCoordinatesContainer existingLink) {
+	public BlockPos retrieveExistingLinkExit(ServerPlayer player, ServerLevel currentWorld, ServerLevel destWorld, GlobalPos existingLink) {
 		if (WorldUtil.isWorld((Level)currentWorld, AoADimensions.NOWHERE) && player.distanceToSqr(17, 453, 1) < 100) {
-			PortalCoordinatesContainer returnLoc = PlayerUtil.getAdventPlayer(player).getPortalReturnLocation(AoADimensions.NOWHERE);
+			GlobalPos returnLoc = PlayerUtil.getAdventPlayer(player).storage.getPortalReturnFor(AoADimensions.NOWHERE);
 
 			if (returnLoc != null)
-				return returnLoc.portalPos();
+				return returnLoc.pos();
 		}
 
 		return super.retrieveExistingLinkExit(player, currentWorld, destWorld, existingLink);
@@ -74,7 +74,7 @@ public class NowherePortalBlock extends PortalBlock {
 	}
 
 	@Override
-	public DimensionTransition getTransitionForPortalLink(ServerLevel targetLevel, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, Optional<PortalCoordinatesContainer> existingLink) {
+	public DimensionTransition getTransitionForPortalLink(ServerLevel targetLevel, Entity entity, Optional<BlockPos> fromPortal, BlockPos safeCoords, Optional<GlobalPos> existingLink) {
 		final ServerLevel fromLevel = (ServerLevel)entity.level();
 		final BlockPos portalPos = AoAPortal.getOrCreatePortalLocation(targetLevel, fromLevel, entity, safeCoords, this, existingLink);
 

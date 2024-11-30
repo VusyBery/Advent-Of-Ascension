@@ -14,6 +14,7 @@
     "aoa3:bright_rock_wall",
     "aoa3:coral_brick_wall",
     "aoa3:precasian_cobblestone_wall",
+    "aoa3:scoria_wall",
     "aoa3:coral_rock_wall",
     "aoa3:creeponia_brick_wall",
     "aoa3:creep_stone_wall",
@@ -72,7 +73,7 @@
     "aoa3:runic_stone_wall",
     "aoa3:skeletal_brick_wall",
     "aoa3:weightless_stone_wall",
-    "aoa3:precasian_stone_bricks_wall",
+    "aoa3:precasian_stone_brick_wall",
     "aoa3:whitewash_brick_wall",
     "aoa3:white_shyre_brick_wall",
     "aoa3:yellow_shyre_brick_wall"

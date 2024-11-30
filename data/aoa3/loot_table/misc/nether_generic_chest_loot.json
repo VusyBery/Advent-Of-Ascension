@@ -145,10 +145,8 @@
           "type": "minecraft:item",
           "functions": [
             {
-              "components": {
-                "patchouli:book": "aoa3:expedition"
-              },
-              "function": "minecraft:set_components"
+              "book_id": "aoa3:expedition",
+              "function": "aoa3:set_patchouli_book"
             }
           ],
           "name": "aoa3:torn_pages",

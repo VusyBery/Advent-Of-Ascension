@@ -24,7 +24,7 @@ public class UnderwaterWalkingMovementController extends MoveControl {
 			return;
 		}
 
-		if (operation == MoveControl.Operation.MOVE_TO && !entity.getNavigation().isDone()) {
+		if (operation == Operation.MOVE_TO && !entity.getNavigation().isDone()) {
 			LivingEntity target = entity.getTarget();
 			double distanceX = wantedX - entity.getX();
 			double distanceY = wantedY + 1 - entity.getY();
@@ -45,7 +45,9 @@ public class UnderwaterWalkingMovementController extends MoveControl {
 		}
 		else {
 			entity.setDeltaMovement(entity.getDeltaMovement().add(0, -0.008d, 0));
-			entity.setSpeed(0);
+
+			if (operation == Operation.WAIT)
+				entity.setSpeed(0);
 		}
 	}
 }

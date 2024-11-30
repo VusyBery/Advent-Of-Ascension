@@ -34,13 +34,13 @@ public final class RenderUtil {
 		renderCustomSizedTexture(matrix, x, y, u, v, width, height, width, height);
 	}
 
-	public static void renderSprite(PoseStack poseStack, ResourceLocation sprite, int x, int y) {
+	public static void renderSprite(PoseStack poseStack, ResourceLocation sprite, int x, int y, float renderWidth, float renderHeight) {
 		final TextureAtlasSprite atlasSprite = getSprite(sprite);
 		final float uWidth = atlasSprite.getU1() - atlasSprite.getU0();
 		final float vHeight = atlasSprite.getV1() - atlasSprite.getV0();
 
 		prepRenderTexture(atlasSprite.atlasLocation());
-		renderScaledCustomSizedTexture(poseStack, x, y, atlasSprite.getU0(), atlasSprite.getV0(), uWidth, vHeight, atlasSprite.contents().width(), atlasSprite.contents().height(), 1f, 1f);
+		renderScaledCustomSizedTexture(poseStack, x, y, atlasSprite.getU0(), atlasSprite.getV0(), uWidth, vHeight, renderWidth, renderHeight, 1f, 1f);
 	}
 
 	public static void renderCustomSizedTexture(PoseStack matrix, float x, float y, float u, float v, float uWidth, float vHeight, float textureWidth, float textureHeight) {

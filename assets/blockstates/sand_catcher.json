@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "filled=false": {
+      "model": "aoa3:block/sand_catcher"
+    },
+    "filled=true": {
+      "model": "aoa3:block/sand_catcher_filled"
+    }
+  }
+}

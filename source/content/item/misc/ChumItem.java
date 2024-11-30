@@ -12,16 +12,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.*;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.item.AoAFood;
-import net.tslat.aoa3.data.server.AoAHaulingFishReloadListener;
+import net.tslat.aoa3.content.skill.hauling.HaulingSpawnPool;
 import net.tslat.aoa3.util.EntityUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.aoa3.util.WorldUtil;
@@ -30,6 +30,7 @@ import net.tslat.effectslib.networking.packet.TELParticlePacket;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ChumItem extends Item {
 	public ChumItem() {
@@ -79,10 +80,15 @@ public class ChumItem extends Item {
 
 	private Entity getFishEntity(LivingEntity user, Level level, BlockPos pos) {
 		if (user instanceof ServerPlayer player) {
-			Entity entity = AoAHaulingFishReloadListener.getFishListForBiome(user.level().getBiome(pos).value(), false, level).getRandomElement(player, player.getLuck()).apply(user.level());
+			Optional<Entity> fish = HaulingSpawnPool.getPoolForLocation(level, pos, NeoForgeMod.WATER_TYPE.value())
+					.map(pool -> pool.getEntry(player, player.getLuck()))
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.filter(haulingEntity -> haulingEntity.object().right().isPresent())
+					.map(haulingEntity -> haulingEntity.apply(level, false));
 
-			if (!(entity instanceof ItemEntity))
-				return entity;
+			if (fish.isPresent())
+				return fish.get();
 		}
 
 		int selection = RandomUtil.randomNumberUpTo(66);

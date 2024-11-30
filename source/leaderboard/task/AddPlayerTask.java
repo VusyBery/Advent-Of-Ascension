@@ -18,8 +18,8 @@ public class AddPlayerTask extends InsertionTask {
 	private int totalLevel = 0;
 
 	public AddPlayerTask(ServerPlayerDataManager plData) {
-		this.uuid = plData.player().getUUID().toString();
-		this.name = plData.player().getName().getString();
+		this.uuid = plData.getPlayer().getUUID().toString();
+		this.name = plData.getPlayer().getName().getString();
 
 		for (AoASkill.Instance skill : plData.getSkills()) {
 			int level = skill.getLevel(true);

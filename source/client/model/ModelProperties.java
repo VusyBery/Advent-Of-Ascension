@@ -80,7 +80,7 @@ public final class ModelProperties {
 				if (entity == null || entity.getUseItem() != stack)
 					return 0;
 
-				return ((BaseBow)stack.getItem()).getDrawSpeedMultiplier() * (float)(stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / 20.0F;
+				return ((BaseBow)stack.getItem()).getDrawSpeedMultiplier(stack) * (float)(stack.getUseDuration(entity) - entity.getUseItemRemainingTicks()) / 20.0F;
 			});
 			registerItemProperty(bow, "pulling", (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1 : 0);
 		}

@@ -16,17 +16,19 @@ import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.UpdateClientMovementPacket;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoAResources;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
 import java.util.function.Consumer;
 
 public class DoubleJump extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.KEY_INPUT, ListenerType.PLAYER_FALL};
-
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(LivingFallEvent.class, LivingFallEvent::getEntity, serverOnly(this::handlePlayerFall)));
 	private final float energyConsumption;
 
 	private boolean canJump = true;
@@ -49,8 +51,8 @@ public class DoubleJump extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	@Override
@@ -86,26 +88,26 @@ public class DoubleJump extends AoAAbility.Instance {
 
 	@Override
 	public void handleKeyInput() {
-		Player player = getPlayer();
+		if (getPlayer() instanceof ServerPlayer player) {
+			if (canJump || player.isCreative()) {
+				if (player.onGround())
+					return;
 
-		if (canJump || player.isCreative()) {
-			if (player.onGround())
-				return;
+				if (consumeResource(AoAResources.ENERGY.get(), energyConsumption, true)) {
+					canJump = false;
 
-			if (consumeResource(AoAResources.ENERGY.get(), energyConsumption, true)) {
-				canJump = false;
+					player.jumpFromGround();
+					// TODO look at whether this is needed now that keybinds are both sides
+					AoANetworking.sendToPlayer((ServerPlayer)player, new UpdateClientMovementPacket(UpdateClientMovementPacket.Operation.SET, player.getDeltaMovement().y()));
 
-				player.jumpFromGround();
-				AoANetworking.sendToPlayer((ServerPlayer)player, new UpdateClientMovementPacket(UpdateClientMovementPacket.Operation.SET, player.getDeltaMovement().y()));
-
-				if (getSkill().canGainXp(true))
-					PlayerUtil.giveTimeBasedXpToPlayer((ServerPlayer)player, getSkill().type(), 16, false);
+					if (getSkill().canGainXp(true))
+						PlayerUtil.giveTimeBasedXpToPlayer((ServerPlayer)player, getSkill().type(), 16, false);
+				}
 			}
 		}
 	}
 
-	@Override
-	public void handlePlayerFall(LivingFallEvent ev) {
+	private void handlePlayerFall(LivingFallEvent ev) {
 		if (!canJump)
 			ev.setDistance(ev.getDistance() - ev.getEntity().getJumpPower() * 10f);
 

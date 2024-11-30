@@ -60,7 +60,7 @@ public abstract class BaseVulcane extends Item {
 	}
 
 	public InteractionResultHolder<ItemStack> activate(AoAResource.Instance rage, ItemStack vulcane, InteractionHand hand) {
-		Player pl = rage.getPlayerDataManager().player();
+		Player pl = rage.getPlayerDataManager().getPlayer();
 		float targetHealth = pl.getLastHurtByMob().getHealth();
 		float damage = (float) getVulcaneDamage(vulcane) * (1 + ((rage.getCurrentValue() - 50) / 100));
 

@@ -21,6 +21,11 @@ public class GoldFishingBobberEntity extends HaulingFishingBobberEntity {
 	}
 
 	@Override
+	protected float getMaxCastDistance() {
+		return 64;
+	}
+
+	@Override
 	public EntityType<?> getType() {
 		return AoAMiscEntities.GOLD_BOBBER.get();
 	}

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.tslat.aoa3.common.registration.AoARegistries;
+import net.tslat.aoa3.event.custom.events.ApplyDynamicAttributeModifiersEvent;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.resource.AoAResource;
 import net.tslat.aoa3.player.skill.AoASkill;
@@ -104,15 +105,20 @@ public class AoAAbility {
 		}
 
 		@Override
+		public boolean isStillValid() {
+			return AoAPlayerEventListener.super.isStillValid() && getSkill().isStillValid();
+		}
+
+		@Override
 		public final void reenable(boolean isInit) {
 			if (this.skill.hasLevel(getLevelReq())) {
 				this.state = ListenerState.ACTIVE;
 
-				markForClientSync();
-				this.skill.getPlayerDataManager().markListenerDirty(this);
-
 				if (!isInit)
 					onReenable();
+
+				markForClientSync();
+				registerEventSubscribers();
 			}
 		}
 
@@ -120,20 +126,18 @@ public class AoAAbility {
 		public final void disable(ListenerState reason, boolean isInit) {
 			this.state = reason;
 
-			markForClientSync();
-			this.skill.getPlayerDataManager().markListenerDirty(this);
-
 			if (!isInit)
 				onDisable();
+
+			if (reason != ListenerState.REMOVED)
+				markForClientSync();
 		}
 
 		protected void onReenable() {
-			applyAttributeModifiers(skill.getPlayerDataManager());
+			getEventSubscriber(ApplyDynamicAttributeModifiersEvent.class).ifPresent(handler -> handler.accept(new ApplyDynamicAttributeModifiersEvent(getPlayer())));
 		}
 
-		protected void onDisable() {
-			removeAttributeModifiers(skill.getPlayerDataManager());
-		}
+		protected void onDisable() {}
 
 		protected void markForClientSync() {
 			this.needsSync = true;
@@ -145,7 +149,7 @@ public class AoAAbility {
 			return state;
 		}
 
-		protected Player getPlayer() {
+		public Player getPlayer() {
 			return this.skill.getPlayer();
 		}
 
@@ -155,12 +159,12 @@ public class AoAAbility {
 
 		@Override
 		public boolean meetsRequirements() {
-			return skill.hasLevel(getLevelReq());
+			return this.skill.hasLevel(getLevelReq());
 		}
 
 		public void checkDeactivation(boolean isInit, boolean stateChanged) {
-			if (state == ListenerState.ACTIVE) {
-				if (!skill.hasLevel(levelReq)) {
+			if (this.state == ListenerState.ACTIVE) {
+				if (!this.skill.hasLevel(this.levelReq)) {
 					disable(ListenerState.DEACTIVATED, isInit);
 				}
 				else if (stateChanged) {
@@ -168,11 +172,11 @@ public class AoAAbility {
 				}
 			}
 			else if (state == ListenerState.DEACTIVATED) {
-				if (skill.hasLevel(levelReq)) {
+				if (this.skill.hasLevel(this.levelReq)) {
 					reenable(isInit);
 				}
 				else {
-					disable(state, isInit);
+					disable(this.state, isInit);
 				}
 			}
 		}

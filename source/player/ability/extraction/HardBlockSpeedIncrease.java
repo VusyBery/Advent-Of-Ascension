@@ -4,11 +4,15 @@ import com.google.gson.JsonObject;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
+import java.util.List;
+
 public class HardBlockSpeedIncrease extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_BREAK_SPEED};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerEvent.BreakSpeed.class, serverOnly(this::handleHarvestSpeedCheck)));
 
 	public HardBlockSpeedIncrease(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.HARD_BLOCK_SPEED_INCREASE.get(), skill, data);
@@ -19,12 +23,11 @@ public class HardBlockSpeedIncrease extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleHarvestSpeedCheck(PlayerEvent.BreakSpeed ev) {
+	private void handleHarvestSpeedCheck(final PlayerEvent.BreakSpeed ev) {
 		if (ev.getPosition().isEmpty())
 			return;
 

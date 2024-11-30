@@ -27,12 +27,22 @@ public class PatchouliIntegration {
 		return Optional.ofNullable(stack.has(PatchouliDataComponents.BOOK) ? stack.get(PatchouliDataComponents.BOOK) : null);
 	}
 
+	public static ItemStack setPatchouliBook(ItemStack stack, ResourceLocation book) {
+		stack.set(PatchouliDataComponents.BOOK, book);
+
+		return stack;
+	}
+
 	public static boolean isBookLoaded(ResourceLocation id) {
 		return BookRegistry.INSTANCE.books.containsKey(id);
 	}
 
 	public static ItemStack getBook(ResourceLocation id) {
 		return BookRegistry.INSTANCE.books.get(id).getBookItem();
+	}
+
+	public static boolean isValidBook(ItemStack stack) {
+		return getBookFromStack(stack).filter(PatchouliIntegration::isBookLoaded).isPresent();
 	}
 
 	public static void openBook(ResourceLocation id) {

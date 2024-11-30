@@ -8,13 +8,13 @@ import net.minecraft.world.entity.ai.control.SmoothSwimmingMoveControl;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.navigation.AmphibiousPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyLivingEntitySensor;
 import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.content.entity.brain.task.temp.SetRandomSwimTarget;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.OneRandomBehaviour;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.look.LookAtTarget;
@@ -62,7 +62,7 @@ public abstract class AoAWaterMonster<T extends AoAWaterMonster<T>> extends AoAM
         return BrainActivityGroup.idleTasks(
                 new TargetOrRetaliate<>()
                         .useMemory(MemoryModuleType.NEAREST_VISIBLE_ATTACKABLE_PLAYER)
-                        .attackablePredicate(target -> target.isAlive() && target.isInWater() && (!(target instanceof Player player) || !player.getAbilities().invulnerable) && !isAlliedTo(target)),
+                        .attackablePredicate(target -> DamageUtil.isAttackable(target) && target.isInWater() && !isAlliedTo(target)),
                 new OneRandomBehaviour<>(
                         new SetRandomSwimTarget<>().speedModifier(0.9f),
                         new Idle<>().runFor(entity -> entity.getRandom().nextInt(30, 60))));

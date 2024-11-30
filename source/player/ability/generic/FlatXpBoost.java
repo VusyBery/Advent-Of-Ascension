@@ -8,12 +8,16 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.util.GsonHelper;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.PlayerChangeXpEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.AoAAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.NumberUtil;
 
+import java.util.List;
+
 public class FlatXpBoost extends AoAAbility.Instance {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.GAIN_SKILL_XP};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(PlayerChangeXpEvent.class, serverOnly(this::handleSkillXpGain)));
 
 	private final float modifier;
 
@@ -37,12 +41,11 @@ public class FlatXpBoost extends AoAAbility.Instance {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleSkillXpGain(PlayerChangeXpEvent ev) {
+	private void handleSkillXpGain(PlayerChangeXpEvent ev) {
 		ev.setXpGain(ev.getNewXpGain() * modifier);
 	}
 

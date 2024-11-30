@@ -6,26 +6,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.common.registration.entity.AoAMiscEntities;
-import net.tslat.aoa3.data.server.AoAHaulingFishReloadListener;
-import net.tslat.aoa3.event.AoAPlayerEvents;
 import net.tslat.aoa3.util.WorldUtil;
 import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
-import net.tslat.smartbrainlib.util.RandomUtil;
-
-import java.util.function.Function;
 
 public class ThermalFishingBobberEntity extends HaulingFishingBobberEntity {
 	public ThermalFishingBobberEntity(ServerPlayer player, Level world, ItemStack rod) {
@@ -48,34 +40,6 @@ public class ThermalFishingBobberEntity extends HaulingFishingBobberEntity {
 	@Override
 	public EntityType<?> getType() {
 		return AoAMiscEntities.THERMAL_BOBBER.get();
-	}
-
-	@Override
-	protected void spawnFish(ServerPlayer player) {
-		Function<Level, Entity> fishFunction = AoAHaulingFishReloadListener.getFishListForBiome(level().getBiome(blockPosition()).value(), true, this.level()).getRandomElement(player, getLuck());
-
-		if (fishFunction != null) {
-			Entity entity = fishFunction.apply(player.level());
-
-			if (entity == null)
-				return;
-
-			if (entity instanceof Mob mob) {
-				BlockPos pos = RandomUtil.getRandomPositionWithinRange(this.blockPosition(), 10, 10, 10, 2, 2, 2, false, level(), 5, (state, statePos) -> state.getFluidState().getType() == Fluids.LAVA);
-
-				mob.setPos(pos.getX(), pos.getY(), pos.getZ());
-				mob.getNavigation().createPath(blockPosition(), 0);
-				level().addFreshEntity(mob);
-			}
-			else {
-				entity.setPos(getX(), getY() - entity.getBbHeight(), getZ());
-				level().addFreshEntity(entity);
-			}
-
-			spawnedFish = entity;
-
-			AoAPlayerEvents.handleCustomInteraction(player, "hauling_spawn_fish", spawnedFish);
-		}
 	}
 
 	@Override

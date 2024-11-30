@@ -1,6 +1,6 @@
 package net.tslat.aoa3.integration.jei.recipe.ashferncooking;
 
-import it.unimi.dsi.fastutil.Pair;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
@@ -18,7 +18,6 @@ import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.content.recipe.AshfernCookingRecipe;
 
 import java.util.List;
-import java.util.Optional;
 
 public class AshfernCookingRecipeExtension implements ICraftingCategoryExtension<AshfernCookingRecipe> {
 	@Override
@@ -28,23 +27,27 @@ public class AshfernCookingRecipeExtension implements ICraftingCategoryExtension
 		if (level == null)
 			return;
 
-		final List<Pair<ItemStack, ItemStack>> recipes = BuiltInRegistries.ITEM.stream()
-				.filter(item -> item.components().has(DataComponents.FOOD))
-				.map(item -> {
-					final ItemStack stack = item.getDefaultInstance();
-					final Optional<ItemStack> smelted = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level).map(RecipeHolder::value)
-							.map(recipe -> recipe.getResultItem(level.registryAccess()));
+		final List<ItemStack> inputs = new ObjectArrayList<>();
+		final List<ItemStack> outputs = new ObjectArrayList<>();
 
-					return smelted.map(itemStack -> Pair.of(stack, itemStack));
-				})
-				.filter(Optional::isPresent)
-				.map(Optional::get)
-				.toList();
+		BuiltInRegistries.ITEM.stream().forEach(item -> {
+			if (item.components().has(DataComponents.FOOD)) {
+				final ItemStack stack = item.getDefaultInstance();
 
-		final IRecipeSlotBuilder resultSlot = craftingGridHelper.createAndSetOutputs(builder, recipes.stream().map(Pair::second).toList());
-		final List<IRecipeSlotBuilder> ingredientSlots = craftingGridHelper.createAndSetInputs(builder, List.of(recipes.stream().map(Pair::first).toList(), List.of(AoAItems.ASHFERN.get().getDefaultInstance())), 0, 0);
+				level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SingleRecipeInput(stack), level).map(RecipeHolder::value)
+						.map(recipe -> recipe.getResultItem(level.registryAccess()))
+						.ifPresent(smelted -> {
+							inputs.add(stack);
+							outputs.add(smelted);
+						});
+			}
+		});
 
-		builder.createFocusLink(ingredientSlots.get(0), resultSlot);
+		final List<IRecipeSlotBuilder> ingredientSlots = craftingGridHelper.createAndSetInputs(builder, List.of(List.of(AoAItems.ASHFERN.toStack()), inputs), 0, 0);
+		final IRecipeSlotBuilder resultSlot = craftingGridHelper.createAndSetOutputs(builder, outputs);
+
+		builder.setShapeless();
+		builder.createFocusLink(ingredientSlots.get(1), resultSlot);
 	}
 
 	@Override

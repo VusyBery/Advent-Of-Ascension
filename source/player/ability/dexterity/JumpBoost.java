@@ -15,11 +15,17 @@ import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.UpdateClientMovementPacket;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.event.custom.events.PlayerLevelChangeEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 
+import java.util.List;
+
 public class JumpBoost extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.PLAYER_JUMP, ListenerType.PLAYER_FALL, ListenerType.LEVEL_CHANGE};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(LivingFallEvent.class, LivingFallEvent::getEntity, serverOnly(this::handlePlayerFall)),
+			listener(LivingEvent.LivingJumpEvent.class, LivingEvent.LivingJumpEvent::getEntity, serverOnly(this::handlePlayerJump)),
+			listener(PlayerLevelChangeEvent.class, serverOnly(this::handleLevelChange)));
 	private final boolean sprintJumpBoost;
 
 	private double baseBoostMultiplier;
@@ -45,22 +51,20 @@ public class JumpBoost extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
 	private void updateMultipliers() {
 		this.baseBoostMultiplier = 1 + getScaledValue();
-		this.launchMultiplier = -0.0008 * Math.pow(baseBoostMultiplier, 4) + 0.00332 * Math.pow(baseBoostMultiplier, 3) - 0.05499 * Math.pow(baseBoostMultiplier, 2) + 0.62043 * baseBoostMultiplier + 0.27697;
+		this.launchMultiplier = -0.0008 * Math.pow(this.baseBoostMultiplier, 4) + 0.00332 * Math.pow(this.baseBoostMultiplier, 3) - 0.05499 * Math.pow(baseBoostMultiplier, 2) + 0.62043 * baseBoostMultiplier + 0.27697;
 	}
 
-	@Override
-	public void handleLevelChange(PlayerLevelChangeEvent ev) {
+	private void handleLevelChange(PlayerLevelChangeEvent ev) {
 		updateMultipliers();
 	}
 
-	@Override
-	public void handlePlayerJump(LivingEvent.LivingJumpEvent ev) {
+	private void handlePlayerJump(LivingEvent.LivingJumpEvent ev) {
 		LivingEntity entity = ev.getEntity();
 		Vec3 oldMotion = entity.getDeltaMovement();
 		Vec3 newMotion;
@@ -79,8 +83,7 @@ public class JumpBoost extends ScalableModAbility {
 		entity.setDeltaMovement(newMotion);
 	}
 
-	@Override
-	public void handlePlayerFall(LivingFallEvent ev) {
+	private void handlePlayerFall(LivingFallEvent ev) {
 		if (ev.getDistance() - (this.launchMultiplier * 0.75f) < 3)
 			ev.setCanceled(true);
 	}

@@ -12,14 +12,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.custom.AoASkills;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.InventoryUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 
+import java.util.List;
+
 public class HarvestReplant extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {ListenerType.BLOCK_BREAK};
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(BlockEvent.BreakEvent.class, BlockEvent.BreakEvent::getPlayer, serverOnly(this::handleBlockBreak)));
 
 	public HarvestReplant(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.HARVEST_REPLANT.get(), skill, data);
@@ -30,12 +34,11 @@ public class HarvestReplant extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleBlockBreak(BlockEvent.BreakEvent ev) {
+	private void handleBlockBreak(BlockEvent.BreakEvent ev) {
 		BlockState state = ev.getState();
 
 		if (state.getBlock() instanceof CropBlock crop && testAsChance()) {

@@ -33,7 +33,7 @@ public class CheckpointResetCommand implements Command<CommandSourceStack> {
 			throw AoACommand.NO_PERMISSION_EXCEPTION.create();
 
 		AoACommand.feedback(cmd.getSource(), "CheckpointReset", "--", AoACommand.CommandFeedbackType.INFO);
-		PlayerUtil.getAdventPlayer(pl).clearCheckpoint();
+		PlayerUtil.getAdventPlayer(pl).storage.clearActiveCheckpoint();
 		AoACommand.feedback(cmd.getSource(), "CheckpointReset", "command.aoa.checkpointreset.success", AoACommand.CommandFeedbackType.SUCCESS);
 
 		return 1;

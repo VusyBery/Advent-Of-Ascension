@@ -24,7 +24,7 @@ public class PlayerLevelChangeEvent extends PlayerEvent {
 	private final boolean wasNaturallyChanged;
 
 	public PlayerLevelChangeEvent(ServerPlayerDataManager playerDataManager, AoASkill.Instance skill, int oldLevel, boolean wasNaturallyChanged) {
-		super(playerDataManager.player());
+		super(playerDataManager.getPlayer());
 
 		this.oldLevel = oldLevel;
 		this.skill = skill;

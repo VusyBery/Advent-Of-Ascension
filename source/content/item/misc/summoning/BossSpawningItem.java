@@ -1,5 +1,6 @@
 package net.tslat.aoa3.content.item.misc.summoning;
 
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,9 +16,8 @@ import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.registration.AoAParticleTypes;
 import net.tslat.aoa3.common.registration.block.AoABlocks;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
-import net.tslat.aoa3.content.world.teleporter.AoAPortal;
 import net.tslat.aoa3.content.item.misc.TooltipItem;
-import net.tslat.aoa3.content.world.teleporter.PortalCoordinatesContainer;
+import net.tslat.aoa3.content.world.teleporter.AoAPortal;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.AdvancementUtil;
@@ -102,16 +102,16 @@ public abstract class BossSpawningItem<T extends Entity> extends TooltipItem imp
 		AoAScheduler.scheduleSyncronisedTask(() -> {
 			if (AdvancementUtil.isAdvancementCompleted(pl, AdventOfAscension.id("nowhere/root"))) {
 				ServerPlayerDataManager plData = PlayerUtil.getAdventPlayer(pl);
-				PortalCoordinatesContainer returnLoc = plData.getPortalReturnLocation(nowhere.dimension());
+				GlobalPos returnLoc = plData.storage.getPortalReturnFor(nowhere.dimension());
 
 				pl.changeDimension(AoAPortal.getTransitionForLevel(nowhere, pl, AoABlocks.NOWHERE_PORTAL.get()));
 				pl.connection.teleport(17.5d, 502.5d, 3.5d, 0, pl.getXRot());
 
 				if (returnLoc != null)
-					plData.setPortalReturnLocation(nowhere.dimension(), returnLoc);
+					plData.storage.setPortalReturnLocation(nowhere.dimension(), returnLoc);
 			}
 			else {
-				PlayerUtil.getAdventPlayer(pl).setPortalReturnLocation(nowhere.dimension(), new PortalCoordinatesContainer(pl.level().dimension(), pl.blockPosition()));
+				PlayerUtil.getAdventPlayer(pl).storage.setPortalReturnLocation(nowhere.dimension(), pl.level().dimension(), pl.blockPosition());
 				pl.changeDimension(AoAPortal.getTransitionForLevel(nowhere, pl, AoABlocks.NOWHERE_PORTAL.get()));
 				pl.connection.teleport(17.5d, 452.5d, 3.5d, 0, pl.getXRot());
 			}

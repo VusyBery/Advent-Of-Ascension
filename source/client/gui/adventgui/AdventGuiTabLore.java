@@ -11,13 +11,11 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.common.networking.AoANetworking;
 import net.tslat.aoa3.common.networking.packets.patchouli.AccountPatchouliBookPacket;
-import net.tslat.aoa3.common.registration.AoARegistries;
+import net.tslat.aoa3.common.networking.packets.patchouli.GivePatchouliBookPacket;
 import net.tslat.aoa3.integration.IntegrationManager;
 import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
 import net.tslat.aoa3.library.object.RenderContext;
@@ -71,11 +69,7 @@ public class AdventGuiTabLore extends Screen {
 		this.adjustedMouseY = (int)(mouseY * (1 / AdventMainGui.SCALE));
 
 		for (Renderable renderable : this.renderables) {
-			renderable.render(guiGraphics, adjustedMouseX, adjustedMouseY, partialTick);
-		}
-
-		for (GuiEventListener book : children()) {
-			((PatchouliBook)book).render(guiGraphics, mouseX, mouseY, partialTick);
+			renderable.render(guiGraphics, mouseX, mouseY, partialTick);
 		}
 	}
 
@@ -100,17 +94,11 @@ public class AdventGuiTabLore extends Screen {
 		if (!IntegrationManager.isPatchouliActive())
 			return;
 
-		Item guideBook = AoARegistries.ITEMS.getEntry(ResourceLocation.fromNamespaceAndPath("patchouli", "guide_book"));
-
 		for (ResourceLocation id : bookIds) {
 			if (!PatchouliIntegration.isBookLoaded(id))
 				continue;
 
-			/*ItemStack book = new ItemStack(guideBook);
-			CompoundTag tag = book.getOrCreateTag();
-
-			tag.putString("patchouli:book", id.toString());
-			loreBooks.put(id, book);*/
+			loreBooks.put(id, PatchouliIntegration.getBook(id));
 		}
 	}
 
@@ -156,21 +144,13 @@ public class AdventGuiTabLore extends Screen {
 							mouseX / AdventMainGui.SCALE > AdventMainGui.scaledRootX + AdventMainGui.BACKGROUND_TEXTURE_WIDTH ||
 							mouseY / AdventMainGui.SCALE > AdventMainGui.scaledRootY + AdventMainGui.BACKGROUND_TEXTURE_HEIGHT) {
 						Player pl = Minecraft.getInstance().player;
-						Item patchouliBook = AoARegistries.ITEMS.getEntry(ResourceLocation.fromNamespaceAndPath("patchouli", "guide_book"));
 
-						if (patchouliBook == null || patchouliBook == Items.AIR)
-							return true;
-
-						/*for (ItemStack stack : pl.getInventory().items) {
-							if (stack.getItem() == patchouliBook && stack.hasTag()) {
-								CompoundTag bookTag = stack.getTag();
-
-								if (bookTag.contains("patchouli:book") && bookTag.getString("patchouli:book").equals(id.toString()))
-									return true;
-							}
+						for (ItemStack stack : pl.getInventory().items) {
+							if (PatchouliIntegration.isValidBook(stack))
+								return true;
 						}
 
-						AoANetworking.sendToServer(new GivePatchouliBookPacket(id));*/
+						AoANetworking.sendToServer(new GivePatchouliBookPacket(id));
 
 						return true;
 					}
@@ -206,8 +186,8 @@ public class AdventGuiTabLore extends Screen {
 		@Override
 		protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 			this.isHovered = isMouseOver(mouseX, mouseY);
-			int itemX = mouseHolding ? (int)((mouseX - 8) / AdventMainGui.SCALE) : (int)(getX() + titleWidth / 2f);
-			int itemY = mouseHolding ? (int)((mouseY - 8) / AdventMainGui.SCALE) : (int)((getY() + 8 * 1.5f) + 10);
+			int itemX = mouseHolding ? (int)((mouseX - 24) / AdventMainGui.SCALE) : (int)(getX() + titleWidth / 2f);
+			int itemY = mouseHolding ? (int)((mouseY - 24) / AdventMainGui.SCALE) : (int)((getY() + 8 * 1.5f) + 10);
 			RenderContext renderContext = RenderContext.of(guiGraphics);
 			PoseStack poseStack = guiGraphics.pose();
 

@@ -3,13 +3,13 @@
   "category": "misc",
   "key": {
     "A": {
-      "tag": "neoforge:ingots/baronyte"
+      "tag": "c:ingots/baronyte"
     },
     "B": {
       "tag": "c:ingots/gold"
     },
     "C": {
-      "tag": "neoforge:rods/metal"
+      "tag": "c:rods/metal"
     },
     "D": {
       "tag": "c:nuggets/gold"

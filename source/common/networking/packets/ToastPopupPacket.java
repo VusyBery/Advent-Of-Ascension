@@ -11,8 +11,7 @@ import net.tslat.aoa3.common.toast.CustomToastData;
 public record ToastPopupPacket(CustomToastData toastData) implements AoAPacket {
 	public static final Type<ToastPopupPacket> TYPE = new Type<>(AdventOfAscension.id("toast_trigger"));
 	public static final StreamCodec<RegistryFriendlyByteBuf, ToastPopupPacket> CODEC = StreamCodec.composite(
-			ByteBufCodecs.registry(AoARegistries.CUSTOM_TOAST_DATA_REGISTRY_KEY).dispatch(CustomToastData::type, CustomToastData.Type::streamCodec),
-			ToastPopupPacket::toastData,
+			ByteBufCodecs.registry(AoARegistries.CUSTOM_TOAST_DATA_REGISTRY_KEY).dispatch(CustomToastData::type, CustomToastData.Type::streamCodec), ToastPopupPacket::toastData,
 			ToastPopupPacket::new);
 
 	@Override

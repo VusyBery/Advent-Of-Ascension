@@ -8,19 +8,19 @@
       "item": "aoa3:enchanted_gunpowder"
     },
     {
-      "tag": "neoforge:ingots/shyrestone"
+      "tag": "c:ingots/shyrestone"
     },
     {
-      "tag": "neoforge:ingots/shyrestone"
-    },
-    {
-      "tag": "c:ingots/iron"
+      "tag": "c:ingots/shyrestone"
     },
     {
       "tag": "c:ingots/iron"
     },
     {
-      "tag": "neoforge:gems/shyregem"
+      "tag": "c:ingots/iron"
+    },
+    {
+      "tag": "c:gems/shyregem"
     }
   ],
   "result": {

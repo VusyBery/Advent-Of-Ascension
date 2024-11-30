@@ -175,6 +175,7 @@ public final class AoAEntityRendering {
 	public static final EntityRendererPackage<?> WOOD_GIANT = new GeckoLibRendererPackage<>(AoAMonsters.WOOD_GIANT).model(new WoodGiantModel());
 	public static final EntityRendererPackage<?> YETI = new GeckoLibRendererPackage<>(AoAMonsters.YETI).path("mob/overworld/yeti");
 	public static final EntityRendererPackage<?> NOSPIKE = new GeckoLibRendererPackage<>(AoAMonsters.NOSPIKE).path("mob/barathos/nospike");
+	public static final EntityRendererPackage<?> THARAFLY = new GeckoLibRendererPackage<>(AoAMonsters.THARAFLY).path("mob/barathos/tharafly");
 
 	public static final EntityRendererPackage<?> SMASH = new GeckoLibRendererPackage<>(AoAMonsters.SMASH).model(new SmashModel());
 	public static final EntityRendererPackage<?> ELITE_SMASH = new GeckoLibRendererPackage<>(AoAMonsters.ELITE_SMASH).model(new EliteSmashModel());
@@ -232,6 +233,7 @@ public final class AoAEntityRendering {
 
 	public static final EntityRendererPackage<?> LIGHTNING = new EntityRendererPackage<>(AoAMiscEntities.CUSTOMISABLE_LIGHTNING_BOLT).provider(LightningBoltRenderer::new);
 	public static final EntityRendererPackage<?> EARTHQUAKE_BLOCK = new EntityRendererPackage<>(AoAMiscEntities.EARTHQUAKE_BLOCK).provider(EarthquakeBlockRenderer::new);
+	public static final EntityRendererPackage<?> FAKE_TNT = new EntityRendererPackage<>(AoAMiscEntities.FAKE_TNT).provider(FakeTntRenderer::new);
 
 	public static final EntityRendererPackage<?> PIXON = new EntityRendererPackage<>(AoAMiscEntities.PIXON).provider(PixonRenderer::new);
 

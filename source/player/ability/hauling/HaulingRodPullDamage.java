@@ -6,15 +6,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.tslat.aoa3.common.registration.custom.AoAAbilities;
 import net.tslat.aoa3.common.registration.entity.AoADamageTypes;
 import net.tslat.aoa3.event.custom.events.HaulingRodPullEntityEvent;
+import net.tslat.aoa3.event.dynamic.DynamicEventSubscriber;
 import net.tslat.aoa3.player.ability.generic.ScalableModAbility;
 import net.tslat.aoa3.player.skill.AoASkill;
 import net.tslat.aoa3.util.DamageUtil;
 
-import static net.tslat.aoa3.player.AoAPlayerEventListener.ListenerType.HAULING_ROD_PULL_ENTITY;
+import java.util.List;
 
 public class HaulingRodPullDamage extends ScalableModAbility {
-	private static final ListenerType[] LISTENERS = new ListenerType[] {HAULING_ROD_PULL_ENTITY};
-
+	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
+			listener(HaulingRodPullEntityEvent.class, serverOnly(this::handleHaulingRodPullEntity)));
 
 	public HaulingRodPullDamage(AoASkill.Instance skill, JsonObject data) {
 		super(AoAAbilities.HAULING_ROD_PULL_DAMAGE.get(), skill, data);
@@ -30,13 +31,12 @@ public class HaulingRodPullDamage extends ScalableModAbility {
 	}
 
 	@Override
-	public ListenerType[] getListenerTypes() {
-		return LISTENERS;
+	public List<DynamicEventSubscriber<?>> getEventSubscribers() {
+		return this.eventSubscribers;
 	}
 
-	@Override
-	public void handleHaulingRodPullEntity(HaulingRodPullEntityEvent ev) {
-		if (ev.getHookedEntity() instanceof LivingEntity)
-			DamageUtil.safelyDealDamage(DamageUtil.indirectEntityDamage(AoADamageTypes.HAULING, getPlayer(), ev.getBobber()), ev.getHookedEntity(), getScaledValue());
+	private void handleHaulingRodPullEntity(final HaulingRodPullEntityEvent ev) {
+		if (ev.getHookedEntity() instanceof LivingEntity entity && !entity.level().isClientSide)
+			DamageUtil.safelyDealDamage(DamageUtil.indirectEntityDamage(AoADamageTypes.HAULING, getPlayer(), ev.getBobber()), entity, getScaledValue());
 	}
 }

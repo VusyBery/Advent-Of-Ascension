@@ -1,22 +1,30 @@
 package net.tslat.aoa3.integration.jei.ingredient.subtype;
 
-import mezz.jei.api.ingredients.subtypes.IIngredientSubtypeInterpreter;
+import mezz.jei.api.ingredients.subtypes.ISubtypeInterpreter;
 import mezz.jei.api.ingredients.subtypes.UidContext;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.tslat.aoa3.integration.IntegrationManager;
 import net.tslat.aoa3.integration.patchouli.PatchouliIntegration;
+import org.jetbrains.annotations.Nullable;
 
-public class TornPagesSubtypeInterpreter implements IIngredientSubtypeInterpreter<ItemStack> {
+import java.util.Optional;
+
+public class TornPagesSubtypeInterpreter implements ISubtypeInterpreter<ItemStack> {
 	public static final TornPagesSubtypeInterpreter INSTANCE = new TornPagesSubtypeInterpreter();
 
+	@Nullable
 	@Override
-	public String apply(ItemStack ingredient, UidContext context) {
+	public Object getSubtypeData(ItemStack ingredient, UidContext context) {
 		if (!IntegrationManager.isPatchouliActive())
-			return "";
+			return null;
 
 		return PatchouliIntegration.getBookFromStack(ingredient)
 				.filter(PatchouliIntegration::isBookLoaded)
-				.map(ResourceLocation::toString).orElse("");
+				.orElse(null);
+	}
+
+	@Override
+	public String getLegacyStringSubtypeInfo(ItemStack ingredient, UidContext context) {
+		return Optional.ofNullable(getSubtypeData(ingredient, context)).map(Object::toString).orElse(null);
 	}
 }

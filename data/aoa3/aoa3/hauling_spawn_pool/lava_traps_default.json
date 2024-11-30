@@ -1,0 +1,54 @@
+{
+  "biomes": [],
+  "entries": [
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "aoa3:fake_tnt"
+      },
+      "weight": 180
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "minecraft:magma_cube"
+      },
+      "weight": 150
+    },
+    {
+      "hauling_level_req": 1,
+      "luck_mod": 10.0,
+      "object_id": {
+        "entity": "minecraft:wither_skeleton"
+      },
+      "weight": 75
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "minecraft:blaze"
+      },
+      "weight": 100
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "aoa3:fake_tnt"
+      },
+      "spawn_data": {
+        "DealsDamage": 1
+      },
+      "weight": 20
+    },
+    {
+      "hauling_level_req": 1,
+      "object_id": {
+        "entity": "minecraft:zombified_piglin"
+      },
+      "weight": 130
+    }
+  ],
+  "for_fluid": "minecraft:lava",
+  "is_default": true,
+  "is_trap": true
+}

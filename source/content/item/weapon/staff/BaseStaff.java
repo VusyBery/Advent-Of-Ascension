@@ -1,8 +1,13 @@
 package net.tslat.aoa3.content.item.weapon.staff;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -26,6 +31,7 @@ import net.tslat.aoa3.content.item.datacomponent.StaffRuneCost;
 import net.tslat.aoa3.content.item.weapon.blaster.BaseBlaster;
 import net.tslat.aoa3.content.item.weapon.gun.BaseGun;
 import net.tslat.aoa3.library.builder.SoundBuilder;
+import net.tslat.aoa3.util.CodecUtil;
 import net.tslat.aoa3.util.InteractionResults;
 import net.tslat.aoa3.util.ItemUtil;
 import net.tslat.aoa3.util.LocaleUtil;
@@ -33,6 +39,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapon {
 	public BaseStaff(Item.Properties properties) {
@@ -76,7 +83,19 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 		return InteractionResultHolder.success(stack);
 	}
 
+	public int getStoredCharges(ItemStack stack) {
+		return stack.has(AoADataComponents.STORED_SPELL_CASTS) ? stack.get(AoADataComponents.STORED_SPELL_CASTS).stored() : -1;
+	}
+
 	public boolean findAndConsumeRunes(Object2IntMap<Item> runes, ServerPlayer player, boolean allowBuffs, ItemStack staff) {
+		StoredCasts storedCasts = staff.has(AoADataComponents.STORED_SPELL_CASTS) ? staff.get(AoADataComponents.STORED_SPELL_CASTS) : null;
+
+		if (storedCasts != null && storedCasts.stored() > 0) {
+			staff.set(AoADataComponents.STORED_SPELL_CASTS, StoredCasts.decrement(storedCasts));
+
+			return true;
+		}
+
 		return ItemUtil.findAndConsumeRunes(runes, player, allowBuffs, staff);
 	}
 
@@ -122,10 +141,51 @@ public abstract class BaseStaff<T> extends Item implements EnergyProjectileWeapo
 		if (getDmg() > 0)
 			tooltip.add(1, LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.MAGIC_DAMAGE, LocaleUtil.ItemDescriptionType.ITEM_DAMAGE, LocaleUtil.numToComponent(getDmg())));
 
+		int storedCharges = getStoredCharges(stack);
+
+		if (storedCharges > 0) {
+			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.STAFF_STORED_CHARGES, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST, Component.literal(String.valueOf(storedCharges))));
+		}
+		else if (storedCharges == 0) {
+			tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.STAFF_ADD_CHARGE, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST));
+		}
+
 		tooltip.add(LocaleUtil.getFormattedItemDescriptionText(LocaleUtil.Keys.STAFF_RUNE_COST, LocaleUtil.ItemDescriptionType.ITEM_AMMO_COST));
 
 		for (Object2IntMap.Entry<Item> runeEntry : runeCost(stack).runeCosts().object2IntEntrySet()) {
 			tooltip.add(LocaleUtil.getLocaleMessage(LocaleUtil.Keys.STAFF_RUNE_COST_LINE, ChatFormatting.WHITE, LocaleUtil.numToComponent(runeEntry.getIntValue()), LocaleUtil.getLocaleMessage(runeEntry.getKey().getDescriptionId())));
+		}
+	}
+
+	public record StoredCasts(int stored, OptionalInt max) {
+		public static final Codec<StoredCasts> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+				Codec.INT.fieldOf("stored")
+						.forGetter(StoredCasts::stored),
+				Codec.INT.optionalFieldOf("max")
+						.xmap(optional -> optional.map(
+										OptionalInt::of).orElseGet(OptionalInt::empty),
+								optionalInt -> optionalInt.isPresent() ? Optional.of(optionalInt.getAsInt()) : Optional.<Integer>empty())
+						.forGetter(StoredCasts::max)
+		).apply(builder, StoredCasts::new));
+		public static final StreamCodec<FriendlyByteBuf, StoredCasts> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.INT, StoredCasts::stored,
+				CodecUtil.STREAM_OPTIONAL_INT, StoredCasts::max,
+				StoredCasts::new);
+		public static final StoredCasts DISABLED = new StoredCasts(-1, OptionalInt.of(-1));
+
+		public static StoredCasts decrement(StoredCasts original) {
+			return new StoredCasts(original.stored - 1, original.max);
+		}
+
+		public static StoredCasts increment(StoredCasts original) {
+			return new StoredCasts(original.stored + 1, original.max);
+		}
+
+		public static Optional<StoredCasts> getIfPresent(ItemStack stack) {
+			if (!stack.has(AoADataComponents.STORED_SPELL_CASTS))
+				return Optional.empty();
+
+			return Optional.of(stack.get(AoADataComponents.STORED_SPELL_CASTS));
 		}
 	}
 }

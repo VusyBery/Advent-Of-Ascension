@@ -43,6 +43,7 @@ public final class AoAAbilities {
 	public static final DeferredHolder<AoAAbility, AoAAbility> FISHING_XP_BOOST = register("fishing_xp_boost", () -> new AoAAbility(FishingXpBoost::new, FishingXpBoost::new));
 	public static final DeferredHolder<AoAAbility, AoAAbility> HAULING_ROD_PULL_STRENGTH = register("hauling_rod_pull_strength", () -> new AoAAbility(HaulingRodPullStrengthModifier::new, HaulingRodPullStrengthModifier::new));
 	public static final DeferredHolder<AoAAbility, AoAAbility> HAULING_ROD_PULL_DAMAGE = register("hauling_rod_pull_damage", () -> new AoAAbility(HaulingRodPullDamage::new, HaulingRodPullDamage::new));
+	public static final DeferredHolder<AoAAbility, AoAAbility> HAULING_RESUPPLY = register("hauling_resupply", () -> new AoAAbility(HaulingResupply::new, HaulingResupply::new));
 	public static final DeferredHolder<AoAAbility, AoAAbility> FISHING_TRAP_SPAWN = register("fishing_trap_spawn", () -> new AoAAbility(FishingTrapSpawn::new, FishingTrapSpawn::new));
 	public static final DeferredHolder<AoAAbility, AoAAbility> BLOCK_CONVERSION = register("block_conversion", () -> new AoAAbility(BlockConversion::new, BlockConversion::new));
 	public static final DeferredHolder<AoAAbility, AoAAbility> HOE_AREA_HARVEST = register("hoe_area_harvest", () -> new AoAAbility(HoeAreaHarvest::new, HoeAreaHarvest::new));

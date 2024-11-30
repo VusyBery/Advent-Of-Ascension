@@ -30,6 +30,10 @@ import java.util.function.Function;
 
 
 public final class DamageUtil {
+	public static <T extends Entity> boolean isAttackable(T entity) {
+		return entity.isAlive() && (!(entity instanceof Player pl) || !pl.getAbilities().invulnerable);
+	}
+
 	public static DamageSource miscDamage(ResourceKey<DamageType> damageType, Level level) {
 		return new DamageSource(level.damageSources().damageTypes.getHolderOrThrow(damageType));
 	}

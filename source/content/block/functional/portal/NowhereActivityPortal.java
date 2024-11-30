@@ -96,7 +96,7 @@ public class NowhereActivityPortal extends PortalBlock {
 		RETURN(pl -> doReturnPortalTeleport(pl, 16.5d, 1501.5d, 16.5d, 180), pl -> {
 			if (!NowhereEvents.isInParkourRegion(pl.blockPosition())) {
 				InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
-				PlayerUtil.getAdventPlayer(pl).returnItemStorage();
+				PlayerUtil.getAdventPlayer(pl).storage.returnStoredItems();
 				PlayerUtil.resetToDefaultStatus(pl);
 			}
 		});

@@ -17,11 +17,11 @@
       "unique_id": "1485830590"
     },
     {
-      "base_value": 0.05,
+      "base_value": 0.05875,
       "id": "aoa3:fishing_trap_spawn",
       "level_req": 25,
-      "per_level_mod": -0.0035,
-      "unique_id": "135142147"
+      "per_level_mod": -3.5E-4,
+      "unique_id": "-1825942066"
     },
     {
       "id": "aoa3:level_restriction",
@@ -68,6 +68,13 @@
       "level_req": 77,
       "per_level_mod": 0.0,
       "unique_id": "-496987384"
+    },
+    {
+      "base_value": 0.075,
+      "id": "aoa3:hauling_resupply",
+      "level_req": 86,
+      "per_level_mod": 0.0,
+      "unique_id": "219506441"
     },
     {
       "id": "aoa3:level_restriction",

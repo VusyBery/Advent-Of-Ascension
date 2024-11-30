@@ -30,6 +30,7 @@ import net.tslat.aoa3.content.entity.brain.sensor.AggroBasedNearbyPlayersSensor;
 import net.tslat.aoa3.content.entity.projectile.mob.BaseMobProjectile;
 import net.tslat.aoa3.content.entity.projectile.mob.TreeSpiritSpriteEntity;
 import net.tslat.aoa3.util.AdvancementUtil;
+import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.PlayerUtil;
 import net.tslat.smartbrainlib.api.core.BrainActivityGroup;
 import net.tslat.smartbrainlib.api.core.behaviour.custom.attack.AnimatableRangedAttack;
@@ -96,7 +97,7 @@ public class TreeSpiritEntity extends AoARangedMob<TreeSpiritEntity> {
 	public BrainActivityGroup<TreeSpiritEntity> getIdleTasks() {
 		return BrainActivityGroup.idleTasks(
 				new SetRetaliateTarget<>()
-						.attackablePredicate(entity -> entity.isAlive() && (!(entity instanceof Player player) || !player.getAbilities().invulnerable) && distanceToSqr(entity.position()) < Math.pow(getAttributeValue(AoAAttributes.AGGRO_RANGE), 2))
+						.attackablePredicate(target -> DamageUtil.isAttackable(target) && distanceToSqr(target.position()) < Math.pow(getAttributeValue(AoAAttributes.AGGRO_RANGE), 2))
 						.whenStarting(owner -> ATTACK_STATE.set(owner, 1))
 						.startCondition(entity -> level().getDifficulty() != Difficulty.PEACEFUL));
 	}

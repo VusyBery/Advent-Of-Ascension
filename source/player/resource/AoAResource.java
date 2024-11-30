@@ -6,6 +6,7 @@ import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.entity.player.Player;
 import net.tslat.aoa3.common.registration.AoARegistries;
 import net.tslat.aoa3.player.AoAPlayerEventListener;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
@@ -50,6 +51,11 @@ public final class AoAResource {
 			this.resource = resource;
 		}
 
+		@Override
+		public Player getPlayer() {
+			return this.playerDataManager.getPlayer();
+		}
+
 		public void changePlayerInstance(ServerPlayerDataManager plData) {
 			this.playerDataManager = plData;
 		}
@@ -74,6 +80,11 @@ public final class AoAResource {
 			return this.playerDataManager;
 		}
 
+		@Override
+		public boolean isStillValid() {
+			return this.playerDataManager != null && this.playerDataManager.isStillValid();
+		}
+
 		public boolean hasAmount(float amount) {
 			return getCurrentValue() >= amount;
 		}
@@ -83,13 +94,13 @@ public final class AoAResource {
 		}
 
 		public boolean consume(float amount, boolean consumeIfInsufficient) {
-			if (!PlayerUtil.shouldPlayerBeAffected(playerDataManager.player()))
+			if (!PlayerUtil.shouldPlayerBeAffected(playerDataManager.getPlayer()))
 				return true;
 
 			float current = getCurrentValue();
 
 			if (current < amount && !consumeIfInsufficient) {
-				PlayerUtil.notifyPlayerOfInsufficientResources(playerDataManager.player(), type(), amount);
+				PlayerUtil.notifyPlayerOfInsufficientResources(playerDataManager.getPlayer(), type(), amount);
 
 				return false;
 			}

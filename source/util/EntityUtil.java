@@ -1,5 +1,6 @@
 package net.tslat.aoa3.util;
 
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
@@ -99,12 +100,12 @@ public final class EntityUtil {
 	}
 
 	public static void applyPotions(Entity entity, EffectBuilder... effects) {
-		entity = getLivingEntityFromSelfOrPart(entity);
+		entity = getPartOrPartOwner(entity);
 
 		if (!(entity instanceof LivingEntity target) || !entity.isAlive() || entity.isSpectator() || entity instanceof FakePlayer)
 			return;
 
-		boolean onlyBeneficial = entity instanceof Player && ((Player)entity).getAbilities().invulnerable;
+		boolean onlyBeneficial = entity instanceof Player pl && pl.getAbilities().invulnerable;
 
 		for (EffectBuilder builder : effects) {
 			if (!onlyBeneficial || builder.getEffect().value().isBeneficial())
@@ -205,7 +206,7 @@ public final class EntityUtil {
 			return Collections.emptySet();
 		}
 
-		HashSet<Entity> killers = new HashSet<>(tracker.entries.size());
+		Set<Entity> killers = new ObjectOpenHashSet<>(tracker.entries.size());
 
 		for (CombatEntry entry : tracker.entries) {
 			if (entry.source().getEntity() instanceof LivingEntity attacker && (filter == null || filter.test(attacker)))
@@ -289,12 +290,11 @@ public final class EntityUtil {
 		return impactEntity == null ? null : new EntityHitResult(impactEntity, position);
 	}
 
-	@Nullable
-	public static LivingEntity getLivingEntityFromSelfOrPart(Entity entity) {
-		if (entity instanceof LivingEntity livingEntity)
-			return livingEntity;
+	public static Entity getPartOrPartOwner(Entity entity) {
+		if (entity instanceof PartEntity<?> part)
+			return part.getParent();
 
-		return entity instanceof PartEntity<?> part && part.getParent() instanceof LivingEntity livingEntity ? livingEntity : null;
+		return entity;
 	}
 
 	public static boolean isAllyOf(Entity entity1, Entity entity2) {
