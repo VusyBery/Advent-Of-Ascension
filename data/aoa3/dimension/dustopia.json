@@ -1,0 +1,11 @@
+{
+  "type": "aoa3:dustopia",
+  "generator": {
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "aoa3:the_silent_forest"
+    },
+    "settings": "aoa3:dustopia",
+    "type": "minecraft:noise"
+  }
+}
