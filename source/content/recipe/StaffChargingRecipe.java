@@ -87,32 +87,41 @@ public class StaffChargingRecipe extends CustomRecipe implements RecipeBookRecip
 	@Override
 	public NonNullList<ItemStack> getRemainingItems(CraftingInput input) {
 		NonNullList<ItemStack> remainingItems = NonNullList.withSize(input.size(), ItemStack.EMPTY);
-		Object2IntMap<ItemStack> foundItems = new Object2IntArrayMap<>();
+
 		Object2IntMap<Item> runeCosts = null;
 
-		for (ItemStack stack : input.items()) {
-			if (runeCosts == null && stack.has(AoADataComponents.STORED_SPELL_CASTS)) {
-				runeCosts = stack.has(AoADataComponents.STAFF_RUNE_COST) ? new Object2IntArrayMap<>(stack.get(AoADataComponents.STAFF_RUNE_COST).runeCosts()) : null;
+		for (int i = 0; i < input.size(); i++) {
+			ItemStack stack = input.getItem(i);
+
+			if (stack.has(AoADataComponents.STORED_SPELL_CASTS) && stack.has(AoADataComponents.STAFF_RUNE_COST)) {
+				runeCosts = new Object2IntArrayMap<>(stack.get(AoADataComponents.STAFF_RUNE_COST).runeCosts());
 			}
-			else if (!stack.isEmpty()) {
-				foundItems.mergeInt(stack, stack.getCount(), Integer::sum);
+			else {
+				remainingItems.set(i, stack);
 			}
 		}
 
-		for (Object2IntMap.Entry<ItemStack> stack : foundItems.object2IntEntrySet()) {
-			ItemStack runeStack = stack.getKey();
-			Item rune = runeStack.getItem();
+		if (runeCosts == null || runeCosts.isEmpty())
+			return remainingItems;
 
-			runeCosts.computeIntIfPresent(rune, (item, remaining) -> {
-				if (remaining < runeStack.getCount()) {
-					remainingItems.add(runeStack.copyWithCount(runeStack.getCount() - remaining));
+		for (int i = 0; i < remainingItems.size(); i++) {
+			int slot = i;
+			ItemStack stack = remainingItems.get(slot);
+
+			runeCosts.computeIntIfPresent(stack.getItem(), (item, remaining) -> {
+				if (remaining < stack.getCount()) {
+					remainingItems.set(slot, stack.copyWithCount(stack.getCount() - remaining));
 
 					return 0;
 				}
 				else {
-					return remaining - runeStack.getCount();
+					remainingItems.set(slot, ItemStack.EMPTY);
+
+					return Math.max(0, remaining - stack.getCount());
 				}
 			});
+
+			stack.setCount(0);
 		}
 
 		return remainingItems;

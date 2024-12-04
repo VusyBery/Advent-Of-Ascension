@@ -9,6 +9,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -24,6 +25,7 @@ import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.TyrosaurEntity;
 import net.tslat.aoa3.content.entity.boss.tyrosaur.WoundedTyrosaurEntity;
 import net.tslat.aoa3.library.builder.SoundBuilder;
+import net.tslat.aoa3.util.AttributeUtil;
 import net.tslat.aoa3.util.EntitySpawningUtil;
 import net.tslat.aoa3.util.LocaleUtil;
 import net.tslat.smartbrainlib.util.BrainUtils;
@@ -37,8 +39,15 @@ public class BoneHorn extends BossSpawningItem<TyrosaurEntity> {
 	}
 
 	@Override
-	public TyrosaurEntity spawnBoss(ServerLevel level, Vec3 position, ItemStack stack) {
-		return EntitySpawningUtil.spawnEntity(level, AoAMonsters.TYROSAUR.get(), position, MobSpawnType.TRIGGERED);
+	public TyrosaurEntity spawnBoss(ServerLevel level, Vec3 position, ItemStack stack, int playerCount) {
+		TyrosaurEntity tyrosaur = EntitySpawningUtil.spawnEntity(level, AoAMonsters.TYROSAUR.get(), position, MobSpawnType.TRIGGERED);
+
+		if (playerCount > 1 && tyrosaur != null) {
+			AttributeUtil.applyPermanentModifier(tyrosaur, Attributes.MAX_HEALTH, getPerPlayerHealthBuff(playerCount));
+			tyrosaur.setHealth(tyrosaur.getMaxHealth());
+		}
+
+		return tyrosaur;
 	}
 
 	@Override

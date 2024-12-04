@@ -9,7 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.tslat.aoa3.util.DamageUtil;
 import net.tslat.aoa3.util.PositionAndMotionUtil;
@@ -86,7 +85,7 @@ public class GroundSlamAttack<E extends LivingEntity> extends ConditionlessAttac
 
 		packet.sendToAllPlayersTrackingEntity((ServerLevel)level, entity);
 
-		for (LivingEntity target : EntityRetrievalUtil.getEntities(level, AABB.ofSize(originEntity.position(), this.radius.xzRadius(), this.radius.yRadius(), this.radius.xzRadius()), LivingEntity.class, target -> DamageUtil.isAttackable(target) && target.onGround())) {
+		for (LivingEntity target : EntityRetrievalUtil.getEntities(originEntity, this.radius.xzRadius(), this.radius.yRadius(), this.radius.xzRadius(), LivingEntity.class, target -> DamageUtil.isAttackable(target) && target.onGround())) {
 			entity.doHurtTarget(target);
 		}
 	}

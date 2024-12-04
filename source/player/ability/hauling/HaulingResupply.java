@@ -53,7 +53,7 @@ public class HaulingResupply extends ScalableModAbility {
 	}
 
 	private void handleHaulingEntitySpawn(final HaulingSpawnEntityEvent ev) {
-		if (ev.getSpawnPool() != null && (true || testAsChance())) {
+		if (ev.getSpawnPool() != null && testAsChance()) {
 			List<Supplier<ItemStack>> repairIngredients = new ObjectArrayList<>();
 
 			InventoryUtil.findItem(ev.getEntity(), stack -> {

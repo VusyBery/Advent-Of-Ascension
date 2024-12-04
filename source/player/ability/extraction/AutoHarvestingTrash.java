@@ -45,6 +45,7 @@ public class AutoHarvestingTrash extends AoAAbility.Instance {
 
 		String itemId = data.getString("item");
 		this.consumingItem = itemId.isEmpty() ? null : AoARegistries.ITEMS.getEntry(ResourceLocation.read(itemId).getOrThrow());
+		updateDescription(Component.translatable(Util.makeDescriptionId("ability", AoARegistries.AOA_ABILITIES.getKey(type())) + ".description"));
 	}
 
 	@Override

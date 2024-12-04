@@ -1,9 +1,9 @@
 {
   "base_settings": {
-    "id": "aoa3:barathos_sandstorm",
     "dimensions": [
       "aoa3:barathos"
-    ]
+    ],
+    "id": "aoa3:barathos_sandstorm"
   },
   "damage": 0.5,
   "duration": {

@@ -8,6 +8,7 @@ import net.minecraft.server.PlayerAdvancements;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.FlyingMob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -42,6 +43,7 @@ import net.tslat.aoa3.common.registration.item.AoAArmourMaterials;
 import net.tslat.aoa3.common.registration.item.AoAItems;
 import net.tslat.aoa3.common.registration.worldgen.AoADimensions;
 import net.tslat.aoa3.content.block.functional.misc.CheckpointBlock;
+import net.tslat.aoa3.content.entity.boss.AoABoss;
 import net.tslat.aoa3.content.item.misc.ReservedItem;
 import net.tslat.aoa3.content.item.tool.artifice.ExpFlask;
 import net.tslat.aoa3.content.item.weapon.sword.BaseSword;
@@ -55,6 +57,7 @@ import net.tslat.aoa3.library.object.Text;
 import net.tslat.aoa3.player.ServerPlayerDataManager;
 import net.tslat.aoa3.scheduling.AoAScheduler;
 import net.tslat.aoa3.util.*;
+import net.tslat.smartbrainlib.util.EntityRetrievalUtil;
 import net.tslat.smartbrainlib.util.RandomUtil;
 
 public class PlayerEvents {
@@ -140,8 +143,12 @@ public class PlayerEvents {
 				if (checkpoint != null) {
 					if (CheckpointBlock.isValidCheckpoint(pl.level(), checkpoint)) {
 						AoAScheduler.scheduleSyncronisedTask(() -> {
-							if (NowhereEvents.isInBossRegion(pl.blockPosition()))
+							if (NowhereEvents.isInBossRegion(pl.blockPosition())) {
 								InventoryUtil.clearItems(pl, AoAItems.RETURN_CRYSTAL);
+
+								if (EntityRetrievalUtil.getPlayers(pl, 100).isEmpty())
+									EntityRetrievalUtil.getEntities(pl, 100, AoABoss.class).forEach(Entity::discard);
+							}
 
 							PlayerUtil.resetToDefaultStatus(pl);
 							pl.sendSystemMessage(LocaleUtil.getLocaleMessage("deathScreen.title", ChatFormatting.DARK_RED));

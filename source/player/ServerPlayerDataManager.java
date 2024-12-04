@@ -22,6 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.Event;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -73,11 +74,10 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 
 	private final ObjectArrayList<WeakReference<AoAPlayerEventListener>> eventListeners = new ObjectArrayList<>();
 	private final List<DynamicEventSubscriber<?>> eventSubscribers = List.of(
-			listener(LivingDeathEvent.class, LivingDeathEvent::getEntity, serverOnly(this::handlePlayerDeath)),
-			listener(PlayerEvent.PlayerRespawnEvent.class, serverOnly(this::handlePlayerRespawn)),
-			listener(PlayerEvent.Clone.class, serverOnly(this::handlePlayerDataClone)),
-			listener(PlayerLevelChangeEvent.class, serverOnly(this::handleLevelChange)),
-			listener(PlayerTickEvent.Pre.class, serverOnly(this::handlePlayerTick)));
+			listener(LivingDeathEvent.class, LivingDeathEvent::getEntity, this::handlePlayerDeath),
+			listener(PlayerEvent.PlayerRespawnEvent.class, this::handlePlayerRespawn),
+			listener(PlayerLevelChangeEvent.class, this::handleLevelChange),
+			listener(PlayerTickEvent.Pre.class, this::handlePlayerTick));
 
 	public ServerPlayerDataManager(ServerPlayer player) {
 		this.player = new WeakReference<>(player);
@@ -188,8 +188,10 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 			return;
 
 		Supplier<CompoundTag> syncData = Suppliers.memoize(CompoundTag::new);
+		boolean sync = this.stats.getSyncData(syncData);
+		sync |= this.storage.getSyncData(syncData);
 
-		if (this.stats.getSyncData(syncData) || this.storage.getDataForSyncUpdate(syncData))
+		if (sync)
 			AoANetworking.sendToPlayer(getPlayer(), new PlayerDataUpdatePacket(syncData.get()));
 	}
 
@@ -271,11 +273,16 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		return this.stats.getTotalLevel();
 	}
 
-	private void handlePlayerDataClone(final PlayerEvent.Clone ev) {
+	static {
+		NeoForge.EVENT_BUS.addListener(PlayerEvent.Clone.class, ServerPlayerDataManager::handlePlayerDataClone);
+	}
+
+	public static void handlePlayerDataClone(final PlayerEvent.Clone ev) {
+		ServerPlayerDataManager newData = PlayerUtil.getAdventPlayer((ServerPlayer)ev.getEntity());
 		ServerPlayerDataManager sourceData = PlayerUtil.getAdventPlayer((ServerPlayer)ev.getOriginal());
 
-		this.stats.clone(sourceData.stats);
-		this.storage.clone(sourceData.storage);
+		newData.stats.clone(sourceData.stats);
+		newData.storage.clone(sourceData.storage);
 	}
 
 	public final class Stats implements PartialNbtSerializable {
@@ -524,8 +531,8 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 		}
 
 		public void addPatchouliBook(ResourceLocation book) {
-			this.patchouliBooks.add(book);
-			this.needsPatchouliSync = true;
+			if (this.patchouliBooks.add(book))
+				this.needsPatchouliSync = true;
 		}
 
 		public boolean hasPatchouliBook(ResourceLocation book) {
@@ -638,7 +645,7 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 			this.foodDataStorage = null;
 		}
 
-		boolean getDataForSyncUpdate(Supplier<CompoundTag> syncData) {
+		boolean getSyncData(Supplier<CompoundTag> syncData) {
 			if (!this.needsPatchouliSync)
 				return false;
 
@@ -721,6 +728,8 @@ public final class ServerPlayerDataManager implements AoAPlayerEventListener, Pl
 
 			if (nbt.contains("PatchouliBooks")) {
 				ListTag data = nbt.getList("PatchouliBooks", Tag.TAG_STRING);
+
+				this.needsPatchouliSync = true;
 
 				if (!this.patchouliBooks.isEmpty())
 					this.patchouliBooks.clear();

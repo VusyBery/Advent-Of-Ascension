@@ -1,0 +1,26 @@
+{
+  "values": [
+    "#c:storage_blocks/baronyte",
+    "#c:storage_blocks/blazium",
+    "#c:storage_blocks/bloodstone",
+    "#c:storage_blocks/crystallite",
+    "#c:storage_blocks/elecanium",
+    "#c:storage_blocks/emberstone",
+    "#c:storage_blocks/gemenyte",
+    "#c:storage_blocks/ghastly",
+    "#c:storage_blocks/ghoulish",
+    "#c:storage_blocks/jade",
+    "#c:storage_blocks/jewelyte",
+    "#c:storage_blocks/raw_limonite",
+    "#c:storage_blocks/raw_emberstone",
+    "#c:storage_blocks/limonite",
+    "#c:storage_blocks/lunar",
+    "#c:storage_blocks/lyon",
+    "#c:storage_blocks/mystite",
+    "#c:storage_blocks/ornamyte",
+    "#c:storage_blocks/shyregem",
+    "#c:storage_blocks/shyrestone",
+    "#c:storage_blocks/skeletal",
+    "#c:storage_blocks/varsium"
+  ]
+}

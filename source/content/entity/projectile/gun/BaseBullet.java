@@ -177,13 +177,17 @@ public class BaseBullet extends ThrowableProjectile implements HardProjectile {
 	protected void onHitBlock(BlockHitResult rayTrace) {
 		BlockPos resultPos = rayTrace.getBlockPos();
 		BlockState block = level().getBlockState(resultPos);
-		TELParticlePacket packet = new TELParticlePacket(5);
 
-		for (int i = 0; i < 5; i++) {
-			packet.particle(ParticleBuilder.forPositions(new BlockParticleOption(ParticleTypes.BLOCK, block), rayTrace.getLocation()).scaleMod((float)RandomUtil.randomValueBetween(0.5f, 0.75f)).cutoffDistance(64));
+		if (!level().isClientSide) {
+			TELParticlePacket packet = new TELParticlePacket(5);
+
+			for (int i = 0; i < 5; i++) {
+				packet.particle(ParticleBuilder.forPositions(new BlockParticleOption(ParticleTypes.BLOCK, block), rayTrace.getLocation()).scaleMod((float) RandomUtil.randomValueBetween(0.5f, 0.75f)).cutoffDistance(64));
+			}
+
+			packet.sendToAllPlayersTrackingEntity((ServerLevel)level(), this);
 		}
 
-		packet.sendToAllPlayersTrackingEntity((ServerLevel)level(), this);
 		block.onProjectileHit(level(), block, rayTrace, this);
 
 		if (AoAGameRules.checkDestructiveWeaponPhysics(level())) {

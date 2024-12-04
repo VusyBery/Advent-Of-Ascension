@@ -38,7 +38,7 @@ public interface AoAWorldEvent {
     record GenericSettings(ResourceLocation id, Set<ResourceKey<Level>> dimensions) {
         public static final Codec<GenericSettings> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                 ResourceLocation.CODEC.fieldOf("id").forGetter(GenericSettings::id),
-                ResourceKey.codec(Registries.DIMENSION).listOf().xmap(Set::copyOf, List::copyOf).fieldOf("inDimensions").forGetter(GenericSettings::dimensions)
+                ResourceKey.codec(Registries.DIMENSION).listOf().xmap(Set::copyOf, List::copyOf).fieldOf("dimensions").forGetter(GenericSettings::dimensions)
         ).apply(builder, GenericSettings::new));
     }
 }

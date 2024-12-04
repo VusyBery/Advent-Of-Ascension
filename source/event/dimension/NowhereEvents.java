@@ -79,7 +79,7 @@ public final class NowhereEvents {
 				List<AoABoss> bosses = EntityRetrievalUtil.getEntities(pl, 80, entity -> entity instanceof AoABoss);
 
 				if (!bosses.isEmpty()) {
-					AoABoss boss = bosses.get(0);
+					AoABoss boss = bosses.getFirst();
 
 					if (boss.getMusic() != null)
 						new SoundBuilder(boss.getMusic()).isMusic().include(pl).execute();

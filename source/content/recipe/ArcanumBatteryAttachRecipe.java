@@ -78,7 +78,7 @@ public class ArcanumBatteryAttachRecipe extends CustomRecipe implements RecipeBo
 			if (stack.is(AoATags.Items.STAVES)) {
 				staff = stack.copy();
 
-				staff.set(AoADataComponents.STORED_SPELL_CASTS, new BaseStaff.StoredCasts(1, OptionalInt.empty()));
+				staff.set(AoADataComponents.STORED_SPELL_CASTS, new BaseStaff.StoredCasts(0, OptionalInt.empty()));
 
 				break;
 			}

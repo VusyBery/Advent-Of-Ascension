@@ -205,8 +205,10 @@ public class NowhereBossArena {
 				}, 40);
 
 				AoAScheduler.scheduleSyncronisedTask(() -> {
-					if (!getPlayersInside(level, bounds).isEmpty())
-						bossFunction.spawn(level, getRandomBossSpawn(), stack);
+					int playerCount = getPlayersInside(level, bounds).size();
+
+					if (playerCount > 0)
+						bossFunction.spawn(level, getRandomBossSpawn(), stack, playerCount);
 				}, 140);
 			}
 		}, 100);

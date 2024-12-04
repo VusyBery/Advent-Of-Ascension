@@ -4,10 +4,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.neoforged.neoforge.common.Tags;
 import net.tslat.aoa3.advent.AdventOfAscension;
 import net.tslat.aoa3.content.world.event.AoAWorldEventManager;
 import net.tslat.aoa3.content.world.event.BarathosSandstormEvent;
@@ -16,7 +16,7 @@ public class SandCatcher extends GenericPlantBlock {
     public static final BooleanProperty FILLED = BooleanProperty.create("filled");
 
     public SandCatcher(Properties properties) {
-        super(properties, state -> state.is(Blocks.SAND), 12f, 16f);
+        super(properties, state -> state.is(Tags.Blocks.SANDS), 12f, 16f);
 
         registerDefaultState(this.stateDefinition.any().setValue(FILLED, false));
     }
